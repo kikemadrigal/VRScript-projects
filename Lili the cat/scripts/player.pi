@@ -1,0 +1,134 @@
+﻿
+class player implements GL_Sprite
+{
+	properties:
+		incrementoY=0;
+		aceleracion=0;
+		pad=null;
+		lives=7;
+		caught=0;
+		stage=Null;
+		
+	virtual _operator_new(_name,_creator, _stage)
+	{
+		stage=_stage;
+		//name, path, frame_inicio, frame_fin, offect_X, offest_Y, ancho_hoja, alto_hoja, ancho_sprite,alto_sprite, velocidad, jump_frames  
+		//Addanimationwithsheet("walk","textures/cat-walk.png",0,3,0,0,32,32,-1,-1,1,-1);
+		Addanimationwithsheet("walk","textures/cat-walk.png",0,3,0,0,32,32);
+		Addanimationwithsheet("stop","textures/cat-stop.png",0,3,0,0,32,32,-1,-1,-1,0.02);
+		Addanimationwithsheet("jump","textures/cat-jump1.png",0,0,0,0,32,32);
+		Addanimationwithsheet("fall","textures/cat-jump2.png",0,0,0,0,32,32);
+		SetAnimation("stop");
+		
+		Setcollidermode(true);
+		//Setcollisionrect(6,10,20,20);
+		_pad=NewObject("pad","gl_pad");
+		_pad.SetPreset("CURSORS");
+		pad=_pad;
+		//pad.SetPreset("Joystick1",1);
+		
+		/*
+		hit=NewObject("hit","gl_sound");
+		hit.Load("audios/hit.ogg");
+		*/		
+	}
+	
+	virtual Move(){	
+		stage.HUD();
+		_incrementoX=0;
+		if (pad.IsButton(PAD_BUTTON_RIGHT)){
+			_incrementoX=2;
+			//Volteamos el sprite
+			SetHFlip(False);
+			
+		}
+		else if (pad.IsButton(PAD_BUTTON_LEFT))	{
+			_incrementoX=-2;
+			SetHFlip(True);
+		}
+		
+		if(pad.IsButtonDown(PAD_BUTTON_1) && aceleracion==0){
+			incrementoY=-5;
+			aceleracion=0;
+		}	
+		
+		//si estamos subiendo o bajando
+		if(aceleracion!=0){
+			//Si está subiendo	
+			if (incrementoY<0) Setanimation("jump");
+			//Si está bajando
+			else Setanimation("fall"); 
+		}else if(_incrementoX) Setanimation("walk");   
+		else SetAnimation("stop");  
+		
+		incpos(_incrementoX,incrementoY);
+		_x=clamp(GetX(), 0,GetApp().GetResX()-GetWF());
+		setX(_x);
+		
+		//Rollo gravedad plataforma			
+		if(GetY()>=14*32){
+			SetY(14*32);
+			incrementoY=0;
+			aceleracion=0;
+		}else{
+			incrementoY+=aceleracion*GetFTime();
+			aceleracion+=GetFTime()*0.025f;
+		}
+	}
+	virtual OnSpriteCollision (_sp1,_sp2)
+	{
+		if(Class_Id(_sp2)=="Enemy"){
+			//GetEngine().LogPrint("colision con enemigo");
+			_fx=CreateFx("Tint");
+			_fx.Start(100,RGB(255,0,0));
+			
+		}else if(Class_Id(_sp2)=="Fruit"){
+			//GetEngine().LogPrint("colision con fruta");
+			_sp2.Destroy();
+			caught++;
+			stage.HUD();
+			
+			if(caught>=5){
+				currentStage++;
+				if (currentStage==2) currentStage=0;
+			 	GetApp().RunStage("stage", "stage"+currentStage);
+			}
+		}else if(Class_Id(_sp2)=="Animal" ){
+			stage.DestroyAnimal(_sp2);
+			//_type=_sp2.GetType();			
+			//stage.CreateAnimal(_type);
+			if(_sp2.type==4)stage.asesino_creado=False;
+			playerDie();
+		}else if(Class_Id(_sp2)=="Vehicle"){
+			_sp2.Destroy();
+			playerDie();
+		}else if(Class_Id(_sp2)=="Platform"){
+			if(GetY()<_sp2.GetY() && incrementoY>=0 && _sp2.GetName()=="plataforma"){	
+				//lo situamos encima de la plataforma
+				SetY(_sp2.GetY()-GetHF()+1);
+				incrementoY=0;
+				aceleracion=0;
+			}else if(GetY()<_sp2.GetY() && incrementoY>=0 && _sp2.GetName()=="toldo"){	
+				//lo situamos encima de la plataforma
+				SetY(_sp2.GetY()-GetHF()+1);
+				incrementoY=-10;
+				aceleracion=0;
+			}else if(_sp2.GetName()=="muerte"){	
+				playerDie();
+				if(lives>0) SetPos(0,60);	
+			}
+		}
+	}	
+	
+	function playerDie(){
+		//Efecto de color rojo durante 2 segundos
+		_fx=CreateFX("TINT");
+		_fx.Start(2000, RGB(255,0,0));
+		//Efecto de parpadep
+		_fx=CreateFX("BLINK");
+		_fx.Start(100,15);
+		lives--;
+		stage.HUD();
+		if(lives<=0) GetApp().RunStage("menu", "menu");
+	}
+}

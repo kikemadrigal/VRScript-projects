@@ -1,0 +1,13 @@
+﻿class Timer implements GL_Timer{
+	virtual _operator_new(_name, _creator, _stage){
+		SetFrequency(1000);
+		SetUserCallBack(this, "onCallBack");
+	}
+	function onCallBack(_timer){	
+	    creator.time--;
+		if(creator.time<=0){
+			creator.player.playerDie();
+			creator.time=60;
+		}
+	}
+}

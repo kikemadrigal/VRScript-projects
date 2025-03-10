@@ -1,0 +1,51 @@
+﻿class Fruit implements GL_Sprite
+{
+	properties:
+
+		
+	virtual _operator_new(_name,_creator, _type){
+		switch(_type){
+			case 0:
+				Addanimationwithsheet("apple","textures/fruits/apple.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("apple");
+				break;
+			case 1:
+				Addanimationwithsheet("cherries","textures/fruits/cherries.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("cherries");
+				break;	
+			
+			case 2:
+				Addanimationwithsheet("kiwi","textures/fruits/kiwi.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("kiwi");
+				break;
+		
+			case 3:
+				Addanimationwithsheet("apple","textures/fruits/orange.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("orange");
+				break;
+		
+			case 4:
+				Addanimationwithsheet("strawberry","textures/fruits/strawberry.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("strawberry");
+				break;
+		
+			case 5:
+				Addanimationwithsheet("bananas","textures/fruits/bananas.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("bananas");
+				break;
+			case 6:
+				Addanimationwithsheet("melon","textures/fruits/melon.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("melon");
+				break;
+			
+			case 7:
+				Addanimationwithsheet("pineapple","textures/fruits/pineapple.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("pineapple");
+				break;
+		}
+		
+		
+		
+		SetCollision(True);
+	}	
+}

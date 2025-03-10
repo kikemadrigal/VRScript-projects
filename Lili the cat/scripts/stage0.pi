@@ -1,0 +1,120 @@
+﻿class Stage0 implements GL_Stage{
+	properties:
+		mapper=null;
+		sprites=[];
+		player=null;
+		HUD_text=null;
+		time=60;
+		timer=Null;
+		asesino_creado=False;
+		asesino=Null;
+	virtual _operator_new(_name, _creator){
+		_mapList=null;
+	
+		//pintamos la pantalla con el Tiled
+		mapper = NewObject("mapper", "GL_Mapper");
+		tmx = new TMX_Loader();
+		//Load(_mapper, _path, _actorCreator = null)
+		_ok = tmx.Load(mapper, "textures/stages/stage0vr.tmx", this);
+		
+		//delete tmx;	
+		//SetDebug(True);
+		
+		//Colocamos al player
+		player=NewObject("player","player", this);
+		player.setPos(0,140 );
+	
+		//Colocamos la comida
+		fruit=NewObject("fruit","fruit",0);
+		fruit.SetPos(7*32,6*32);	
+		fruit=NewObject("fruit","fruit",1);
+		fruit.SetPos(7*32,13*32);
+		fruit=NewObject("fruit","fruit",2);
+		fruit.SetPos(12*32,4*32);	
+		fruit=NewObject("fruit","fruit",3);
+		fruit.SetPos(17*32,9*32);	
+		fruit=NewObject("fruit","fruit",4);
+		fruit.SetPos(22*32,4*32);
+		
+		//Colocamos los enemigos
+		//creamos 1 aguila (se mueve de derecha a izquierda)
+		CreateAnimal(0);
+		//Creamos un cuervo (de izquierda a derecha)
+		CreateAnimal(1);
+		//creamos un buitre (da vueltas en circulos)
+		animal=CreateAnimal(2);
+		animal.Setcircle(7*32,7*32,60);
+		//creamos otro buitre
+		animal=CreateAnimal(2);
+		animal.Setcircle(17*32,10*32,60);
+		//Creamos los vehículos
+		NewObject("vehicle","vehicle",[0,6]);
+		NewObject("vehicle2","vehicle",[1,-6]);
+		//Pintamos el marcador	
+		_hud=NewObject("hud", "GL_Text");
+		_hud.SetFont("fonts/Vintage Black.ttf", 20);
+		_hud.SetColor(RGB(255,0,0));
+		_hud.SetAlign(DT_CENTER);
+		_hud.SetPos(0,20);
+		HUD_text=_hud;	
+		HUD();	
+		
+		//Cronómetro
+		timer=NewObject("timer", "timer", this);
+	}
+	virtual Start(){
+		//timer.Start();
+	}
+	virtual Move(){
+		if(time%29==0 && asesino_creado==False){
+			asesino=CreateAnimal(4);
+			asesino_creado=True;
+		}	
+	}
+	
+	function AddActor(_name, _type, _x, _y, _params)
+	{
+		switch (_type)
+		{
+			case "plataforma":
+				_type = 0; 
+				break;
+			case "arbol": 
+				_type = 1; 
+				break;
+			case "muerte": 
+				_type = 2;
+				break;
+		}
+		CreatePlatform(_name, _x,_y, _type);
+				
+	}
+
+	function HUD(){
+		//mapa=tmx.subList[0];
+		//GetEngine().LogPrint(mapa[0]);
+	
+		HUD_Text.SetText(" Lives: "+String_format("%001d",player.lives)+" Caught: "+player.caught+" Time: "+time);
+	
+	}
+	
+	function CreatePlatform(_name,_x, _y, _type){
+		/*_tile=NewObject(_name, "GL_Sprite");
+		_tile.Addanimationwithsheet("ani","textures/stages/objects.png",0,0,0,0,32,32);
+		_tile.SetCollision(True);*/
+		_tile=NewObject(_name,"Platform", _type);
+		_tile.SetPos(_x, _y);
+		return _tile;
+	}
+	function CreateAnimal(_type){
+		animal=NewObject("animal","animal",_type);
+		//count_animal++;
+		return animal;
+	}
+
+	function DestroyAnimal(_spr){
+		_spr.Destroy();
+		//count_animal--;
+	}
+	
+}

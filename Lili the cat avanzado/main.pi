@@ -1,0 +1,171 @@
+﻿class Main implements GL_Program
+{
+	constants:
+		AUDIO_HIT=3;
+		AUDIO_CAUGHT=1;
+		AUDIO_CLICK=2;
+		AUDIO_JUMP=0;
+		AUDIO_CHANGE_LEVEL=4;
+		AUDIO_GAME_OVER=5;
+	globals:
+		currentStage=0;
+	
+	properties:
+		mapper = null;
+		//tmx=null;
+		music=null;
+		audioJump=null;
+		audioClick=null;
+		audios=[];
+		hud=null;
+		stage=null;
+		player=null;
+		score=null;
+		time=60;
+		timer=null;
+		
+		
+		tiles=[];
+		fruits=[];
+		animals=[];
+		cars=[];
+		
+	virtual Start()
+	{
+		AddScriptPackage("scripts");
+		//Configuraciones básicas de color de fondo, tamaño pantalla..
+		SetBackColor(RGB(128,234,235));
+		//25x20 cuadraditos de 32px
+		SetResolution(800,640);
+		//-1 Ajusta l apantalla en horizontal
+		//-2 Ajusta la pantalla en vertical
+		//-3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-1);
+		SetVSync(True);
+		SetFrameRate(60);
+		//Música
+		//_music=NewObject("music", "Gl_Music");
+		_music=NewMusic("music");
+		_music.SetLoop(True);
+		music=_music;
+		
+		//click_sound=NewObject("click_sound", "GL_Sound");
+		//click_sound.Load("audios/click.ogg");
+		LoadAudio("audios/hit.ogg");
+		LoadAudio("audios/caught.ogg");
+		LoadAudio("audios/click.ogg");
+		LoadAudio("audios/jump.ogg");
+		LoadAudio("audios/change_level.ogg");
+		LoadAudio("audios/game_over.ogg");
+		
+		//Para alamcenar los tiles según su tipo
+		mapper = NewMapper("mapper");
+		
+		//El jugador
+		player=NewObject("player","player", null, [this]);
+		player.SetPriority(1);
+		
+		//Pintamos el marcador		
+		_score=NewObject("score", "GL_Text");
+		_score.SetFont("fonts/Vintage Black.ttf", 20);
+		_score.SetColor(RGB(255,0,0));
+		_score.SetAlign(DT_CENTER);
+		_score.SetPos(0,20);
+		score=_score;	
+	
+		//Cuenta hacia atrás del juego
+		timer=NewTimer("timer");
+		timer.SetFrequency(1000);
+		timer.SetUserCallBack(this,"OnCallBack");
+		//timer.Stop();
+		
+		// el icono de ratón y el botón que haces click
+		hud=new HUD(this);
+		//Por el This le pasamos el propio objeo GL_Program	
+		_menu=new Menu(this);
+		//_level0=new Stage0(this);
+		//_level1=new Stage1(this);
+		
+	}
+	function OnCallBack(_timer){
+		time--;
+		if(time<=0) {
+			player.PlayerDie();
+			time=60;
+		}
+		DrawScore();
+	}
+
+	
+	function DrawText(text, size){
+		_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", size);
+		_text.SetAlign(DT_CENTER);
+		_text.SetText(text);
+		_text.SetColor(RGB(234,255,0));
+		return _text;
+	}
+	function DrawScore(){
+		score.SetText(" Lives: "+String_format("%001d",player.lives)+" Caught: "+player.caught+" Time: "+time);
+	}
+	function Log(_message){
+		GetEngine().LogPrint(_message);
+	}
+	
+	function GetPlayer(){
+		return player;
+	}
+		
+	function AddActor(_name, _type, _x, _y, _params)
+	{
+		switch (_type)
+		{
+			case "plataforma":
+				_type = 0; 
+				break;
+			case "toldo": 
+				_type = 1; 
+				break;
+			case "muerte": 
+				_type = 2;
+				break;
+		}
+		CreateTile(_x,_y,_type,_name);	
+	}
+	
+	function CreateTile(_x,_y,_type, _name){
+		_tile=NewObject(_name,"Platform", null, [_type]);
+		_tile.SetPos(_x, _y);	
+		tiles+=[_tile];
+	}
+	
+	function CreateFruit(_type){
+		_fruit=NewObject("fruit","fruit", null, _type);
+		fruits+=[_fruit];
+		return _fruit;
+	}
+	function CreateAnimal(_type){
+		_animal=NewObject("animal","animal",null, [_type, this]);
+		animals+=[_animal];
+		return _animal;
+	}
+	function CreateCar(_type, _velocity){
+		_car=NewObject("vehicle","vehicle",null,[_type,_velocity]);
+		cars+=[_car];
+		return _car;
+	}
+	function Restablecer(){
+		for(i=0; i<sizeof(tiles);i++) delete tiles[i];
+		for(k=0; k<sizeof(animals);k++)delete animals[k];
+		for(l=0; l<sizeof(cars);l++)delete cars[l];
+	}
+	
+	
+	function LoadAudio(path){
+		_audio=NewSound("audio");
+		_audio.Load(path);
+		_audio.SetVolume(255);
+		audios+=[_audio];
+	}
+	
+}

@@ -1,0 +1,18 @@
+﻿class Main implements GL_Program{
+
+	virtual Start(){
+		AddScriptPackage("scripts");
+		//Configuraciones básicas de color de fondo, tamaño pantalla..
+		SetBackColor(RGB(128,234,235));
+		//25x20 cuadraditos de 32px
+		SetResolution(800,640);
+		//-1 Ajusta l apantalla en horizontal
+		//-2 Ajusta la pantalla en vertical
+		//-3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-1);
+		SetVSync(True);
+		SetFrameRate(60);
+		_stage=NewStage("stage0","Stage0");
+		_stage.SetActive();
+	}
+}

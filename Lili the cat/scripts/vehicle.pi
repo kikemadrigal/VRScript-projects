@@ -1,0 +1,48 @@
+﻿class Vehicle implements GL_Sprite
+{
+	properties:
+		speedY=0;
+		speedx=0;
+		type=0;
+		
+	virtual _operator_new(_name,_creator, _attributes)
+	{
+		type=_attributes[0];
+		speedX=_attributes[1];
+		switch(_attributes[0]){
+			case 0:
+				Addanimationwithsheet("car-blue","textures/vehicles/car-bue.png",0,2,0,0,128,64,-1,-1,-1,.05);
+				Setanimation("car-blue");
+				SetHFlip(False);
+				SetPos(0, FRand(13*32,15*32));
+				break;
+			case 1:
+				Addanimationwithsheet("car-yellow","textures/vehicles/car-yellow.png",0,2,0,0,128,64,-1,-1,-1,.05);
+				SetHFlip(True);
+				SetPos(GetApp().GetResX()-128, FRand(15*32,17*32));
+				break;
+		}
+		SetCollision(True);
+	
+		//Setcollisionrect(2,2,16-4,16-4);
+
+	}
+	
+	virtual Move()
+	{
+		incpos(speedX,speedY);
+		if (type==0){
+			if(GetX()>GetApp().GetResX()){
+				SetY(FRand(13*32,14*32));
+				SetX(-128);
+			}
+		}else if(type==1){
+			if(GetX()<0){
+				SetY(FRand(16*32,17*32));
+				SetX(GetApp().GetResX());
+			}
+		}
+
+	}
+	
+}

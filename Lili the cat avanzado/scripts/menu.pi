@@ -1,0 +1,33 @@
+﻿class Menu implements App{
+	properties:
+		click_sound=null;
+	function Init(){
+		//La imagen del fondo
+		_bg=app.NewObject("bg", "GL_Sprite");
+		_bg.AddFrame("textures/menu.png");
+		_bg.SetPos(0,0);
+			
+		//Fíjate que la función DrawText() aparece en main.pi
+		_text=app.DrawText("Lili the cat",32);
+		_text.SetPos(0,20);
+
+		//Musica
+		//Fijalte que music es una propertie que está en el main.pi
+		app.music.Load("audios/music_menu.ogg");
+		app.music.play();
+		app.music.SetVolume(255);
+				
+		_button=app.hud.CreateButton(350, 500, "Start");
+		_button.SetOnClick(this,"OnClickButtonStart");
+	}
+	function OnClickButtonStart(){
+		app.audios[app.AUDIO_CLICK].Play();
+		app.music.Stop();
+		//button.SetVisible(False);
+		app.hud.DestroyControls();
+		//.Log("Has hecho click en start vamos a la pantalla 2");
+		app.stage=new Stage0(app);
+		//app.RunStage("level","level");
+		delete this;
+	}
+}

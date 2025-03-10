@@ -1,0 +1,47 @@
+﻿class Menu implements GL_Stage{
+	properties:
+		pad=null;
+		gotoStage=False;
+		click_sound=null;
+	virtual _operator_new(_name, _creator){
+		_bg=NewObject("bg", "GL_Sprite");
+		_bg.AddFrame("textures/menu.png");
+		_bg.SetPos(0,0);
+		
+		//Esto es para que pueda pulsar el espacio
+		_pad=NewObject("pad", "GL_Pad");
+		_pad.SetPreset("CURSORS");
+		pad=_pad;
+		
+		_text=DrawText("Lili the cat",32);
+		_text.SetPos(0,20);
+		_text=Drawtext("Press space to continue",14);
+		_text.SetPos(0,500);
+		
+		//Mï¿½sica
+		_music_menu=NewObject("music_menu", "Gl_Music");
+		_music_menu.Load("audios/music_menu.ogg");
+		_music_menu.SetLoop(True);
+		_music_menu.Play();
+		
+		//Efecto click
+		//click_sound=NewObject("click_sound", "GL_Sound");
+		//click_sound.Load("audios/click.ogg");
+	}
+	virtual Move(){
+		if(gotoStage){
+			GetApp().RunStage("stage", "stage0");
+		}else if(pad.IsButtonDown(PAD_BUTTON_1)){
+			gotoStage=True;
+			//click_sound.Play();
+		}
+	}
+	function DrawText(text, size){
+		_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", size);
+		_text.SetAlign(DT_CENTER);
+		_text.SetText(text);
+		_text.SetColor(RGB(234,255,0));
+		return _text;
+	}
+}

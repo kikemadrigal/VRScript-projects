@@ -1,0 +1,84 @@
+﻿class Stage0 implements GL_Stage{
+	properties:
+		hud=null;
+		lives=3;
+		score=0;
+		player=null;
+		shots=[];
+	virtual _operator_new(_name, _creator){
+		_bg=NewObject("bg", "GL_Sprite");
+		_bg.AddFrame("textures/bg.png");
+		_bg.SetPos(0,0);
+		
+		
+		_hud=NewObject("hud", "GL_Text");
+		_hud.SetFont("fonts/Vintage Black.ttf", 20);
+		_hud.SetColor(RGB(255,0,0));
+		_hud.SetAlign(DT_CENTER);
+		_hud.SetPos(0,20);
+		hud=_hud;
+		DrawHud();
+		
+		_player=NewObject("player", "Player", [this]);
+		_player.SetPos(0,300);
+		player=_player;
+	}
+	virtual Move(){
+		if(sizeof(shots)>0){
+			for(i=0;i<sizeof(shots);i++){
+				_shot=shots[i];
+				if(_shot.GetX()>GetApp().GetResX() || _shot.GetX()<0) {
+					shots-=[_shot];
+				}
+			}
+		}
+		//GetEngine().LogPrint("Disparos "+sizeof(shots));	
+	}
+	function SetCamera(_x){
+		hud.setPos(_x,20);
+		SetCameraX(_x);
+	}
+	function CreateShot(){
+		//GetEngine().LogPrint("Disparo");
+		_shot=NewObject("shot", "Shot", [this]);
+		//Si mira hacia la derecha
+		if(player.direction==3){
+			_shot.SetPos(player.GetX()+player.getWidth()-10,player.GetY());
+			_shot.incrementoX=2;
+		//Sim ira arriba derecha
+		}else if(player.direction==2){
+			_shot.SetPos(player.GetX()+player.getWidth()-10,player.GetY());
+			_shot.incrementoX=2;
+			_shot.incrementoY=-2;
+			_shot.SetAngle(-0.5);
+		//Si mira abajo derecha
+		}else if(player.direction==4){
+			_shot.SetPos(player.GetX(),player.GetY());
+			_shot.SetHFlip(True);
+			_shot.incrementoX=-2;
+			_shot.incrementoY=2;
+			_shot.SetAngle(-0.5);
+		}else if(player.direction==6){
+			_shot.SetPos(player.GetX()+player.getWidth()-10,player.GetY());
+			//_shot.SetHFlip(True);
+			_shot.incrementoX=2;
+			_shot.incrementoY=2;
+			_shot.SetAngle(0.5);
+		}else if(player.direction==7){
+			_shot.SetPos(player.GetX(),player.GetY());
+			_shot.SetHFlip(True);
+			_shot.incrementoX=-2;
+		}else if(player.direction==8){
+			_shot.SetPos(player.GetX(),player.GetY());
+			_shot.SetHFlip(True);
+			_shot.incrementoX=-2;
+			_shot.incrementoY=-2;
+			_shot.SetAngle(0.5);
+		}
+		shots+=[_shot];
+	}
+	
+	function DrawHud(){
+		hud.Settext("Score: "+score+" lives: "+lives);
+	}
+}

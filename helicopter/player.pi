@@ -1,0 +1,70 @@
+﻿class Player implements GL_Sprite{
+	properties:
+		pad=null;
+		stage=null;
+		incrementoX=0;
+		incrementoY=0;
+		direction=3;
+	virtual _operator_new(_name,_creator, _params)
+	{
+		stage=_params[0];
+		//name, path, frame_inicio, frame_fin, offect_X, offest_Y, ancho_hoja, alto_hoja, ancho_sprite,alto_sprite, velocidad, jump_frames  
+		Addanimationwithsheet("walk","textures/helicoptero.png",0,3,0,0,96,32);
+		SetAnimation("walk");
+		Setcollidermode(true);
+		SetUserMove(this, "OnMove");
+		_pad=NewObject("pad","gl_pad");
+		_pad.SetPreset("CURSORS");
+		pad=_pad;
+	}
+	function OnMove(_spr){
+		_x=_spr.GetX()-GetApp().GetResX()/2;
+		_x=Clamp(_x,0, GetApp().GetResX());
+		stage.SetCamera(_x);
+	}
+	
+	virtual Move(){	
+		_incrementoX=0;
+		_incrementoY=0;
+		_angle=0;
+		if (pad.IsButton(PAD_BUTTON_RIGHT)){
+			_incrementoX=2;
+			direction=3;
+			SetHFlip(False);
+		}
+		else if (pad.IsButton(PAD_BUTTON_LEFT)){
+			_incrementoX=-2;
+			direction=7;
+			SetHFlip(True);
+		}
+		if (pad.IsButton(PAD_BUTTON_UP)){
+			_incrementoY=-2;
+			if(_incrementoX>0){
+				_angle=-0.5;
+				direction=2;	
+			}
+			else if(_incrementoX<0){
+				_angle=0.5;	
+				direction=8;
+			}	
+		}else if (pad.IsButton(PAD_BUTTON_DOWN)){
+			_incrementoY=2;
+			if(_incrementoX>0){
+				_angle=0.5;	
+				direction=6;	
+			}
+			else if(_incrementoX<0){
+				_angle=-0.5;
+				direction=4;
+			}
+		}
+		if(pad.IsButtonDown(PAD_BUTTON_1)){
+			stage.createShot();
+		}			
+		incpos(_incrementoX,_incrementoY);		
+		SetAngle(_angle);
+		incrementoX=_incrementoX;
+		incrementoY=_incrementoY;
+	}	
+	
+}

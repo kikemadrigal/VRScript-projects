@@ -1,0 +1,5 @@
+﻿-mira xq no detecta el toldo
+
+-Ponle que desaparezcan las cuerdas
+-Pon que escale en los arboles
+-crea un tileset de rascacielos

@@ -1,0 +1,9 @@
+﻿-Centra las frutas y los enemigos y los vehiculos
+-Ponle que desaparezcan las cuerdas
+-En el stage 1 que salte en los toldos.
+-Crea un aguila grande que salga cuando pase un tiempo.
+-creaun ventilador gigante que tenga una fruta dentro.
+
+Stage 0
+---------
+-deberá de recoger todas las frutas pasando por tendederos que se caen.

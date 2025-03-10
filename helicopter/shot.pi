@@ -1,0 +1,21 @@
+﻿class Shot implements GL_Sprite{
+	properties:
+		incrementoX=0;
+		incrementoY=0;
+	
+	virtual _operator_new(_name,_creator, _params)
+	{
+		stage=_params[0];
+		//name, path, frame_inicio, frame_fin, offect_X, offest_Y, ancho_hoja, alto_hoja, ancho_sprite,alto_sprite, velocidad, jump_frames  
+		Addanimationwithsheet("ani","textures/misil.png",0,1,0,0,32,32);
+		SetAnimation("ani");
+		Setcollidermode(true);
+		//_controller=CreateController();
+		//_controller.SetCustom(this, "OnController");
+		
+		
+	}
+	virtual Move(){
+		IncPos(incrementoX,incrementoY);
+	}
+}

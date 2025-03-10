@@ -1,0 +1,60 @@
+﻿class HUD implements App{
+	constants:
+		EVENT_CLICK=0;
+		EVENT_MAX;
+	properties:
+	stage=null;
+	cursor=null;
+	pad=null;
+	button=null;
+	//Evento click
+	eventManager=null;
+	bClick=0;
+	function Init(){
+		eventManager=EventManager_New(EVENT_MAX);
+		_stage=app.NewStage("hudstage");
+		_stage.SetGlobal(True);
+		_stage.SetPriority(1);
+		stage=_stage;
+		
+		_cursor=app.NewSprite("cursor", stage);
+		_cursor.AddFrame("textures/pointer.png");
+		_cursor.SetUserMove(this, "onCursorMove");
+		_cursor.SetCollision(True);
+		_cursor.SetPriority(1);
+		cursor=_cursor;
+		
+		_pad=app.NewPad("pad", stage);
+		_pad.SetPreset("MOUSE");
+		pad=_pad;
+		_c=_cursor.CreateController();
+		_c.SetPad(_pad);
+		
+		
+	}	
+	function final(){
+		DestroyControls();
+	}
+	function CreateButton(_x,_y,_text){
+		_button=new Button(app);
+		_button.SetPos(_x,_y);
+		_button.SetText(_text);
+		button=_button;
+		return button;
+	}
+	function DestroyControls(){
+		delete button;
+	}
+	
+	function onCursorMove(_spr){
+		if(bClick==0){
+			if(pad.IsButton(PAD_BUTTON_1)) bClick=1;
+		}else if(!pad.IsButton(PAD_BUTTON_1)){
+			bClick=0;
+			EventManager_DoEvent(eventManager, EVENT_CLICK);
+		}
+	}
+	function RegisterEvent(_eventID,_ctx,_event){
+			EventManager_AddEvent(eventManager,_eventID,_ctx,_event);
+	}
+}

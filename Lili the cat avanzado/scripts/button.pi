@@ -1,0 +1,62 @@
+﻿class Button implements App{
+	properties:
+		text=null;
+		bg=null;
+		//solo par los eventos click
+		onClickContext=null;
+		onClickEvent=null;
+	function Init(){
+		_bg=app.NewSprite("button",app.hud.stage);
+		_bg.SetPos(0,500);
+		_bg.AddEmptyFrame(100,50);
+		_bg.SetColor(RGB(255,255,0));
+		_bg.SetPriority(0);	
+		bg=_bg;
+		_text=app.NewText("button",app.hud.stage);
+		_text.SetFont("fonts/Vintage Black.ttf", 32);
+		_text.SetText("not set text");
+		_text.SetColor(RGB(255,0,0));
+		_text.SetPriority(0);
+		
+		_text.SetCollision(true);
+		_text.SetUserMove(this,"OnHover");
+		text=_text;
+		
+		app.hud.RegisterEvent(HUD.EVENT_CLICK, this,"OnClick");
+	}
+	
+	function SetPos(x,y){
+		text.SetPos(x+20,y+5);
+		bg.SetPos(x,y);
+	}
+	function SetText(_text){
+		text.SetText(_text);
+	}
+	function SetVisible(_visible){
+		text.SetVisible(_visible);
+		bg.SetVisible(_visible);
+	}
+	function SetOnClick(_context, _event){
+		onClickContext=_context;
+		onClickEvent=_event;
+	}
+	function OnClick(){
+		//app.Log("Has hecho click con el ratÃ³n");
+		if(app.hud.cursor.CheckCollisionWithSprite(text)) {
+			if(onClickContext) {
+				onClickContext._call(onClickEvent);
+			}
+		}
+	}
+	function OnHover(_text){
+		if(app.hud.cursor.CheckCollisionWithSprite(_text)) {
+			_text.SetColor(RGB(255,0,255));
+			//bg.SetColor(255,255,255);
+		}
+		else{
+		 	_text.SetColor(RGB(0,0,255));
+			//bg.SetColor(0,0,0);
+		}
+	}
+	
+}

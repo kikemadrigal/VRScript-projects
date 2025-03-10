@@ -1,0 +1,28 @@
+﻿class Main implements GL_Program
+{
+	globals:
+		currentStage=0;
+	
+	properties:
+		mapper = null;
+		
+	virtual Start()
+	{
+		//Le decimos que el código están en la carpeta scrips
+		AddScriptPackage("scripts");
+		//Configuraciones básicas de color de fondo, tamaño pantalla..
+		SetBackColor(RGB(128,234,235));
+		//25x20 cuadraditos de 32px
+		SetResolution(800,640);
+		//-1 Ajusta l apantalla en horizontal
+		//-2 Ajusta la pantalla en vertical
+		//-3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-1);
+		SetVSync(True);
+		SetFrameRate(60);
+		//Cargamos el menú inicial
+		_menu=NewStage("menu", "menu");
+		_menu.SetMain();
+		_menu.SetActive();	
+	}
+}
