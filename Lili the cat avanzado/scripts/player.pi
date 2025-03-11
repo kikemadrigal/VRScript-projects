@@ -7,7 +7,6 @@ class player implements GL_Sprite
 		pad=null;
 		lives=7;
 		caught=0;
-		stage=Null;
 		app=null;
 	virtual _operator_new(_name,_creator, _params)
 	{
@@ -22,6 +21,7 @@ class player implements GL_Sprite
 		
 		Setcollidermode(true);
 		//Setcollisionrect(6,10,20,20);
+		// Para poder mover el sprite por la pantalla creamos un pad
 		_pad=NewObject("pad","gl_pad");
 		_pad.SetPreset("CURSORS");
 		_pad.SetPreset("Joystick1",1);
@@ -45,7 +45,7 @@ class player implements GL_Sprite
 		if(pad.IsButtonDown(PAD_BUTTON_1) && aceleracion==0){
 			incrementoY=-5;
 			aceleracion=0;
-			app.audios[app.AUDIO_JUMP].Play();
+			app.resources.audios[app.resources.AUDIO_JUMP].Play();
 		}	
 		
 		//si estamos subiendo o bajando
@@ -74,29 +74,32 @@ class player implements GL_Sprite
 	virtual OnSpriteCollision (_sp1,_sp2)
 	{
 		if(Class_Id(_sp2)=="Fruit"){
-			app.audios[app.AUDIO_CAUGHT].Play();
+			app.resources.audios[app.resources.AUDIO_CAUGHT].Play();
 			_sp2.Destroy();
 			caught++;
-			app.DrawScore();
+			//Si hemos cogido 5 piezas de comida cambiamos de pantalla
 			if(caught>=5){
-				currentStage++;
-				if (currentStage==2){
+				caught=0;
+				app.currentStage++;
+				//Si llegamos a la pantalla final mostramos la pantalla de ganardor
+				/*if (app.currentStage==2){
+					app.currentStage=0;
 					app.stage.Final();
 				 	app.stage=new Stage0(app);	
-				}
-				caught=0;
-
-				app.stage.Final();				
-				app.stage=new Stage1(app);	
-				
+				}else{*/
+					app.ChangeStage();
+					//app.stage.Final();	
+					//app.stage=new Stage1(app);	
+				//}
 			}
+			app.hud.DrawScore();
 		}else if(Class_Id(_sp2)=="Animal" ){
-			app.audios[app.AUDIO_HIT].Play();
+			app.resources.audios[app.resources.AUDIO_HIT].Play();
 			_sp2.Destroy();
 			_type=_sp2.GetType();			
 			playerDie();
 		}else if(Class_Id(_sp2)=="Vehicle"){
-			app.audios[app.AUDIO_HIT].Play();
+			app.resources.audios[app.resources.AUDIO_HIT].Play();
 			_sp2.Destroy();
 			playerDie();
 		}else if(Class_Id(_sp2)=="Platform"){
@@ -125,12 +128,14 @@ class player implements GL_Sprite
 		_fx=CreateFX("BLINK");
 		_fx.Start(100,15);
 		lives--;
-		app.DrawScore();
+		app.hud.DrawScore();
 		if(lives<=0) {
+			//app.resources.audios[app.resources.AUDIO_GAME_OVER].Play();	 
+			lives=7;
+			caught=0;
+			app.currentStage=0;
 			app.stage.Final();				
 			app.stage=new Menu(app);
-			app.audios[app.AUDIO_GAME_OVER].Play();	 
-			lives=7;
 		}
 	}
 }

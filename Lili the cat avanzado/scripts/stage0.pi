@@ -1,6 +1,5 @@
 ﻿class Stage0 implements App{
 	
-
 	function Init(){
 		_tmx = new TMX_Loader();
 		//Load(_mapper, _path, _actorCreator = null)
@@ -9,14 +8,15 @@
 		
 		//Activamos para mostrar el recuadro de las colisiones
 		//app.GetActiveStage().SetDebug(True);
-		//Ponemos un sonido chulo
-		app.audios[app.AUDIO_CHANGE_LEVEL].Play();
-		
+		//Ponemos un sonido chulo de inicio de nivel
+		app.resources.audios[app.resources.AUDIO_CHANGE_LEVEL].Play();
+		//Ponemos una música bonita y que se oiga floja
+		app.resources.GetMusicIngame().Play();
 		//Colocamos al player
 		_player=app.GetPlayer();
 		_player.setPos(0,140);
 		//Dibujamos el marcador
-		app.DrawScore();		
+		
 		//Colocamos la comida a recoger
 		_fruit=app.CreateFruit(0);
 		_fruit.SetPos(7*32,6*32);	
@@ -47,21 +47,14 @@
 		app.CreateCar(0,6);
 		app.CreateCar(1,-6);
 		
-		//Ponemos una música bonita y que se oiga floja
-		app.music.Load("audios/ingame.ogg");
-		app.music.play();
-		app.music.SetVolume(50);
-
+		//Actualizamos el marcador
+		app.hud.DrawScore();
+		
 		app.time=60;
 	}
 	function Final(){
-		app.music.Stop();
+		app.resources.GetMusicIngame().Stop();
 		app.mapper.ClearLayers();
 		app.Restablecer();
-		
 	}
-	
-	
-	
-
 }

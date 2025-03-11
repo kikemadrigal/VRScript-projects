@@ -3,13 +3,14 @@
 		EVENT_CLICK=0;
 		EVENT_MAX;
 	properties:
-	stage=null;
-	cursor=null;
-	pad=null;
-	button=null;
-	//Evento click
-	eventManager=null;
-	bClick=0;
+		stage=null;
+		cursor=null;
+		pad=null;
+		button=null;
+		score=null;
+		//Evento click
+		eventManager=null;
+		bClick=0;
 	function Init(){
 		eventManager=EventManager_New(EVENT_MAX);
 		_stage=app.NewStage("hudstage");
@@ -30,10 +31,21 @@
 		_c=_cursor.CreateController();
 		_c.SetPad(_pad);
 		
+		//Pintamos el marcador		
+		_score=app.NewObject("score", "GL_Text");
+		_score.SetFont("fonts/Vintage Black.ttf", 20);
+		_score.SetColor(RGB(255,0,0));
+		_score.SetAlign(DT_CENTER);
+		_score.SetPos(0,20);
+		score=_score;
+		
 		
 	}	
 	function final(){
 		DestroyControls();
+	}
+	function DrawScore(){
+		score.SetText("Stage: "+app.currentStage+" Lives: "+String_format("%001d",app.player.lives)+" Caught: "+app.player.caught+" Time: "+app.time);
 	}
 	function CreateButton(_x,_y,_text){
 		_button=new Button(app);
