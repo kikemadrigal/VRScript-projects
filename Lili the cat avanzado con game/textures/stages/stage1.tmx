@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="78">
+ <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32" tilecount="500" columns="25">
+  <image source="tileset.png" width="800" height="640"/>
+ </tileset>
+ <layer id="1" name="Capa de patrones 1" width="25" height="20">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAEAABkBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgBAAAZAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAEAABkBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgBAAAZAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAEAABkBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAEAABkBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgBAAAZAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVAAAAFgAAABcAAAAYAAAAGQAAAAAAAAAAAAAAAAAAAAAAAAAGAAAABwAAAAgAAAAJAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAVAAAAFgAAABcAAAAYAAAAGQAAAAAAAAAAAAAALgAAAC8AAAAwAAAAMQAAADIAAAAAAAAAAAAAAAAAAAAAAAAAHwAAACAAAAAhAAAAIgAAACMAAAAAAAAAAAAAAAAAAAAAAAAALgAAAC8AAAAwAAAAMQAAADIAAAAAAAAAAAAAAEcAAABIAAAASQAAAEoAAABLAAAAAAAAAAAAAAAAAAAAAAAAADgAAAA5AAAAOgAAADsAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAEcAAABIAAAASQAAAEoAAABLAAAAAAAAAAAAAABgAAAAYQAAAGIAAABjAAAAZAAAAOsAAADsAAAAAAAAAAAAAABRAAAAUgAAAFMAAABUAAAAVQAAAOsAAADsAAAAAAAAAAAAAABgAAAAYQAAAGIAAABjAAAAZAAAAOsAAADsAAAAeQAAAHoAAAB7AAAAfAAAAH0AAAAAAAAAAAAAAAAAAAAAAAAAagAAAGsAAABsAAAAbQAAAG4AAAAAAAAAAAAAAAAAAAAAAAAAeQAAAHoAAAB7AAAAfAAAAH0AAAAAAAAAAAAAAJIAAACTAAAAlAAAAJUAAACWAAAAAAAAAAAAAAAAAAAAAAAAAIMAAACEAAAAhQAAAIYAAACHAAAA6wAAAOwAAAAAAAAAAAAAAJIAAACTAAAAlAAAAJUAAACWAAAAAAAAAAAAAACrAAAArAAAAK0AAACuAAAArwAAAPsAAAD8AAAA/QAAAP4AAACcAAAAnQAAAJ4AAACfAAAAoAAAAPsAAAD8AAAA/QAAAP4AAACrAAAArAAAAK0AAACuAAAArwAAAPsAAAD8AAAAxAAAAMUAAADGAAAAxwAAAMgAAAAUAQAAFQEAABYBAAAXAQAAtQAAALYAAAC3AAAAuAAAALkAAAAUAQAAFQEAABYBAAAXAQAAxAAAAMUAAADGAAAAxwAAAMgAAAAUAQAAFQEAAN0AAADeAAAA3wAAAOAAAADhAAAALQEAAC4BAAAvAQAAMAEAAM4AAADPAAAA0AAAANEAAADSAAAALQEAAC4BAAAvAQAAMAEAAN0AAADeAAAA3wAAAOAAAADhAAAALQEAAC4BAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAADkAAAA5AAAAOQAAAA=
+  </data>
+ </layer>
+ <objectgroup id="2" name="Capa de Objetos 1">
+  <object id="5" name="plataforma" type="plataforma" x="48" y="256">
+   <point/>
+  </object>
+  <object id="6" name="plataforma" type="plataforma" x="81" y="256.5">
+   <point/>
+  </object>
+  <object id="7" name="plataforma" type="plataforma" x="113.5" y="255.5">
+   <point/>
+  </object>
+  <object id="8" name="plataforma" type="plataforma" x="131.5" y="254.5">
+   <point/>
+  </object>
+  <object id="14" name="plataforma" type="plataforma" x="5.5" y="423">
+   <point/>
+  </object>
+  <object id="15" name="plataforma" type="plataforma" x="36" y="425.5">
+   <point/>
+  </object>
+  <object id="16" name="plataforma" type="plataforma" x="73" y="423.5">
+   <point/>
+  </object>
+  <object id="17" name="plataforma" type="plataforma" x="106" y="424">
+   <point/>
+  </object>
+  <object id="18" name="plataforma" type="plataforma" x="126" y="424">
+   <point/>
+  </object>
+  <object id="23" name="plataforma" type="plataforma" x="310.5" y="255.5">
+   <point/>
+  </object>
+  <object id="24" name="plataforma" type="plataforma" x="344" y="255.5">
+   <point/>
+  </object>
+  <object id="26" name="plataforma" type="plataforma" x="378" y="255">
+   <point/>
+  </object>
+  <object id="27" name="plataforma" type="plataforma" x="395" y="255">
+   <point/>
+  </object>
+  <object id="28" name="plataforma" type="plataforma" x="289.5" y="309.5">
+   <point/>
+  </object>
+  <object id="29" name="plataforma" type="plataforma" x="352" y="308">
+   <point/>
+  </object>
+  <object id="30" name="plataforma" type="plataforma" x="415.5" y="308">
+   <point/>
+  </object>
+  <object id="31" name="plataforma" type="plataforma" x="381" y="374.5">
+   <point/>
+  </object>
+  <object id="32" name="plataforma" type="plataforma" x="316" y="374.5">
+   <point/>
+  </object>
+  <object id="33" name="plataforma" type="plataforma" x="293" y="387.5">
+   <point/>
+  </object>
+  <object id="34" name="plataforma" type="plataforma" x="328.5" y="387">
+   <point/>
+  </object>
+  <object id="35" name="plataforma" type="plataforma" x="363.5" y="387.5">
+   <point/>
+  </object>
+  <object id="36" name="plataforma" type="plataforma" x="393" y="387.5">
+   <point/>
+  </object>
+  <object id="37" name="plataforma" type="plataforma" x="411.5" y="387">
+   <point/>
+  </object>
+  <object id="38" name="plataforma" type="plataforma" x="318" y="442.5">
+   <point/>
+  </object>
+  <object id="39" name="plataforma" type="plataforma" x="383.5" y="441.5">
+   <point/>
+  </object>
+  <object id="40" name="plataforma" type="plataforma" x="372.5" y="455">
+   <point/>
+  </object>
+  <object id="41" name="plataforma" type="plataforma" x="387.5" y="455">
+   <point/>
+  </object>
+  <object id="42" name="plataforma" type="plataforma" x="590" y="256">
+   <point/>
+  </object>
+  <object id="43" name="plataforma" type="plataforma" x="629.5" y="255.5">
+   <point/>
+  </object>
+  <object id="44" name="plataforma" type="plataforma" x="661.5" y="255.5">
+   <point/>
+  </object>
+  <object id="45" name="plataforma" type="plataforma" x="693.5" y="255.5">
+   <point/>
+  </object>
+  <object id="47" name="plataforma" type="plataforma" x="706" y="255">
+   <point/>
+  </object>
+  <object id="48" name="plataforma" type="plataforma" x="582" y="317.5">
+   <point/>
+  </object>
+  <object id="49" name="plataforma" type="plataforma" x="616.5" y="320">
+   <point/>
+  </object>
+  <object id="50" name="plataforma" type="plataforma" x="647.5" y="320">
+   <point/>
+  </object>
+  <object id="51" name="plataforma" type="plataforma" x="680.5" y="320.5">
+   <point/>
+  </object>
+  <object id="53" name="plataforma" type="plataforma" x="705" y="320">
+   <point/>
+  </object>
+  <object id="54" name="plataforma" type="plataforma" x="581" y="424">
+   <point/>
+  </object>
+  <object id="55" name="plataforma" type="plataforma" x="616" y="425.5">
+   <point/>
+  </object>
+  <object id="56" name="plataforma" type="plataforma" x="649" y="423">
+   <point/>
+  </object>
+  <object id="57" name="plataforma" type="plataforma" x="680" y="424.5">
+   <point/>
+  </object>
+  <object id="58" name="plataforma" type="plataforma" x="700.5" y="424">
+   <point/>
+  </object>
+  <object id="59" name="toldo" type="toldo" x="160" y="349">
+   <point/>
+  </object>
+  <object id="60" name="toldo" type="toldo" x="449" y="351">
+   <point/>
+  </object>
+  <object id="61" name="toldo" type="toldo" x="448" y="413.5">
+   <point/>
+  </object>
+  <object id="62" name="toldo" type="toldo" x="738" y="352">
+   <point/>
+  </object>
+  <object id="63" name="plataforma" type="plataforma" x="14" y="256.5">
+   <point/>
+  </object>
+  <object id="64" name="plataforma" type="plataforma" x="6.5" y="318">
+   <point/>
+  </object>
+  <object id="65" name="plataforma" type="plataforma" x="35.5" y="318.5">
+   <point/>
+  </object>
+  <object id="66" name="plataforma" type="plataforma" x="67" y="321.5">
+   <point/>
+  </object>
+  <object id="67" name="plataforma" type="plataforma" x="101" y="320.5">
+   <point/>
+  </object>
+  <object id="68" name="plataforma" type="plataforma" x="131" y="320">
+   <point/>
+  </object>
+  <object id="69" name="muerte" type="muerte" x="161.5" y="447">
+   <point/>
+  </object>
+  <object id="71" name="muerte" type="muerte" x="232" y="448">
+   <point/>
+  </object>
+  <object id="72" name="muerte" type="muerte" x="195" y="447.5">
+   <point/>
+  </object>
+  <object id="73" name="muerte" type="muerte" x="259" y="448.5">
+   <point/>
+  </object>
+  <object id="74" name="muerte" type="muerte" x="451" y="448.5">
+   <point/>
+  </object>
+  <object id="75" name="muerte" type="muerte" x="480.5" y="448.5">
+   <point/>
+  </object>
+  <object id="76" name="muerte" type="muerte" x="513" y="448">
+   <point/>
+  </object>
+  <object id="77" name="muerte" type="muerte" x="544" y="448">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

@@ -1,0 +1,33 @@
+﻿class Menu implements GL_Stage{
+	properties:
+		bg=null;
+		text="";
+	//function Init(){
+	virtual _operator_new(_name,_gl){
+		//La imagen del fondo
+		_bg=NewObject("bg", "GL_Sprite");
+		_bg.AddFrame("textures/menu.png");
+		_bg.SetPos(0,0);
+		bg=_bg;
+		
+		_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 32);
+		_text.SetAlign(DT_CENTER);
+		_text.SetText("Lili the cat");
+		_text.SetColor(RGB(234,255,0));
+		_text.SetPos(0,20);
+
+		
+		//GetApp().resources.GetMusicMenu().Play();
+		
+		_button=GetApp().hud.CreateButton(350, 500, "Start");
+		_button.SetOnClick(this,"OnClickButtonStart");
+		button=_button;
+	}
+	function OnClickButtonStart(){
+		//GetApp().resources.audios[GetApp().resources.AUDIO_CLICK].Play();
+		//GetApp().resources.GetMusicMenu().Stop();		
+		GetApp().hud.DestroyControls();
+		GetApp().RunGame();
+	}
+}

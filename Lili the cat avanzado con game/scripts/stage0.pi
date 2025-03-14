@@ -1,0 +1,65 @@
+﻿class Stage0 implements Game_instace{
+	properties:
+		mapper=null;
+	//function Init(){
+	function _operator_new(_game){
+		::_operator_new(_game);
+		tmx = new TMX_Loader();
+		//Load(_mapper, _path, _actorCreator = null)
+		_ok = tmx.Load(game.mapper, "textures/stages/stage0vr.tmx", game);
+		//delete game.tmx;	
+		//game.Drawtext("pantalla 0",40);
+		//Activamos para mostrar el recuadro de las colisiones
+		//GetApp().GetActiveStage().SetDebug(True);
+		//Ponemos un sonido chulo de inicio de nivel
+		//GetApp().resources.audios[getApp().resources.AUDIO_CHANGE_LEVEL].Play();
+		//Ponemos una música bonita y que se oiga floja
+		//GetApp().resources.GetMusicIngame().Play();
+		//Colocamos al player
+		_player=game.GetPlayer();
+		_player.setPos(0,140);
+		//Dibujamos el marcador
+		
+		//Colocamos la comida a recoger
+		_fruit=game.CreateFruit(0);
+		_fruit.SetPos(7*32,6*32);	
+		_fruit=game.CreateFruit(1);
+		_fruit.SetPos(5*32,13*32);
+		_fruit=game.CreateFruit(1);
+		_fruit.SetPos(7*32,13*32);
+		_fruit=game.CreateFruit(2);
+		_fruit.SetPos(12*32,4*32);	
+		_fruit=game.CreateFruit(3);
+		_fruit.SetPos(17*32,9*32);	
+		_fruit=game.CreateFruit(4);
+		_fruit.SetPos(22*32,4*32);
+		
+		//Colocamos los enemigos
+		//creamos 1 aguila (se mueve de derecha a izquierda)
+		game.CreateAnimal(0);
+		//Creamos un cuervo (de izquierda a derecha)
+		game.CreateAnimal(1);
+		//creamos un buitre (da vueltas en circulos)
+		_animal=game.CreateAnimal(2);
+		_animal.Setcircle(7*32,7*32,60);
+		//creamos otro buitre
+		_animal=game.CreateAnimal(2);
+		_animal.Setcircle(17*32,10*32,60);
+		//Asesino
+		_asesino=game.CreateAnimal(4);
+		
+		//Creamos los vehículos
+		game.CreateCar(0,6);
+		game.CreateCar(1,-6);
+		
+		//Actualizamos el marcador
+		game.DrawScore();
+	}
+	//function Final(){
+	virtual _operator_delete(){
+		//GetApp().resources.GetMusicIngame().Stop();
+		game.mapper.ClearLayers();
+		game.mapper.ClearTilesets();
+		game.Restablecer();
+	}
+}

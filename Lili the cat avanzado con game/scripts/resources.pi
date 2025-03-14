@@ -1,0 +1,58 @@
+﻿class Resources {
+	constants:
+		MUSIC_MENU=0;
+		MUSIC_INGAME=1;
+		AUDIO_HIT=3;
+		AUDIO_CAUGHT=1;
+		AUDIO_CLICK=2;
+		AUDIO_JUMP=0;
+		AUDIO_CHANGE_LEVEL=4;
+		AUDIO_GAME_OVER=5;
+	properties:
+		app=null;
+		musics=[];
+		music=null;
+		audios=[];
+	function _operator_new(_app){
+		app=_app;
+		LoadMusic("audios/music_menu.ogg");
+		LoadMusic("audios/ingame.ogg");
+		
+		LoadAudio("audios/hit.ogg");
+		LoadAudio("audios/caught.ogg");
+		LoadAudio("audios/click.ogg");
+		LoadAudio("audios/jump.ogg");
+		LoadAudio("audios/change_level.ogg");
+		LoadAudio("audios/game_over.ogg");
+	}
+	
+	//function operator_delete(){
+	function _operator_delete(){
+		for (i=0;i<sizeof(musics);i++) delete musics[i];
+		for (j=0;j<sizeof(audios);j++) delete audios[j];
+	}
+	function GetMusicMenu(){
+		return musics[MUSIC_MENU];
+	}
+	function GetMusicIngame(){
+		return musics[MUSIC_INGAME];
+	}
+	function LoadMusic(path){
+		//_music=NewObject("music", "Gl_Music");
+		_music=app.NewMusic("music");
+		_music.Load(path);
+		_music.SetVolume(50);
+		_music.SetLoop(True);
+		musics+=[_music];
+	}
+	
+	function LoadAudio(path){
+		//click_sound=NewObject("click_sound", "GL_Sound");
+		//click_sound.Load("audios/click.ogg");
+		_audio=app.NewSound("audio");
+		_audio.Load(path);
+		_audio.SetVolume(255);
+		audios+=[_audio];
+	}
+
+}

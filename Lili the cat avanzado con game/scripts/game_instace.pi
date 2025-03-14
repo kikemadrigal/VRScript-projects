@@ -1,0 +1,23 @@
+﻿class Game_instance {
+	properties:
+		game=null;
+		//cc=null;
+	function _operator_new(_game){
+		game=_game;
+		//cc=app.StartCreationContext();
+		//Init();
+		//app.EndCreationContext();
+	}
+	function _operator_delete(){
+		//delete cc;
+		Final();
+	}
+	
+	function Init(){
+	}
+	
+	function Final(){
+	}
+	
+	
+}

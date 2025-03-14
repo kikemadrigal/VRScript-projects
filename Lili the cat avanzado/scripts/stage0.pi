@@ -5,7 +5,6 @@
 		//Load(_mapper, _path, _actorCreator = null)
 		_ok = _tmx.Load(app.mapper, "textures/stages/stage0vr.tmx", app);
 		delete _tmx;	
-		
 		//Activamos para mostrar el recuadro de las colisiones
 		//app.GetActiveStage().SetDebug(True);
 		//Ponemos un sonido chulo de inicio de nivel
@@ -22,35 +21,33 @@
 		_fruit.SetPos(7*32,6*32);	
 		_fruit=app.CreateFruit(1);
 		_fruit.SetPos(7*32,13*32);
-		_fruit=app.CreateFruit(2);
+		_fruit=app.CreateFruit(0);
 		_fruit.SetPos(12*32,4*32);	
-		_fruit=app.CreateFruit(3);
+		_fruit=app.CreateFruit(1);
 		_fruit.SetPos(17*32,9*32);	
-		_fruit=app.CreateFruit(4);
+		_fruit=app.CreateFruit(0);
 		_fruit.SetPos(22*32,4*32);
 		
 		//Colocamos los enemigos
 		//creamos 1 aguila (se mueve de derecha a izquierda)
-		app.CreateAnimal(0);
+		//app.CreateAnimal(0);
 		//Creamos un cuervo (de izquierda a derecha)
-		app.CreateAnimal(1);
+		//app.CreateAnimal(1);
 		//creamos un buitre (da vueltas en circulos)
-		_animal=app.CreateAnimal(2);
-		_animal.Setcircle(7*32,7*32,60);
+		//_animal=app.CreateAnimal(2);
+		//_animal.Setcircle(7*32,7*32,60);
 		//creamos otro buitre
 		_animal=app.CreateAnimal(2);
 		_animal.Setcircle(17*32,10*32,60);
-		//Asesino
-		_asesino=app.CreateAnimal(4);
+
+	
 		
 		//Creamos los vehículos
 		app.CreateCar(0,6);
 		app.CreateCar(1,-6);
 		
-		//Actualizamos el marcador
-		app.hud.DrawScore();
 		
-		app.time=60;
+		
 	}
 	function Final(){
 		app.resources.GetMusicIngame().Stop();

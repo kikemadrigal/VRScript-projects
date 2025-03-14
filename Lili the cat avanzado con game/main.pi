@@ -1,0 +1,43 @@
+﻿
+class Main implements GL_Program
+{
+	properties:
+		resources=null;
+		hud=null;
+		//mapper=null;
+		
+	virtual Start()
+	{
+		AddScriptPackage("scripts");
+		// Configuraciones básicas de color de fondo, tamaño pantalla..
+		SetBackColor(RGB(128,234,235));
+		// 25x20 cuadraditos de 32px
+		SetResolution(800,640);
+		// -1 Ajusta l apantalla en horizontal
+		// -2 Ajusta la pantalla en vertical
+		// -3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-1);
+		SetVSync(True);
+		SetFrameRate(60);;
+
+		
+		resources=new Resources(this);
+		
+		// En el HUD se encuentran todos los elementos de visuallización que 
+		// No son el juego en sí, incluidos los botones con su eventos onclick
+		hud=new HUD(this);
+		// Por el This le pasamos el propio objeo GL_Program	
+		_menu=newStage("menu", "menu");
+		_menu.SetMain();
+		_menu.SetActive();
+		//level1=new Stage0(this);
+		//level2=new Stage1(this);
+		//winner=new StageWinner(this);
+	}
+	
+	function RunGame(){
+		_game=newStage("game", "game");
+		_game.SetMain();
+		_game.SetActive();
+	}
+}

@@ -1,0 +1,161 @@
+﻿class Game implements GL_Stage{
+
+	properties:
+		stage=null;
+		mapper=null;
+		player=null;
+		time=60;
+		pad=null;
+		//timer=null;
+		currentStage=0;
+		score=null;
+		
+		tiles=[];
+		fruits=[];
+		animals=[];
+		cars=[];
+	virtual _operator_new(_name,_gl){
+			
+		//Para alamcenar los tiles según su tipo
+		mapper = NewObject("mapper", "GL_Mapper");
+		
+		//Pintamos el marcador		
+		_score=NewObject("score", "GL_Text");
+		_score.SetFont("fonts/Vintage Black.ttf", 20);
+		_score.SetColor(RGB(255,0,0));
+		_score.SetAlign(DT_CENTER);
+		_score.SetPos(0,20);
+		score=_score;
+
+		// El jugador
+		player=NewObject("player","player", [this]);
+		player.SetPriority(1);
+		
+		_pad=NewObject("pad", "GL_Pad");
+		_pad.SetPreset("CURSORS");
+		pad=_pad;
+			
+		// Cuenta hacia atrás del juego
+		//timer=NewObject("timer", "GL_Timer");
+		//timer.SetFrequency(1000);
+		//timer.SetUserCallBack(this,"OnCallBack");
+		
+		stage=new Stage0(this);
+	}
+	virtual  move(){
+		if(pad.IsButtonDown(PAD_BUTTON_1)){
+			ChangeStage();
+		}
+	}
+
+
+	function OnCallBack(_timer){
+		time--;
+		if(time<=0) {
+			player.PlayerDie();
+			time=60;
+		}
+		DrawScore();
+	}
+
+	
+	
+	function Log(_message){
+		GetApp().GetEngine().LogPrint(_message);
+	}
+	
+	function GetPlayer(){
+		return player;
+	}
+		
+	function AddActor(_name, _type, _x, _y, _params)
+	{
+		switch (_type)
+		{
+			case "plataforma":
+				_type = 0; 
+				break;
+			case "toldo": 
+				_type = 1; 
+				break;
+			case "muerte": 
+				_type = 2;
+				break;
+		}
+		CreateTile(_x,_y,_type,_name);	
+	}
+	
+	function CreateTile(_x,_y,_type, _name){
+		_tile=NewObject(_name,"Platform", [_type]);
+		_tile.SetPos(_x, _y);	
+		tiles+=[_tile];
+	}
+	
+	function CreateFruit(_type){
+		_fruit=NewObject("fruit","fruit", _type);
+		fruits+=[_fruit];
+		return _fruit;
+	}
+	function CreateAnimal(_type){
+		_animal=NewObject("animal","animal", [_type, this]);
+		animals+=[_animal];
+		return _animal;
+	}
+	function CreateCar(_type, _velocity){
+		_car=NewObject("vehicle","vehicle",[_type,_velocity]);
+		cars+=[_car];
+		return _car;
+	}
+	function Restablecer(){
+		for(i=0; i<sizeof(tiles);i++) {
+			delete tiles[i];
+		}
+		tiles=[];
+		for(k=0; k<sizeof(animals);k++) {
+			delete animals[k];
+		}
+		animals=[];	
+		for(l=0; l<sizeof(cars);l++){
+		 	delete cars[l];
+		}
+		cars=[];
+	}
+	function ChangeStage(){
+		//timer.Stop();
+		//stage.Destroy();
+		delete stage;
+		currentStage++;
+		if (currentStage>=3) currentStage=0;
+		switch (currentStage){
+			case 0:
+				stage=new Stage0(this);
+				break;
+			case 1:
+				stage=new Stage1(this);
+				break;
+			case 2:
+				stage=new Stage0(this);
+				break;
+			case 3:
+				stage=new Stage1(this);
+				break;
+		}
+		
+		//timer.Start();
+	}
+
+	
+	function DrawScore(){
+		score.SetText("Stage: "+currentStage+" Lives: "+String_format("%001d",player.lives)+" Caught: "+player.caught+" Time: "+time);
+	}
+	
+	
+	function DrawText(text, size){
+		_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", size);
+		_text.SetAlign(DT_CENTER);
+		_text.SetText(text);
+		_text.SetColor(RGB(234,255,0));
+		return _text;
+	}
+}

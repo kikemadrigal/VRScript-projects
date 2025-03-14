@@ -1,0 +1,64 @@
+﻿class Records implements App {
+	properties:
+		db=null;
+		text=null;
+	
+	function Init(){
+		
+		_text=app.DrawText("Records",16);
+		_text.SetPos(0,50);
+		_text.SetColor(RGB(0,0,0));
+		text=_text;
+	
+		_button=app.hud.CreateButton(350, 500,100,20, "Back");
+		_button.SetText("Back");
+		_button.SetOnClick(this,"OnClickButtonBack");
+		
+		_db = app.GetEngine().OpenDB("data/mydb.sql");
+		if (_db){
+			db=_db;
+			app.Log("conectado a la base de datos");
+			_ret = db.Query("SELECT * FROM records ORDER BY score DESC LIMIT 10");
+			count=0;
+			for(i=0;i<sizeof(_ret);i++){
+				id=_ret[i][0];
+				name=_ret[i][1];
+				date=_ret[i][2];
+				text.Settext(text.GetText()+"\n"+id+", "+name+","+date);
+				
+			}
+		}else{
+			app.Log("No existe la base de datos");
+		}
+		
+	}
+	
+	function OnClickButtonBack(){
+		app.resources.audios[app.resources.AUDIO_CLICK].Play();
+		app.hud.DestroyControls();
+		//delete this;
+		//app.GetEngine().CloseDB(db);
+		//.Log("Has hecho click en start vamos a la pantalla 2");
+		app.stage=new Menu(app);
+		
+	}
+	
+	/*function Init(){
+	
+
+		_button=app.hud.CreateButton(350, 500,100,20, "Back");
+		_button.SetText("Back");
+		_button.SetOnClick(this,"OnClickButtonBack");
+
+		_db = app.GetEngine().OpenDB("mydb.sql");
+		if (_db){
+			db=_db;
+		}
+	}*/
+
+   
+		
+	
+}
+
+

@@ -1,34 +1,27 @@
 ﻿class Stage1 implements App{
 
 	function Init(){
-		tmx = new TMX_Loader();
+		_tmx = new TMX_Loader();
 		//Load(_mapper, _path, _actorCreator = null)
-		_ok = tmx.Load(app.mapper, "textures/stages/stage1vr.tmx", app);
-		delete tmx;	
+		_ok = _tmx.Load(app.mapper, "textures/stages/stage1vr.tmx", app);
+		delete _tmx;	
 		//Activamos los cuadraditos de las colisiones
 		//app.GetActiveStage().SetDebug(True);
-		//app.resources.audios[app.resources.AUDIO_CHANGE_LEVEL].Play();
+		app.resources.audios[app.resources.AUDIO_CHANGE_LEVEL].Play();
 		//Colocamos al player
 		player=app.GetPlayer();
 		player.setPos(0,140);
 		
 		//Colocamos la comida
-		fruit=app.CreateFruit(0);
-		fruit.SetPos(7*32,6*32);	
-		fruit=app.CreateFruit(1);
-		fruit.SetPos(7*32,13*32);
-		fruit=app.CreateFruit(2);
-		fruit.SetPos(12*32,4*32);	
-		fruit=app.CreateFruit(3);
-		fruit.SetPos(17*32,9*32);	
-		fruit=app.CreateFruit(4);
-		fruit.SetPos(22*32,4*32);
-		
+		app.CreateFruit(2).SetPos(7*32,6*32);
+		app.CreateFruit(3).SetPos(2*32,4*32);
+		app.CreateFruit(2).SetPos(12*32,4*32);
+		app.CreateFruit(3).SetPos(17*32,5*32);
+		app.CreateFruit(2).SetPos(22*32,4*32);
 		//Colocamos los enemigos
 		app.CreateAnimal(0);
-		app.CreateCar(0,6);
-		
-		/*_asesino=app.CreateAnimal(4);
+		//app.CreateCar(0,6);
+		_asesino=app.CreateAnimal(4);
 		_asesino.speedX=0.5;
 		_asesino.speedy=0.5;
 		_asesino.SetPos(200,20);
@@ -39,7 +32,7 @@
 		_asesino=app.CreateAnimal(4);
 		_asesino.speedX=0.5;
 		_asesino.speedy=0.5;
-		_asesino.SetPos(500,500);*/
+		_asesino.SetPos(500,500);
 		//Volvemos a poner la música
 		app.resources.GetMusicInGame().Play();
 

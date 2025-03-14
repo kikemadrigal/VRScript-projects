@@ -7,12 +7,11 @@ class player implements GL_Sprite
 		pad=null;
 		lives=7;
 		caught=0;
-		score=0;
-		app=null;
+		game=null;
 	virtual _operator_new(_name,_creator, _params)
 	{
-		app=_params[0];
-		stage=app.GetActiveStage();
+		game=_params[0];
+	
 		//name, path, frame_inicio, frame_fin, offect_X, offest_Y, ancho_hoja, alto_hoja, ancho_sprite,alto_sprite, velocidad, jump_frames  
 		Addanimationwithsheet("walk","textures/cat-walk.png",0,3,0,0,32,32);
 		Addanimationwithsheet("stop","textures/cat-stop.png",0,3,0,0,32,32,-1,-1,-1,0.02);
@@ -25,12 +24,8 @@ class player implements GL_Sprite
 		// Para poder mover el sprite por la pantalla creamos un pad
 		_pad=NewObject("pad","gl_pad");
 		_pad.SetPreset("CURSORS");
-		//_pad.SetPreset("Joystick1",1);
+		_pad.SetPreset("Joystick1",1);
 		pad=_pad;
-		
-
-		//Pintamos el marcador		
-
 	}
 	
 	virtual Move(){	
@@ -50,7 +45,7 @@ class player implements GL_Sprite
 		if(pad.IsButtonDown(PAD_BUTTON_1) && aceleracion==0){
 			incrementoY=-5;
 			aceleracion=0;
-			app.resources.audios[app.resources.AUDIO_JUMP].Play();
+			//app.resources.audios[app.resources.AUDIO_JUMP].Play();
 		}	
 		
 		//si estamos subiendo o bajando
@@ -78,14 +73,34 @@ class player implements GL_Sprite
 	}
 	virtual OnSpriteCollision (_sp1,_sp2)
 	{
-	    if(Class_Id(_sp2)=="Animal" ){
-			app.resources.audios[app.resources.AUDIO_HIT].Play();
-			app.animals-=[_sp2];
-			_sp2.Destroy();			
+		if(Class_Id(_sp2)=="Fruit"){
+			//app.resources.audios[app.resources.AUDIO_CAUGHT].Play();
+			_sp2.Destroy();
+			caught++;
+			game.DrawScore();
+			//Si hemos cogido 5 piezas de comida cambiamos de pantalla
+			if(caught>=2){
+			
+				caught=0;
+				//Si llegamos a la pantalla final mostramos la pantalla de ganardor
+				/*if (app.currentStage==2){
+					app.currentStage=0;
+					app.stage.Final();
+				 	app.stage=new Stage0(app);	
+				}else{*/
+					game.ChangeStage();
+					//delete app.stage;	
+					//app.stage=new Stage1(app);	
+				//}
+			}
+			
+		}else if(Class_Id(_sp2)=="Animal" ){
+			//app.resources.audios[app.resources.AUDIO_HIT].Play();
+			_sp2.Destroy();
+			_type=_sp2.GetType();			
 			playerDie();
 		}else if(Class_Id(_sp2)=="Vehicle"){
-			app.resources.audios[app.resources.AUDIO_HIT].Play();
-			app.cars-=[_sp2];
+			//app.resources.audios[app.resources.AUDIO_HIT].Play();
 			_sp2.Destroy();
 			playerDie();
 		}else if(Class_Id(_sp2)=="Platform"){
@@ -100,45 +115,28 @@ class player implements GL_Sprite
 				incrementoY=-10;
 				aceleracion=0;
 			}else if(_sp2.GetName()=="muerte"){	
-				SetPos(30,60);
 				playerDie();
+				if(lives>0) SetPos(0,60);	
 			}
-		}else if(Class_Id(_sp2)=="Fruit"){
-			app.resources.audios[app.resources.AUDIO_CAUGHT].Play();
-			app.fruits-=[_sp2];
-			_sp2.Destroy();
-			caught++;
-			score+=10;
-			//Si hemos cogido 5 piezas de comida cambiamos de pantalla
-			if(caught>=5){
-				app.DeshabilitarColisionEnemigos();
-				app.timer_text_completed.Start();	
-			}
-		
 		}
 	}	
 	
 	function playerDie(){
 		//Efecto de color rojo durante 2 segundos
-		
+		_fx=CreateFX("TINT");
+		_fx.Start(2000, RGB(255,0,0));
+		//Efecto de parpadeo
+		_fx=CreateFX("BLINK");
+		_fx.Start(100,15);
 		lives--;
+		game.DrawScore();
 		if(lives<=0) {
 			//app.resources.audios[app.resources.AUDIO_GAME_OVER].Play();	 
-			app.resources.GetMusicIngame().Stop();
-			app.mapper.ClearLayers();
-			app.Restablecer();
 			lives=7;
 			caught=0;
-			stage=new Menu(app);
-		}else{
-			_fx=CreateFX("TINT");
-			_fx.Start(2000, RGB(255,0,0));
-			//Efecto de parpadeo
-			_fx=CreateFX("BLINK");
-			_fx.Start(100,15);
-			app.hud.DrawScore();
+			game.currentStage=0;
+			delete game.stage;				
+			game.stage=new Menu(game);
 		}
 	}
-	
-	
 }

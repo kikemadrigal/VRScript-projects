@@ -1,43 +1,39 @@
-﻿class Button implements App{
+﻿class Button {
 	properties:
 		text=null;
 		bg=null;
+		app=null;
 		//solo par los eventos click
 		onClickContext=null;
 		onClickEvent=null;
-	function Init(){
-
-		_text=app.NewText("button",app.hud.stage);
-		_text.SetFont("fonts/Vintage Black.ttf", 22);
-		_text.SetText("not set text");
-		_text.SetColor(RGB(255,0,0));
-		_text.SetPriority(1);
-		_text.SetCollision(true);
-		
-		_text.SetUserMove(this,"OnHover");
-		text=_text;
-		
+	//function Init(){
+	function _operator_new(_app){
+		app=_app;
 		_bg=app.NewSprite("button",app.hud.stage);
 		_bg.SetPos(0,500);
-		_bg.AddEmptyFrame(_text.GetTextWidth(),_text.GetTextheight());
+		_bg.AddEmptyFrame(100,50);
 		_bg.SetColor(RGB(255,255,0));
-		_bg.SetPriority(0);
-		
+		_bg.SetPriority(0);	
 		bg=_bg;
+		_text=app.NewText("button",app.hud.stage);
+		_text.SetFont("fonts/Vintage Black.ttf", 32);
+		_text.SetText("not set text");
+		_text.SetColor(RGB(255,0,0));
+		_text.SetPriority(0);
+		
+		_text.SetCollision(true);
+		_text.SetUserMove(this,"OnHover");
+		text=_text;
 		
 		app.hud.RegisterEvent(HUD.EVENT_CLICK, this,"OnClick");
 	}
 	
 	function SetPos(x,y){
-		text.SetPos(x,y);
+		text.SetPos(x+20,y+5);
 		bg.SetPos(x,y);
 	}
 	function SetText(_text){
 		text.SetText(_text);
-	}
-	function SetSize(_w,_h){
-		text.SetSize(_w,_h);
-		bg.SetSize(_w,_h);
 	}
 	function SetVisible(_visible){
 		text.SetVisible(_visible);
@@ -62,6 +58,10 @@
 		else{
 		 	_text.SetColor(RGB(0,0,255));
 		}
+	}
+	function _operator_delete(){
+		bg.Destroy();
+		delete text;
 	}
 	
 }

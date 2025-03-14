@@ -1,7 +1,9 @@
 ﻿class Fruit implements GL_Sprite
-{		
-	virtual _operator_new(_name,_creator, _params){
-		_type=_params[0];
+{
+	properties:
+
+		
+	virtual _operator_new(_name,_creator, _type){
 		switch(_type){
 			case 0:
 				Addanimationwithsheet("apple","textures/fruits/apple.png",0,16,0,0,32,32,-1,-1,-1,.5);
@@ -18,7 +20,7 @@
 				break;
 		
 			case 3:
-				Addanimationwithsheet("orange","textures/fruits/orange.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Addanimationwithsheet("apple","textures/fruits/orange.png",0,16,0,0,32,32,-1,-1,-1,.5);
 				Setanimation("orange");
 				break;
 		
@@ -41,6 +43,9 @@
 				Setanimation("pineapple");
 				break;
 		}
+		
+		
+		
 		SetCollision(True);
 	}	
 }

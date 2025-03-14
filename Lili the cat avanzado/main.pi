@@ -1,18 +1,27 @@
-﻿
+﻿/**
+Vamos a aprobechar el propio stage del gl_program
+*/
 class Main implements GL_Program
 {
+
 	properties:
 		mapper = null;
+		tmx=null;
 		hud=null;
 		stage=null;
 		player=null;
 		time=60;
 		timer=null;
+		
+		timer_text_completed=null;
+		text_completed=null;
+		counter_timer=0;
 		resources=null;
 		currentStage=0;
 		
 		tiles=[];
 		fruits=[];
+	
 		animals=[];
 		cars=[];
 		
@@ -28,30 +37,43 @@ class Main implements GL_Program
 		// -3 Ajuste puede que no proporcional a pantalla completa
 		SetViewScale(-1);
 		SetVSync(True);
-		SetFrameRate(60);;
-		
+		SetFrameRate(60);
+		//Cargamos las texturas y sonidos
 		resources=new Resources(this);
 		//Para alamcenar los tiles según su tipo
 		mapper = NewMapper("mapper");
-		
-		// El jugador
+		// Creamos el jugador
 		player=NewObject("player","player", null, [this]);
 		player.SetPriority(1);
-			
 		// Cuenta hacia atrás del juego
 		timer=NewTimer("timer");
 		timer.SetFrequency(1000);
 		timer.SetUserCallBack(this,"OnCallBack");
 		
+		_text_completed=NewObject("text_completed", "GL_Text");
+		_text_completed.SetFont("fonts/Vintage Black.ttf", 40);
+		_text_completed.SetColor(RGB(255,255,0));
+		_text_completed.SetPos(200,300);
+		
+		_text_completed.SetText("Level completed");
+		text_completed=_text_completed;	
+		text_completed.SetVisible(False);	
+		_timer_text_completed=NewObject("timer", "GL_Timer");
+		_timer_text_completed.SetFrequency(1000);
+		_timer_text_completed.SetUserCallBack(this,"OnTimerCompletedCallBack");
+		timer_text_completed=_timer_text_completed;
+		timer_text_completed.Stop();
 		// En el HUD se encuentran todos los elementos de visuallización que 
 		// No son el juego en sí, incluidos los botones con su eventos onclick
 		hud=new HUD(this);
 		// Por el This le pasamos el propio objeo GL_Program	
-		menu=new Menu(this);
+		_menu=new Menu(this);
 		//level1=new Stage0(this);
 		//level2=new Stage1(this);
 		//winner=new StageWinner(this);
+		
 	}
+	//Función que es llamada con cada tic del timer
 	function OnCallBack(_timer){
 		time--;
 		if(time<=0) {
@@ -61,16 +83,16 @@ class Main implements GL_Program
 		hud.DrawScore();
 	}
 
-	
+	//Ayuda para dibujar textos como game over o start durante el juego
 	function DrawText(text, size){
 		_text=NewObject("text","GL_Text");
 		_text.SetFont("fonts/Vintage Black.ttf", size);
 		_text.SetAlign(DT_CENTER);
 		_text.SetText(text);
-		_text.SetColor(RGB(234,255,0));
+		_text.SetColor(RGB(234,255,0));	
 		return _text;
 	}
-	
+	//Para mostrar logs
 	function Log(_message){
 		GetEngine().LogPrint(_message);
 	}
@@ -78,7 +100,7 @@ class Main implements GL_Program
 	function GetPlayer(){
 		return player;
 	}
-		
+	//Función que llama el tmx_loader cuando encuentra un objeto
 	function AddActor(_name, _type, _x, _y, _params)
 	{
 		switch (_type)
@@ -103,42 +125,92 @@ class Main implements GL_Program
 	}
 	
 	function CreateFruit(_type){
-		_fruit=NewObject("fruit","fruit", null, _type);
+		_fruit=NewObject("fruit","Fruit", null, [_type]);
 		fruits+=[_fruit];
 		return _fruit;
 	}
 	function CreateAnimal(_type){
-		_animal=NewObject("animal","animal",null, [_type, this]);
+		_animal=NewObject("animal","Animal",null, [_type, this]);
 		animals+=[_animal];
 		return _animal;
 	}
 	function CreateCar(_type, _velocity){
-		_car=NewObject("vehicle","vehicle",null,[_type,_velocity]);
+		_car=NewObject("vehicle","Vehicle",null,[_type,_velocity]);
 		cars+=[_car];
 		return _car;
 	}
 	function Restablecer(){
+		for(x=0; x<sizeof(fruits);x++) delete fruits[x];
+		fruits=[];
 		for(i=0; i<sizeof(tiles);i++) delete tiles[i];
-		for(k=0; k<sizeof(animals);k++) delete animals[k];
+		tiles=[];
+		for(k=0; k<sizeof(animals);k++)	delete animals[k];
+		animals=[];
 		for(l=0; l<sizeof(cars);l++) delete cars[l];
+		cars=[];
 	}
+	//Función para cambiar de pantalla
 	function ChangeStage(){
+		timer.Stop();
 		stage.Final();
-		switch (currentStage){
-			case 0:
-				stage=new Stage0(this);
-				break;
-			case 1:
-				stage=new Stage1(this);
-				break;
-			case 2:
-				stage=new Stage0(this);
-				break;
-			case 3:
-				stage=new Stage1(this);
-				break;
-		}	
+		currentStage++;
+		//gl.Stop();
+		//Si has pasado la última pantalla mostramos la pantalla de ganador
+		if(currentStage>=4){
+			stage=new StageWinner(this);			
+		}else{
+			switch (currentStage){
+				case 0:
+					stage=new Stage0(this);
+					break;
+				case 1:
+					stage=new Stage1(this);
+					break;
+				case 2:
+					stage=new Stage0(this);
+					break;
+				case 3:
+					stage=new Stage1(this);
+					break;
+				case 4:
+					stage=new Stage0(this);
+					break;
+			}
+			//gl.Play();
+			timer.Start();
+		}
+
+		//resteamos el tiempo
+		time=60;
+		player.caught=0;
+		//Actualizamos el marcador
+		hud.DrawScore();	
 	}
+	
+	//El timer comienza a funcionar cuando el player coja 5 frutas
+	function OnTimerCompletedCallBack(_timer){
+		text_completed.SetVisible(True);
+		counter_timer++;
+		if (counter_timer>=3){
+			while(time>0){
+				player.score+=time;
+				time--;
+			}
+			
+			timer_text_completed.Stop();
+			text_completed.SetVisible(False);
+			counter_timer=0;
+			ChangeStage();
+		}
+	}			
+	
+	
+	function DeshabilitarColisionEnemigos(){
+		for(i=0; i<sizeof(fruits);i++) fruits[i].SetCollision(False);
+		for(k=0; k<sizeof(animals);k++)	animals[k].SetCollision(False);
+		for(l=0; l<sizeof(cars);l++) cars[l].SetCollision(False);
+	}
+	
 	
 	
 }

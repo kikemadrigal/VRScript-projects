@@ -1,0 +1,17 @@
+﻿-mira xq no detecta el toldo
+
+-Ponle que desaparezcan las cuerdas
+-Pon que escale en los arboles
+-crea un tileset de rascacielos
+
+		
+fruit=app.CreateFruit(0);
+		fruit.SetPos(7*32,6*32);	
+		fruit=app.CreateFruit(1);
+		fruit.SetPos(7*32,13*32);
+		fruit=app.CreateFruit(2);
+		fruit.SetPos(12*32,4*32);	
+		fruit=app.CreateFruit(3);
+		fruit.SetPos(17*32,9*32);	
+		fruit=app.CreateFruit(4);
+		fruit.SetPos(22*32,4*32);

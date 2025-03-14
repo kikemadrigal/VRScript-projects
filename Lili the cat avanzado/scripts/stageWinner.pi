@@ -5,16 +5,17 @@
 		_bg.AddFrame("textures/stages/winnerstage.png");
 		_bg.SetPos(0,0);
 
-		_button=app.hud.CreateButton(350, 500, "Start");
+		_button=app.hud.CreateButton(300, 400, 100, 25, "Menu");
 		_button.SetText("Menu");
-		_button.SetOnClick(this,"OnClickButtonStart");
+		_button.SetOnClick(this,"OnClickButtonMenu");
 	}
-	function OnClickButtonStart(){
+	function OnClickButtonMenu(){
 		app.resources.audios[app.resources.AUDIO_CLICK].Play();
 		app.hud.DestroyControls();
+		delete this;
 		//.Log("Has hecho click en start vamos a la pantalla 2");
 		app.stage=new Menu(app);
-		delete this;
+		
 	}
 	function Final(){
 

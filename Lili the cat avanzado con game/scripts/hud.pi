@@ -1,24 +1,26 @@
-﻿class HUD implements App{
+﻿class HUD {
 	constants:
 		EVENT_CLICK=0;
 		EVENT_MAX;
 	properties:
+		app=null;
 		stage=null;
 		cursor=null;
 		pad=null;
-		buttons=[];
 		button=null;
-		score=null;
 		//Evento click
 		eventManager=null;
 		bClick=0;
-	function Init(){
+	//function Init(){
+	function _operator_new(_app){
+		app=_app;
 		eventManager=EventManager_New(EVENT_MAX);
 		_stage=app.NewStage("hudstage");
+		//GL_Program solo puede tener un stage pero si lo marcamos como  global podemos tener 
 		_stage.SetGlobal(True);
 		_stage.SetPriority(1);
 		stage=_stage;
-		//stage.SetDebug(True);
+		
 		_cursor=app.NewSprite("cursor", stage);
 		_cursor.AddFrame("textures/pointer.png");
 		_cursor.SetUserMove(this, "onCursorMove");
@@ -32,35 +34,20 @@
 		_c=_cursor.CreateController();
 		_c.SetPad(_pad);
 		
-		//Pintamos el marcador		
-		_score=app.NewObject("score", "GL_Text");
-		_score.SetFont("fonts/Vintage Black.ttf", 20);
-		_score.SetColor(RGB(255,0,0));
-		_score.SetAlign(DT_CENTER);
-		_score.SetPos(0,20);
-		score=_score;
+
 		
 		
 	}	
-	function final(){
-		DestroyControls();
-	}
-	function DrawScore(){
-		score.SetText("Stage: "+app.currentStage+" Score: "+app.player.score+" Lives: "+String_format("%001d",app.player.lives)+" Caught: "+app.player.caught+" Time: "+app.time);
-	}
-	function CreateButton(_x,_y,_w,_h,_text){
+
+	function CreateButton(_x,_y,_text){
 		_button=new Button(app);
 		_button.SetPos(_x,_y);
-		_button.SetSize(_w,_h);
 		_button.SetText(_text);
-		buttons+=[_button];
-		//button=_button;
-		return _button;
+		button=_button;
+		return button;
 	}
 	function DestroyControls(){
-		for(i=0;i<sizeof(buttons);i++) delete buttons[i];
-		buttons=[];
-	
+		delete button;
 	}
 	
 	function onCursorMove(_spr){
@@ -73,5 +60,8 @@
 	}
 	function RegisterEvent(_eventID,_ctx,_event){
 			EventManager_AddEvent(eventManager,_eventID,_ctx,_event);
+	}
+	function _operator_delete(){
+		//delete stage;
 	}
 }

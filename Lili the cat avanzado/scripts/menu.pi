@@ -12,17 +12,48 @@
 		
 		app.resources.GetMusicMenu().Play();
 		
-		_button=app.hud.CreateButton(350, 500, "Start");
-		_button.SetOnClick(this,"OnClickButtonStart");
+		
+		_buttonStart=app.hud.CreateButton(300, 370, 100, 25, "    Start");
+		_buttonStart.SetOnClick(this,"OnClickButtonStart");
+		
+		//_buttonRecords=app.hud.CreateButton(300, 420, 100, 25, "  Records");
+		//_buttonRecords.SetOnClick(this,"OnClickButtonRecords");
+		
+		//_buttonSettings=app.hud.CreateButton(300, 470, 100, 25,"  Settings");
+		//_buttonSettings.SetOnClick(this,"OnClickButtonSettings");
+		
+		//_buttonExit=app.hud.CreateButton(300, 520, 100, 25,"    Exit");
+		//_buttonExit.SetOnClick(this,"OnClickButtonExit");
 	}
+	/*function OnClickButtonSettings(){
+		app.resources.audios[app.resources.AUDIO_CLICK].Play();
+		app.hud.DestroyControls();		
+		app.stage=new Settings(app);
+		delete this;
+	}*/
+	
+	/*function OnClickButtonRecords(){
+		app.resources.audios[app.resources.AUDIO_CLICK].Play();
+		app.hud.DestroyControls();
+		app.stage=new Records(app);
+		delete this;
+	}*/
+	
 	function OnClickButtonStart(){
 		app.resources.audios[app.resources.AUDIO_CLICK].Play();
 		app.resources.GetMusicMenu().Stop();
 		//button.SetVisible(False);
 		app.hud.DestroyControls();
+		app.player.caught=0;
+		app.player.lives=7;
+		app.currentStage=0;
 		//.Log("Has hecho click en start vamos a la pantalla 2");
 		app.stage=new Stage0(app);
 		//app.RunStage("level","level");
 		delete this;
+	}
+	
+	function OnClickButtonExit(){
+		app.Exit(0);
 	}
 }

@@ -1,0 +1,19 @@
+﻿class Platform implements GL_Sprite
+{
+	properties:
+		type=0;
+	virtual _operator_new(_name,_creator, _type)
+	{
+		type=_type[0];
+		Addanimationwithsheet("ani","textures/stages/objects.png",_type*32,0,0,32,32,5);
+		//Addanimationwithsheet("ani","textures/stages/objects.png",_type*32,0,0,28,32,32);
+		SetCollision(True);
+		//Setcollisionrect(0,0,32,5);
+	}	
+	function GetName()
+	{
+		if(type==0)return "plataforma";
+		else if(type==1)return "toldo";
+		else if(type==2)return "muerte";
+	}
+}
