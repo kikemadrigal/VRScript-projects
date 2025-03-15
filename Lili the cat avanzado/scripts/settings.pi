@@ -2,24 +2,19 @@
 
 	function Init(){
 	
-		/*_text=app.DrawText("Settings",16);
-		_text.SetPos(0,50);
-		_text.SetColor(RGB(0,0,0));
+
 		
 		
 		_button=app.hud.CreateButton(350, 500,100,20, "Back");
 		_button.SetText("Back");
-		_button.SetOnClick(this,"OnClickButtonBack");*/
+		_button.SetOnClick(this,"OnClickButtonBack");
 	
 	}
 	
-	/*function OnClickButtonBack(){
+	function OnClickButtonBack(){
 		app.resources.audios[app.resources.AUDIO_CLICK].Play();
 		app.hud.DestroyControls();
 		app.stage=new Menu(app);	
-	}*/
-	
-	/*function Final(){
-	
-	}*/
+	}
+
 }

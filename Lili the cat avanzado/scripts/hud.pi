@@ -7,11 +7,12 @@
 		cursor=null;
 		pad=null;
 		buttons=[];
-		button=null;
 		score=null;
 		//Evento click
 		eventManager=null;
 		bClick=0;
+
+
 	function Init(){
 		eventManager=EventManager_New(EVENT_MAX);
 		_stage=app.NewStage("hudstage");
@@ -39,9 +40,9 @@
 		_score.SetAlign(DT_CENTER);
 		_score.SetPos(0,20);
 		score=_score;
-		
-		
 	}	
+	
+
 	function final(){
 		DestroyControls();
 	}
@@ -54,13 +55,13 @@
 		_button.SetSize(_w,_h);
 		_button.SetText(_text);
 		buttons+=[_button];
-		//button=_button;
 		return _button;
 	}
-	function DestroyControls(){
-		for(i=0;i<sizeof(buttons);i++) delete buttons[i];
-		buttons=[];
 	
+
+	function DestroyControls(){
+		for(y=0;y<sizeof(buttons);y++) delete buttons[y];
+		buttons=[];
 	}
 	
 	function onCursorMove(_spr){

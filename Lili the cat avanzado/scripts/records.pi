@@ -9,10 +9,15 @@
 		_text.SetPos(0,50);
 		_text.SetColor(RGB(0,0,0));
 		text=_text;
+		
 	
-		_button=app.hud.CreateButton(350, 500,100,20, "Back");
-		_button.SetText("Back");
-		_button.SetOnClick(this,"OnClickButtonBack");
+		
+	
+		
+			_buttonback=app.hud.CreateButton(350, 500,100,20, "Back");
+			_buttonback.SetOnClick(this,"OnClickButtonBack");
+		
+		
 		
 		_db = app.GetEngine().OpenDB("data/mydb.sql");
 		if (_db){
@@ -31,12 +36,15 @@
 			app.Log("No existe la base de datos");
 		}
 		
+		
+		app.Log("creados en records botones: "+sizeof(app.hud.buttons));
+		
 	}
 	
 	function OnClickButtonBack(){
 		app.resources.audios[app.resources.AUDIO_CLICK].Play();
 		app.hud.DestroyControls();
-		//delete this;
+		delete this;
 		//app.GetEngine().CloseDB(db);
 		//.Log("Has hecho click en start vamos a la pantalla 2");
 		app.stage=new Menu(app);

@@ -27,7 +27,10 @@
 		
 		app.hud.RegisterEvent(HUD.EVENT_CLICK, this,"OnClick");
 	}
-	
+	function final(){
+		bg.Destroy();
+		delete text;
+	}
 	function SetPos(x,y){
 		text.SetPos(x,y);
 		bg.SetPos(x,y);
