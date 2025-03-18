@@ -1,0 +1,70 @@
+﻿class Db implements App{
+    properties:
+        db=null;
+    function Init(){
+		app.Log("creando el objeto base de datos");
+        _db = app.GetEngine().OpenDB("data/mydb.sql");
+		if (_db){
+			db=_db;
+			app.Log("conectado a la base de datos");
+        }
+    
+    }
+    function GetAll(){
+        _text="";
+        _result = db.Query("SELECT * FROM records ORDER BY score DESC LIMIT 10");
+        return _result;
+    }
+    function GetMax10(){
+        sql="select * from records order by score limit 10;";
+        _result=db.Query(sql);
+        return _result;
+    }
+
+	function CheckRecord(record){
+		app.Log("Comprobando el record "+record);
+		_result=GetMax10();
+		for(i=0;i<sizeof(_result);i++){
+			if (_result[i][2]<record) {
+				return true;
+			}
+		}
+		return False;
+	}
+
+    function CreateTableRecords(){
+        sql="CREATE TABLE IF NOT EXISTS records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name varchar(20),
+            score int,
+            date varchar(255)
+        );";
+        db.Query(sql);
+    }
+    function InsertFakeRecords(){
+        sql="insert into records (name, score, date) values 
+        ('Neo', 45000, datetime('now','localtime')),
+        ('Trinity', 2000, datetime('now','localtime')),
+        ('Morpheus', 1520, datetime('now','localtime')),
+        ('Cifra', 1113, datetime('now','localtime')),
+        ('Smith agent', 144, datetime('now','localtime')),
+        ('Oraculo', 100, datetime('now','localtime')),
+        ('Merovingio', 50, datetime('now','localtime')),
+        ('Persephone', 40, datetime('now','localtime')),
+        ('Arquitect', 30, datetime('now','localtime')),
+        ('Anakin Skywalker', 20, datetime('now','localtime')),
+        ('Luke Skywalker', 23, datetime('now','localtime')),
+        ('Han solo', 20, datetime('now','localtime')),
+        ('Leia Organa', 18, datetime('now','localtime')),
+        ('Yoda', 4, datetime('now','localtime'));";
+        db.Query(sql);
+    }
+	function InsertRecord(name, score){
+		sql="insert into records (name, score, date) values ('"+name+"', "+score+", datetime('now','localtime'));";
+        db.Query(sql);
+	}
+    function Final(){
+        app.GetEngine().CloseDB(db);
+    
+    }
+}

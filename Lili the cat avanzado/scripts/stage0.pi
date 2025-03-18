@@ -30,12 +30,12 @@
 		
 		//Colocamos los enemigos
 		//creamos 1 aguila (se mueve de derecha a izquierda)
-		//app.CreateAnimal(0);
+		app.CreateAnimal(0);
 		//Creamos un cuervo (de izquierda a derecha)
-		//app.CreateAnimal(1);
+		app.CreateAnimal(1);
 		//creamos un buitre (da vueltas en circulos)
-		//_animal=app.CreateAnimal(2);
-		//_animal.Setcircle(7*32,7*32,60);
+		_animal=app.CreateAnimal(2);
+		_animal.Setcircle(7*32,7*32,60);
 		//creamos otro buitre
 		_animal=app.CreateAnimal(2);
 		_animal.Setcircle(17*32,10*32,60);

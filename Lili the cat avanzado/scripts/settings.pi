@@ -1,20 +1,11 @@
 ﻿class Settings implements App{
-
 	function Init(){
-	
-
-		
-		
-		_button=app.hud.CreateButton(350, 500,100,20, "Back");
-		_button.SetText("Back");
-		_button.SetOnClick(this,"OnClickButtonBack");
-	
-	}
-	
-	function OnClickButtonBack(){
-		app.resources.audios[app.resources.AUDIO_CLICK].Play();
-		app.hud.DestroyControls();
-		app.stage=new Menu(app);	
-	}
-
+		if(app.hud.buttonBack){
+			//app.Log("ya existe el boton callback, hagamoslo vosible");
+			app.hud.SetVisibleButtonBack();
+		}else{
+			//app.Log("No existe el boton callback");
+			app.hud.CreateButtonBack(this,"OnClickButtonBack");
+		}
+	}	
 }

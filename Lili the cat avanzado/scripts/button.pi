@@ -5,6 +5,7 @@
 		//solo par los eventos click
 		onClickContext=null;
 		onClickEvent=null;
+		stage=null;
 	function Init(){
 
 		_text=app.NewText("button",app.hud.stage);
@@ -45,6 +46,12 @@
 	function SetVisible(_visible){
 		text.SetVisible(_visible);
 		bg.SetVisible(_visible);
+	}
+	function SetStage(_stage){
+		stage=_stage;
+	}
+	function GetStage(){
+		return stage;
 	}
 	function SetOnClick(_context, _event){
 		onClickContext=_context;

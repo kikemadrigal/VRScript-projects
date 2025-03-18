@@ -2,71 +2,40 @@
 	properties:
 		db=null;
 		text=null;
-	
+
 	function Init(){
 		
 		_text=app.DrawText("Records",16);
-		_text.SetPos(0,50);
+		_text.SetPos(0,150);
 		_text.SetColor(RGB(0,0,0));
 		text=_text;
 		
-	
+		
+		if(app.hud.buttonBack){
+			//app.Log("ya existe el boton callback, hagamoslo vosible");
+			app.hud.SetVisibleButtonBack();
+		}else{
+			//app.Log("No existe el boton callback");
+			app.hud.CreateButtonBack(this,"OnClickButtonBack");
+		}
+		
 		
 	
-		
-			_buttonback=app.hud.CreateButton(350, 500,100,20, "Back");
-			_buttonback.SetOnClick(this,"OnClickButtonBack");
-		
-		
-		
-		_db = app.GetEngine().OpenDB("data/mydb.sql");
-		if (_db){
-			db=_db;
-			app.Log("conectado a la base de datos");
-			_ret = db.Query("SELECT * FROM records ORDER BY score DESC LIMIT 10");
-			count=0;
+		_ret=app.db.GetAll();
+		if(sizeof(_ret)>0){
+			text.SetText("Record    Name   Date\n");
 			for(i=0;i<sizeof(_ret);i++){
 				id=_ret[i][0];
 				name=_ret[i][1];
-				date=_ret[i][2];
-				text.Settext(text.GetText()+"\n"+id+", "+name+","+date);
-				
+				record=_ret[i][2];
+				date=_ret[i][3];
+				text.Settext(text.GetText()+Record+" "+name+","+date+"\n");	
 			}
 		}else{
-			app.Log("No existe la base de datos");
+			text.SetText("Sin records");
 		}
 		
-		
-		app.Log("creados en records botones: "+sizeof(app.hud.buttons));
-		
-	}
-	
-	function OnClickButtonBack(){
-		app.resources.audios[app.resources.AUDIO_CLICK].Play();
-		app.hud.DestroyControls();
-		delete this;
-		//app.GetEngine().CloseDB(db);
-		//.Log("Has hecho click en start vamos a la pantalla 2");
-		app.stage=new Menu(app);
-		
-	}
-	
-	/*function Init(){
-	
-
-		_button=app.hud.CreateButton(350, 500,100,20, "Back");
-		_button.SetText("Back");
-		_button.SetOnClick(this,"OnClickButtonBack");
-
-		_db = app.GetEngine().OpenDB("mydb.sql");
-		if (_db){
-			db=_db;
-		}
-	}*/
-
-   
-		
-	
+	}	
 }
 
 

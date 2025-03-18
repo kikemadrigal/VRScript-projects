@@ -11,48 +11,24 @@
 		_text.SetPos(0,20);
 		
 		app.resources.GetMusicMenu().Play();
-		
-		_buttonStart=app.hud.CreateButton(300, 370, 100, 25, "  Start");
-		_buttonStart.SetOnClick(this,"OnClickButtonStart");
-		
-		//_buttonRecords=app.hud.CreateButton(300, 420, 100, 25,"  Records");
-		//_buttonRecords.SetOnClick(this,"OnClickButtonRecords");
-		
-		//_buttonSettings=app.hud.CreateButton(300, 470, 100, 25,"  Settings");
-		//_buttonSettings.SetOnClick(this,"OnClickButtonSettings");
-		
-		//_buttonExit=app.hud.CreateButton(300, 520, 100, 25,"    Exit");
-		//_buttonExit.SetOnClick(this,"OnClickButtonExit");
-		
-		
-		
+		app.player.SetVisible(False);
+		app.hud.cursor.SetVisible(True);
+		cantidad_botones=sizeof(app.hud.buttonsMenu);
+		//app.Log("la cantidad de botones menu es "+cantidad_botones);
+		if(cantidad_botones==0){
+			_buttonStart=app.hud.CreateButtonMenu(350, 370, 100, 25, "    Start", this, "OnClickButtonStart");
+			//_buttonStart.SetOnClick(this,"OnClickButtonStart");
+			_buttonRecords=app.hud.CreateButtonMenu(350, 420, 100, 25,"  Records", this, "OnClickButtonRecords");
+			//_buttonRecords.SetOnClick(this,"OnClickButtonRecords");
+			_buttonSettings=app.hud.CreateButtonMenu(350, 470, 100, 25,"  Settings", this, "OnClickButtonSettings");
+			//_buttonSettings.SetOnClick(this,"OnClickButtonSettings");
+			_buttonExit=app.hud.CreateButtonMenu(350, 520, 100, 25,"    Exit", this, "OnClickButtonExit");
+			//_buttonExit.SetOnClick(this,"OnClickButtonExit");
+		}else {
+			//app.Log("hagamos visible los botones de menu");
+			app.hud.SetButtonsMenuVisible();
+			app.hud.SetNewStageButtonsMenu(this);
+		}	
 	}
-	function OnClickButtonSettings(){
-		app.resources.audios[app.resources.AUDIO_CLICK].Play();
-		app.hud.DestroyControls();		
-		app.stage=new Settings(app);
-		delete this;
-	}
-	
-	function OnClickButtonRecords(){
-		app.resources.audios[app.resources.AUDIO_CLICK].Play();
-		app.hud.DestroyControls();
-		app.stage=new Records(app);
-		delete this;
-	}
-	
-	function OnClickButtonStart(){
-		app.resources.audios[app.resources.AUDIO_CLICK].Play();
-		app.resources.GetMusicMenu().Stop();
-		app.hud.DestroyControls();
-		delete this;
-		app.player.caught=0;
-		app.player.lives=7;
-		app.currentStage=0;
-		app.stage=new Stage0(app);		
-	}
-	
-	function OnClickButtonExit(){
-		app.Exit(0);
-	}
+
 }

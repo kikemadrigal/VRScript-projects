@@ -129,7 +129,19 @@ class player implements GL_Sprite
 			app.Restablecer();
 			lives=7;
 			caught=0;
-			stage=new Menu(app);
+			//Comprobamos si tiene algun record
+			if (app.db.CheckRecord(score)){
+				//gl.Stop();
+				app.Log("Se ha encontrado un nuevo record!");
+				//name=app.GetEngine().InputDialogModal("New record, enter your name", "", 0, "OnOkDialog");
+				name=app.GetEngine().AlertDialog("New record, enter your name", "", 0, "OnAlertDialogOk", "OnAlertDialogcancel");
+			
+				
+			}else{
+				app.Log("no hay nuevo record");
+				stage=new Menu(app);
+			}
+			
 		}else{
 			_fx=CreateFX("TINT");
 			_fx.Start(2000, RGB(255,0,0));
@@ -140,5 +152,12 @@ class player implements GL_Sprite
 		}
 	}
 	
+	function OnAlertDialogOk(){
+		app.Log("El nombre introducido es "+name);
+		app.db.InsertRecord(name, score);
+	}
 	
+	function OnAlertDialogcancel(){
+		stage=new Menu(app);
+	}
 }

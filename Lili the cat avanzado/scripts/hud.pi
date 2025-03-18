@@ -6,7 +6,8 @@
 		stage=null;
 		cursor=null;
 		pad=null;
-		buttons=[];
+		buttonBack=null;
+		buttonsMenu=[];
 		score=null;
 		//Evento click
 		eventManager=null;
@@ -39,6 +40,7 @@
 		_score.SetColor(RGB(255,0,0));
 		_score.SetAlign(DT_CENTER);
 		_score.SetPos(0,20);
+		_score.SetVisible(False);
 		score=_score;
 	}	
 	
@@ -47,21 +49,51 @@
 		DestroyControls();
 	}
 	function DrawScore(){
-		score.SetText("Stage: "+app.currentStage+" Score: "+app.player.score+" Lives: "+String_format("%001d",app.player.lives)+" Caught: "+app.player.caught+" Time: "+app.time);
+		listCell=app.mapper.GetCellFromPos(app.player.GetX(), app.player.GetY()+1);
+		infoCell=app.mapper.GetInfoFromPos(app.player.GetX(), app.player.GetY()+1,0);
+		score.SetText("Stage: "+app.currentStage+" Score: "+app.player.score+" Lives: "+String_format("%001d",app.player.lives)+" Caught: "+app.player.caught+" Time: "+app.time );
+		score.setText(score.GetText()+"\nTile : x"+listCell[0]+" y:"+listCell[1]);
 	}
-	function CreateButton(_x,_y,_w,_h,_text){
+	function CreateButtonBack(_stage,_onCallback){
+		_button=new Button(app);
+		_button.SetPos(500,500);
+		_button.SetSize(100,20);
+		_button.SetText("Back");
+		_button.SetStage(_stage);
+		_button.SetOnClick(this, _onCallback);
+		buttonback=_button;
+		return _button;
+	}
+	function CreateButtonMenu(_x,_y,_w,_h,_text,_stage,_onCallback){
 		_button=new Button(app);
 		_button.SetPos(_x,_y);
 		_button.SetSize(_w,_h);
 		_button.SetText(_text);
-		buttons+=[_button];
+		_button.SetStage(_stage);
+		_button.SetOnClick(this, _onCallback);
+		buttonsMenu+=[_button];
 		return _button;
 	}
-	
 
 	function DestroyControls(){
-		for(y=0;y<sizeof(buttons);y++) delete buttons[y];
-		buttons=[];
+		for(y=0;y<sizeof(buttonsMenu);y++) delete buttonsMenu[y];
+		buttonsMenu=[];
+	}
+	
+	function DestroyButtonBack(){
+		//delete buttonback;
+		buttonBack.SetVisible(False);
+	}
+	function SetVisibleButtonBack(){
+		//delete buttonback;
+		buttonBack.SetVisible(True);
+	}
+	function DestroyButtonsMenu(){
+		for(y=0;y<sizeof(buttonsMenu);y++) buttonsMenu[y].SetVisible(False);
+		//for(y=0;y<sizeof(buttonsMenu);y++) delete buttonsMenu[y];
+	}
+	function SetButtonsMenuVisible(){
+		for(y=0;y<sizeof(buttonsMenu);y++) buttonsMenu[y].SetVisible(True);
 	}
 	
 	function onCursorMove(_spr){
@@ -74,5 +106,56 @@
 	}
 	function RegisterEvent(_eventID,_ctx,_event){
 			EventManager_AddEvent(eventManager,_eventID,_ctx,_event);
+	}
+	
+	
+	function SetNewStageButtonsMenu(_stage){
+		for (i=0;i<sizeof(buttonsMenu);i++){
+			buttonsMenu[i].SetStage(_stage);
+		}
+	}
+	
+	function OnClickButtonSettings(){
+		app.resources.audios[app.resources.AUDIO_CLICK].Play();
+		DestroyButtonsMenu();		
+		app.stage=new Settings(app);
+		_stage= buttonsMenu[2].GetStage();
+		delete _stage;
+	}
+	
+	function OnClickButtonRecords(){
+		app.resources.audios[app.resources.AUDIO_CLICK].Play();
+		DestroyButtonsMenu();
+		app.stage=new Records(app);
+		_stage= buttonsMenu[1].GetStage();
+		delete _stage;
+	}
+	
+	function OnClickButtonStart(){
+		app.resources.audios[app.resources.AUDIO_CLICK].Play();
+		app.resources.GetMusicMenu().Stop();
+		_stage= buttonsMenu[0].GetStage();	
+		delete _stage;	
+		DestroyButtonsMenu();
+		app.player.SetVisible(True);
+		cursor.SetVisible(False);
+		score.SetVisible(True);
+		app.player.caught=0;
+		app.player.lives=7;
+		app.currentStage=0;
+		app.stage=new Stage0(app);
+		
+	}
+	
+	function OnClickButtonBack(){
+		app.resources.audios[app.resources.AUDIO_CLICK].Play();
+		DestroyButtonBack();
+		app.stage=new Menu(app);
+		_stage= buttonback.GetStage();	
+		delete _stage;	
+	}
+
+	function OnClickButtonExit(){
+		app.Exit(0);
 	}
 }
