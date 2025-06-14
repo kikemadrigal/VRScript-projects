@@ -1,0 +1,100 @@
+class Server implements GL_Program
+{
+    properties:
+        sockets=[];
+ 
+        ball=null;
+        playerServer=null;
+        playerClient=null;
+
+        text_hud=null;
+        text=null;
+    virtual Start(){
+		SetBackColor(RGB(200,200,200));
+		SetResolution(800,640);
+		SetViewScale(-3);
+		SetVSync(True);
+		SetFrameRate(60);
+        //Para mostrar textos en el juego
+        _text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 18);
+		_text.SetPos(320,20);
+        _text.SetText("Servidor");
+        text=_text;
+        //Para mostrar el marcador
+        _text_hud=NewObject("text","GL_Text");
+		_text_hud.SetFont("fonts/Vintage Black.ttf",24);
+		_text_hud.SetPos(300,60);
+        text_hud=_text_hud;
+        update_HUD();
+        
+        ball=NewObject("ball","Ball",null,[20,GetResY()/2,4]);
+        ball.SetPos(GetResX()/2,GetResY()/2);
+
+        //parámetros posición x, y, velocidad, número de jugador
+        playerServer=NewObject("playerServer","player",null,[20,GetResY()/2,4,1]);
+        playerServer.SetColor(RGB(255,0,0));
+
+        playerClient=NewObject("playerClient","player",null,[580,GetResY()/2,4,2]);
+        playerClient.SetColor(RGB(0,255,0)); 
+
+        //El servidor con esto se queda a la espera. Cuando recibe la petición del cliente se llamará a una función Net_Event_Listen
+        _serverSocket = NetSocket_New(this, SOCKET_TYPE_TCP);
+		//Establece una escucha a través de un socket
+        NetSocket_Listen(_serverSocket, "", 5555, 0);
+        GetEngine().LogPrint("Servidor escuchando en el puerto 5555");
+    }
+    /*virtual Destroy(){
+        delete socket;
+        delete text;
+        delete text_hud;
+    }*/
+    virtual Move(){
+        EnviarDatos();
+    }
+    // En el listen vamos indicar que el socket opere de modo DYNAMIC, 
+	// esto es .. autónomo .. llegan datos que se han enviado también en este modo,
+	// tienen un cabecera de 4 bytes (un INT) con el tamaño de los datos adjuntos y luego los datos.
+    function Net_Event_Listen(_socket, _host, _port)
+    {
+        NetSocket_SetRecvMode(_socket, RECVMODE_DYNAMIC);
+        NetSocket_SetNoDelay(_socket, true);
+        GetEngine().LogPrint("Se ha conectado un player!!");
+        text.SetText(text.GetText()+"\nSe ha conectado un player");
+        sockets+=[_socket];
+        EnviarDatos();
+    }
+
+    // De esta manera, cuando el cliente nos envíe datos se invocará a la función..
+    function Net_Event_Recv(_id, _buffer, _error)
+    {
+        cadena=Buffer_GetString(_buffer, 0, Buffer_Len(_buffer));
+        //text.SetText(text.GetText()+"\nCliente dice: "+String(cadena));
+        if(cadena!=null){
+            list=String_ToList(cadena, ",");
+            //playerClient.SetY(list[1]);
+            playerClient.SetPos(list[0],list[1]);
+            text.SetText("Cliente dice: "+String(list[1]));
+        }
+    }
+
+    function update_HUD(){
+		text_hud.SetText("0 || 0");
+	} 
+
+    function Net_Event_Connect (error)
+    {
+        GetEngine().LogPrint("Error "+String(error));
+        text.SetText(text.GetText()+"\nError "+String(error));
+    }
+
+    function EnviarDatos(){
+        cadena=String(ball.GetX())+","+String(ball.GetY())+","+String(playerServer.GetY());
+		_buffer=Buffer_New(1024);
+		Buffer_SetString(_buffer,0,cadena);
+        for(i=0;i<sizeof(sockets);i++){
+            NetSocket_Send(sockets[i],_buffer,0,Buffer_Len(_buffer));
+        }
+        Buffer_Delete(_buffer);
+    }
+}

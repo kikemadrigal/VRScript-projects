@@ -1,0 +1,65 @@
+namespace es_tipolisto_arkanoid;
+
+
+class Player implements GL_Sprite
+{
+    
+    properties:
+        speed=3;
+        pad=null;
+        sndCol=null;
+        sndDead=null;
+        sndStart=null;
+        time=0;
+    virtual _operator_new(_name,_creator)
+    {
+        //AddFrame("ship_normal.png");
+        AddEmptyFrame(10,10);
+        SetColor(RGB(255,0,0));
+       
+       _pad=NewObject("pad","GL_Pad");
+       _pad.SetPreset("CURSORS",0);
+       _pad.SetPreset("JOYSTICK1",1);
+        pad=_pad;
+
+        sndDead=NewObject("snd","GL_Sound");
+        sndDead.Load("sounds/naveexplota.ogg");
+        sndCol=NewObject("snd","GL_Sound");
+        sndCol.Load("sounds/pala.ogg");
+        sndStart=NewObject("snd","GL_Sound");
+        sndStart.Load("sounds/game_start.ogg");
+
+    }
+    //virtual Start(){
+    function Init(){
+        SetPos(400,600);
+       
+
+        SetCollision(True);
+
+        sndStart.Play();
+
+        time=GetTime();
+        SetAnimation("normal");
+        _change("normal");
+    }
+
+
+    state "normal"{
+        if((GetTime()-time)>=2000)
+        {
+           if(GetTime()%2==0){
+                SetColor(RGB(255,0,0));
+            }else{
+                SetColor(RGB(0,255,0));
+            }
+        }
+        
+    }
+}
+    
+
+    
+
+
+

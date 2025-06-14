@@ -1,0 +1,93 @@
+namespace es_tipolisto_arkanoid;
+
+
+class Player implements GL_Sprite
+{
+    
+    properties:
+        speed=3;
+        pad=null;
+        sndCol=null;
+        sndDead=null;
+        sndStart=null;
+        time=0;
+    virtual _operator_new(_name,_creator)
+    {
+        //AddFrame("ship_normal.png");
+        AddAnimationWithPrefix("normal","res/ship_normal.png",0,0,-1);
+        AddAnimationWithPrefix("destroy","res/ship_destroy_%d.png",1,2,-1);
+       
+       _pad=NewObject("pad","GL_Pad");
+       _pad.SetPreset("CURSORS",0);
+       _pad.SetPreset("JOYSTICK1",1);
+        pad=_pad;
+
+        sndDead=NewObject("snd","GL_Sound");
+        sndDead.Load("sounds/naveexplota.ogg");
+        sndCol=NewObject("snd","GL_Sound");
+        sndCol.Load("sounds/pala.ogg");
+        sndStart=NewObject("snd","GL_Sound");
+        sndStart.Load("sounds/game_start.ogg");
+
+        SetPriority(PRIORITY_PLAYER);
+        SetType(TYPE_PLAYER);  
+    }
+    //virtual Start(){
+    function Init(){
+        SetPos(LIMIT_X1+((LIMIT_X2-LIMIT_X1)-GetWF())/2,LIMIT_Y2-GetHF()-4);
+        _ball=creator.FindObject("ball");
+        _ball.SetPos(GetX(),GetY()-_ball.GetHF());
+        _ball.Stop();
+
+        SetCollision(True);
+
+        sndStart.Play();
+
+        time=GetTime();
+        SetAnimation("normal");
+        _change("wait_to_normal");
+    }
+
+
+    state "wait_to_normal"{
+        if((GetTime()-time)>=2000)
+        {
+            _ball=creator.FindObject("ball");
+            _ball.Start();
+            _change("normal");
+        }
+    }
+    state "normal"{
+        if(pad.IsButton(PAD_BUTTON_LEFT))
+            _dir=-1;
+        else if(pad.IsButton(PAD_BUTTON_RIGHT))
+            _dir=1;
+        else
+            _dir=0;
+        
+        IncPos(_dir*speed,0);
+        _x=clamp(GetX(),LIMIT_X1,LIMIT_X2-GetWF());
+        SetX(_x);
+    }
+    state "destroy"{
+        //Cuando la animación se ejecuta 10 veces volvemos a inicializar al jugador
+        if(GetAnimationLoops()>=10){
+            //Start();
+            Init();
+        }
+    }
+
+    function OnBallCollision(){
+        sndCol.Play();
+    }
+
+    function OnDestroyShip(){
+        _ball=creator.FindObject("ball");
+        _ball.Stop();
+        SetAnimation("destroy");
+        sndDead.Play();
+        _change("destroy");
+    }
+
+    
+}

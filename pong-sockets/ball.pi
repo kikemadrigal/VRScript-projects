@@ -1,0 +1,35 @@
+class Ball implements GL_sprite{
+	properties:
+		speed=4;
+		dirX=1;
+		dirY=1;
+	
+		
+	virtual _operator_new(_name,_creator,_params){
+		_x=_params[0];
+		_y=_params[1];
+		speed=_params[2];
+	
+		AddEmptyFrame(10,10);
+        SetColor(RGB(255,0,0));
+		SetPos(_x,_y);	
+
+		Setcollidermode(true);
+		SetCollisionRect(0,0,10,10);		
+	}
+    virtual Move(){
+        if (GetX() > 640 || GetX() < 0) dirX *= -1;
+        if (GetY() > 480 || GetY() < 0) dirY *= -1;
+		//creator.GetEngine().LogPrint("speed: "+speed);
+        incpos(dirX*speed,dirY*speed);
+    }
+	function OnSpriteCollision(_ball, _player){
+		if(_player.numeroPlayer==1){
+			_ball.SetPos(_player.GetX()+20,_ball.GetY());
+		}else{
+			_ball.SetPos(_player.GetX(),_ball.GetY());
+		}
+		_ball.dirX*=-1;
+		
+	}
+}

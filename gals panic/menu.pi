@@ -1,0 +1,30 @@
+namespace es_tipolisto_arkanoid;
+
+class Menu implements GL_Stage{
+    properties:
+        pad=null;
+        text=null;
+    virtual _operator_new(_name,_creator)
+    {
+
+       
+        _text=NewObject("text","GL_Text");
+        _text.SetFont("./fonts/Vintage Black.ttf", 12);
+        _text.SetPos(80,140);
+        _text.SetText("Press space to start");
+        _text.SetColor(RGB(0,0,0));
+        text=_text;
+
+        pad=NewObject("pad","GL_Pad");
+        pad.SetPreset("CURSORS",0);
+        pad.SetPreset("JOYSTICK1",1); 
+    }
+
+    virtual Move()
+    {
+        if(pad.IsButtonDown(PAD_BUTTON_1)){
+            GetApp().RunStage("stage", "Stage");
+        }
+    }
+
+}

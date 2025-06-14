@@ -1,0 +1,153 @@
+namespace es_tipolisto_arkanoid;
+
+class Ball implements GL_sprite{
+	properties:
+		app=null;
+		speed=4;
+		dirX=1;
+		dirY=1;
+	
+		
+	virtual _operator_new(_name,_creator,_params){
+		app=_params[0];
+		_x=_params[1];
+		_y=_params[2];
+		speed=_params[3];
+	
+		Addframe("res/pelota.png");
+		SetPos(_x,_y);	
+		Setcollidermode(true);
+		//SetCollisionRect(0,0,20,20);
+	}
+	virtual Move(){
+		app.game.update_HUD();	
+		if (GetX() <=0) dirX *=-1;
+		else if(GetX()+getWidth() > app.BOARD_WIDTH) dirX *=-1;
+		else if (GetY() > app.GetResY()) player_die();
+		else if (GetY() < 40) dirY *=-1;
+		incpos(dirX*speed,dirY*speed);
+	}
+	/*function OnSpriteCollision (_sp1,_sp2)
+	{
+	    if(Class_Id(_sp2)=="Brick" || Class_Id(_sp2)=="Player"){
+			app.resources.PlaySoundHit();
+			
+			app.player.score+=10;
+		
+			app.bricks-=[_sp2];
+			//Si no quedan ladrillos cambiamos de pantalla
+			if(sizeof(app.bricks)<=0) {
+				app.game.ChangeLevel();	
+			}
+			app.update_HUD();
+			
+			if(GetX()+GetWidth()>_sp2.GetX() && GetX()+GetWidth()<_sp2.GetX()+_sp2.GetWidth()) dirX *=-1;
+			if(GetX()<_sp2.GetX()+_sp2.GetWidth() && GetX()>_sp2.GetX())dirX *=-1;
+			//Colision por arriba
+			if(GetY()+GetHeight()>_sp2.GetY() && GetY()+GetHeight()< _sp2.GetY()+_sp2.getHeight())dirY*=-1;	
+			if(GetY()<_sp2.GetY()+_sp2.getHeight() && GetY() > _sp2.GetY())dirY*=-1;
+			_sp2.Destroy();	
+		}else if(Class_Id(_sp2)=="Player"){
+			//_fx=_sp2.CreateFx("tint");
+			//_fx.Start(2000, RGB(255,0,0),False);
+			if(getX() < _sp2.GetX()+5)dirX =-8;
+			else if(GetX() < _sp2.GetX()+10) speed_x = -4;
+			else if(GetX() < _sp2.GetX()+20) speed_x = -2;
+			else if(getX() < _sp2.GetX()+40) speed_x = 2;
+			else if(GetX() < _sp2.GetX()+60) speed_x = 4;
+			else if(GetX() < _sp2.GetX()+75) speed_x = 8;
+			speed_y=-4;			
+		}
+	}*/
+	function OnSpriteCollision(_ball, _spr){
+        _x=GetX()+GetWF()*0.5f - dirX*speed;
+        _y=GetY()+GetHF()*0.5f - dirY*speed;
+        _colY=False;
+        //Comprobamos si colisionamos por arriba
+        if(_y<_spr.GetY())
+        {
+            //Si La pelota toca la paleta por arriba, la situamos arriba
+            SetY(_spr.GetY()-GetHF()-1);
+            //La pelota rebota
+            _colY=True;
+        }
+        //Comprobamos si colisionamos por abajo
+        else if(_y>=_spr.GetY()+_spr.GetHF())
+        {
+            //Si La pelota toca la paleta por abajo, la situamos abajo
+            SetY(_spr.GetY()+_spr.GetHF());
+            //La pelota rebota
+            _colY=True;
+        }
+        //Comprobamos si colisionamos por la izquierda
+        else if(_x<_spr.GetX())
+        {
+            //Si la pelota toca la paleta en la izquierda, la situamos a la izquierda
+            SetX(_spr.GetX()-GetWF());
+            //La pelota rebota
+            dirX*=-1;
+        }
+        else
+        {
+            //Si La pelota toca la paleta por la derecha, la situamos a la derecha
+            SetX(_spr.GetX()+_spr.GetWF());
+            //La pelota rebota
+            dirX*=-1;
+        }
+
+        //Una vez comprobados los 4 lados miramos si la colisión ha sido por arriba o por abajo
+        if(_colY)
+        {
+            //Vamos a mirar el lugar de rebote en horizontal
+            _zone=(GetXF()+GetWF()*0.5f) - _spr.GetXF();
+            //En función de donde ha tocado la pelota en la paleta
+            _zone=clamp(_zone / _spr.GetWF(),0,1);
+            dirX=_zone-0.5f;
+            dirY*=-1;
+        }
+        else
+        {
+            //La pelota rebota
+            dirX*=-1;
+        }
+		if(Class_Id(_spr)=="Brick")_spr.Destroy();
+  
+   }
+	
+	function player_die(){
+		app.player.lives--;
+		SetPos(app.GetResX()/2,app.GetResY()/2+200);
+		
+		if(app.player.lives<=0){
+			app.resources.PlaySoundGameOver();
+			if(app.db.CheckRecord(app.player.score)){
+				gl.Stop();
+				_textModal="Nuevo record!!!";
+				do{
+					name=GetEngine().InputDialogModal(_textModal,"",View.AD_OK,"");
+					_textModal="El nombre no puede estar vacío ni ser menor de 4 caracteres";
+				}while(name=="" || strlen(name)<=3);
+				app.Log("El nombre introducido es "+name);
+				app.db.InsertRecord(name,app.player.score);
+				app.db.UpdateUserRecord(app.player.score);
+				gl.Start();
+				
+			}
+	
+			for(i=0; i<sizeof(app.bricks);i++)delete app.bricks[i];
+			app.bricks=[];			
+			app.menu=new Menu(app);
+			app.gameOver=True;
+			app.ball.speed=0;
+			app.ball.SetVisible(False);
+			app.player.SetVisible(False);
+			app.text_hud.SetVisible(False);
+			app.game.level=0;
+		}else{
+			app.gamePaused=True;
+		}
+		app.update_HUD();
+	
+	}
+	
+}

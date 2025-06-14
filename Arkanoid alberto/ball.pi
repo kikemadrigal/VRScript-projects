@@ -1,0 +1,125 @@
+namespace es_tipolisto_arkanoid;
+
+
+class Ball implements GL_Sprite{
+    properties:
+       
+        dirX=1;
+        dirY=1;
+        speed=2;
+        
+    virtual _operator_new(_name,_creator)
+    {
+        AddFrame("res/ball5.png");
+        SetPriority(PRIORITY_PLAYER);
+        SetPriority(PRIORITY_BALL);
+        SetType(TYPE_BALL);
+        SetColliderMode(True, TYPE_PLAYER | TYPE_BRICK);
+    }
+
+    virtual Move()
+    {
+        IncPos(dirX*speed,dirY*speed);
+        //La pelota toca los límites del juego
+        if(GetX()<=LIMIT_X1)
+        {
+            SetX(LIMIT_X1);
+            dirX*=-1;
+        }else if(GetX()>=LIMIT_X2-GetWF())
+        {
+            SetX(LIMIT_X2-GetWF());
+            dirX*=-1;
+        }
+        if(GetY()<=LIMIT_Y1)
+        {
+            SetY(LIMIT_Y1);
+            dirY*=-1;
+        }else if(GetY()>=LIMIT_Y2-GetHF())
+        {
+            //SetY(LIMIT_Y2-GetHF());
+            //dirY*=-1;
+            //aqui se perderá una vida
+            if(DEBUG){
+                SetVisible(True);
+                _player=creator.FindObject("player");
+                _player.Init();
+                _player.SetVisible(True);
+            }else{
+                creator.OnDestroyShip();
+            }
+            //
+
+        }
+    }
+
+    /*function OnSpriteCollision(_ball, _player)
+    {
+        //La pelota toca la paleta
+        SetY(_player.GetY()-GetHF());
+        //La pelota rebota
+        dirY*=-1;
+        //Vamos a mirar el lugar de rebote en horizontal
+        _zone=(GetXF()+GetWF()*0.5f) - _player.GetXF();
+        //En función de donde ha tocado la pelota en la paleta
+        _zone=clamp(_zone / _player.GetWF(),0,1);
+        dirX=_zone-0.5f;
+    }*/
+
+   function OnSpriteCollision(_ball, _spr){
+        _x=GetX()+GetWF()*0.5f - dirX*speed;
+        _y=GetY()+GetHF()*0.5f - dirY*speed;
+        _colY=False;
+        //Comprobamos si colisionamos por arriba
+        if(_y<=_spr.GetY())
+        {
+            //Si La pelota toca la paleta por arriba, la situamos arriba
+            SetY(_spr.GetY()-GetHF());
+            //La pelota rebota
+            _colY=True;
+        }
+        //Comprobamos si colisionamos por abajo
+        else if(_y>=_spr.GetY()+_spr.GetHF())
+        {
+            //Si La pelota toca la paleta por abajo, la situamos abajo
+            SetY(_spr.GetY()+_spr.GetHF());
+            //La pelota rebota
+            _colY=True;
+        }
+        //Comprobamos si colisionamos por la izquierda
+        else if(_x<_spr.GetX())
+        {
+            //Si la pelota toca la paleta en la izquierda, la situamos a la izquierda
+            SetX(_spr.GetX()-GetWF());
+            //La pelota rebota
+            dirX*=-1;
+        }
+        else
+        {
+            //Si La pelota toca la paleta por la derecha, la situamos a la derecha
+            SetX(_spr.GetX()+_spr.GetWF());
+            //La pelota rebota
+            dirX*=-1;
+        }
+
+        //Una vez comprobados los 4 lados miramos si la colisión ha sido por arriba o por abajo
+        if(_colY)
+        {
+            //Vamos a mirar el lugar de rebote en horizontal
+            _zone=(GetXF()+GetWF()*0.5f) - _spr.GetXF();
+            //En función de donde ha tocado la pelota en la paleta
+            _zone=clamp(_zone / _spr.GetWF(),0,1);
+            dirX=_zone-0.5f;
+            dirY*=-1;
+        }
+        else
+        {
+            //La pelota rebota
+            dirX*=-1;
+        }
+
+        _spr.OnBallCollision();
+   }
+
+}
+
+    

@@ -1,0 +1,107 @@
+class Client implements GL_Program {
+   properties:
+      socket=null;
+      text_hud=null;
+      text_game=null;
+      ball=null;
+      playerServer=null;
+      playerClient=null;
+      padClient=null;
+   virtual Start(){
+      SetBackColor(RGB(0,0,240));
+      SetResolution(800,640);
+      SetViewScale(-3);
+      SetVSync(True);
+      SetFrameRate(60);
+
+      //Para mostrar textos en el juego
+      _text_game=NewObject("text","GL_Text");
+      _text_game.SetFont("fonts/Vintage Black.ttf", 18);
+      _text_game.SetPos(300,20);
+      _text_game.SetText("Cliente");
+      text_game=_text_game;
+
+      //Para mostrar el marcador
+      _text_hud=NewObject("text","GL_Text");
+      _text_hud.SetFont("fonts/Vintage Black.ttf", 24);
+      _text_hud.SetPos(300,60);
+      text_hud=_text_hud;
+      update_HUD();
+    
+      _ball=NewSprite("ball");
+      _ball.AddEmptyFrame(10,10);
+      _ball.SetColor(RGB(255,0,0));
+      _ball.SetPos(300,200);
+      ball=_ball;
+
+      _playerServer=NewSprite("playerServer");
+      _playerServer.AddEmptyFrame(20,80);
+      _playerServer.SetColor(RGB(255,0,0));
+      _playerServer.SetPos(20,GetResY()/2);
+      playerServer=_playerServer; 
+
+      _playerClient=NewSprite("playerClient");
+      _playerClient.AddEmptyFrame(20,80);
+      _playerClient.SetColor(RGB(0,255,0));
+      _playerClient.SetPos(580,GetResY()/2);
+      playerClient=_playerClient; 
+
+      padClient=NewObject("pad","GL_Pad");
+		padClient.SetPreset("CURSORS");
+		padClient.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_SPACE);
+      
+      socket = NetSocket_New(this, SOCKET_TYPE_TCP);
+      NetSocket_Connect(socket, "localhost" , 5555, false);
+   }
+   
+   virtual Move(){
+      _incrementoYPlayerClient=0;
+      //if(padClient.IsButtonDown(PAD_BUTTON_1)) espacioPulsado();
+      if (padClient.IsButton(PAD_BUTTON_UP))_incrementoYPlayerClient=-4;		
+		else if (padClient.IsButton(PAD_BUTTON_DOWN))_incrementoYPlayerClient=4;		
+      playerClient.incpos(0,_incrementoYPlayerClient);
+      if(_incrementoYPlayerClient>0)EnviarDatos();
+   }
+   
+   function update_HUD(){
+		text_hud.SetText("0 || 0");
+	}       
+
+   //Una vez se conecte al servidor, recibiremos un evento...
+   function Net_Event_Connect(_error)
+   {
+     	NetSocket_SetRecvMode(socket, RECVMODE_DYNAMIC);
+      NetSocket_SetNoDelay(socket, true);
+      GetEngine().LogPrint("Cliente conectado a servidor");
+		contectadoAlServidor=True;
+   }
+
+   //Del mismo modo, recibiremos datos del servidor en el evento:
+   function Net_Event_Recv(_id, _buffer, _error)
+   {
+      if(_error!=0){
+         GetEngine().LogPrint("Error en la recepcion de datos del servidor: "+_error);
+         text_game.SetText(text_game.GetText()+"\nError en la recepcion de datos del servidor: "+_error);
+         return;
+      }
+ 		cadena=Buffer_GetString (_buffer, 0);
+		if(cadena!=null){
+         //GetEngine().LogPrint("Datos recibidos del servidor en el cliente: "+cadena);
+         //text_game.SetText(text_game.GetText()+"\nDatos recibidos del servidor en el cliente: "+sizeof(cadena)+" "+cadena);
+         list=String_ToList(cadena, ",");
+         if(list!=null){
+            ball.SetPos(list[0],list[1]);
+            playerServer.SetY(list[2]);
+         }
+      } 
+      Buffer_Delete(_buffer);
+   }
+
+	function EnviarDatos(){
+		cadena=String(playerClient.GetX())+","+String(playerClient.GetY());
+		_buffer=Buffer_New(1024);
+		Buffer_SetString(_buffer,0,cadena);
+		NetSocket_Send(socket,_buffer,0,Buffer_Len(_buffer));
+      Buffer_Delete(_buffer);
+	}   
+}

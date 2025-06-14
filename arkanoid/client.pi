@@ -1,0 +1,22 @@
+class Client implements GL_Program {
+   virtual Start(){
+    SetBackColor(RGB(0,200,240));
+    // 25x20 cuadraditos de 32px
+    SetResolution(800,640);
+    // -1 Ajusta l apantalla en horizontal
+    // -2 Ajusta la pantalla en vertical
+    // -3 Ajuste puede que no proporcional a pantalla completa
+    //SetViewScale(-1,True);
+    SetVSync(True);
+    SetFrameRate(50);
+    /*_socket=NetSocket_New (this, 1);
+    if (_socket==null){
+        GetEngine().LogPrint("Error creando socket");
+        return;
+    }
+    GetEngine().LogPrint("Enviando mensaje: "+"hola desde cliente");
+    NetSocket_Connect (_socket, "localhost", 1234);
+    //NetSocket_Send (_socket, _msg, 0, 1024);
+    NetSocket_Delete (_socket);*/
+   }
+}

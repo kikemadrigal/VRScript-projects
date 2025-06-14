@@ -1,0 +1,35 @@
+namespace es_tipolisto_arkanoid;
+
+class Winner implements GL_Stage{
+    properties:
+        pad=null;
+        text=null;
+    virtual _operator_new(_name,_creator)
+    {
+        // Constructor
+        _bg=NewObject("bg","GL_Sprite");
+        _bg.AddFrame("res/winner150x150.png");
+        _bg.SetPos(60,0);
+       
+        _text=NewObject("text","GL_Text");
+        _text.SetFont("./fonts/Vintage Black.ttf", 12);
+        _text.SetPos(80,150);
+        _text.SetText("Has ganado el juego!!!\n press space to menu");
+        _text.SetColor(RGB(255,255,255));
+        text=_text;
+
+        pad=NewObject("pad","GL_Pad");
+        pad.SetPreset("CURSORS",0);
+        pad.SetPreset("JOYSTICK1",1);
+        
+    }
+
+    virtual Move()
+    {
+        if(pad.IsButtonDown(PAD_BUTTON_1)){
+            text.SetText("Loading...");
+            GetApp().RunStage("menu", "menu");
+        }
+    }
+
+}

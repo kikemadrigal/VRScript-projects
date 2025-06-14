@@ -1,0 +1,22 @@
+﻿namespace es_tipolisto_arkanoid;
+
+class Manual implements App{
+	properties:
+		bg=null;
+		text=null;
+	virtual _operator_new(_app){
+		app.SetBackColor(RGB(0,0,0));
+		_bg=app.NewObject("image","GL_Sprite");
+		_bg.addframe("res/manual.png");
+		_bg.SetPos(20,20);
+		_bg.SetSize(600,500, True);
+		bg=_bg;
+		_text=app.DrawText("Escape para salir",16);
+		_text.SetPos(app.GetResX()/2-_text.GetTextWidth()/2-100,600);
+		text=_text;
+	}
+	virtual _operator_delete(){
+		delete bg;
+		delete text;
+	}
+}

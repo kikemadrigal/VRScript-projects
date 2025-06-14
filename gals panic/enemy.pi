@@ -1,0 +1,49 @@
+namespace es_tipolisto_arkanoid;
+
+
+class Enemy implements GL_Sprite{
+    properties:
+ 
+        sndCol=null;
+    virtual _operator_new(_name,_creator)
+    {
+        LoadGraphics();
+        LoadSounds();
+        SetPriority(PRIORITY_BRICK);
+        SetType(TYPE_BRICK);
+        SetCollision(True);
+        
+    }
+
+    //La función LoadGraphics la redefinimos para clases derivadas
+    function LoadGraphics(){
+        //Cargamos la imagen del ladrillo
+        AddFrame("./res/brick17x9.png");
+        //Cargamos el sprite de la explosión
+        //AddFrame("explosion.png");
+        //Cargamos el sprite de la explosión
+        //AddFrame("explosion2.png");
+    }
+
+    function LoadSounds(){
+        _snd=NewObject("snd","GL_Sound");
+        _snd.Load("./sounds/rebote.ogg");
+        sndCol=_snd;
+    }
+
+
+    function OnBallCollision(){
+        SetVisible(False);
+        SetCollision(False);
+        creator.OnDestroyBrick(this);
+        sndCol.Play();
+    }
+
+    function GetScore(){
+        return 100;
+    }
+
+    function CanBeDestroy(){
+        return True;
+    }
+}

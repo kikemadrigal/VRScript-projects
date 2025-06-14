@@ -1,0 +1,18 @@
+namespace es_tipolisto_arkanoid;
+
+
+class Brick_4 implements Brick{
+    
+    //Como no queremos llamar al padre no ponemos virtual
+    function LoadGraphics(){
+        AddFrame("res/brick_metal17x9.png");
+    }
+
+    function OnBallCollision(){
+
+    }
+    function CanBeDestroy(){
+        return False;
+    }
+
+}

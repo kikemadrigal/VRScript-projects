@@ -1,0 +1,17 @@
+namespace es_tipolisto_arkanoid;
+
+class Boundy implements GL_sprite{
+	properties:
+		app=null;
+
+	virtual _operator_new(_name,_creator,_params){
+		app=_params[0];
+		_x=_params[1];
+		_y=_params[2];
+		_name=_params[3];
+		_file="res/"+_name+".png";
+		addframe(_file);
+		SetPos(_x,_y);	
+		SetCollision(True);		
+	}
+}

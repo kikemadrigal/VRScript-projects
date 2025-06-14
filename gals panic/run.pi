@@ -1,0 +1,16 @@
+class Run implements DOS_Program
+{
+    virtual Start()
+    {
+        _console = GetConsole();
+
+
+        while (!Input_IsKeyPressed(KEY_ESCAPE))
+        {
+            _console.PrintLn("Ejecutando programa ");
+            RunProgramWithParams("main.pi", "arg1 arg2 arg3");
+            _console.Input("continuar?");
+        }
+        End(0);
+    }
+}

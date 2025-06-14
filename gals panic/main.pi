@@ -1,0 +1,22 @@
+class Main implements GL_Program{
+		
+	virtual Start()
+	{
+		SetBackColor(RGB(0,0,0));
+		SetResolution(800,640);
+		SetViewScale(-3);
+		SetVSync(True);
+		SetFrameRate(60);
+ 
+        _imagen=NewObject("image","GL_Sprite");
+        _imagen.AddFrame("res/image.png");
+		//_imagen.SetFlags(16);
+        
+        _mascara=NewObject("mascara","GL_Sprite");
+		//_mascara.AddFrame("res/mascara.png");
+		_mascara.AddEmptyFrame(100,100);
+		_mascara.SetPos(500,300);
+		_mascara.SetFlags(16);
+        _imagen.SetTextureMask(_mascara);
+	}
+}

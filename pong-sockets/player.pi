@@ -1,0 +1,38 @@
+class player implements GL_sprite{
+	properties:
+		speed=0;
+        pad=null;
+		numeroPlayer=0;
+		
+	virtual _operator_new(_name,_creator,_params){
+		_x=_params[0];
+		_y=_params[1];
+		speed=_params[2];
+		numeroPlayer=_params[3];
+	
+		AddEmptyFrame(20,80);
+        SetColor(RGB(255,0,0));
+		SetPos(_x,_y);	
+		Setcollidermode(true);
+
+		pad=NewObject("pad","GL_Pad");
+		pad.SetPreset("CURSORS");
+		pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_SPACE);
+
+		SetCollision(True);	
+		SetCollisionRect(0,0,20,80);	
+	}
+    virtual Move(){
+		_incrementoY=0;
+		if(numeroPlayer==1){
+			if (pad.IsButton(PAD_BUTTON_UP))_incrementoY=-1;		
+			else if (pad.IsButton(PAD_BUTTON_DOWN))	_incrementoY=1;		
+		}	
+		
+		incpos(0,_incrementoY*speed);
+		_y=clamp(GetY(),20, 600);
+		setY(_y);
+    }
+
+
+}

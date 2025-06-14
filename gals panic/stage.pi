@@ -1,0 +1,93 @@
+namespace es_tipolisto_arkanoid;
+
+class Stage implements GL_Stage{
+    defines:
+        //Cuanto mas prioridad se dibijará por encima
+        //PRIORITY_BACKGROUNDIMAGE=0;
+        //PRIORITY_BACKGROUNDCOLORBLACK=;
+        //PRIORITY_BACKGROUNDREVEALED=1;
+        PRIORITY_PLAYER=3;
+        PRIORITY_ENEMY=4;
+
+        TYPE_PLAYER=1;
+        TYPE_ENEMY=2;
+
+
+        LIMIT_X=800;
+        LIMIT_Y=640;
+        //Desaciva que maten al player
+        DEBUG=True;
+    properties:
+        score=0;
+        hiScore=0;
+
+        player=null;
+
+
+        sndGameOver=null;
+        timer=0;
+        currentStage=5;
+ 
+    virtual _operator_new(_name,_creator)
+    {
+
+        //Se crea un fondo negro
+
+        //_bg.SetPriority(PRIORITY_BACKGROUNDCOLORBLACK);
+
+        
+        // Se pinta la imagen de fondo
+        _image=NewObject("image","GL_Sprite");
+        _image.AddFrame("res/image.png");
+        _image.SetFlags(_image.FLAG_Blit);
+        //_image.SetColor(RGB(0,0,0));
+        //_image.SetPriority(0);
+
+
+        
+        _mascara=NewObject("mascara","GL_Sprite");
+        //_mascara.AddEMptyFrame(800,640);
+        //_mascara.AddFrame("res/mascara.png");
+        //_mascara.SetColor(RGB(0,0,0));
+        _image.SetTextureMask(_mascara);
+        
+
+        //dibujamos un polígono trasparente
+        _revealed=NewObject("bg","GL_Sprite");
+        _revealed.AddEmptyFrame(500,400);
+        _revealed.SetPos(100,100);
+        _revealed.SetColor(RGB(255,255,255));
+        _revealed.SetTextureMask(_mascara);
+
+     
+     
+               
+               
+
+
+
+        player=NewObject("player","Player");
+        player.SetCollision(True);
+        player.SetVisible(True);
+
+
+        sndGameOver=NewObject("snd","GL_Sound");
+        sndGameOver.Load("sounds/gameover.ogg");  
+    }
+    /**
+     * Función que se llama al iniciar el juego siempre en los GL_Stages
+     */
+    virtual Start(){
+        //Iniciamos el jugador
+        
+
+        //Iniciamos el fondo
+
+    }
+
+
+
+
+
+
+}
