@@ -1,0 +1,41 @@
+class Player implements GL_sprite{
+	properties:
+		speedX=4;
+		stage=null;
+		pad=null;
+
+	virtual _operator_new(_name,_creator, _params){
+		stage=_params[0];
+
+		//addFrame("images/ninja-walk.png"); //Añadimos una imagen de 80x80
+		//name, path, frame_inicio, frame_fin, offect_X, offest_Y, ancho_hoja, alto_hoja, ancho_sprite,alto_sprite, velocidad, jump_frames  
+		Addanimationwithsheet("walk","images/ninja-walk.png",0,6,0,0,50,40,-1,-1,-1,0.05);
+		Addanimationwithsheet("idle","images/ninja-idle.png",0,0,0,0,50,40);
+		Addanimationwithsheet("atack","images/ninja-atack.png",0,4,0,0,50,40,-1,-1,-1,0.02);
+		SetAnimation("idle");
+		//SetPos(10,500);	
+		SetPriority(1);
+		SetColliderMode(True);
+	
+
+		
+	}
+
+
+
+	virtual OnSpriteCollision (_sp1,_sp2)
+	{
+		//GetApp().GetEngine().LogPrint("Collision");
+		_fx=CreateFX("TINT");
+		_fx.Start(2000, RGB(255,0,0));
+	    if(Class_Id(_sp2)=="Item" ){
+			//GetApp().GetEngine().LogPrint("with item");
+			if(_sp2.GetTyoe()==0){
+				GetApp().GetEngine().LogPrint("with item tpe 0");
+				//_sp2.Destroy();
+				GetApp().ChangeStage();
+			}
+		}
+	}
+
+}

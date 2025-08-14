@@ -1,0 +1,59 @@
+class Item implements GL_sprite{
+	properties:
+		type=0;
+		speedX=0;
+		speedY=0;
+
+    virtual _operator_new(_name,_creator, _params){
+		_type=_params[0];
+		switch(_type){
+			//Meta
+			case 0:
+				//AddFrame("images/house.png");
+       			AddEmptyFrame (50,100);
+        		SetColor(RGB(255,0,0));
+				type=0;
+				break;
+			//Cuadrados
+			case 1:
+       			AddEmptyFrame (50,50);
+        		SetColor(RGB(255,0,0));
+				speedX=-10.5;
+				type=1; 
+				break;
+			case 2:
+       			AddEmptyFrame (20,30);
+        		SetColor(RGB(255,255,0));
+				speedX=-7.0;
+				type=2; 
+				break;
+			case 3:
+       			AddEmptyFrame (50,10);
+        		SetColor(RGB(0,255,0));
+				speedX=-5.5;
+				type=3; 
+				break;
+			case 4:
+       			AddEmptyFrame (10,40);
+        		SetColor(RGB(0,0,255));
+				speedX=-20.5;
+				type=4; 
+				break;
+			//otro
+			case 20:
+				/*Addanimationwithsheet("cherries","textures/fruits/cherries.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("cherries");*/
+				break;	
+		}
+		SetCollision(True);
+	}	
+
+
+	function Move(){     
+		incpos(speedX,speedY);
+	}
+
+	function GetTyoe(){
+		return type;
+	}
+}

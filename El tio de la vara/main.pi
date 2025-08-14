@@ -1,0 +1,97 @@
+/**
+@Title: El caballero de la bara
+@autor Kike Madrigal
+@Version: 1.0
+*/
+class main implements GL_Program{
+    defines:
+        LEVEL_WIDTH=1287;
+        LEVEL_HEIGHT=411;
+
+    properties:
+        stageGlobal=null;
+        gameOver=True;
+    	menu=null;
+		currentStage=0;
+        player1=null;
+        stage=null;
+    virtual start(){
+        Setbackcolor(RGB(0,0,0));
+        Setresolution(500,450);
+        Setviewscale(-3);
+        Setframerate(30);
+
+        menu=NewStage("stage","menu");
+        menu.Setmain();
+        menu.Setactive();              
+
+        stageGlobal=newStage("stageGlobal","StageGlobal");
+    }
+
+    virtual move(){
+        stageGlobal.DrawScore();
+        if (gameOver){
+            if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
+                ChangeStage();
+            }
+        //Si estamos jugando movemos al jugador
+        }else{
+            _player1=stageGlobal.player1;
+           _incrementoX=0;
+
+            if (stageGlobal.pad.IsButton(PAD_BUTTON_RIGHT)){
+                _incrementoX=_player1.speedX;	
+                _player1.SetHFlip(False);	
+            }
+            else if (stageGlobal.pad.IsButton(PAD_BUTTON_LEFT)){
+                _incrementoX=-_player1.speedX;	
+                _player1.SetHFlip(True);
+            }		
+		    _x=clamp(_player1.GetX(),GetResX()/2, LEVEL_WIDTH);
+		    _player1.setX(_x);
+		    _player1.incpos(_incrementoX,0);
+
+            if(_incrementoX!=0){
+                _player1.SetAnimation("walk");
+            }else{
+                _player1.SetAnimation("idle");
+            }
+
+        
+            _x_camera=_player1.GetX()-GetResX()/2;
+            _x_camera=Clamp(_x_camera,GetResX()/2, LEVEL_WIDTH-GetResX());
+		    stage.SetCameraX(_x_camera);
+        }
+    }
+
+
+    function ChangeStage(){
+	    gameOver=false;
+        
+        currentStage++;
+        GetEngine().LogPrint("camniando a la escena "+currentStage);
+        if(stage!=null)stage.Destroy();
+        if(currentStage>4)currentStage=1;
+
+        switch (currentStage){
+            case 1:
+                stage=RunStage("stage","Stage1");
+                break;
+            case 2:
+                stage=RunStage("stage","Stage2");
+                break;
+            case 3:
+                stage=RunStage("stage","Stage1");
+                break;
+            case 4:
+                stage=RunStage("stage","Stage2");
+                break;
+            default:
+                currentStage=0;
+                NewStage("stage","menu");
+                break;
+        }
+        stage.SetActive();
+       
+	}
+}

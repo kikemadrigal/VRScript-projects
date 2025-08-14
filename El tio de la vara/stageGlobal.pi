@@ -1,0 +1,42 @@
+class StageGlobal implements GL_Stage{
+    properties:
+		pad=null;
+		player1=null;
+		fps=null;
+
+		text_score=null;
+
+	virtual _operator_new(_name,_creator){
+		SetGlobal(True);
+		//Pad
+		_pad=NewObject("pad", "GL_Pad");
+	    _pad.SetPreset("CURSORS");
+		_pad.SetPreset("Joystick1",1);
+		pad=_pad;
+
+		text_score=DrawText("Stage: "+GetApp().currentStage+" Score: 0 Lives: 3 Caught: 0 Time: 0", 12);
+		text_score.SetPos(200,10);
+		fps=DrawText("FPS: "+GETFPS(1), 12);
+		fps.SetPos(0,10);
+	}	
+
+	function SetPlayer(player){
+		player1=player;
+		player1.SetVisible(True);
+		player1.SetPos(100,500);
+	}
+	
+
+	function DrawText(text, size){
+		_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", size);
+		//_text.SetAlign(DT_CENTER);
+		_text.SetText(text);
+		_text.SetColor(RGB(234,255,0));	
+		return _text;
+	}
+	function DrawScore(){
+		text_score.SetText("Stage: "+GetApp().currentStage );
+		fps.setText("FPS: "+GETFPS(1));
+	}
+}
