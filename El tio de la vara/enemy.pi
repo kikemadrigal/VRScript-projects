@@ -1,0 +1,84 @@
+class Enemy implements GL_sprite{
+	properties:
+		game=null;
+		type=0;
+		speedX=0;
+		speedY=0;
+		start_position_x=0;
+		start_position_y=0;
+
+    virtual _operator_new(_name,_creator, _params){
+		game=_params[0];
+		_type=_params[1];
+
+		switch(_type){
+			//Enemigo Aguila de izquierda a derecha
+			case 1:
+				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
+				Setanimation("eagle");
+				speedX=-5.5;
+				type=1; 
+				break;
+			//Enemigo Cuervo de izquierda a derecha
+			case 2:
+				Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
+				Setanimation("raven");
+				speedX=-7.0;
+				type=2; 
+				break;
+			//Enemigo 3
+			case 3:
+       			//AddEmptyFrame (50,10);
+        		//SetColor(RGB(0,255,0));
+				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
+				Setanimation("eagle");
+				SetColor(RGB(0,255,0));
+				speedX=-7.5;
+				type=3; 
+				break;
+			//Enemigo 4
+			case 4:
+       			Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
+				Setanimation("raven");
+        		SetColor(RGB(0,0,255));
+				speedX=-20.5;
+				type=4; 
+				break;
+
+
+		}
+		//Setcollisionrect(0,0,32,32);
+		SetCollision(True);
+	}	
+
+
+	function Move(){     
+		if(type==11){
+			//Plataforma horizontal
+			if(GetX()>=start_position_x+100){
+				speedX=-2;
+			}else if(GetX()<=start_position_x){
+				speedX=2;
+			}
+		}else if(type==12){
+			//Plataforma vertical
+			if(GetY()>=start_position_y+100){
+				speedY=-2;
+			}else if(GetY()<=start_position_y){
+				speedY=2;
+			}
+		}
+
+
+		incpos(speedX,speedY);
+	}
+
+	function GetItemType(){
+		return type;
+	}
+
+	function SetStartPosition(_x,_y){
+		start_position_x=_x;
+		start_position_y=_y;
+	}
+}

@@ -1,4 +1,4 @@
-class Item implements GL_sprite{
+class Platform implements GL_sprite{
 	properties:
 		game=null;
 		type=0;
@@ -19,47 +19,16 @@ class Item implements GL_sprite{
 		switch(_type){
 			//Meta le decimos que ha llegado al final de la fase
 			case 0:
-				//AddFrame("images/house.png");
        			AddEmptyFrame (50,100);
         		SetColor(RGB(255,0,0));
 				type=0;
+				/*
+				//Otra forma de aplicar los dibujos es:
+				AddFrame("images/house.png");
+				Addanimationwithsheet("cherries","textures/fruits/cherries.png",0,16,0,0,32,32,-1,-1,-1,.5);
+				Setanimation("cherries");
+				 */
 				break;
-			//Enemigo 1
-			case 1:
-				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
-				Setanimation("eagle");
-				speedX=-5.5;
-				type=1; 
-				break;
-			//Enemigo 2
-			case 2:
-       			//AddEmptyFrame (20,30);
-        		//SetColor(RGB(255,255,0));
-				Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
-				Setanimation("raven");
-				speedX=-7.0;
-				type=2; 
-				break;
-			//Enemigo 3
-			case 3:
-       			//AddEmptyFrame (50,10);
-        		//SetColor(RGB(0,255,0));
-				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
-				Setanimation("eagle");
-				SetColor(RGB(0,255,0));
-				speedX=-7.5;
-				type=3; 
-				break;
-			//Enemigo 4
-			case 4:
-       			Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
-				Setanimation("raven");
-        		SetColor(RGB(0,0,255));
-				speedX=-20.5;
-				type=4; 
-				break;
-
-
 			//Suelo
 			case 10:
        			AddEmptyFrame (32,32);
@@ -85,11 +54,6 @@ class Item implements GL_sprite{
 				//start_position_x=GetX();
 				type=12; 
 				break;
-			//otro
-			case 20:
-				/*Addanimationwithsheet("cherries","textures/fruits/cherries.png",0,16,0,0,32,32,-1,-1,-1,.5);
-				Setanimation("cherries");*/
-				break;	
 		}
 		SetCollision(True);
 	}	

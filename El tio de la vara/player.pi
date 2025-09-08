@@ -1,12 +1,13 @@
 class Player implements GL_sprite{
 	properties:
+		score=0;
+		lives=3;
 		speedX=4;
 		incrementoX=0;
 		incrementoY=0;
 		aceleracion=0;
 		attack=false;
 		game=null;
-		pad=null;
 
 	virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
@@ -25,12 +26,10 @@ class Player implements GL_sprite{
 
 	virtual OnSpriteCollision (_sp1,_sp2)
 	{
-		//GetApp().GetEngine().LogPrint("Collision con "+Class_Id(_sp2));
-	    if(Class_Id(_sp2)=="Item" ){
-			//GetApp().GetEngine().LogPrint("with item");
+		//Si es una plataforma
+	    if(Class_Id(_sp2)=="Platform" ){
+			//Si la plataforma es la meta
 			if(_sp2.GetItemType()==0){
-				//GetApp().GetEngine().LogPrint("with item tpe 0"); 
-				//_sp2.Destroy();
 				game.ChangeStage();
 			//Si es suelo
 			}else if(_sp2.GetItemType()==10){
@@ -54,19 +53,18 @@ class Player implements GL_sprite{
 				incrementoY=0;
 				aceleracion=0;
 				incpos(0,_sp2.speedY);
-			}
-			
-			
-			//Si es un enemigo
-			else if (_sp2.GetItemType()==1 || _sp2.GetItemType()==2 || _sp2.GetItemType()==3 || _sp2.GetItemType()==4){
-				game.delete_enemy(_sp2);
-				_sp2.Destroy();
-			}
-			
+			}			
 		}
-		
-
-
+		//Si es un enemigo
+		if(Class_Id(_sp2)=="Enemy" ){
+			//Que sale de izquierda a derecha
+			if (_sp2.GetItemType()==1 || _sp2.GetItemType()==2 || _sp2.GetItemType()==3 || _sp2.GetItemType()==4){
+				if(attack){
+					game.delete_enemy(_sp2);
+					_sp2.Destroy();
+				}else player_die();
+			}
+		}
 		/*
 		//Otra forma sería con setype y getType en el main
 		if(_sp2.GetType()==GetApp().TYPE_SUELO){
@@ -79,6 +77,22 @@ class Player implements GL_sprite{
 			}
 		}
 		*/
+
+	}
+
+	function player_die(){
+		lives--;
+		if(lives<=0) {
+			lives=3;			
+		}else{
+			//Efecto de color rojo durante 2 segundos
+			_fx=CreateFX("TINT");
+			_fx.Start(2000, RGB(255,0,0));
+			//Efecto de parpadeo
+			_fx=CreateFX("BLINK");
+			_fx.Start(100,15);
+			GetApp().stageGlobal.DrawScore();
+		}
 	}
 
 }

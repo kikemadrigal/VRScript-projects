@@ -41,14 +41,18 @@ class main implements GL_Program{
         //Si estamos jugando movemos al jugador
         }else{
             _player1=game.player1;
+            _x_camera=_player1.GetX()-GetResX()/2;
+            _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
             //Si se pulsa el cursor derecho
             if (stageGlobal.pad.IsButton(PAD_BUTTON_RIGHT)){
                 _player1.incrementoX=_player1.speedX;	
                 _player1.SetHFlip(False);	
+                game.SetCameraX(_x_camera);
             }
             else if (stageGlobal.pad.IsButton(PAD_BUTTON_LEFT)){
                 _player1.incrementoX=-_player1.speedX;	
                 _player1.SetHFlip(True);
+                game.SetCameraX(_x_camera);
             }else{
                 _player1.incrementoX=0;
             }
@@ -91,9 +95,8 @@ class main implements GL_Program{
                 _player1.aceleracion+=GetFTime()*0.025f;
             }
 
-            _x_camera=_player1.GetX()-GetResX()/2;
-            _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
-		    game.SetCameraX(_x_camera);
+
+		   
         }
     }
 
