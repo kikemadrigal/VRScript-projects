@@ -95,10 +95,14 @@ class Game implements GL_Stage{
                 tmx.Load(mapper, "tilesmap.tmx", this);
                 //Colocamos el fondo
                 bg=NewObject("bg","gl_sprite");
-                bg.Addframe("images/stage1.png");
+                bg.Addframe("images/stage2.png");
                 bg.SetPriority(-1);
                 meta=NewObject("house","Platform",[this,0]); 
                 meta.SetPos(GetApp().LEVEL_WIDTH-20,GetApp().GetResY()-200);
+
+                player1.SetPos(20,100);
+                _x_camera=player1.GetX()-GetApp().GetResX()/2;
+                SetCameraX(_x_camera);
                 break;
             case 3:
                 bg=NewObject("bg","gl_sprite");
