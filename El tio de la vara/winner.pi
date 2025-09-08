@@ -1,4 +1,4 @@
-class stage2 implements GL_Stage{
+class Winner implements GL_Stage{
     properties:
         item=null;
         bg=null;

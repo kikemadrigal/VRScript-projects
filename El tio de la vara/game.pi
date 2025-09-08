@@ -1,0 +1,130 @@
+class Game implements GL_Stage{
+    properties:
+        item=null;
+        bg=null;
+        house=null;
+        player1=null;
+        enemies=[];
+        currentStage=0;
+        //Para ir creando enemigos usamos un timer
+        timer=null;
+       
+
+    virtual _operator_new(_name,_creators){
+        SetDebug(True);
+        mapper =NewObject("mapper","gl_mapper");
+	
+		tmx = new TMX_Loader();
+		_ok = tmx.Load(mapper, "tilesmap.tmx", this);
+		delete tmx;
+        
+        player1=NewObject("player","Player",[this]);
+        player1.SetVisible(True);
+        player1.SetPos(20,100);
+
+        ChangeStage();
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        house.Destroy();
+        player1.Destroy();
+    }
+
+
+
+
+
+
+    function AddActor(_name, _type, _x, _y, _params)
+	{
+		switch (_type)
+		{
+			case "suelo": 
+                item=NewObject(_name,"Item",[this,10]);
+                item.SetPos(_x, _y);
+    
+            break;
+            case "plataforma_horizontal": 
+                item=NewObject(_name,"Item",[this,11]);
+                item.SetPos(_x, _y);
+                item.SetStartPosition(_x, _y);
+            break;
+            case "plataforma_vertical": 
+                item=NewObject(_name,"Item",[this,12]);
+                item.SetPos(_x, _y);
+                item.SetStartPosition(_x, _y);
+            break;  
+		}
+	}
+
+
+    virtual Move(){     
+
+        for (i=0; i< sizeof(enemies); i++){
+            enemy=enemies[i];
+            if(enemy.GetX()<player1.GetX()-380){
+                enemies-=[enemy];
+                enemy.Destroy();
+                GetEngine().LogPrint("enemigo destruido");
+            }
+        } 
+    }
+
+
+
+
+
+
+
+    function ChangeStage(){
+        currentStage++;
+        GetEngine().LogPrint("camniando a la escena "+currentStage);
+        if(currentStage>4)currentStage=1;
+
+        switch (currentStage){
+            case 1:
+                //Colocamos el fondo
+                bg=NewObject("bg","gl_sprite");
+                bg.Addframe("images/stage1.png");
+                bg.SetPriority(-1);
+                //Colocamse la meta
+                house=NewObject("house","Item",[this,0]); 
+                house.SetPos(GetApp().LEVEL_WIDTH-20,GetApp().GetResY()-200);
+                //Vamos creando enemigos cada 2 segundos
+                timer=NewObject("timer", "GL_Timer");
+                timer.SetFrequency(2000);
+                timer.SetUserCallBack(this,"OnTimerCallBack");
+                break;
+            case 2:
+                bg=NewObject("bg","gl_sprite");
+                bg.Addframe("images/stage1.png");
+                break;
+            case 3:
+                bg=NewObject("bg","gl_sprite");
+                bg.Addframe("images/stage2.png");
+                break;
+            case 4:
+                bg=NewObject("bg","gl_sprite");
+                bg.Addframe("images/stage1.png");
+                break; 
+        }
+	}
+
+
+    function create_enemy(_type){
+        //Los parámetros son el game y el tipo de enemigo
+        enemy=NewObject("aguila","Item",[this,_type]);
+        enemy.SetPos(player1.GetX()+380,rand(300,800));
+        enemies+=[enemy];
+    }
+    function delete_enemy(_enemy){
+        enemies-=[_enemy];
+        //_enemy.Destroy();
+    }
+
+    function OnTimerCallBack(_timer){
+		create_enemy(rand(1,4));
+	}
+}
+
+        

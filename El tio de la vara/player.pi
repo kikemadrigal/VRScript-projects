@@ -1,41 +1,84 @@
 class Player implements GL_sprite{
 	properties:
 		speedX=4;
-		stage=null;
+		incrementoX=0;
+		incrementoY=0;
+		aceleracion=0;
+		attack=false;
+		game=null;
 		pad=null;
 
 	virtual _operator_new(_name,_creator, _params){
-		stage=_params[0];
-
-		//addFrame("images/ninja-walk.png"); //Añadimos una imagen de 80x80
-		//name, path, frame_inicio, frame_fin, offect_X, offest_Y, ancho_hoja, alto_hoja, ancho_sprite,alto_sprite, velocidad, jump_frames  
-		Addanimationwithsheet("walk","images/ninja-walk.png",0,6,0,0,50,40,-1,-1,-1,0.05);
-		Addanimationwithsheet("idle","images/ninja-idle.png",0,0,0,0,50,40);
-		Addanimationwithsheet("atack","images/ninja-atack.png",0,4,0,0,50,40,-1,-1,-1,0.02);
-		SetAnimation("idle");
-		//SetPos(10,500);	
+		game=_params[0];
+		Addanimationwithsheet("walk","images/player-walk.png",0,6,0,0,50,40,-1,-1,-1,0.1);
+		Addanimationwithsheet("idle","images/player-idle.png",0,0,0,0,50,40);
+		Addanimationwithsheet("jump","images/player-idle.png",0,0,0,0,50,40);
+		Addanimationwithsheet("fall","images/player-idle.png",0,0,0,0,50,40);
+		Addanimationwithsheet("attack","images/player-attack.png",0,4,0,0,50,40,-1,-1,-1,0.3);
+		SetAnimation("idle");	
 		SetPriority(1);
 		SetColliderMode(True);
-	
-
-		
+		Setcollisionrect(10,0,20,40);
 	}
 
 
 
 	virtual OnSpriteCollision (_sp1,_sp2)
 	{
-		//GetApp().GetEngine().LogPrint("Collision");
-		_fx=CreateFX("TINT");
-		_fx.Start(2000, RGB(255,0,0));
+		//GetApp().GetEngine().LogPrint("Collision con "+Class_Id(_sp2));
 	    if(Class_Id(_sp2)=="Item" ){
 			//GetApp().GetEngine().LogPrint("with item");
-			if(_sp2.GetTyoe()==0){
-				GetApp().GetEngine().LogPrint("with item tpe 0");
+			if(_sp2.GetItemType()==0){
+				//GetApp().GetEngine().LogPrint("with item tpe 0"); 
 				//_sp2.Destroy();
-				GetApp().ChangeStage();
+				game.ChangeStage();
+			//Si es suelo
+			}else if(_sp2.GetItemType()==10){
+				if(GetY()<_sp2.GetY() && incrementoY>=0){	
+					//lo situamos encima de la plataforma
+					SetY(_sp2.GetY()-GetHF()+1);
+					incrementoY=0;
+					aceleracion=0;
+				}
+			//Si es una plataforma horizontal
+			}else if(_sp2.GetItemType()==11){
+				if(GetY()<_sp2.GetY() && incrementoY>=0){	
+					SetY(_sp2.GetY()-GetHF()+1);
+					incrementoY=0;
+					aceleracion=0;
+					incpos(_sp2.speedX,0);
+				}
+			//Si es una plataforma vertical
+			}else if(_sp2.GetItemType()==12){
+				SetY(_sp2.GetY()-GetHF()+1);
+				incrementoY=0;
+				aceleracion=0;
+				incpos(0,_sp2.speedY);
+			}
+			
+			
+			//Si es un enemigo
+			else if (_sp2.GetItemType()==1 || _sp2.GetItemType()==2 || _sp2.GetItemType()==3 || _sp2.GetItemType()==4){
+				game.delete_enemy(_sp2);
+				_sp2.Destroy();
+			}
+			
+		}
+		
+
+
+		/*
+		//Otra forma sería con setype y getType en el main
+		if(_sp2.GetType()==GetApp().TYPE_SUELO){
+			//GetApp().GetEngine().LogPrint("with suelo");
+			if(GetY()<_sp2.GetY() && incrementoY>=0){	
+				//lo situamos encima de la plataforma
+				SetY(_sp2.GetY()-GetHF()+1);
+				incrementoY=0;
+				aceleracion=0;
 			}
 		}
+		*/
 	}
 
 }

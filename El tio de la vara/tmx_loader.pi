@@ -1,0 +1,259 @@
+//-----------------------------------------------------------------------------
+// TMX_Loader Script
+// Revision: 1
+//
+// This VR-Script class loads a TMX file format
+// TMX format is used in Tiled Editor [https://www.mapeditor.org/]
+// This class lets you initialized a GL_Mapper instance and
+// controlling the actors included in the stage.
+// This code is compatible with the MSXVR computer (https://msxvr.com)
+// VR-Script Author: Alberto De Hoyo Nebot
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+// See the GNU General Public License for more details:
+// http://www.gnu.org/licenses/
+//-----------------------------------------------------------------------------
+
+class TMX_Loader
+{
+	class Object
+	{
+		properties:
+			name = "";
+			type = "";
+			subList = [];
+			
+		function _operator_delete ()
+		{
+			for (i=0; i<sizeof(subList); i++)
+			{	
+				_list = _get(subList[i]);
+				for (j=0; j<sizeof(_list); j++)
+					delete _list[j];
+			}
+			subList = [];
+		}
+	};
+	
+	properties:
+		xmlDoc = null;
+		xmlElement = null;
+		subList = [];
+		
+	function _operator_new ()
+	{
+	}
+		
+	function _operator_delete ()
+	{
+		for (i=0; i<sizeof(subList); i++)
+		{	
+			_list = _get(subList[i]);
+			for (j=0; j<sizeof(_list); j++)
+				delete _list[j];
+		}
+		subList = [];
+	}
+	
+	function LoadStartFromFile (_file)
+	{
+		_fileSize = File_Size(_file);
+		_buffer = Buffer_New (_fileSize);
+		File_Read (_file, _buffer, 0, _fileSize);
+		File_Close (_file);
+		_xmlStr = Buffer_GetString (_buffer, 0);
+		Buffer_Delete (_buffer);
+		
+		xmlDoc = XML_Open (_xmlStr);
+		if (!xmlDoc)
+		{
+			return 0;
+		}
+		
+		xmlElement = XML_GetRootElement (xmlDoc);
+
+		_num_steps = GetNumSteps (xmlElement);
+				
+		return _num_steps;
+	}
+	
+	function LoadStart (_filename)
+	{
+		_file = File_Open (_filename, FILE_MODE_READ);
+		if (!_file)
+		{
+			return false;
+		}
+		return LoadStartFromFile (_file);
+	}
+
+	function LoadXML(_filename)
+	{
+		if (!LoadStart (_filename))
+			return false;
+		ReadClass (this, xmlElement);
+		XML_Close (xmlDoc);
+		return true;
+	}
+
+	function LoadNext ()
+	{
+		if (!xmlElement) return false;
+		_xmlElement = ReadClass (this, xmlElement, true);
+		xmlElement = _xmlElement;
+		if (!xmlElement)
+		{
+			XML_Close (xmlDoc);
+			return false;
+		}
+		return true;
+	}
+
+	function GetNumSteps (_e)
+	{
+		_count = 0;
+		while (_e)
+		{
+			_e = XML_NextElement (_e);
+			_count++;
+		}
+		return _count;
+	}
+
+	function ReadClass (_obj, _e, _iterative = false)
+	{
+		while (_e)
+		{
+			_key = XML_GetElementName (_e);
+			_text = XML_GetElementValue (_e);
+		
+			_class = new Object();
+			
+			ReadAttributes (_class, _e);
+			ReadClass (_class, XML_GetRootElement (_e));
+
+			if (_obj._implements(_key+"list"))
+			{
+				_list = _obj._get(_key+"list");
+			}
+			else
+			{
+				_list = [];
+				_obj.subList += [_key+"list"];
+			}
+			_list += [_class];
+			_obj._set(_key+"list", _list);
+			_obj._set(_key+"text", _text);
+			
+			_e = XML_NextElement (_e);
+			if (_iterative) break;
+		}
+		
+		return _e;
+	}
+
+	function ReadAttributes (_obj, _e)
+	{
+		_a = XML_FirstAttribute (_e);
+		while (_a)
+		{
+			_name = XML_GetAttributeName (_a);
+			_value = XML_GetAttributeValue (_a);
+			_obj._set (_name, _value);
+			_a = XML_NextAttribute (_a);
+		}
+	}
+	
+	function Load(_mapper, _path, _actorCreator = null)
+	{
+		_xml = LoadXML(_mapper.GetEngine().GetPath(_path));
+		
+		if (_xml)
+		{
+			_map = this.mapList[0];
+		
+			_tw = int(_map.tilewidth);
+			_th = int(_map.tileheight);
+			
+			_mapper.SetTile(_tw, _th);
+			
+			_tileset = null;
+			
+			//for (i=0; i<sizeof(_map.tilesetList); i++)
+			//Only the first one...
+			i = 0;
+			{
+				_ts = _map.tilesetList[i];
+				_ps = Path_Split(_ts.imageList[0].source);
+				_tileset = _mapper.AddTileSet(_ps[2] + _ps[3], int(_ts.tileWidth), int(_ts.tileHeight), 0, 0, int(_ts.imageList[0].width), int(_ts.imageList[0].height));
+			}
+			
+			for (i=0; i<sizeof(_map.layerList); i++)
+			{
+				_layer = _map.layerList[i];
+				_w = int(_layer.width);
+				_h = int(_layer.height);
+				
+				_mapLayer = _mapper.AddLayer(_w, _h);
+				
+				_buffer = Buffer_New();
+				Buffer_FromBase64String(_buffer, String_Trim(_layer.dataText));
+				
+				if (Buffer_Len(_buffer) == (_w*_h)*4)
+				{
+					for (y=0; y<_h; y++)
+					{
+						for (x=0; x<_w; x++)
+						{   
+							_ix = Buffer_GetUInt(_buffer, (y*_w+x)*4) - 1;
+							_flags = 0;
+							if (_ix & 0x80000000) _flags |= 0x80;
+							if (_ix & 0x40000000) _flags |= 0x40;
+							_ix &= 0xFFFF;
+							_mapLayer.Set(x, y, _tileset, _ix, _flags);
+						}
+					}
+				}
+			}
+			
+			if (_actorCreator && _actorCreator._implements("AddActor"))
+			{
+				for (i=0; i<sizeof(_map.objectGroupList); i++)
+				{
+					_objgroup = _map.objectGroupList[i];
+					if (_objgroup._implements("objectList"))
+					{
+						for (j=0; j<sizeof(_objgroup.objectList); j++)
+						{
+							_obj = _objgroup.objectList[j];
+							_params = [];
+							if (_obj._implements("propertiesList"))
+							{
+								for (k=0; k<sizeof(_obj.propertiesList[0].propertyList); k++)
+								{
+									_prop = _obj.propertiesList[0].propertyList[k];
+									if (_prop.type == "int") _prop.value = int(_prop.value);
+									else if (_prop.type == "float") _prop.value = float(_prop.value);
+									else if (_prop.type == "bool") _prop.value = bool(_prop.value);
+									_params += [_prop.name, _prop.value];
+								}
+							}
+							// Actor Creation...
+							_spr = _actorCreator.AddActor(_obj.name, _obj.type, int(_obj.x), int(_obj.y), _params);
+							if (_spr)
+								_mapLayer.AddSprite(_spr);
+						}
+					}
+				}
+			}
+		}
+		return (_xml != null);
+	}
+}

@@ -1,43 +1,89 @@
 class Item implements GL_sprite{
 	properties:
+		game=null;
 		type=0;
 		speedX=0;
 		speedY=0;
+		start_position_x=0;
+		start_position_y=0;
+		text=null;
 
     virtual _operator_new(_name,_creator, _params){
-		_type=_params[0];
+		game=_params[0];
+		_type=_params[1];
+		text=NewObject("text","GL_Text");
+		text.SetFont("fonts/Vintage Black.ttf", 18);
+        text.SetPos(10,50);
+		
+		//GetApp().GetEngine().LogPrint("Creating item of type "+_params);
 		switch(_type){
-			//Meta
+			//Meta le decimos que ha llegado al final de la fase
 			case 0:
 				//AddFrame("images/house.png");
        			AddEmptyFrame (50,100);
         		SetColor(RGB(255,0,0));
 				type=0;
 				break;
-			//Cuadrados
+			//Enemigo 1
 			case 1:
-       			AddEmptyFrame (50,50);
-        		SetColor(RGB(255,0,0));
-				speedX=-10.5;
+				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
+				Setanimation("eagle");
+				speedX=-5.5;
 				type=1; 
 				break;
+			//Enemigo 2
 			case 2:
-       			AddEmptyFrame (20,30);
-        		SetColor(RGB(255,255,0));
+       			//AddEmptyFrame (20,30);
+        		//SetColor(RGB(255,255,0));
+				Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
+				Setanimation("raven");
 				speedX=-7.0;
 				type=2; 
 				break;
+			//Enemigo 3
 			case 3:
-       			AddEmptyFrame (50,10);
-        		SetColor(RGB(0,255,0));
-				speedX=-5.5;
+       			//AddEmptyFrame (50,10);
+        		//SetColor(RGB(0,255,0));
+				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
+				Setanimation("eagle");
+				SetColor(RGB(0,255,0));
+				speedX=-7.5;
 				type=3; 
 				break;
+			//Enemigo 4
 			case 4:
-       			AddEmptyFrame (10,40);
+       			Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
+				Setanimation("raven");
         		SetColor(RGB(0,0,255));
 				speedX=-20.5;
 				type=4; 
+				break;
+
+
+			//Suelo
+			case 10:
+       			AddEmptyFrame (32,32);
+        		SetColor(RGB(0,255,0));
+				//speedX=0;
+				type=10; 
+				break;
+			//platafporma horizontal
+			case 11:
+	   			AddEmptyFrame (32,32);
+				SetColor(RGB(0,0,255));
+				speedX=2;
+				//start_position_y=GetY();
+				start_position_x=GetX();
+				type=11; 
+				break;
+			//plataforma vertical
+			case 12:
+	   			AddEmptyFrame (32,32);
+				SetColor(RGB(255,0,255));
+				speedY=2;
+				start_position_y=GetY();
+				//start_position_x=GetX();
+				type=12; 
 				break;
 			//otro
 			case 20:
@@ -50,10 +96,32 @@ class Item implements GL_sprite{
 
 
 	function Move(){     
+		if(type==11){
+			//Plataforma horizontal
+			if(GetX()>=start_position_x+100){
+				speedX=-2;
+			}else if(GetX()<=start_position_x){
+				speedX=2;
+			}
+		}else if(type==12){
+			//Plataforma vertical
+			if(GetY()>=start_position_y+100){
+				speedY=-2;
+			}else if(GetY()<=start_position_y){
+				speedY=2;
+			}
+		}
+
+
 		incpos(speedX,speedY);
 	}
 
-	function GetTyoe(){
+	function GetItemType(){
 		return type;
+	}
+
+	function SetStartPosition(_x,_y){
+		start_position_x=_x;
+		start_position_y=_y;
 	}
 }

@@ -5,19 +5,20 @@
 */
 class main implements GL_Program{
     defines:
-        LEVEL_WIDTH=1287;
-        LEVEL_HEIGHT=411;
-
+        LEVEL_WIDTH=3000;
+        LEVEL_HEIGHT=768;
     properties:
         stageGlobal=null;
-        gameOver=True;
+
     	menu=null;
-		currentStage=0;
-        player1=null;
-        stage=null;
+        game=null;
+        winner_screen=null;
+	
+        gameOver=True;
+        
     virtual start(){
         Setbackcolor(RGB(0,0,0));
-        Setresolution(500,450);
+        Setresolution(800,768);
         Setviewscale(-3);
         Setframerate(30);
 
@@ -25,73 +26,77 @@ class main implements GL_Program{
         menu.Setmain();
         menu.Setactive();              
 
+        //El stageGlobal es usado para los marcadores y elementos generales
         stageGlobal=newStage("stageGlobal","StageGlobal");
     }
 
     virtual move(){
-        stageGlobal.DrawScore();
+        //stageGlobal.DrawScore();
+        
         if (gameOver){
             if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
-                ChangeStage();
+                gameOver=false;
+                game=RunStage("game","Game");
             }
         //Si estamos jugando movemos al jugador
         }else{
-            _player1=stageGlobal.player1;
-           _incrementoX=0;
-
+            _player1=game.player1;
+            //Si se pulsa el cursor derecho
             if (stageGlobal.pad.IsButton(PAD_BUTTON_RIGHT)){
-                _incrementoX=_player1.speedX;	
+                _player1.incrementoX=_player1.speedX;	
                 _player1.SetHFlip(False);	
             }
             else if (stageGlobal.pad.IsButton(PAD_BUTTON_LEFT)){
-                _incrementoX=-_player1.speedX;	
+                _player1.incrementoX=-_player1.speedX;	
                 _player1.SetHFlip(True);
-            }		
-		    _x=clamp(_player1.GetX(),GetResX()/2, LEVEL_WIDTH);
-		    _player1.setX(_x);
-		    _player1.incpos(_incrementoX,0);
-
-            if(_incrementoX!=0){
-                _player1.SetAnimation("walk");
             }else{
-                _player1.SetAnimation("idle");
+                _player1.incrementoX=0;
+            }
+            
+            // Si se pulsa arriba y no estamos ya saltando
+            if(stageGlobal.pad.IsButton(PAD_BUTTON_UP) && _player1.aceleracion==0){
+                _player1.incrementoY=-5;
+                _player1.aceleracion=0;
+		    }	
+
+            if(stageGlobal.pad.IsButton(PAD_BUTTON_1)){
+                _player1.attack=true;  
+                _player1.SetAnimation("attack");
+            }
+            	
+		    _x=clamp(_player1.GetX(),0, LEVEL_WIDTH);
+		    _player1.setX(_x);
+		    _player1.incpos(_player1.incrementoX,_player1.incrementoY);
+
+            //Si el player está atacando
+            if(_player1.attack){
+                if(_player1.GetAnimationLoops()>=1) _player1.attack=false;  
+            }else{  
+               if(_player1.aceleracion!=0){
+                //Si está subiendo	
+                if (_player1.incrementoY<0) _player1.Setanimation("jump");
+                    //Si está bajando
+                    else _player1.Setanimation("fall"); 
+                }else if(_player1.incrementoX) _player1.Setanimation("walk");   
+                else _player1.SetAnimation("idle");
             }
 
-        
+            //Rollo gravedad plataforma			
+            if(_player1.GetY()>=20*32){
+                _player1.SetY(20*32);
+                _player1.incrementoY=0;
+                _player1.aceleracion=0;
+            }else{
+                _player1.incrementoY+=_player1.aceleracion*GetFTime();
+                _player1.aceleracion+=GetFTime()*0.025f;
+            }
+
             _x_camera=_player1.GetX()-GetResX()/2;
-            _x_camera=Clamp(_x_camera,GetResX()/2, LEVEL_WIDTH-GetResX());
-		    stage.SetCameraX(_x_camera);
+            _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
+		    game.SetCameraX(_x_camera);
         }
     }
 
 
-    function ChangeStage(){
-	    gameOver=false;
-        
-        currentStage++;
-        GetEngine().LogPrint("camniando a la escena "+currentStage);
-        if(stage!=null)stage.Destroy();
-        if(currentStage>4)currentStage=1;
-
-        switch (currentStage){
-            case 1:
-                stage=RunStage("stage","Stage1");
-                break;
-            case 2:
-                stage=RunStage("stage","Stage2");
-                break;
-            case 3:
-                stage=RunStage("stage","Stage1");
-                break;
-            case 4:
-                stage=RunStage("stage","Stage2");
-                break;
-            default:
-                currentStage=0;
-                NewStage("stage","menu");
-                break;
-        }
-        stage.SetActive();
-       
-	}
+    
 }
