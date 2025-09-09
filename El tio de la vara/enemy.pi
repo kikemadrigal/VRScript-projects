@@ -64,6 +64,9 @@ class Enemy implements GL_sprite{
 		//Setcollisionrect(0,0,32,32);
 		SetCollision(True);
 	}	
+	virtual _operator_delete(){
+		game=null;
+	}
 
 
 	function Move(){     
@@ -82,8 +85,6 @@ class Enemy implements GL_sprite{
 				speedY=2;
 			}
 		}
-
-
 		incpos(speedX,speedY);
 	}
 

@@ -61,7 +61,7 @@ class Player implements GL_sprite{
 			if (_sp2.GetItemType()==1 || _sp2.GetItemType()==2 || _sp2.GetItemType()==3 || _sp2.GetItemType()==4){
 				if(attack){
 					game.delete_enemy(_sp2);
-					_sp2.Destroy();
+					//_sp2.Destroy();
 				}else player_die();
 			}
 		}

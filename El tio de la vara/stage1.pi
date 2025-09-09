@@ -31,6 +31,6 @@ class Stage1{
 
     function OnTimerCreateEnemiesCallBack(_timer){
 		_enemy=game.create_enemy(rand(1,4));
-        _enemy.SetPos(game.player1.GetX()+380,rand(300,800));
+        _enemy.SetPos(game.player1.GetX()+380,rand(500,700));
 	}
 }

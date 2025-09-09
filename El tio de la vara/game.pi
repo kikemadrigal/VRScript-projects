@@ -1,13 +1,12 @@
 class Game implements GL_Stage{
     properties:
         bg=null;
-        house=null;
         player1=null;
         blocks=[]; 
         enemies=[];
+        objects=[];
         currentStage=0;
-        //Para ir creando enemigos usamos un timer
-        timer=null;
+
         mapper=null;
         tmx=null;
         stage=null;
@@ -20,17 +19,13 @@ class Game implements GL_Stage{
 		
         player1=NewObject("player","Player",[this]);
         player1.SetVisible(True);
-        
 
         ChangeStage();
     }
     function _operator_delete(){
         bg.Destroy();
-        house.Destroy();
         player1.Destroy();
     }
-
-
 
     function AddActor(_name, _type, _x, _y, _params)
 	{
@@ -48,7 +43,6 @@ class Game implements GL_Stage{
 		}
 	}
 
-
     virtual Move(){     
         for (i=0; i< sizeof(enemies); i++){
             enemy=enemies[i];
@@ -58,13 +52,6 @@ class Game implements GL_Stage{
             }
         } 
     }
-
-
-
-        
-
-
-
 
     function ChangeStage(){
         currentStage++;
@@ -82,6 +69,12 @@ class Game implements GL_Stage{
             
         }
 	}
+
+
+
+
+
+
     function create_blocks(_type, _x, _y){
         //Crea los bloques del escenario
         block=NewObject(_type,"Block",[this,_type]);
@@ -93,7 +86,6 @@ class Game implements GL_Stage{
        	for(x=0; x<sizeof(blocks);x++) delete blocks[x];
         blocks=[];
     }
-
     function create_enemy(_type){
         //Los parámetros son el game y el tipo de enemigo
         enemy=NewObject("enemy","Enemy",[this,_type]);
@@ -106,10 +98,18 @@ class Game implements GL_Stage{
     }
     function delete_enemy(_enemy){
         enemies-=[_enemy];
-        //_enemy.Destroy();
+        delete _enemy;
     }
-
-
+    function create_object(_type){
+        //Los parámetros son el game y el tipo de objeto
+        object=NewObject("object","Objects",[this,_type]);
+        objects+=[object];
+        return object;
+    }
+    function delete_objects(){
+       	for(x=0; x<sizeof(objects);x++) delete objects[x];
+        objects=[];
+    }
 }
 
         
