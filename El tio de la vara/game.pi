@@ -3,12 +3,14 @@ class Game implements GL_Stage{
         bg=null;
         house=null;
         player1=null;
+        blocks=[]; 
         enemies=[];
         currentStage=0;
         //Para ir creando enemigos usamos un timer
         timer=null;
         mapper=null;
         tmx=null;
+        stage=null;
 
     virtual _operator_new(_name,_creators){
         SetDebug(True);
@@ -18,7 +20,7 @@ class Game implements GL_Stage{
 		
         player1=NewObject("player","Player",[this]);
         player1.SetVisible(True);
-        player1.SetPos(20,100);
+        
 
         ChangeStage();
     }
@@ -30,26 +32,18 @@ class Game implements GL_Stage{
 
 
 
-
-
-
     function AddActor(_name, _type, _x, _y, _params)
 	{
 		switch (_type)
 		{
 			case "suelo": 
-                platform=NewObject(_name,"Platform",[this,10]);
-                platform.SetPos(_x, _y);
+               create_blocks(10,_x, _y);
             break;
             case "plataforma_horizontal": 
-                platform=NewObject(_name,"Platform",[this,11]);
-                platform.SetPos(_x, _y);
-                platform.SetStartPosition(_x, _y);
+                create_blocks(11,_x, _y);
             break;
             case "plataforma_vertical": 
-                platform=NewObject(_name,"Platform",[this,12]);
-                platform.SetPos(_x, _y);
-                platform.SetStartPosition(_x, _y);
+                create_blocks(12,_x, _y);
             break;  
 		}
 	}
@@ -67,6 +61,7 @@ class Game implements GL_Stage{
 
 
 
+        
 
 
 
@@ -74,62 +69,47 @@ class Game implements GL_Stage{
     function ChangeStage(){
         currentStage++;
         //GetEngine().LogPrint("camniando a la escena "+currentStage);
-        if(currentStage>4)currentStage=1;
+        if(currentStage>2)currentStage=0;
 
         switch (currentStage){
             case 1:
-                tmx.Load(mapper, "tilesmap.tmx", this);
-                //Colocamos el fondo
-                bg=NewObject("bg","gl_sprite");
-                bg.Addframe("images/stage1.png");
-                bg.SetPriority(-1);
-                //Colocamos la meta
-                meta=NewObject("meta","Platform",[this,0]); 
-                meta.SetPos(GetApp().LEVEL_WIDTH-20,GetApp().GetResY()-200);
-                //Vamos creando enemigos cada 2 segundos
-                timer_create_enemies=NewObject("timer", "GL_Timer");
-                timer_create_enemies.SetFrequency(2000);
-                timer_create_enemies.SetUserCallBack(this,"OnTimerCreateEnemiesCallBack");
+                stage=New Stage1(this);
                 break;
             case 2:
-                tmx.Load(mapper, "tilesmap.tmx", this);
-                //Colocamos el fondo
-                bg=NewObject("bg","gl_sprite");
-                bg.Addframe("images/stage2.png");
-                bg.SetPriority(-1);
-                meta=NewObject("house","Platform",[this,0]); 
-                meta.SetPos(GetApp().LEVEL_WIDTH-20,GetApp().GetResY()-200);
-
-                player1.SetPos(20,100);
-                _x_camera=player1.GetX()-GetApp().GetResX()/2;
-                SetCameraX(_x_camera);
+                delete stage;
+                stage=New Stage2(this);
                 break;
-            case 3:
-                bg=NewObject("bg","gl_sprite");
-                bg.Addframe("images/stage2.png");
-                break;
-            case 4:
-                bg=NewObject("bg","gl_sprite");
-                bg.Addframe("images/stage1.png");
-                break; 
+            
         }
 	}
-
+    function create_blocks(_type, _x, _y){
+        //Crea los bloques del escenario
+        block=NewObject(_type,"Block",[this,_type]);
+        block.SetPos(_x, _y);
+        block.SetStartPosition(_x, _y);
+        blocks+=[block];
+    }
+    function delete_blocks(){
+       	for(x=0; x<sizeof(blocks);x++) delete blocks[x];
+        blocks=[];
+    }
 
     function create_enemy(_type){
         //Los parámetros son el game y el tipo de enemigo
         enemy=NewObject("enemy","Enemy",[this,_type]);
-        enemy.SetPos(player1.GetX()+380,rand(300,800));
         enemies+=[enemy];
+        return enemy;
+    }
+    function delete_enemies(){
+       	for(x=0; x<sizeof(enemies);x++) delete enemies[x];
+		enemies=[];
     }
     function delete_enemy(_enemy){
         enemies-=[_enemy];
         //_enemy.Destroy();
     }
 
-    function OnTimerCreateEnemiesCallBack(_timer){
-		create_enemy(rand(1,4));
-	}
+
 }
 
         

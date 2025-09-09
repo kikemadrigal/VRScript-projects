@@ -1,0 +1,36 @@
+class Stage1{
+    properties:
+        game=null;
+        bg=null;
+        meta=null;
+        timer_create_enemies=null;
+        tmx=null;
+
+    function _operator_new(_game){
+        game=_game;
+        _game.player1.SetPos(20,100);
+        _game.tmx.Load(_game.mapper, "tilesmap.tmx", _game);
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        bg.Addframe("images/stage1.png");
+        bg.SetPriority(-1);
+        //Colocamos la meta
+        meta=_game.NewObject("meta","Block",[this,0]); 
+        meta.SetPos(LEVEL_WIDTH-20,_game.GetApp().GetResY()-200);
+        //Vamos creando enemigos cada 2 segundos
+        timer_create_enemies=_game.NewObject("timer", "GL_Timer");
+        timer_create_enemies.SetFrequency(2000);
+        timer_create_enemies.SetUserCallBack(this,"OnTimerCreateEnemiesCallBack");
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        meta.Destroy();
+        timer_create_enemies.Destroy();
+        game.delete_blocks();
+    }
+
+    function OnTimerCreateEnemiesCallBack(_timer){
+		_enemy=game.create_enemy(rand(1,4));
+        _enemy.SetPos(game.player1.GetX()+380,rand(300,800));
+	}
+}

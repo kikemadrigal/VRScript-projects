@@ -1,4 +1,19 @@
-class Platform implements GL_sprite{
+        /**
+         * Los bloques pueden ser:
+         * 0. Meta
+         * 1. Vacío de ambientación
+         * 2. Escalera
+         * 3. Pared  / bloque estático
+         * 4. Agua
+         * 5. Pinchos de muerte
+         * 6 colectionable (moneda, fruta, etc)
+         * 7. Destruible
+         * 10. plataforma estática / suelo
+         * 11. Plataforma horizontal
+         * 12. Plataforma vertical
+         */
+
+class Block implements GL_sprite{
 	properties:
 		game=null;
 		type=0;

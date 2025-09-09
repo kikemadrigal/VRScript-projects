@@ -1,3 +1,17 @@
+        /**
+         * Los enemigos pueden ser:
+         * 0. Estático / vacío
+         * 1. Aguila de izquierda a derecha y desaparece
+         * 2. Cuervo de izquierda a derecha y desaparece
+         * 3. Codorniz izquierda a derecha y desaparece
+         * 4. Halcon izquierda a derecha y desaparece
+         * 5. Murcielago de izquierda a derecha y desaparece
+         * 6. Ardilla de abajo hacia arriba y desaparece
+         * 7. Moviemiento repetitivo arriba - abajo
+         * 8. Moviemiento repetitivo izquierda - derecha
+         * 9. Enemigo que sigue al jugador
+         * 10. Enemigo que dispara al jugador
+         */
 class Enemy implements GL_sprite{
 	properties:
 		game=null;

@@ -26,9 +26,9 @@ class Player implements GL_sprite{
 
 	virtual OnSpriteCollision (_sp1,_sp2)
 	{
-		//Si es una plataforma
-	    if(Class_Id(_sp2)=="Platform" ){
-			//Si la plataforma es la meta
+		//Si es un bloque
+	    if(Class_Id(_sp2)=="Block" ){
+			//Si es la meta
 			if(_sp2.GetItemType()==0){
 				game.ChangeStage();
 			//Si es suelo

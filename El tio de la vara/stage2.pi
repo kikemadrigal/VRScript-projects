@@ -1,0 +1,18 @@
+class Stage2{
+    function _operator_new(_game){
+        _game.player1.SetPos(20,100);
+         _x_camera=_game.player1.GetX()-LEVEL_WIDTH/2;
+        _game.SetCameraX(_x_camera);
+        //tmx.Load(game.mapper, "tilesmap.tmx", game);
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        bg.Addframe("images/stage2.png");
+        bg.SetPriority(-1);
+        //Colocamos la meta
+        meta=_game.NewObject("meta","Block",[this,0]); 
+        meta.SetPos(LEVEL_WIDTH-20,LEVEL_HEIGHT-200);
+        
+     }
+
+
+}

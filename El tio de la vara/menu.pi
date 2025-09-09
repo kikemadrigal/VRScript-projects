@@ -1,5 +1,8 @@
 class menu implements GL_Stage
 {
+	properties:
+		background=null;
+		text=null;
 	virtual _operator_new(_name,_creator)
 	{
 		//El pad está en el main
@@ -7,6 +10,20 @@ class menu implements GL_Stage
 		_background.Addframe("images/menu.png");
 		_bacKground.Setpos(0,0);
 		_background.SetSize(GetApp().GetResX(),GetApp().GetResY());
+		background=_background;
+
+		_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 32);
+		_text.SetPos(300,450);
+		_text.SetColor(RGB(255,255,255));
+		_text.SetText("->Coge 3 llaves para abrir \nlos candados y pasar de nivel<-");
+		text=_text;
+	}
+
+	virtual _operator_delete()
+	{
+		//background.Destroy();
+		//text.Destroy();
 	}
 }
 
