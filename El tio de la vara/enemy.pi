@@ -58,6 +58,22 @@ class Enemy implements GL_sprite{
 				speedX=-20.5;
 				type=4; 
 				break;
+			//Buitre que te persigue
+			case 5:
+       			Addanimationwithsheet("buitre","images/buitre.png",0,2,0,0,32,32,-1,-1,-1,.2);
+				Setanimation("buitre");
+        		SetColor(RGB(0,0,255));
+				speedX=-2;
+				type=5; 
+				break;
+			// Escorpión
+			case 6:
+	   			Addanimationwithsheet("escorpion","images/scorpion.png",0,5,0,0,40,40,-1,-1,-1,.2);
+				Setanimation("escorpion");
+				//SetColor(RGB(255,0,255));
+				speedX=-3;
+				type=6; 
+				break;
 
 
 		}
@@ -69,20 +85,27 @@ class Enemy implements GL_sprite{
 	}
 
 
-	function Move(){     
-		if(type==11){
-			//Plataforma horizontal
-			if(GetX()>=start_position_x+100){
+	function Move(){   
+		//Si es un buitre que te persigue  
+		if(type==5){
+			if(GetX()>=game.player1.GetX()){
 				speedX=-2;
-			}else if(GetX()<=start_position_x){
+			}else{
 				speedX=2;
 			}
-		}else if(type==12){
-			//Plataforma vertical
-			if(GetY()>=start_position_y+100){
+			if(GetY()>=game.player1.GetY()){
 				speedY=-2;
-			}else if(GetY()<=start_position_y){
+			}else{
 				speedY=2;
+			}
+		}else if(type==6){
+			//Si es un escorpión que va de izquierda a derecha
+			if (GetX()<=start_position_x-100){
+				speedX=3;
+				SetHFlip(True);
+			}else if (GetX()>=start_position_x){
+				speedX=-3;
+				SetHFlip(False);
 			}
 		}
 		incpos(speedX,speedY);

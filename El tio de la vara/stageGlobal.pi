@@ -12,13 +12,13 @@ class StageGlobal implements GL_Stage{
 		_pad.SetPreset("Joystick1",1);
 		pad=_pad;
 
-		text_score=DrawText("Stage:  Score: 0 Lives: 3 Caught: 0 Time: 0", 12);
+		text_score=GetNewText("", 12);
 		text_score.SetPos(200,10);
-		fps=DrawText("FPS: "+GETFPS(1), 12);
+		fps=GetNewText("", 12);
 		fps.SetPos(0,10);
 	}	
 
-	function DrawText(text, size){
+	function GetNewText(text, size){
 		_text=NewObject("text","GL_Text");
 		_text.SetFont("fonts/Vintage Black.ttf", size);
 		//_text.SetAlign(DT_CENTER);

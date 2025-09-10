@@ -58,12 +58,12 @@ class Player implements GL_sprite{
 		//Si es un enemigo
 		if(Class_Id(_sp2)=="Enemy" ){
 			//Que sale de izquierda a derecha
-			if (_sp2.GetItemType()==1 || _sp2.GetItemType()==2 || _sp2.GetItemType()==3 || _sp2.GetItemType()==4){
+			//if (_sp2.GetItemType()==1 || _sp2.GetItemType()==2 || _sp2.GetItemType()==3 || _sp2.GetItemType()==4){
 				if(attack){
 					game.delete_enemy(_sp2);
 					//_sp2.Destroy();
 				}else player_die();
-			}
+			//}
 		}
 		/*
 		//Otra forma sería con setype y getType en el main

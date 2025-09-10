@@ -12,7 +12,7 @@ class Game implements GL_Stage{
         stage=null;
 
     virtual _operator_new(_name,_creators){
-        SetDebug(True);
+        //SetDebug(True);
 
         mapper =NewObject("mapper","gl_mapper");
 		tmx = new TMX_Loader();
@@ -32,14 +32,20 @@ class Game implements GL_Stage{
 		switch (_type)
 		{
 			case "suelo": 
-               create_blocks(10,_x, _y);
-            break;
+                create_blocks(10,_x, _y);
+                break;
             case "plataforma_horizontal": 
                 create_blocks(11,_x, _y);
-            break;
+                break;
             case "plataforma_vertical": 
                 create_blocks(12,_x, _y);
-            break;  
+                break;
+            case "escorpion":
+                _enemy=create_enemy(6);
+                _enemy.SetPos(_x, _y);
+                _enemy.SetStartPosition(_x, _y);
+                //GetEngine().LogPrint("Enemigo creado en  "+_x+","+_y);
+                break;  
 		}
 	}
 
@@ -66,6 +72,7 @@ class Game implements GL_Stage{
                 delete stage;
                 stage=New Stage2(this);
                 break;
+            
             
         }
 	}
