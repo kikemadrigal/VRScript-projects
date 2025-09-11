@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="104">
- <tileset firstgid="1" name="objects" tilewidth="32" tileheight="32" tilecount="450" columns="25">
-  <image source="objects.png" width="800" height="600"/>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="165">
+ <tileset firstgid="1" name="objects" tilewidth="32" tileheight="32" tilecount="600" columns="25">
+  <image source="objects.png" width="800" height="768"/>
  </tileset>
  <layer id="1" name="Capa de patrones 1" width="100" height="24">
   <data encoding="base64">
@@ -9,19 +9,6 @@
   </data>
  </layer>
  <objectgroup id="2" name="Capa de Objetos 1">
-  <object id="1" name="suelo" type="suelo" gid="3221225473" x="787.554" y="600" width="31.4979" height="31.4979"/>
-  <object id="3" name="suelo" type="suelo" gid="3221225473" x="760.408" y="600" width="31.4979" height="31.4979"/>
-  <object id="4" name="suelo" type="suelo" gid="3221225473" x="731.951" y="600" width="31.4979" height="31.4979"/>
-  <object id="5" name="suelo" type="suelo" gid="3221225473" x="702.183" y="600" width="31.4979" height="31.4979"/>
-  <object id="6" name="suelo" type="suelo" gid="3221225473" x="675.775" y="600" width="31.4979" height="31.4979"/>
-  <object id="7" name="suelo" type="suelo" gid="3221225473" x="1011.24" y="600" width="31.4979" height="31.4979"/>
-  <object id="8" name="suelo" type="suelo" gid="3221225473" x="951.839" y="600" width="31.4979" height="31.4979"/>
-  <object id="9" name="suelo" type="suelo" gid="3221225473" x="891.564" y="600" width="31.4979" height="31.4979"/>
-  <object id="11" name="suelo" type="suelo" gid="3221225473" x="813.287" y="600" width="31.4979" height="31.4979"/>
-  <object id="12" name="suelo" type="suelo" gid="3221225473" x="838.321" y="600" width="31.4979" height="31.4979"/>
-  <object id="13" name="suelo" type="suelo" gid="3221225473" x="860.409" y="600" width="31.4979" height="31.4979"/>
-  <object id="14" name="suelo" type="suelo" gid="3221225473" x="923.728" y="600" width="31.4979" height="31.4979"/>
-  <object id="15" name="suelo" type="suelo" gid="3221225473" x="979.684" y="600" width="31.4979" height="31.4979"/>
   <object id="16" name="suelo" type="suelo" gid="3221225473" x="1168.16" y="480" width="31.4979" height="31.4979"/>
   <object id="17" name="suelo" type="suelo" gid="3221225473" x="1193.2" y="480" width="31.4979" height="31.4979"/>
   <object id="18" name="suelo" type="suelo" gid="3221225473" x="1215.29" y="480" width="31.4979" height="31.4979"/>
@@ -32,27 +19,21 @@
   <object id="23" name="suelo" type="suelo" gid="3221225473" x="825.068" y="288.582" width="31.4979" height="31.4979"/>
   <object id="24" name="suelo" type="suelo" gid="3221225473" x="805.925" y="288.582" width="31.4979" height="31.4979"/>
   <object id="25" name="suelo" type="suelo" gid="3221225473" x="851.574" y="288.582" width="31.4979" height="31.4979"/>
-  <object id="26" name="suelo" type="suelo" gid="3221225473" x="555.594" y="600" width="31.4979" height="31.4979"/>
-  <object id="27" name="suelo" type="suelo" gid="3221225473" x="586.517" y="600" width="31.4979" height="31.4979"/>
-  <object id="28" name="suelo" type="suelo" gid="3221225473" x="618.914" y="600" width="31.4979" height="31.4979"/>
-  <object id="29" name="suelo" type="suelo" gid="3221225473" x="648.364" y="600" width="31.4979" height="31.4979"/>
   <object id="30" name="plataforma_horizontal" type="plataforma_horizontal" gid="2" x="1313.7" y="543.167" width="32" height="32"/>
   <object id="31" name="plataforma_vertical" type="plataforma_vertical" gid="3" x="1441.81" y="370" width="32" height="32"/>
-  <object id="32" name="suelo" type="suelo" gid="3221225473" x="1087.18" y="546.759" width="31.4979" height="31.4979"/>
-  <object id="33" name="suelo" type="suelo" gid="3221225473" x="1115.16" y="546.759" width="31.4979" height="31.4979"/>
   <object id="38" name="suelo" type="suelo" gid="1" x="1103.12" y="402.033" width="32" height="32"/>
   <object id="39" name="suelo" type="suelo" gid="1" x="1126.68" y="402.033" width="32" height="32"/>
   <object id="40" name="suelo" type="suelo" gid="1" x="1157.6" y="402.033" width="32" height="32"/>
   <object id="42" name="escorpion" type="escorpion" x="1057.28" y="304.814">
    <point/>
   </object>
-  <object id="43" name="escorpion" type="escorpion" x="1183.92" y="369.637">
+  <object id="43" name="escorpion" type="escorpion" x="1186.92" y="361.637">
    <point/>
   </object>
   <object id="44" name="escorpion" type="escorpion" x="714.179" y="558.09">
    <point/>
   </object>
-  <object id="45" name="escorpion" type="escorpion" x="880.575" y="566.926">
+  <object id="45" name="escorpion" type="escorpion" x="866.075" y="558.426">
    <point/>
   </object>
   <object id="46" name="plataforma_vertical" type="plataforma_vertical" gid="3" x="1474.2" y="370" width="32" height="32"/>
@@ -89,5 +70,70 @@
   <object id="100" name="suelo" type="suelo" gid="1" x="1212.09" y="402.033" width="32" height="32"/>
   <object id="102" name="suelo" type="suelo" gid="3221225473" x="938.453" y="345" width="31.4979" height="31.4979"/>
   <object id="103" name="suelo" type="suelo" gid="3221225473" x="917.837" y="345" width="31.4979" height="31.4979"/>
+  <object id="106" name="suelo" type="suelo" gid="1" x="554" y="600" width="32" height="32"/>
+  <object id="107" name="suelo" type="suelo" gid="2" x="584" y="600" width="32" height="32"/>
+  <object id="121" name="suelo" type="suelo" gid="2" x="611.5" y="600" width="32" height="32"/>
+  <object id="122" name="suelo" type="suelo" gid="2" x="640.5" y="600" width="32" height="32"/>
+  <object id="123" name="suelo" type="suelo" gid="2" x="668" y="600" width="32" height="32"/>
+  <object id="124" name="suelo" type="suelo" gid="2" x="695" y="600" width="32" height="32"/>
+  <object id="125" name="suelo" type="suelo" gid="2" x="722" y="600" width="32" height="32"/>
+  <object id="126" name="suelo" type="suelo" gid="2" x="751" y="600" width="32" height="32"/>
+  <object id="127" name="suelo" type="suelo" gid="2" x="780.5" y="600" width="32" height="32"/>
+  <object id="128" name="suelo" type="suelo" gid="2" x="808.5" y="600" width="32" height="32"/>
+  <object id="129" name="suelo" type="suelo" gid="2" x="839" y="600" width="32" height="32"/>
+  <object id="130" name="suelo" type="suelo" gid="2" x="870" y="600" width="32" height="32"/>
+  <object id="131" name="suelo" type="suelo" gid="2" x="898.5" y="600" width="32" height="32"/>
+  <object id="132" name="suelo" type="suelo" gid="2" x="926" y="600" width="32" height="32"/>
+  <object id="133" name="suelo" type="suelo" gid="2" x="956.5" y="600" width="32" height="32"/>
+  <object id="134" name="suelo" type="suelo" gid="2" x="986.5" y="600" width="32" height="32"/>
+  <object id="135" name="suelo" type="suelo" gid="3" x="1016.5" y="600" width="32" height="32"/>
+  <object id="138" name="suelo" type="suelo" gid="9" x="1086" y="547.5" width="32" height="32"/>
+  <object id="139" name="suelo" type="suelo" gid="9" x="1116.5" y="547.5" width="32" height="32"/>
+  <object id="140" name="suelo" type="suelo" gid="9" x="1147" y="548" width="32" height="32"/>
+  <object id="141" name="llaves" type="llaves" x="841" y="238.5">
+   <point/>
+  </object>
+  <object id="142" name="llaves" type="llaves" x="2577.5" y="244">
+   <point/>
+  </object>
+  <object id="143" name="llaves" type="llaves" x="1658" y="271.5">
+   <point/>
+  </object>
+  <object id="149" name="moneda50" type="moneda50" x="806.667" y="506.667">
+   <point/>
+  </object>
+  <object id="150" name="moneda50" type="moneda50" x="985.333" y="510.667">
+   <point/>
+  </object>
+  <object id="155" name="moneda50" type="moneda50" x="968" y="261.333">
+   <point/>
+  </object>
+  <object id="156" name="moneda50" type="moneda50" x="1138.67" y="322.667">
+   <point/>
+  </object>
+  <object id="157" name="moneda50" type="moneda50" x="1468" y="278.667">
+   <point/>
+  </object>
+  <object id="158" name="moneda50" type="moneda50" x="1581.33" y="601.333">
+   <point/>
+  </object>
+  <object id="159" name="moneda50" type="moneda50" x="1757.33" y="598.667">
+   <point/>
+  </object>
+  <object id="160" name="moneda50" type="moneda50" x="1952" y="594.667">
+   <point/>
+  </object>
+  <object id="161" name="moneda50" type="moneda50" x="2116" y="592">
+   <point/>
+  </object>
+  <object id="162" name="moneda50" type="moneda50" x="2440" y="438.667">
+   <point/>
+  </object>
+  <object id="163" name="moneda100" type="moneda100" x="2418.67" y="277.333">
+   <point/>
+  </object>
+  <object id="164" name="moneda100" type="moneda100" x="2008" y="309.333">
+   <point/>
+  </object>
  </objectgroup>
 </map>

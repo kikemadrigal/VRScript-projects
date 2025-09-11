@@ -42,11 +42,9 @@ class Enemy implements GL_sprite{
 				break;
 			//Enemigo 3
 			case 3:
-       			//AddEmptyFrame (50,10);
-        		//SetColor(RGB(0,255,0));
 				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
 				Setanimation("eagle");
-				SetColor(RGB(0,255,0));
+				SetColor(RGB(255,255,255));
 				speedX=-7.5;
 				type=3; 
 				break;
@@ -54,7 +52,7 @@ class Enemy implements GL_sprite{
 			case 4:
        			Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
 				Setanimation("raven");
-        		SetColor(RGB(0,0,255));
+        		SetColor(RGB(0,0,0));
 				speedX=-20.5;
 				type=4; 
 				break;
@@ -62,7 +60,7 @@ class Enemy implements GL_sprite{
 			case 5:
        			Addanimationwithsheet("buitre","images/buitre.png",0,2,0,0,32,32,-1,-1,-1,.2);
 				Setanimation("buitre");
-        		SetColor(RGB(0,0,255));
+        		SetColor(RGB(255,0,255));
 				speedX=-2;
 				type=5; 
 				break;
@@ -74,7 +72,19 @@ class Enemy implements GL_sprite{
 				speedX=-3;
 				type=6; 
 				break;
-
+			// cuevo que va de de izquierda a derecha
+			case 7:
+       			Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
+				Setanimation("raven");
+        		SetColor(RGB(0,0,0));
+				speedX=-20.5;
+				type=4; 
+				break;
+			/**
+			 * Otra forma de agregar sprites es
+			 *  AddEmptyFrame (50,10);
+        	 *  SetColor(RGB(0,255,0));
+			 */
 
 		}
 		//Setcollisionrect(0,0,32,32);
@@ -98,8 +108,8 @@ class Enemy implements GL_sprite{
 			}else{
 				speedY=2;
 			}
-		}else if(type==6){
-			//Si es un escorpión que va de izquierda a derecha
+		}else if(type==6 || type==7){
+			//Si es un escorpión o un cuervo que va de izquierda a derecha
 			if (GetX()<=start_position_x-100){
 				speedX=3;
 				SetHFlip(True);

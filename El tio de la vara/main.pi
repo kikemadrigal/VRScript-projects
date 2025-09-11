@@ -20,11 +20,16 @@ class main implements GL_Program {
         BLOCK_TYPE_WALL=3; //muro
         BLOCK_TYPE_WATER=4; //agua
         BLOCK_TYPE_DIED=5; // muerte
-        BLOCK_TYPE_COLLECTIBLE=6; //recogible
-        BLOCK_TYPE_DESTRUCTIBLE=7; // destructible
+        BLOCK_TYPE_COLLECTIBLE_COIN50=6.50; //recogibles
+        BLOCK_TYPE_COLLECTIBLE_COIN100=6.100;
+        BLOCK_TYPE_COLLECTIBLE_KEY=7; //recogibles
+        BLOCK_TYPE_COLLECTIBLE_HEALTH=8; //recogibles
+        BLOCK_TYPE_DESTRUCTIBLE=9; // destructible
         BLOCK_TYPE_GROUND=10; // plataorma
+        BLOCK_TYPE_GROUND2=10.2; // plataorma 2
         BLOCK_TYPE_PLATFORM_HORIZONTAL=11; //movible horizontal
         BLOCK_TYPE_PLATFORM_VERTICAL=12; // movible vertical
+
         // Enemigos
         ENEMY_TYPE_NONE=0;
         ENEMY_TYPE_EAGLE=1;
@@ -37,11 +42,8 @@ class main implements GL_Program {
         ENEMY_TYPE_LEFT_RIGHT=8;
         ENEMY_TYPE_FOLLOW_PLAYER=9;
         ENEMY_TYPE_SHOOT_PLAYER=10;
-        // Objetos
-        OBJECT_TYPE_NONE=0;
-        OBJECT_TYPE_COIN=1;
-        OBJECT_TYPE_HEALTH=2;
-        OBJECT_TYPE_KEY=3;
+
+
     properties:
         stageGlobal=null;
 
@@ -52,7 +54,7 @@ class main implements GL_Program {
         game_over=True;
         
     virtual start(){
-        //AddScriptPackage("scripts");
+        AddScriptPackage("scripts");
         Setbackcolor(RGB(0,0,0));
         Setresolution(VIEWPORT_WIDTH,VIEWPORT_HEIGHT);
         Setviewscale(-3);
@@ -105,7 +107,7 @@ class main implements GL_Program {
             _player1.SetAnimation("attack");
         }
             
-        _x=clamp(_player1.GetX(),0, LEVEL_WIDTH);
+        _x=clamp(_player1.GetX(),0, LEVEL_WIDTH-_player1.GetWF());
         _player1.setX(_x);
         _player1.incpos(_player1.incrementoX,_player1.incrementoY);
 
@@ -143,3 +145,4 @@ class main implements GL_Program {
 
     
 }
+ 

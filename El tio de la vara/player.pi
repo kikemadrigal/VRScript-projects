@@ -8,18 +8,20 @@ class Player implements GL_sprite{
 		aceleracion=0;
 		attack=false;
 		game=null;
+		//Llaves a recoger (puede variar según pantalla
+		keys_to_collect=3;
 
 	virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
-		Addanimationwithsheet("walk","images/player-walk.png",0,6,0,0,50,40,-1,-1,-1,0.1);
-		Addanimationwithsheet("idle","images/player-idle.png",0,0,0,0,50,40);
-		Addanimationwithsheet("jump","images/player-idle.png",0,0,0,0,50,40);
-		Addanimationwithsheet("fall","images/player-idle.png",0,0,0,0,50,40);
-		Addanimationwithsheet("attack","images/player-attack.png",0,4,0,0,50,40,-1,-1,-1,0.3);
+		Addanimationwithsheet("walk","images/player-walk-70x57.png",0,6,0,0,70,57,-1,-1,-1,0.1);
+		Addanimationwithsheet("idle","images/player-idle-70x57.png",0,0,0,0,70,57);
+		Addanimationwithsheet("jump","images/player-idle-70x57.png",0,0,0,0,70,57);
+		Addanimationwithsheet("fall","images/player-idle-70x57.png",0,0,0,0,70,57);
+		Addanimationwithsheet("attack","images/player-attack-70x57.png",0,4,0,0,70,57,-1,-1,-1,0.3);
 		SetAnimation("idle");	
 		SetPriority(1);
 		SetColliderMode(True);
-		Setcollisionrect(10,0,20,40);
+		Setcollisionrect(10,0,35,57);
 	}
 
 
@@ -28,11 +30,34 @@ class Player implements GL_sprite{
 	{
 		//Si es un bloque
 	    if(Class_Id(_sp2)=="Block" ){
+			//GetApp().GetEngine().LogPrint("colsionn con: "+_sp2.GetItemType());
 			//Si es la meta
-			if(_sp2.GetItemType()==0){
+			if(_sp2.GetItemType()==BLOCK_TYPE_META){
 				game.ChangeStage();
+			//Si es una llave
+			}else if(_sp2.GetItemType()==BLOCK_TYPE_COLLECTIBLE_KEY){
+				score+=100;
+				game.delete_block(_sp2);
+				//_sp2.SetVisible(False);
+				//_sp2.setPos(-100,-100);
+				keys_to_collect--;
+				game.print_score();
+				//Si ya no quedan llaves por recoger
+				if(keys_to_collect<=0){
+					//creamos el bloque meta
+					game.create_block(0,LEVEL_WIDTH-60,GetApp().GetResY()-300);
+				}
+			//Si es unamoeda de 50 puntos
+			}else if(_sp2.GetItemType()==BLOCK_TYPE_COLLECTIBLE_COIN50){
+				score+=50;
+				game.delete_block(_sp2);
+				game.print_score();
+			}else if(_sp2.GetItemType()==BLOCK_TYPE_COLLECTIBLE_COIN100){
+				score+=100;
+				game.delete_block(_sp2);
+				game.print_score();
 			//Si es suelo
-			}else if(_sp2.GetItemType()==10){
+			}else if(_sp2.GetItemType()==BLOCK_TYPE_GROUND || _sp2.GetItemType()==BLOCK_TYPE_GROUND2){
 				if(GetY()<_sp2.GetY() && incrementoY>=0){	
 					//lo situamos encima de la plataforma
 					SetY(_sp2.GetY()-GetHF()+1);
@@ -40,7 +65,7 @@ class Player implements GL_sprite{
 					aceleracion=0;
 				}
 			//Si es una plataforma horizontal
-			}else if(_sp2.GetItemType()==11){
+			}else if(_sp2.GetItemType()==BLOCK_TYPE_PLATFORM_HORIZONTAL){
 				if(GetY()<_sp2.GetY() && incrementoY>=0){	
 					SetY(_sp2.GetY()-GetHF()+1);
 					incrementoY=0;
@@ -48,7 +73,7 @@ class Player implements GL_sprite{
 					incpos(_sp2.speedX,0);
 				}
 			//Si es una plataforma vertical
-			}else if(_sp2.GetItemType()==12){
+			}else if(_sp2.GetItemType()==BLOCK_TYPE_PLATFORM_VERTICAL){
 				SetY(_sp2.GetY()-GetHF()+1);
 				incrementoY=0;
 				aceleracion=0;
@@ -91,7 +116,8 @@ class Player implements GL_sprite{
 			//Efecto de parpadeo
 			_fx=CreateFX("BLINK");
 			_fx.Start(100,15);
-			GetApp().stageGlobal.DrawScore();
+			//GetApp().stageGlobal.drawScore();
+			game.print_score();
 		}
 	}
 

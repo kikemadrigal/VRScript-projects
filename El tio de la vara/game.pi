@@ -4,27 +4,27 @@ class Game implements GL_Stage{
         player1=null;
         blocks=[]; 
         enemies=[];
-        objects=[];
+        //Si ponemos otra escena escribiendo otro número borra el delete stage de la línea 91
         currentStage=0;
-
+        
         mapper=null;
-        tmx=null;
+     
         stage=null;
 
     virtual _operator_new(_name,_creators){
-        //SetDebug(True);
-
         mapper =NewObject("mapper","gl_mapper");
-		tmx = new TMX_Loader();
 		
         player1=NewObject("player","Player",[this]);
         player1.SetVisible(True);
-
+        
         ChangeStage();
     }
     function _operator_delete(){
         bg.Destroy();
         player1.Destroy();
+    }
+    function print_score(){
+         GetApp().stageGlobal.text_score.SetText("Stage: "+currentStage+"  Score: "+player1.score+" Lives: "+player1.lives+" Keys: "+player1.keys_to_collect);
     }
 
     function AddActor(_name, _type, _x, _y, _params)
@@ -32,20 +32,35 @@ class Game implements GL_Stage{
 		switch (_type)
 		{
 			case "suelo": 
-                create_blocks(10,_x, _y);
+                create_block(10,_x, _y);
+                break;
+			case "suelo2": 
+                create_block(10.2,_x, _y);
                 break;
             case "plataforma_horizontal": 
-                create_blocks(11,_x, _y);
+                create_block(11,_x, _y);
                 break;
             case "plataforma_vertical": 
-                create_blocks(12,_x, _y);
+                create_block(12,_x, _y);
                 break;
+            case "llaves":
+                create_block(7,_x, _y);
+                break;  
+            case "moneda50":
+                create_block(6.50,_x, _y);
+                break;  
+            case "moneda100":
+                create_block(6.100,_x, _y);
+                break;  
             case "escorpion":
                 _enemy=create_enemy(6);
                 _enemy.SetPos(_x, _y);
                 _enemy.SetStartPosition(_x, _y);
                 //GetEngine().LogPrint("Enemigo creado en  "+_x+","+_y);
                 break;  
+            default:
+                GetEngine().LogPrint("Tipo de actor no definido: "+_type);
+                break;
 		}
 	}
 
@@ -61,8 +76,8 @@ class Game implements GL_Stage{
 
     function ChangeStage(){
         currentStage++;
-        //GetEngine().LogPrint("camniando a la escena "+currentStage);
-        if(currentStage>2)currentStage=0;
+        GetEngine().LogPrint("camniando a la escena "+currentStage);
+        if(currentStage>4)currentStage=0;
 
         switch (currentStage){
             case 1:
@@ -71,6 +86,14 @@ class Game implements GL_Stage{
             case 2:
                 delete stage;
                 stage=New Stage2(this);
+                break;
+            case 3:
+                delete stage;
+                stage=New Stage3(this);
+                break;
+            case 4:
+                delete stage;
+                stage=New Stage4(this);
                 break;
             
             
@@ -82,7 +105,7 @@ class Game implements GL_Stage{
 
 
 
-    function create_blocks(_type, _x, _y){
+    function create_block(_type, _x, _y){
         //Crea los bloques del escenario
         block=NewObject(_type,"Block",[this,_type]);
         block.SetPos(_x, _y);
@@ -92,6 +115,10 @@ class Game implements GL_Stage{
     function delete_blocks(){
        	for(x=0; x<sizeof(blocks);x++) delete blocks[x];
         blocks=[];
+    }
+    function delete_block(_block){
+        blocks-=[_block];
+        delete _block;
     }
     function create_enemy(_type){
         //Los parámetros son el game y el tipo de enemigo
@@ -107,16 +134,7 @@ class Game implements GL_Stage{
         enemies-=[_enemy];
         delete _enemy;
     }
-    function create_object(_type){
-        //Los parámetros son el game y el tipo de objeto
-        object=NewObject("object","Objects",[this,_type]);
-        objects+=[object];
-        return object;
-    }
-    function delete_objects(){
-       	for(x=0; x<sizeof(objects);x++) delete objects[x];
-        objects=[];
-    }
+
 }
 
         

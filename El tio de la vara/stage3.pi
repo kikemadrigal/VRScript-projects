@@ -1,0 +1,15 @@
+class Stage3{
+    function _operator_new(_game){
+        _game.player1.SetPos(20,100);
+        _game.tmx.Load(_game.mapper, "tilesmap.tmx", _game);
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        bg.Addframe("images/stage3.png");
+        bg.SetPriority(-1);
+     
+        
+        
+     }
+
+
+}

@@ -6,19 +6,21 @@ class Stage1{
         timer_create_enemies=null;
         time=0;
         tmx=null;
+        //frecuencia en la que salen los pájaros
         frecuency=2000;
 
     function _operator_new(_game){
         game=_game;
+        //game.SetDebug(true);
         _game.player1.SetPos(20,GROUND_Y-50);
-        _game.tmx.Load(_game.mapper, "tilesmap.tmx", _game);
+        _tmx = new TMX_Loader();
+        _tmx.Load(_game.mapper, "tilesmap.tmx", _game);
+        delete _tmx;
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage1.png");
         bg.SetPriority(-1);
-        //Colocamos la meta
-        meta=_game.NewObject("meta","Block",[this,0]); 
-        meta.SetPos(LEVEL_WIDTH-20,_game.GetApp().GetResY()-200);
+  
         //Vamos creando enemigos cada 2 segundos
         timer_create_enemies=_game.NewObject("timer", "GL_Timer");
         timer_create_enemies.SetFrequency(frecuency);
@@ -28,12 +30,17 @@ class Stage1{
             _enemy=game.create_enemy(5);
             _enemy.SetPos(rand(1000,LEVEL_WIDTH),10);
         }
+       //Pintamos el marcador
+        game.print_score();
+        //game.create_block(0,200,game.GetApp().GetResY()-300);
     }
     function _operator_delete(){
         bg.Destroy();
-        meta.Destroy();
         timer_create_enemies.Destroy();
         game.delete_blocks();
+        game.delete_enemies();
+        game.mapper.ClearTilesets();
+        //delete tmx;
     }
 
     function OnTimerCreateEnemiesCallBack(_timer){
@@ -43,9 +50,8 @@ class Stage1{
             if(frecuency>600)frecuency-=500;
             timer_create_enemies.SetFrequency(frecuency);
         }
-        
         //Creamos un enemigo aleatorio
 		_enemy=game.create_enemy(rand(1,4));
-        _enemy.SetPos(game.player1.GetX()+380,rand(300,700));
+        _enemy.SetPos(game.player1.GetX()+VIEWPORT_WIDTH,rand(300,700));
 	}
 }

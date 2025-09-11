@@ -6,8 +6,9 @@
          * 3. Pared  / bloque estático
          * 4. Agua
          * 5. Pinchos de muerte
-         * 6 colectionable (moneda, fruta, etc)
-         * 7. Destruible
+         * 6. Destruible
+		 * 7 colectionable (llave)
+		 * 8 colectionable (moneda)
          * 10. plataforma estática / suelo
          * 11. Plataforma horizontal
          * 12. Plataforma vertical
@@ -21,40 +22,49 @@ class Block implements GL_sprite{
 		speedY=0;
 		start_position_x=0;
 		start_position_y=0;
-		text=null;
+	
 
     virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
 		_type=_params[1];
-		text=NewObject("text","GL_Text");
-		text.SetFont("fonts/Vintage Black.ttf", 18);
-        text.SetPos(10,50);
-		
-		//GetApp().GetEngine().LogPrint("Creating item of type "+_params);
 		switch(_type){
 			//Meta le decimos que ha llegado al final de la fase
-			case 0:
-       			AddEmptyFrame (50,100);
-        		SetColor(RGB(255,0,0));
-				type=0;
-				/*
-				//Otra forma de aplicar los dibujos es:
-				AddFrame("images/house.png");
-				Addanimationwithsheet("cherries","textures/fruits/cherries.png",0,16,0,0,32,32,-1,-1,-1,.5);
-				Setanimation("cherries");
-				 */
+			case BLOCK_TYPE_META:
+       			Addanimationwithsheet("tile","./objects.png",0,0,19*32,0,3*32,8*32);
+				Setcollisionrect(0,0,3*32,8*32);
+				type=BLOCK_TYPE_META;
+				break;
+			//LLaves recogibles
+			case BLOCK_TYPE_COLLECTIBLE_KEY:
+       			Addanimationwithsheet("tile","./objects.png",0,0,0,8*32,20,45);
+				Setcollisionrect(0,0,20,45);
+				type=BLOCK_TYPE_COLLECTIBLE_KEY;
+				break;
+			case BLOCK_TYPE_COLLECTIBLE_COIN50:
+       			Addanimationwithsheet("tile","./objects.png",0,0,5*32,8*32,32,32);
+				Setcollisionrect(0,0,32,32);
+				type=BLOCK_TYPE_COLLECTIBLE_COIN50;
+				break;
+			case BLOCK_TYPE_COLLECTIBLE_COIN100:
+       			Addanimationwithsheet("tile","./objects.png",0,0,6*32,8*32,32,32);
+				Setcollisionrect(0,0,32,32);
+				type=BLOCK_TYPE_COLLECTIBLE_COIN100;
 				break;
 			//Suelo
 			case 10:
-       			AddEmptyFrame (32,32);
-        		SetColor(RGB(0,255,0));
-				//speedX=0;
+				Addanimationwithsheet("tile","./objects.png",0,0,1*32,0,32,32);
+				Setcollisionrect(0,0,32,10);
 				type=10; 
+				break;
+			case BLOCK_TYPE_GROUND2:
+				Addanimationwithsheet("tile","./objects.png",0,0,0,3*32,32,32);
+				Setcollisionrect(0,0,32,32);
+				type=BLOCK_TYPE_GROUND2; 
 				break;
 			//platafporma horizontal
 			case 11:
-	   			AddEmptyFrame (32,32);
-				SetColor(RGB(0,0,255));
+				Addanimationwithsheet("tile","./objects.png",0,0,10*32,0,32,32);
+				Setcollisionrect(0,0,32,10);
 				speedX=2;
 				//start_position_y=GetY();
 				start_position_x=GetX();
@@ -62,12 +72,16 @@ class Block implements GL_sprite{
 				break;
 			//plataforma vertical
 			case 12:
-	   			AddEmptyFrame (32,32);
-				SetColor(RGB(255,0,255));
+	   			//AddEmptyFrame (32,32);
+				Addanimationwithsheet("tile","./objects.png",0,0,10*32,0,32,32);
+				Setcollisionrect(0,0,32,10);
 				speedY=2;
 				start_position_y=GetY();
 				//start_position_x=GetX();
 				type=12; 
+				break;
+			default:
+				GetEngine().LogPrint("Tipo de bloque no definido: "+_type);
 				break;
 		}
 		SetCollision(True);
