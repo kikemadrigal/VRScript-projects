@@ -80,6 +80,17 @@ class Enemy implements GL_sprite{
 				speedX=-20.5;
 				type=4; 
 				break;
+			//monstruo que dispara derecha o izquierda
+			case ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL:
+       			Addanimationwithsheet("monstruo1","images/monstruo1-64x54x4.png",0,3,0,0,64,54,-1,-1,-1,.2);
+				Setanimation("monstruo1");
+				type=ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL; 
+				break;
+			case ENEMY_TYPE_SHOOT_PLAYER_VERTICAL:
+       			Addanimationwithsheet("monstruo1","images/monstruo2-64x64x4.png",0,3,0,0,64,54,-1,-1,-1,.2);
+				Setanimation("monstruo1");
+				type=ENEMY_TYPE_SHOOT_PLAYER_VERTICAL; 
+				break;
 			/**
 			 * Otra forma de agregar sprites es
 			 *  AddEmptyFrame (50,10);
@@ -116,6 +127,18 @@ class Enemy implements GL_sprite{
 			}else if (GetX()>=start_position_x){
 				speedX=-3;
 				SetHFlip(False);
+			}
+		}else if(type==ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL){
+			if(GetAnimationLoops()>5){
+				//GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
+				ResetAnimation ();
+				if(GetX()>=game.player1.GetX()){
+					SetHFlip(True);
+				}else{
+					SetHFlip(False);
+				}
+				//parametros game y enemy
+				game.create_fire(game, this); 
 			}
 		}
 		incpos(speedX,speedY);

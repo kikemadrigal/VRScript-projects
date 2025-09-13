@@ -41,7 +41,14 @@ class main implements GL_Program {
         ENEMY_TYPE_UP_DOWN=7;
         ENEMY_TYPE_LEFT_RIGHT=8;
         ENEMY_TYPE_FOLLOW_PLAYER=9;
-        ENEMY_TYPE_SHOOT_PLAYER=10;
+        ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL=10;
+        ENEMY_TYPE_SHOOT_PLAYER_VERTICAL=10;
+
+
+        //Fire
+        FIRE_TYPE_SMALL=1;
+        FIRE_TYPE_MOVING=2;
+
 
 
     properties:
@@ -101,10 +108,12 @@ class main implements GL_Program {
             _player1.incrementoY=-5;
             _player1.aceleracion=0;
         }	
-
-        if(stageGlobal.pad.IsButton(PAD_BUTTON_1)){
+        //Fíjate que el isButtonDown solo devuelve verdadero una vez
+        if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
             _player1.attack=true;  
             _player1.SetAnimation("attack");
+            //Fijate que el newObject del GL_Program es distinto al del GL_Stage
+            vara=NewObject("vara","Vara",null,[_player1, game]);
         }
             
         _x=clamp(_player1.GetX(),0, LEVEL_WIDTH-_player1.GetWF());

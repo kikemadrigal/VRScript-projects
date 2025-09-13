@@ -3,12 +3,11 @@ class Game implements GL_Stage{
         bg=null;
         player1=null;
         blocks=[]; 
+        fires=[];
         enemies=[];
         //Si ponemos otra escena escribiendo otro número borra el delete stage de la línea 91
         currentStage=0;
-        
         mapper=null;
-     
         stage=null;
 
     virtual _operator_new(_name,_creators){
@@ -78,21 +77,18 @@ class Game implements GL_Stage{
         currentStage++;
         GetEngine().LogPrint("camniando a la escena "+currentStage);
         if(currentStage>4)currentStage=0;
-
+        if(stage!=null) delete stage;
         switch (currentStage){
             case 1:
                 stage=New Stage1(this);
                 break;
             case 2:
-                delete stage;
                 stage=New Stage2(this);
                 break;
             case 3:
-                delete stage;
                 stage=New Stage3(this);
                 break;
             case 4:
-                delete stage;
                 stage=New Stage4(this);
                 break;
             
@@ -133,6 +129,21 @@ class Game implements GL_Stage{
     function delete_enemy(_enemy){
         enemies-=[_enemy];
         delete _enemy;
+    }
+    function create_fire(_type,_enemy){
+        //GetEngine().LogPrint("Creando el fuego");
+        //Crea los bloques del escenario
+        //parámetros game y tipo de fuego
+        _fire=NewObject("fire","Fire",[this,_enemy]);
+        fires+=[_fire];
+    }
+    function delete_fires(_fire){
+        for(x=0; x<sizeof(fires);x++) delete fires[x];
+		fires=[];
+    }
+    function delete_fire(_fire){
+        fires-=[_fire];
+        delete _fire;
     }
 
 }

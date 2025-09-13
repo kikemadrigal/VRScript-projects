@@ -7,28 +7,41 @@ class Stage2{
         game=_game;
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
+        _game.player1.SetPos(20,GROUND_Y-50);
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage2.png");
         bg.SetPriority(-1);
 
-        _game.player1.SetPos(20,GROUND_Y-50);
+        
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "tilesmap2.tmx", _game);
         delete _tmx;
      
-        for (i=0; i <10; i++){ 
-            _enemy=_game.create_enemy(6);
-            _x=500;
-            _y=rand(100,400);
-            _enemy.SetPos(_x,_y);
-            _enemy.SetStartPosition(_x,_y);
-        }
         
-        _game.create_block(0,300,_game.GetApp().GetResY()-300);
+        //_game.create_block(0,300,_game.GetApp().GetResY()-300);
         //pintamos el marcador
         _game.print_score();
-     }
+        create_enemies_stage2();
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        game.delete_blocks();
+        game.delete_enemies();
+        game.mapper.ClearTilesets();
+    }
+
+    function create_enemies_stage2(){
+        //creamos 5 escorpiones
+        _enemy=game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL);
+        _enemy.SetPos(11*32,10*32);
+        _enemy=game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL);
+
+        _enemy.SetPos(30*32,10*32);
+        _enemy=game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL);
+        _enemy.SetPos(28*32,17*32);
+    }
+
 
 
 }

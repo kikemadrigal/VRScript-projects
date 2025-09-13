@@ -1,0 +1,30 @@
+class Fire implements GL_sprite{
+	properties:
+		incrementoX=0;
+		incrementoY=0;
+		game=null;
+		type=0;
+
+	virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+		_enemy=_params[1];
+		Addanimationwithsheet("fire","images/fire-32x64x6.png",0,5,0,0,64,64,-1,-1,-1,.2);
+		Setanimation("fire");
+		if(game.player1.GetX()<_enemy.GetX()){
+			incrementoX=-2;
+			SetHFlip(True);
+		}else{
+			incrementoX=2;
+			SetHFlip(false);
+		}
+		SetPos(_enemy.GetX(), _enemy.GetY());
+    }
+
+	virtual Move(){     
+		incPos(incrementoX, incrementoY);
+		//Eliminar si sale de la pantalla
+		if(GetX()<game.player1.GetX()-500 || GetX()>game.player1.GetX()+500){
+			delete this;
+		}
+	}
+}
