@@ -20,11 +20,20 @@ class Enemy implements GL_sprite{
 		speedY=0;
 		start_position_x=0;
 		start_position_y=0;
-
+	/**
+	 * Ene el copnstructor le pasamos:
+	 * game: la clase principal del juego
+	 * _type: tipo de enemigo
+	 * _x: posición x inicial
+	 * _y: posición y inicial
+	 */
     virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
 		_type=_params[1];
-
+		_x=_params[2];
+		_y=_params[3];
+		SetPos(_x,_y);
+		SetStartPosition(_x, _y);
 		switch(_type){
 			//Enemigo Aguila de izquierda a derecha
 			case 1:
@@ -101,11 +110,6 @@ class Enemy implements GL_sprite{
 		//Setcollisionrect(0,0,32,32);
 		SetCollision(True);
 	}	
-	virtual _operator_delete(){
-		game=null;
-	}
-
-
 	function Move(){   
 		//Si es un buitre que te persigue  
 		if(type==5){

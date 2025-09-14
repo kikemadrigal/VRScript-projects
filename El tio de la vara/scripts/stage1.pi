@@ -12,23 +12,24 @@ class Stage1{
     function _operator_new(_game){
         game=_game;
         //game.SetDebug(true);
-        _game.player1.SetPos(20,GROUND_Y-50);
+        _game.player1.SetPosition(20,GROUND_Y-50);
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "tilesmap.tmx", _game);
+        _tmx.Load(_game.mapper, "resources/tilesmap.tmx", _game);
         delete _tmx;
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage1.png");
         bg.SetPriority(-1);
   
-        //Vamos creando enemigos cada 2 segundos
+        //Vamos creando enemigos cada 2 segundos con ayuda del timer
         timer_create_enemies=_game.NewObject("timer", "GL_Timer");
         timer_create_enemies.SetFrequency(frecuency);
         timer_create_enemies.SetUserCallBack(this,"OnTimerCreateEnemiesCallBack");
         //creamos 10 buitres
         for (i=0; i < 10; i++){ 
-            _enemy=game.create_enemy(5);
-            _enemy.SetPos(rand(1000,LEVEL_WIDTH),10);
+            _x_random=rand(1000,LEVEL_WIDTH);
+            _y=10;
+            _enemy=game.create_enemy(5,_x_random,_y);
         }
        //Pintamos el marcador
         game.print_score();
@@ -47,11 +48,17 @@ class Stage1{
         time++;
         if (time>20) {
             time=0;
+            //Vamos aumentando la velocidad en la que se crean los enemigos
             if(frecuency>600)frecuency-=500;
             timer_create_enemies.SetFrequency(frecuency);
         }
         //Creamos un enemigo aleatorio
-		_enemy=game.create_enemy(rand(1,4));
-        _enemy.SetPos(game.player1.GetX()+VIEWPORT_WIDTH,rand(300,700));
+        _type_random=rand(1,4);
+        //Lo ponemos en la derecha de la pantalla
+        _x=game.player1.GetX()+VIEWPORT_WIDTH;
+        _y_random=rand(300,700);
+		_enemy=game.create_enemy(_type_random,_x,_y_random);
 	}
+
+    
 }

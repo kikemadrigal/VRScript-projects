@@ -52,10 +52,7 @@ class Game implements GL_Stage{
                 create_block(6.100,_x, _y);
                 break;  
             case "escorpion":
-                _enemy=create_enemy(6);
-                _enemy.SetPos(_x, _y);
-                _enemy.SetStartPosition(_x, _y);
-                //GetEngine().LogPrint("Enemigo creado en  "+_x+","+_y);
+                _enemy=create_enemy(6,_x, _y);
                 break;  
             default:
                 GetEngine().LogPrint("Tipo de actor no definido: "+_type);
@@ -64,13 +61,17 @@ class Game implements GL_Stage{
 	}
 
     virtual Move(){     
+       
         for (i=0; i< sizeof(enemies); i++){
             enemy=enemies[i];
-            if(enemy.GetX()<player1.GetX()-380){
-                enemies-=[enemy];
-                enemy.Destroy();
-            }
+            if(enemy.type==1|| enemy.type==2 || enemy.type==3 || enemy.type==4){
+                if(enemy.GetX()<player1.GetX()-380){
+                    enemies-=[enemy];
+                    enemy.Destroy();
+                }
+            }  
         } 
+        
     }
 
     function ChangeStage(){
@@ -103,9 +104,7 @@ class Game implements GL_Stage{
 
     function create_block(_type, _x, _y){
         //Crea los bloques del escenario
-        block=NewObject(_type,"Block",[this,_type]);
-        block.SetPos(_x, _y);
-        block.SetStartPosition(_x, _y);
+        block=NewObject(_type,"Block",[this,_type,_x, _y]);
         blocks+=[block];
     }
     function delete_blocks(){
@@ -116,9 +115,9 @@ class Game implements GL_Stage{
         blocks-=[_block];
         delete _block;
     }
-    function create_enemy(_type){
+    function create_enemy(_type,_x,_y){
         //Los parámetros son el game y el tipo de enemigo
-        enemy=NewObject("enemy","Enemy",[this,_type]);
+        enemy=NewObject("enemy","Enemy",[this,_type,_x,_y]);
         enemies+=[enemy];
         return enemy;
     }
@@ -131,8 +130,6 @@ class Game implements GL_Stage{
         delete _enemy;
     }
     function create_fire(_type,_enemy){
-        //GetEngine().LogPrint("Creando el fuego");
-        //Crea los bloques del escenario
         //parámetros game y tipo de fuego
         _fire=NewObject("fire","Fire",[this,_enemy]);
         fires+=[_fire];

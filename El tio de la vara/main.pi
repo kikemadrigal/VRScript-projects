@@ -73,7 +73,7 @@ class main implements GL_Program {
         menu.Setmain();
         menu.Setactive();   
         */   
-        RunStage("menu","menu");               
+        RunStage("menu","Menu");               
         _change ("menu");
     }
 
@@ -146,7 +146,7 @@ class main implements GL_Program {
     state "winner":
     {
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
-            game=RunStage("menu","menu");
+            game=RunStage("menu","Menu");
             _change ("menu");
         }
     }

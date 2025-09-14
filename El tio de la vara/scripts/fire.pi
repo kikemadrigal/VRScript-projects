@@ -8,6 +8,7 @@ class Fire implements GL_sprite{
 	virtual _operator_new(_name,_creator, _params){
         game=_params[0];
 		_enemy=_params[1];
+		SetPos(_enemy.GetX(), _enemy.GetY());
 		Addanimationwithsheet("fire","images/fire-32x64x6.png",0,5,0,0,64,64,-1,-1,-1,.2);
 		Setanimation("fire");
 		if(game.player1.GetX()<_enemy.GetX()){
@@ -17,7 +18,7 @@ class Fire implements GL_sprite{
 			incrementoX=2;
 			SetHFlip(false);
 		}
-		SetPos(_enemy.GetX(), _enemy.GetY());
+
     }
 
 	virtual Move(){     
