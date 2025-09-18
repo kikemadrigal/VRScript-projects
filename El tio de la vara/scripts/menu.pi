@@ -9,7 +9,7 @@ class menu implements GL_Stage
 		_background=newobject("titulo","gl_sprite");
 		_background.Addframe("images/menu.png");
 		_bacKground.Setpos(0,0);
-		_background.SetSize(GetApp().GetResX(),GetApp().GetResY());
+		_background.SetSize(GetApp().GetResX(),450);
 		background=_background;
 
 		_text=NewObject("text","GL_Text");

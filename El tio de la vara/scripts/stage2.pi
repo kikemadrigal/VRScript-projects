@@ -5,38 +5,29 @@ class Stage2{
 
     function _operator_new(_game){
         game=_game;
+       game.SetDebug(true);
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
-        _game.player1.SetPosition(20,GROUND_Y-50);
+        _game.player1.SetPosition(20,GROUND_Y);
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage2.png");
         bg.SetPriority(-1);
-
         
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap2.tmx", _game);
         delete _tmx;
-     
         
-        //_game.create_block(0,300,_game.GetApp().GetResY()-300);
         //pintamos el marcador
         _game.print_score();
-        create_enemies_stage2();
+
+        game.create_object(OBJECT_TYPE_META,200,game.GetApp().GetResY()-100);
     }
     function _operator_delete(){
         bg.Destroy();
-        game.delete_blocks();
+        game.delete_objects();
         game.delete_enemies();
-        game.mapper.ClearTilesets();
+        //game.delete_fires();
+        delete game.layer;
     }
-
-    function create_enemies_stage2(){
-        _enemy=game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,11*32,10*32);
-        _enemy=game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,30*32,10*32);
-        _enemy=game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,28*32,17*32);
-    }
-
-
-
 }

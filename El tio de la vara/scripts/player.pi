@@ -13,59 +13,67 @@ class Player implements GL_sprite{
 
 	virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
-		Addanimationwithsheet("walk","images/player-walk-70x57.png",0,6,0,0,70,57,-1,-1,-1,0.1);
-		Addanimationwithsheet("idle","images/player-idle-70x57.png",0,0,0,0,70,57);
-		Addanimationwithsheet("jump","images/player-idle-70x57.png",0,0,0,0,70,57);
-		Addanimationwithsheet("fall","images/player-idle-70x57.png",0,0,0,0,70,57);
-		Addanimationwithsheet("attack","images/player-attack-70x57.png",0,4,0,0,70,57,-1,-1,-1,0.3);
+		Addanimationwithsheet("idle","images/player.png",0,0,0,0,64,64);
+		Addanimationwithsheet("walk","images/player.png",0,5,0,64,64,64,-1,-1,-1,0.1);
+		Addanimationwithsheet("attack","images/player.png",0,4,0,128,64,64,-1,-1,-1,0.3);
+		Addanimationwithsheet("jump","images/player.png",0,0,0,3*64,64,64);
+		Addanimationwithsheet("fall","images/player.png",0,0,0,4*64,64,64);
+		Addanimationwithsheet("dead","images/player.png",0,0,0,5*64,64,64);
 		SetAnimation("idle");	
 		SetPriority(1);
 		SetColliderMode(True);
-		Setcollisionrect(10,0,35,57);
+		Setcollisionrect(20,20,24,44);
 	}
-
+	virtual Move(){
+		_tile_down=game.get_tile_down(GetX(), GetY());
+		//_tile=game.get_tile(GetX(), GetY());
+		//GetApp().GetEngine().LogPrint("incY: "+incrementoY+" acel: "+aceleracion+" tile: "+string(game.get_tile_down(GetX(), GetY())) );
+		if(_tile_down<TILE_TYPE_GROUND){
+			if(incrementoY>=0){	
+				//lo situamos encima de la plataforma
+				incrementoY=0;
+				aceleracion=0;
+			}
+		}
+	}
 
 
 	virtual OnSpriteCollision (_sp1,_sp2)
 	{
-		//Si es un bloque
-	    if(Class_Id(_sp2)=="Block" ){
+		//Si es un objeto
+	    if(Class_Id(_sp2)=="Object" ){
 			//GetApp().GetEngine().LogPrint("colsionn con: "+_sp2.GetItemType());
 			//Si es la meta
-			if(_sp2.GetItemType()==BLOCK_TYPE_META){
-				game.ChangeStage();
-			//Si es una llave
-			}else if(_sp2.GetItemType()==BLOCK_TYPE_COLLECTIBLE_KEY){
+			if(_sp2.GetItemType()==OBJECT_TYPE_META){
+				game.ChangeStage();	
+			}
+			//Si es u na llave
+			else if(_sp2.GetItemType()==OBJECT_TYPE_COLLECTIBLE_KEY){
 				score+=100;
-				game.delete_block(_sp2);
-				//_sp2.SetVisible(False);
-				//_sp2.setPos(-100,-100);
-				keys_to_collect--;
-				game.print_score();
-				//Si ya no quedan llaves por recoger
+				game.delete_object(_sp2);
+				keys_to_collect--; 
+				game.print_score(); 
+				//Si ya no quedan llaves por recoger ponemos el objeto meta al final de la pantalla
 				if(keys_to_collect<=0){
-					//creamos el bloque meta
-					game.create_block(0,LEVEL_WIDTH-60,GetApp().GetResY()-300);
+					//creamos la meta
+					//GetApp().GetEngine().LogPrint("meta dibujada");
+					//game.mapper.DrawTile(game.tileSet, 2, GetX(),GetY(), 1, ARGB(255,255,0,0) );
+					game.create_object(OBJECT_TYPE_META,LEVEL_WIDTH-60,GetApp().GetResY()-100);
 				}
 			//Si es unamoeda de 50 puntos
-			}else if(_sp2.GetItemType()==BLOCK_TYPE_COLLECTIBLE_COIN50){
+			}else if(_sp2.GetItemType()==OBJECT_TYPE_COLLECTIBLE_COIN50){
 				score+=50;
-				game.delete_block(_sp2);
+				game.delete_object(_sp2);
 				game.print_score();
-			}else if(_sp2.GetItemType()==BLOCK_TYPE_COLLECTIBLE_COIN100){
+			}else if(_sp2.GetItemType()==OBJECT_TYPE_COLLECTIBLE_COIN100){
 				score+=100;
-				game.delete_block(_sp2);
+				game.delete_object(_sp2);  
 				game.print_score();
-			//Si es suelo
-			}else if(_sp2.GetItemType()==BLOCK_TYPE_GROUND || _sp2.GetItemType()==BLOCK_TYPE_GROUND2){
-				if(GetY()<_sp2.GetY() && incrementoY>=0){	
-					//lo situamos encima de la plataforma
-					SetY(_sp2.GetY()-GetHF()+1);
-					incrementoY=0;
-					aceleracion=0;
-				}
 			//Si es una plataforma horizontal
-			}else if(_sp2.GetItemType()==BLOCK_TYPE_PLATFORM_HORIZONTAL){
+			}else if(_sp2.GetItemType()==OBJECT_TYPE_PLATFORM_HORIZONTAL){
+				_x_player=GetX()-game.GetApp().GetResX()/2;
+				_x_camera=Clamp(_x_player,0, LEVEL_WIDTH-game.GetApp().GetResX());
+				game.SetCameraX(_x_camera);
 				if(GetY()<_sp2.GetY() && incrementoY>=0){	
 					SetY(_sp2.GetY()-GetHF()+1);
 					incrementoY=0;
@@ -73,12 +81,36 @@ class Player implements GL_sprite{
 					incpos(_sp2.speedX,0);
 				}
 			//Si es una plataforma vertical
-			}else if(_sp2.GetItemType()==BLOCK_TYPE_PLATFORM_VERTICAL){
+			}else if(_sp2.GetItemType()==OBJECT_TYPE_PLATFORM_VERTICAL){
 				SetY(_sp2.GetY()-GetHF()+1);
 				incrementoY=0;
 				aceleracion=0;
 				incpos(0,_sp2.speedY);
-			}			
+			}else if(_sp2.GetItemType()==OBJECT_TYPE_FIRE_DEATH){
+				player_die();
+			}
+				
+		}
+		if(Class_Id(_sp2)=="Fire"){
+			player_die();
+		}
+		if( Class_Id(_sp2)=="Boss1" ){
+			//GetApp().GetEngine().LogPrint("Colison boss player");
+			/*if(attack){
+				//GetApp().GetEngine().LogPrint("player gana");
+				_sp2.boss_live--;
+				_fx=_sp2.CreateFX("TINT");
+				_fx.Start(2000, RGB(255,0,0));
+				//GetApp().stageGlobal.text_boss_live.SetText(""+_sp2.boss_live);
+				if(_sp2.boss_live<=0){
+					GetApp().GetEngine().LogPrint("boss terminado");
+					attack=false;
+					delete _sp2;
+					//game.create_object(OBJECT_TYPE_META,600,400); 
+					//game.change_stage();
+				} 
+			}else*/
+			 player_die();
 		}
 		//Si es un enemigo
 		if(Class_Id(_sp2)=="Enemy" ){
@@ -90,6 +122,7 @@ class Player implements GL_sprite{
 				}else player_die();
 			//}
 		}
+
 		/*
 		//Otra forma sería con setype y getType en el main
 		if(_sp2.GetType()==GetApp().TYPE_SUELO){
@@ -107,8 +140,6 @@ class Player implements GL_sprite{
 	function SetPosition(_x,_y){
         SetPos(_x,_y);
     }
-
-
 
 
 	function player_die(){

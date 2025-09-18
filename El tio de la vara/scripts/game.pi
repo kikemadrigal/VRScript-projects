@@ -2,16 +2,20 @@ class Game implements GL_Stage{
     properties:
         bg=null;
         player1=null;
-        blocks=[]; 
+        Objects=[]; 
         fires=[];
         enemies=[];
         //Si ponemos otra escena escribiendo otro número borra el delete stage de la línea 91
         currentStage=0;
         mapper=null;
+        layer=null;
+        tileSet=null;
         stage=null;
+
 
     virtual _operator_new(_name,_creators){
         mapper =NewObject("mapper","gl_mapper");
+        tileset=mapper.GetTileset(1);
 		
         player1=NewObject("player","Player",[this]);
         player1.SetVisible(True);
@@ -22,38 +26,80 @@ class Game implements GL_Stage{
         bg.Destroy();
         player1.Destroy();
     }
-    function print_score(){
-         GetApp().stageGlobal.text_score.SetText("Stage: "+currentStage+"  Score: "+player1.score+" Lives: "+player1.lives+" Keys: "+player1.keys_to_collect);
+    function print_score(){        
+        GetApp().stageGlobal.text_score.SetText("Stage: "+currentStage+"  Score: "+player1.score+" Lives: "+player1.lives+" Keys: "+player1.keys_to_collect );
+        //GetApp().stageGlobal.text_score.SetText("layers: "+mapper.GetNumLayers()+" tile: "+string(get_tile_down(player1.GetX(), player1.GetY()))+" playerX: "+string(player1.GetX())+" playerY: "+string(player1.GetY()));
+        //distinto=player1.GetY()%32!=0;
+        //GetApp().stageGlobal.text_score.SetText("Right: "+get_tile_right(player1.GetX(),player1.GetY())+" left: "+get_tile_left(player1.GetX(),player1.GetY()));
+        //GetApp().stageGlobal.text_score.SetText("enemies: "+sizeof(enemies)+" enemy1: "+enemies[0].GetX()+" speed: "+enemies[0].speedX);
+    }
+    function draw_boss_live(live){
+		 GetApp().stageGlobal.text_boss_live.SetText(""+live);
+	}
+   
+    function get_tile(_x,_y){
+        layer=mapper.GetLayer(1);
+        tile=mapper.GetCellFromPos(_x+32,_y+32);
+        cell=layer.Get(tile[0] ,tile[1]);       
+        return cell[1];
+    }
+    function get_tile_down(_x,_y){
+        layer=mapper.GetLayer(1);
+        tile=mapper.GetCellFromPos(_x+32,_y+player1.GetHF());
+        cell=layer.Get(tile[0] ,tile[1]);
+        return cell[1];
+    }
+    function get_tile_right(_x,_y){
+        layer=mapper.GetLayer(1);
+        tile=mapper.GetCellFromPos(_x+42,_y+32);
+        cell=layer.Get(tile[0] ,tile[1]);
+        return cell[1];
+    }
+    function get_tile_left(_x,_y){
+        layer=mapper.GetLayer(1);
+        tile=mapper.GetCellFromPos(_x+20,_y+32);
+        cell=layer.Get(tile[0] ,tile[1]);
+        return cell[1];
     }
 
     function AddActor(_name, _type, _x, _y, _params)
 	{
 		switch (_type)
 		{
-			case "suelo": 
-                create_block(10,_x, _y);
-                break;
-			case "suelo2": 
-                create_block(10.2,_x, _y);
-                break;
-            case "plataforma_horizontal": 
-                create_block(11,_x, _y);
-                break;
-            case "plataforma_vertical": 
-                create_block(12,_x, _y);
-                break;
+            /**
+             * Objetos
+             */
             case "llaves":
-                create_block(7,_x, _y);
+                create_object(OBJECT_TYPE_COLLECTIBLE_KEY,_x, _y);
                 break;  
             case "moneda50":
-                create_block(6.50,_x, _y);
+                create_object(OBJECT_TYPE_COLLECTIBLE_COIN50,_x, _y);
                 break;  
             case "moneda100":
-                create_block(6.100,_x, _y);
+                create_object(OBJECT_TYPE_COLLECTIBLE_COIN100,_x, _y);
                 break;  
+            case "plataforma_horizontal":
+                create_object(OBJECT_TYPE_PLATFORM_HORIZONTAL,_x, _y);
+                break; 
+            case "plataforma_vertical":
+                create_object(OBJECT_TYPE_PLATFORM_VERTICAL,_x, _y);
+                break; 
+            case "fuego_que_mata":
+                create_object(OBJECT_TYPE_FIRE_DEATH,_x, _y);
+                break;  
+            /**
+             * Enemigos
+             */
             case "escorpion":
-                _enemy=create_enemy(6,_x, _y);
+                create_enemy(ENEMY_TYPE_SQUIRREL,_x, _y);
                 break;  
+            case "monstruo1":
+                create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,_x, _y);
+                break; 
+            case "monstruo2":
+                create_enemy(ENEMY_TYPE_SHOOT_PLAYER_VERTICAL,_x, _y);
+                break; 
+            
             default:
                 GetEngine().LogPrint("Tipo de actor no definido: "+_type);
                 break;
@@ -61,8 +107,8 @@ class Game implements GL_Stage{
 	}
 
     virtual Move(){     
-       
-        for (i=0; i< sizeof(enemies); i++){
+        //print_score();
+        /*for (i=0; i< sizeof(enemies); i++){
             enemy=enemies[i];
             if(enemy.type==1|| enemy.type==2 || enemy.type==3 || enemy.type==4){
                 if(enemy.GetX()<player1.GetX()-380){
@@ -70,14 +116,13 @@ class Game implements GL_Stage{
                     enemy.Destroy();
                 }
             }  
-        } 
-        
+        } */
     }
 
     function ChangeStage(){
         currentStage++;
         GetEngine().LogPrint("camniando a la escena "+currentStage);
-        if(currentStage>4)currentStage=0;
+        if(currentStage>12)currentStage=0;
         if(stage!=null) delete stage;
         switch (currentStage){
             case 1:
@@ -92,29 +137,31 @@ class Game implements GL_Stage{
             case 4:
                 stage=New Stage4(this);
                 break;
-            
+            case 5: 
+                stage=New Stage5(this);
+                break;
             
         }
 	}
 
 
 
-
-
-
-    function create_block(_type, _x, _y){
-        //Crea los bloques del escenario
-        block=NewObject(_type,"Block",[this,_type,_x, _y]);
-        blocks+=[block];
+    //Objects
+    function create_object(_type, _x, _y){
+        //Crea los objectos del juego, parámetros game, tipo de objeto y posición
+        object=NewObject(_type,"object",[this,_type,_x, _y]);
+        objects+=[object];
     }
-    function delete_blocks(){
-       	for(x=0; x<sizeof(blocks);x++) delete blocks[x];
-        blocks=[];
+    function delete_objects(){
+       	for(x=0; x<sizeof(objects);x++) delete objects[x];
+        objects=[];
     }
-    function delete_block(_block){
-        blocks-=[_block];
-        delete _block;
+    function delete_object(_object){
+        objects-=[_object];
+        delete _object;
     }
+
+    //Enemies
     function create_enemy(_type,_x,_y){
         //Los parámetros son el game y el tipo de enemigo
         enemy=NewObject("enemy","Enemy",[this,_type,_x,_y]);
@@ -129,9 +176,12 @@ class Game implements GL_Stage{
         enemies-=[_enemy];
         delete _enemy;
     }
+
+    //Fires
     function create_fire(_type,_enemy){
-        //parámetros game y tipo de fuego
-        _fire=NewObject("fire","Fire",[this,_enemy]);
+        //GetEngine().LogPrint("Creamos un disparo: "+_type);
+        //parámetros game, tipo de fuego y enemigo  
+        _fire=NewObject("fire","Fire",[this,_type,_enemy]);
         fires+=[_fire];
     }
     function delete_fires(_fire){

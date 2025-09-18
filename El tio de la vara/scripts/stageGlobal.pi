@@ -3,6 +3,7 @@ class StageGlobal implements GL_Stage{
 		pad=null;
 		fps=null;
 		text_score=null;
+		text_boss_live=null;
 
 	virtual _operator_new(_name,_creator){
 		SetGlobal(True);
@@ -16,6 +17,11 @@ class StageGlobal implements GL_Stage{
 		text_score.SetPos(200,10);
 		fps=getNewText("", 12);
 		fps.SetPos(0,10);
+
+		
+        text_boss_live=getNewText();
+		text_boss_live.SetPos(700,40);
+        text_boss_live.SetColor(RGB(255,0,0));
 	}	
 
 	function getNewText(text="", size=20){
@@ -30,4 +36,5 @@ class StageGlobal implements GL_Stage{
 		text_score.SetText("Stage: "+GetApp().game.currentStage+"  Score: "+GetApp().game.player1.score+" Lives: "+GetApp().game.player1.lives);
 		fps.setText("FPS: "+GETFPS(1));
 	}
+
 }

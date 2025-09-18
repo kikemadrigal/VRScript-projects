@@ -31,5 +31,13 @@ class Vara implements GL_sprite{
             delete this;
             game.delete_enemy(_sp2);
         }
+        if(Class_Id(_sp2)=="Boss1" ){
+            _sp2.boss_live--;
+            _fx=_sp2.CreateFX("TINT");
+			_fx.Start(1000, RGB(255,255,255));
+            game.draw_boss_live(_sp2.boss_live);
+            //GetApp().stageGlobal.text_boss_live.SetText(""+_sp2.boss_live);
+            
+        }
     }
 }

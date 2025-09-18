@@ -20,6 +20,7 @@ class Enemy implements GL_sprite{
 		speedY=0;
 		start_position_x=0;
 		start_position_y=0;
+	
 	/**
 	 * Ene el copnstructor le pasamos:
 	 * game: la clase principal del juego
@@ -36,67 +37,66 @@ class Enemy implements GL_sprite{
 		SetStartPosition(_x, _y);
 		switch(_type){
 			//Enemigo Aguila de izquierda a derecha
-			case 1:
-				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
+			case ENEMY_TYPE_EAGLE:
+				Addanimationwithsheet("eagle","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
 				Setanimation("eagle");
-				speedX=-5.5;
-				type=1; 
+				//speedX=-5.5;
+				type=ENEMY_TYPE_EAGLE; 
 				break;
 			//Enemigo Cuervo de izquierda a derecha
-			case 2:
-				Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
+			case ENEMY_TYPE_RAVEN:
+				Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
 				Setanimation("raven");
-				speedX=-7.0;
-				type=2; 
+				//speedX=-7.0;
+				type=ENEMY_TYPE_RAVEN; 
 				break;
 			//Enemigo 3
 			case 3:
-				Addanimationwithsheet("eagle","images/aguila.png",0,3,0,0,40,40,-1,-1,-1,.2);
+				Addanimationwithsheet("eagle","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
 				Setanimation("eagle");
 				SetColor(RGB(255,255,255));
-				speedX=-7.5;
+				//speedX=-7.5;
 				type=3; 
 				break;
 			//Enemigo 4
 			case 4:
-       			Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
+       			Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
 				Setanimation("raven");
-        		SetColor(RGB(0,0,0));
-				speedX=-20.5;
+        		//SetColor(RGB(0,0,0));
+				//speedX=-20.5;
 				type=4; 
 				break;
 			//Buitre que te persigue
-			case 5:
-       			Addanimationwithsheet("buitre","images/buitre.png",0,2,0,0,32,32,-1,-1,-1,.2);
+			case ENEMY_TYPE_VULTURE:
+       			Addanimationwithsheet("buitre","images/objects-enemies.png",0,1,0,10*32,32,32,-1,-1,-1,.2);
 				Setanimation("buitre");
-        		SetColor(RGB(255,0,255));
+        		//SetColor(RGB(255,0,255));
 				speedX=-2;
-				type=5; 
+				type=ENEMY_TYPE_VULTURE; 
 				break;
 			// Escorpión
-			case 6:
-	   			Addanimationwithsheet("escorpion","images/scorpion.png",0,5,0,0,40,40,-1,-1,-1,.2);
+			case ENEMY_TYPE_SQUIRREL:
+	   			Addanimationwithsheet("escorpion","images/objects-enemies.png",0,5,0,11*32,32,32,-1,-1,-1,.2);
 				Setanimation("escorpion");
-				//SetColor(RGB(255,0,255));
 				speedX=-3;
-				type=6; 
+				type=ENEMY_TYPE_SQUIRREL; 
 				break;
-			// cuevo que va de de izquierda a derecha
+			// 
 			case 7:
-       			Addanimationwithsheet("raven","images/cuervo.png",0,4,0,0,32,32,-1,-1,-1,.2);
+       			/*Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,0,32,32,-1,-1,-1,.2);
 				Setanimation("raven");
         		SetColor(RGB(0,0,0));
 				speedX=-20.5;
-				type=4; 
+				type=4; */
 				break;
 			//monstruo que dispara derecha o izquierda
 			case ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL:
-       			Addanimationwithsheet("monstruo1","images/monstruo1-64x54x4.png",0,3,0,0,64,54,-1,-1,-1,.2);
+       			Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,14*32,32,32,-1,-1,-1,.2);
 				Setanimation("monstruo1");
 				type=ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL; 
 				break;
 			case ENEMY_TYPE_SHOOT_PLAYER_VERTICAL:
-       			Addanimationwithsheet("monstruo1","images/monstruo2-64x64x4.png",0,3,0,0,64,54,-1,-1,-1,.2);
+       			Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,15*32,32,32,-1,-1,-1,.2);
 				Setanimation("monstruo1");
 				type=ENEMY_TYPE_SHOOT_PLAYER_VERTICAL; 
 				break;
@@ -111,8 +111,17 @@ class Enemy implements GL_sprite{
 		SetCollision(True);
 	}	
 	function Move(){   
+		//Si es un pájaro y se sale por la izquierda
+		if(type==1 || type====2 || type==3 || type==4){
+			if(GetX()<game.player1.getX()-350){
+				SetPos(-100,-100);
+				speedX=0;
+				
+
+			}
+		}
 		//Si es un buitre que te persigue  
-		if(type==5){
+		else if(type==ENEMY_TYPE_VULTURE){
 			if(GetX()>=game.player1.GetX()){
 				speedX=-2;
 			}else{
@@ -123,7 +132,7 @@ class Enemy implements GL_sprite{
 			}else{
 				speedY=2;
 			}
-		}else if(type==6 || type==7){
+		}else if(type==ENEMY_TYPE_SQUIRREL){
 			//Si es un escorpión o un cuervo que va de izquierda a derecha
 			if (GetX()<=start_position_x-100){
 				speedX=3;
@@ -133,7 +142,7 @@ class Enemy implements GL_sprite{
 				SetHFlip(False);
 			}
 		}else if(type==ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL){
-			if(GetAnimationLoops()>5){
+			if(GetAnimationLoops()>10){
 				//GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
 				ResetAnimation ();
 				if(GetX()>=game.player1.GetX()){
@@ -141,10 +150,18 @@ class Enemy implements GL_sprite{
 				}else{
 					SetHFlip(False);
 				}
-				//parametros game y enemy
-				game.create_fire(game, this); 
+				//parametros tipo(ver main.pi) y enemy
+				game.create_fire(FIRE_TYPE_MOVING_HORIZONTAL,this); 
+			}
+		}else if(type==ENEMY_TYPE_SHOOT_PLAYER_VERTICAL){
+			if(GetAnimationLoops()>10){
+				//GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
+				ResetAnimation ();
+				//parametros tipo y enemy
+				game.create_fire(FIRE_TYPE_MOVING_VERTICAL, this); 
 			}
 		}
+
 		incpos(speedX,speedY);
 	}
 

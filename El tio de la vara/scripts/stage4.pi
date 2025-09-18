@@ -2,27 +2,41 @@ class Stage4{
     properties:
         game=null;
         bg=null;
-
+        boss=null;
+        
     function _operator_new(_game){
         game=_game;
-        //ponemos que tenemos que coger 3 llaves
-        _game.player1.keys_to_collect=3;
-        _game.player1.SetPos(20,GROUND_Y-50);
+        game.SetDebug(true);
+        game.GetApp().boss_mode=true;
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage4.png");
         bg.SetPriority(-1);
 
-        
-       /* _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "tilesmap2.tmx", _game);
-        delete _tmx;*/
-     
-        
-        //_game.create_block(0,300,_game.GetApp().GetResY()-300);
+        _tmx = new TMX_Loader();
+        _tmx.Load(_game.mapper, "resources/tilesmap4.tmx", _game);
+        delete _tmx;
+
+        //Colocamos al player
+        _game.player1.SetPosition(20,GROUND_Y);
+        boss=_game.NewObject("boss1","Boss1",[this, _game.player1]);
         //pintamos el marcador
         _game.print_score();
-     }
-
-
+        //Pintamos la vida que le queda al boss
+        _game.draw_boss_live(boss.boss_live);
+    }
+    
+    function _operator_delete(){
+        game.draw_boss_live("");
+        bg.Destroy();
+        boss.Destroy();
+        game.delete_objects();
+        game.delete_enemies();
+        //game.delete_fires();
+        delete game.layer;
+    }
+    function changeStage(){
+        //game.GetApp().Sleep(2000);
+        game.changeStage();
+    }
 }
