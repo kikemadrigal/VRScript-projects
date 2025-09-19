@@ -6,7 +6,10 @@ class Stage2{
 
     function _operator_new(_game){
         game=_game;
-       
+        if (DEBUG_MODE) {
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+        }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
         _game.player1.SetPosition(20,GROUND_Y);
@@ -25,7 +28,7 @@ class Stage2{
         for(i=0;i<20;i++){
             _type_random=rand(1,4);
             //Lo ponemos en la derecha de la pantalla
-            _enemy=game.create_enemy(_type_random,-100,-100);
+            _enemy=_game.create_enemy(_type_random,-100,-100);
         }
         //Vamos creando enemigos cada 2 segundos con ayuda del timer
         timer_create_enemies=_game.NewObject("timer", "GL_Timer");
@@ -34,7 +37,7 @@ class Stage2{
 
         //pintamos el marcador
         _game.print_score();
-        game.create_object(OBJECT_TYPE_META,150,game.GetApp().GetResY()-100);
+  
     }
     function _operator_delete(){
         bg.Destroy();

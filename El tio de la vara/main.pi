@@ -5,6 +5,7 @@
 */
 class main implements GL_Program {
     defines:
+        DEBUG_MODE=false;
         //* Dimensiones del nivel
         LEVEL_WIDTH=3000;
         LEVEL_HEIGHT=450;
@@ -20,12 +21,11 @@ class main implements GL_Program {
         GROUND_Y=10*32;
 
         // Tiles
-        //Los tiles de plataforma son hasta el 100
-        TILE_TYPE_GROUND=100;
-        TILE_TYPE_LADDER=102; //escalera
-        TILE_TYPE_WALL=103; //muro
-        TILE_TYPE_WATER=104; //agua
-        TILE_TYPE_DIED=105; // muerte
+        //Los tiles sólidos (plataforma, muro) son hasta el 250
+        TILE_TYPE_GROUND=250;
+        TILE_TYPE_LADDER=300; //escalera
+        TILE_TYPE_WATER=325; //agua
+        TILE_TYPE_DIED=275; // muerte
         TILE_TYPE_EMPTY=65535;
 
         //Objects

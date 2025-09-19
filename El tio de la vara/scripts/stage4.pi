@@ -6,8 +6,8 @@ class Stage4{
         
     function _operator_new(_game){
         game=_game;
-        game.SetDebug(true);
-        game.GetApp().boss_mode=true;
+        if (DEBUG_MODE) _game.SetDebug(true);
+        _game.GetApp().boss_mode=true;
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage4.png");

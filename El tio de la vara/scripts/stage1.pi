@@ -10,7 +10,10 @@ class Stage1{
 
     function _operator_new(_game){
         game=_game;
-        game.SetDebug(true);
+        if (DEBUG_MODE) {
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100);
+        }
         _game.player1.SetPosition(20,GROUND_Y);
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap.tmx", _game);
@@ -32,9 +35,7 @@ class Stage1{
             _enemy=game.create_enemy(5,_x_random,_y);
         }
        //Pintamos el marcador
-        game.print_score();
-        //game.create_block(OBHECT_TYPE_META,200,game.GetApp().GetResY()-300);
-        game.create_object(OBJECT_TYPE_META,200,game.GetApp().GetResY()-100);
+        game.print_score();        
         //Mostramos la ayuda
         //game.GetEngine().AlertDialogModal ("Información", "Pulsa espacio para golpear con la vara\nCursor arriba para saltar");
         game.GetEngine().AlertDialog("Ayuda", "Pulsa espacio para golpear con la vara\nCursor arriba para saltar\nCursor derecha-izquierda para moverte", 0, game, null, null, null);

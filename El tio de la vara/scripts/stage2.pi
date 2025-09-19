@@ -5,7 +5,10 @@ class Stage2{
 
     function _operator_new(_game){
         game=_game;
-       game.SetDebug(true);
+        if (DEBUG_MODE){
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100);
+        }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
         _game.player1.SetPosition(20,GROUND_Y);
@@ -21,7 +24,7 @@ class Stage2{
         //pintamos el marcador
         _game.print_score();
 
-        game.create_object(OBJECT_TYPE_META,200,game.GetApp().GetResY()-100);
+        
     }
     function _operator_delete(){
         bg.Destroy();

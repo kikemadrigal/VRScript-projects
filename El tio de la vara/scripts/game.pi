@@ -26,12 +26,12 @@ class Game implements GL_Stage{
         bg.Destroy();
         player1.Destroy();
     }
-    function print_score(){        
-        GetApp().stageGlobal.text_score.SetText("Stage: "+currentStage+"  Score: "+player1.score+" Lives: "+player1.lives+" Keys: "+player1.keys_to_collect );
-        //GetApp().stageGlobal.text_score.SetText("layers: "+mapper.GetNumLayers()+" tile: "+string(get_tile_down(player1.GetX(), player1.GetY()))+" playerX: "+string(player1.GetX())+" playerY: "+string(player1.GetY()));
-        //distinto=player1.GetY()%32!=0;
-        //GetApp().stageGlobal.text_score.SetText("Right: "+get_tile_right(player1.GetX(),player1.GetY())+" left: "+get_tile_left(player1.GetX(),player1.GetY()));
-        //GetApp().stageGlobal.text_score.SetText("enemies: "+sizeof(enemies)+" enemy1: "+enemies[0].GetX()+" speed: "+enemies[0].speedX);
+    function print_score(){    
+        message="Stage: "+currentStage+"  Score: "+player1.score+" Lives: "+player1.lives+" Keys: "+player1.keys_to_collect;    
+        if(DEBUG_MODE){
+            message+="\nLayers: "+mapper.GetNumLayers()+" right: "+get_tile_right(player1.GetX(),player1.GetY())+" left: "+get_tile_left(player1.GetX(),player1.GetY());
+        }
+        GetApp().stageGlobal.text_score.SetText(message);
     }
     function draw_boss_live(live){
 		 GetApp().stageGlobal.text_boss_live.SetText(""+live);

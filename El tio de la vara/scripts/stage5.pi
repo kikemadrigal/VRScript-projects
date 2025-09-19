@@ -5,8 +5,12 @@ class Stage5{
 
     function _operator_new(_game){
         game=_game;
+        if (DEBUG_MODE){
+            _game.SetDebug(true);
+            _game.create_block(0,300,_game.GetApp().GetResY()-300);
+        }
         //Desactivamos el modo boss que hace que la pantalla pueda volver a moverse
-        game.GetApp().boss_mode=false;
+        _game.GetApp().boss_mode=false;
         //ponemos que tenemos que coger 3 llaves
 
         //Colocamos el fondo
@@ -19,12 +23,12 @@ class Stage5{
         delete _tmx;
         if (_ok == false)
 		{
-			game.GetApp().GetEngine().LogPrint("no cargado el tileset");
+			_game.GetApp().GetEngine().LogPrint("no cargado el tileset");
 		}
      
         _game.player1.keys_to_collect=3;
         _game.player1.SetPosition(80,GROUND_Y);
-        //_game.create_block(0,300,_game.GetApp().GetResY()-300);
+        
         
         //pintamos el marcador
         _game.print_score();
