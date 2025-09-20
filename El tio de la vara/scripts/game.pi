@@ -5,38 +5,36 @@ class Game implements GL_Stage{
         Objects=[]; 
         fires=[];
         enemies=[];
-        //Si ponemos otra escena escribiendo otro número borra el delete stage de la línea 91
         currentStage=0;
         mapper=null;
         layer=null;
         tileSet=null;
         stage=null;
-
-
+      
     virtual _operator_new(_name,_creators){
         mapper =NewObject("mapper","gl_mapper");
         tileset=mapper.GetTileset(1);
 		
         player1=NewObject("player","Player",[this]);
-        player1.SetVisible(True);
-        
+     
         ChangeStage();
     }
     function _operator_delete(){
         bg.Destroy();
         player1.Destroy();
     }
+
     function print_score(){    
         message="Stage: "+currentStage+"  Score: "+player1.score+" Lives: "+player1.lives+" Keys: "+player1.keys_to_collect;    
         if(DEBUG_MODE){
             message+="\nLayers: "+mapper.GetNumLayers()+" right: "+get_tile_right(player1.GetX(),player1.GetY())+" left: "+get_tile_left(player1.GetX(),player1.GetY());
+            message+="\nEnemies: "+sizeof(enemies)+" objects "+sizeof(Objects)+" fires "+sizeof(fires);
         }
         GetApp().stageGlobal.text_score.SetText(message);
     }
     function draw_boss_live(live){
 		 GetApp().stageGlobal.text_boss_live.SetText(""+live);
-	}
-   
+	}   
     function get_tile(_x,_y){
         layer=mapper.GetLayer(1);
         tile=mapper.GetCellFromPos(_x+32,_y+32);
@@ -45,6 +43,7 @@ class Game implements GL_Stage{
     }
     function get_tile_down(_x,_y){
         layer=mapper.GetLayer(1);
+        tile=null;
         tile=mapper.GetCellFromPos(_x+32,_y+player1.GetHF());
         cell=layer.Get(tile[0] ,tile[1]);
         return cell[1];
@@ -99,33 +98,32 @@ class Game implements GL_Stage{
             case "monstruo2":
                 create_enemy(ENEMY_TYPE_SHOOT_PLAYER_VERTICAL,_x, _y);
                 break; 
-            
+            case "sierra":
+                create_enemy(ENEMY_TYPE_SAW,_x, _y);
+                break;
+            case "pendulo":
+                create_enemy(ENEMY_TYPE_PENDULUM,_x, _y);
+                break;
+            case "ladrillo-que-aplasta":
+                create_enemy(ENEMY_TYPE_CRUSHING_BRICK,_x, _y);
+                break;
             default:
                 GetEngine().LogPrint("Tipo de actor no definido: "+_type);
                 break;
 		}
 	}
 
-    virtual Move(){     
-        //print_score();
-        /*for (i=0; i< sizeof(enemies); i++){
-            enemy=enemies[i];
-            if(enemy.type==1|| enemy.type==2 || enemy.type==3 || enemy.type==4){
-                if(enemy.GetX()<player1.GetX()-380){
-                    enemies-=[enemy];
-                    enemy.Destroy();
-                }
-            }  
-        } */
-    }
+
 
     function ChangeStage(){
         currentStage++;
         GetEngine().LogPrint("camniando a la escena "+currentStage);
-        if(currentStage>12)currentStage=0;
+        if(currentStage>13) currentStage=0;
         if(stage!=null) delete stage;
         switch (currentStage){
             case 1:
+                //player1.SetVisible(true);
+                GetApp().SetCameraNotMove(false);
                 stage=New Stage1(this);
                 break;
             case 2:
@@ -135,16 +133,46 @@ class Game implements GL_Stage{
                 stage=New Stage3(this);
                 break;
             case 4:
+                GetApp().SetCameraNotMove(true);
                 stage=New Stage4(this);
                 break;
             case 5: 
+                GetApp().SetCameraNotMove(false);
                 stage=New Stage5(this);
                 break;
-            
+            case 6: 
+                stage=New Stage6(this);
+                break;
+            case 7: 
+                stage=New Stage7(this);
+                break;
+            case 8: 
+                GetApp().SetCameraNotMove(true);
+                stage=New Stage8(this);
+                break;
+            case 9: 
+                GetApp().SetCameraNotMove(false);
+                stage=New Stage9(this);
+                break;
+            case 10: 
+                stage=New Stage10(this);
+                break;
+            case 11: 
+                stage=New Stage11(this);
+                break;
+            case 12: 
+                GetApp().SetCameraNotMove(false);
+                stage=New Stage12(this);
+                break;
+            case 13:
+                //player1.SetVisible(false);
+                
+                GetApp().changeWinnerScreen();
+                break;
         }
+        //Le ponemos un efecto de fade
+        //GetApp().stageGlobal.fadeInEffect();
 	}
-
-
 
     //Objects
     function create_object(_type, _x, _y){
@@ -192,7 +220,6 @@ class Game implements GL_Stage{
         fires-=[_fire];
         delete _fire;
     }
-
 }
 
         

@@ -1,47 +1,28 @@
 class Winner implements GL_Stage{
     properties:
-        item=null;
         bg=null;
-        house=null;
-        player1=null;
+        text=null;
 
     virtual _operator_new(_name,_creator){
-        player1=NewObject("player","Player",[this]);
-        GetApp().stageGlobal.SetPlayer(player1);
-        player1.SetVisible(True);
-        player1.SetPos(20,GetApp().GetResY()-120);
+        //_game.player1.SetPosition(20,GROUND_Y);
 
         bg=NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage2.png");
-        bg.SetPriority(0);
+        bg.Addframe("images/win.png");
+        bg.SetPriority(0);*/
        
-        house=NewObject("house","Item",[0]); 
-        house.SetPos(GetApp().LEVEL_WIDTH-20,GetApp().GetResY()-200);
-
-        
-        item=NewObject("cuadrado","Item",[1]);
-        item.SetPos(GetApp().GetResX(),GetApp().GetResY()-200);
+       	_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", size);
+		_text.SetAlign(DT_CENTER);
+		
+		_text.SetColor(RGB(234,255,0));	
+        _text.SetPos(100,200);
+        _text.SetPriority(1);
+        _text.SetText("Eres el ganador!!!\n pulsa una tecla para volver al menu");
+        text=_text;
     }
 
-    function Move(){        
-       if(item==null) return;
-        //Si el cuadrado sale por la izquierda, lo cambiamos
-        if(item.GetX()<=player1.GetX()-200){
-            random=rand(1,4);
-            item.Destroy();
-            item=NewObject("cuadrado","Item",[random]);
-            item.SetPos(player1.GetX()+300,rand(GetApp().GetResY()-200,GetApp().GetResY()-100));
-        }
-    }
-    
-    function _operator_delete(){
-        if(item!=null) item.Destroy();
-        item=null;
-        bg.Destroy();
-        bg=null;
-        house.Destroy();
-        house=null;
-        player1.Destroy();
-        player1=null;
+    virtual _operator_delete()
+        //bg.Destroy();
+        //delete text;
     }
 }

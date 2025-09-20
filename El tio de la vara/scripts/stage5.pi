@@ -5,32 +5,33 @@ class Stage5{
 
     function _operator_new(_game){
         game=_game;
-        if (DEBUG_MODE){
+        if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_block(0,300,_game.GetApp().GetResY()-300);
+            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
         }
-        //Desactivamos el modo boss que hace que la pantalla pueda volver a moverse
-        _game.GetApp().boss_mode=false;
         //ponemos que tenemos que coger 3 llaves
-
+        _game.player1.keys_to_collect=3;
+        _game.player1.SetPosition(20,GROUND_Y);
+ 
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage5.png");
         bg.SetPriority(-1);
 
         _tmx = new TMX_Loader();
-        _ok=_tmx.Load(_game.mapper, "resources/tilesmap5.tmx", _game);
+        _tmx.Load(_game.mapper, "resources/tilesmap5.tmx", _game);
         delete _tmx;
-        if (_ok == false)
-		{
-			_game.GetApp().GetEngine().LogPrint("no cargado el tileset");
-		}
-     
-        _game.player1.keys_to_collect=3;
-        _game.player1.SetPosition(80,GROUND_Y);
         
-        
+       
         //pintamos el marcador
         _game.print_score();
+  
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        game.delete_objects();
+        game.delete_enemies();
+        //game.delete_fires();
+        delete game.layer;
     }
 }

@@ -100,6 +100,23 @@ class Enemy implements GL_sprite{
 				Setanimation("monstruo1");
 				type=ENEMY_TYPE_SHOOT_PLAYER_VERTICAL; 
 				break;
+			// La sierra
+			case ENEMY_TYPE_SAW:
+	   			Addanimationwithsheet("saw","images/objects-enemies.png",0,2,0,19*32,32,32,-1,-1,-1,.2);
+				Setanimation("saw");
+				SetSquare(_x,_y,100,100);
+				type=ENEMY_TYPE_SAW; 
+				break;
+			case ENEMY_TYPE_PENDULUM:
+	   			Addanimationwithsheet("pendulum","images/objects-enemies.png",0,3,0,20*32,32,32,-1,-1,-1,.2);
+				Setanimation("pendulum");
+				type=ENEMY_TYPE_PENDULUM; 
+				break;
+			case ENEMY_TYPE_CRUSHING_BRICK:
+	   			Addanimationwithsheet("crushing-brick","images/objects-enemies.png",0,0,3*32,1*32,32,32,-1,-1,-1,.2);
+				Setanimation("crushing-brick");
+				type=ENEMY_TYPE_CRUSHING_BRICK; 
+				break;
 			/**
 			 * Otra forma de agregar sprites es
 			 *  AddEmptyFrame (50,10);
@@ -160,6 +177,12 @@ class Enemy implements GL_sprite{
 				//parametros tipo y enemy
 				game.create_fire(FIRE_TYPE_MOVING_VERTICAL, this); 
 			}
+		}else if(type==ENEMY_TYPE_CRUSHING_BRICK){
+			if (GetY()<=start_position_y-100){
+				speedY=3;
+			}else if(GetY()>=start_position_y){
+				speedY=-3;
+			}
 		}
 
 		incpos(speedX,speedY);
@@ -173,4 +196,25 @@ class Enemy implements GL_sprite{
 		start_position_x=_x;
 		start_position_y=_y;
 	}
+
+
+	function SetSquare(_x,_y,_w,_h){
+		_ct=CreateController();
+		_ruta=NewObject("ruta", "GL_Route");
+		_ruta.AddRect(_x,_y,_w,_h);
+		_ct.SetSpeed(2);
+		_ct.SetRoute(_ruta, _ruta.MODE_LOOP);
+		_ct.Start();
+	}
+
+	function SetCircle(_x,_y,_r){
+		_ruta=NewObject("ruta", "GL_Route");
+		_ruta.AddCircle(_x,_y,_r);
+		_ct=CreateController();
+		_ct.SetSpeed(2);
+		_ct.SetRoute(_ruta, _ruta.MODE_LOOP);
+		_ct.Start();
+	}
+
+
 }

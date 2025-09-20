@@ -5,7 +5,7 @@
 */
 class main implements GL_Program {
     defines:
-        DEBUG_MODE=false;
+        DEBUG_MODE=true;
         //* Dimensiones del nivel
         LEVEL_WIDTH=3000;
         LEVEL_HEIGHT=450;
@@ -53,6 +53,10 @@ class main implements GL_Program {
         ENEMY_TYPE_FOLLOW_PLAYER=9;
         ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL=10;
         ENEMY_TYPE_SHOOT_PLAYER_VERTICAL=11;
+        ENEMY_TYPE_SAW=20;
+        ENEMY_TYPE_PENDULUM=21;
+        ENEMY_TYPE_CRUSHING_BRICK=22;
+
 
         //Fire
         FIRE_TYPE_SMALL=1;
@@ -68,11 +72,13 @@ class main implements GL_Program {
         game=null;
         winner=null;
 	
-        game_over=True;
-        boss_mode=false;
+        game_over=false;
+        camera_not_move=false;
+     
         
     virtual start(){
         AddScriptPackage("scripts");
+        AddScriptPackage("scripts/stages");
         Setbackcolor(RGB(0,0,0));
         Setresolution(VIEWPORT_WIDTH,VIEWPORT_HEIGHT);
         //Lo agrandamos solo en horizontal de 800 a 1280 que suele ser la resuloción habotual
@@ -80,7 +86,6 @@ class main implements GL_Program {
         Setframerate(30);
         //El stageGlobal es usado para los marcadores y elementos generales
         stageGlobal=newStage("stageGlobal","StageGlobal");
-        //stageGlobal.text_boss_live.SetVisible(false);
         /*
         menu=NewStage("stage","menu");
         menu.Setmain();
@@ -90,22 +95,25 @@ class main implements GL_Program {
         _change ("menu");
     }
 
+    function SetCameraNotMove(value){
+        camera_not_move=value;
+    }
+
+
     state "menu":
     {
-        if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
-            game=RunStage("game","Game");
+        if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){ 	
+            game_over=false;    
+		    game=RunStage("game","Game");
             _change ("game");
         }
     }
     state "game":
     {
-        _player1=game.player1;
-        //En las pantallas de los jefes la pantalla no se mueve
-        if(!boss_mode){
-            _x_camera=_player1.GetX()-GetResX()/2;
-            _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
+        if(game_over){
+            return;
         }
-
+        _player1=game.player1;
         _player1.incrementoX=0;
         //Si se pulsa el cursor derecho
         if (stageGlobal.pad.IsButton(PAD_BUTTON_RIGHT)){
@@ -113,14 +121,14 @@ class main implements GL_Program {
             if(tile_right>TILE_TYPE_GROUND || tile_right==TILE_TYPE_EMPTY )
                 _player1.incrementoX=_player1.speedX;	
             _player1.SetHFlip(False);	
-            game.SetCameraX(_x_camera);
+            if(!camera_not_move)CenterCamera(_player1);
         }
         else if (stageGlobal.pad.IsButton(PAD_BUTTON_LEFT)){
             tile_left=game.get_tile_left(_player1.GetX(),_player1.GetY());
             if(tile_left>TILE_TYPE_GROUND || tile_left==TILE_TYPE_EMPTY)
                 _player1.incrementoX=-_player1.speedX;	
             _player1.SetHFlip(True);
-            game.SetCameraX(_x_camera);
+            if(!camera_not_move)CenterCamera(_player1);
         }
         // Si se pulsa arriba y no estamos ya saltando
         if(stageGlobal.pad.IsButton(PAD_BUTTON_UP) && _player1.aceleracion==0){
@@ -136,9 +144,9 @@ class main implements GL_Program {
         }
             
         _x=clamp(_player1.GetX(),0, LEVEL_WIDTH-_player1.GetWF());
-        //_y=clamp(_player1.GetY(),0, LEVEL_HEIGHT+player1.GetHF());
-        //_player1.SetPos(_x,_y);
-        _player1.SetX(_x);
+        _y=clamp(_player1.GetY(),0, LEVEL_HEIGHT+_player1.GetHF());
+        _player1.SetPos(_x,_y);
+        //_player1.SetX(_x);
         _player1.incpos(_player1.incrementoX,_player1.incrementoY);
 
         //Si el player está atacando
@@ -167,10 +175,29 @@ class main implements GL_Program {
     }
     state "winner":
     {
+        GetEngine().LogPrint("Estamos en el estado winner");
+
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
-            game=RunStage("menu","Menu");
+            GetEngine().LogPrint("vamos a cambiar al menu");
+            //RunStage("menu","Menu");
             _change ("menu");
+           
         }
     }
+
+    function CenterCamera(_player1){
+        _x_camera=_player1.GetX()-GetResX()/2;
+        _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
+        game.SetCameraX(_x_camera);
+    }
+
+    function changeWinnerScreen(){
+        GetEngine().LogPrint("vamos a cambiar al winner");
+        delete game;
+        game_over=true;
+        _change ("winner");
+  
+    }
+
 }
   

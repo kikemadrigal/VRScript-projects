@@ -5,6 +5,8 @@ class StageGlobal implements GL_Stage{
 		text_score=null;
 		text_boss_live=null;
 
+   		sprite_efecto_apagado=null;
+
 	virtual _operator_new(_name,_creator){
 		SetGlobal(True);
 		//Pad
@@ -22,7 +24,11 @@ class StageGlobal implements GL_Stage{
         text_boss_live=getNewText();
 		text_boss_live.SetPos(700,40);
         text_boss_live.SetColor(RGB(255,0,0));
+
+		
+
 	}	
+
 
 	function getNewText(text="", size=20){
 		_text=NewObject("text","GL_Text");
@@ -36,5 +42,24 @@ class StageGlobal implements GL_Stage{
 		text_score.SetText("Stage: "+GetApp().game.currentStage+"  Score: "+GetApp().game.player1.score+" Lives: "+GetApp().game.player1.lives);
 		fps.setText("FPS: "+GETFPS(1));
 	}
+
+
+    function fadeInEffect(){
+         /**
+         * EFECTO DEL FADEIn
+         * Recuerda que Runstage borra todo lo que haya en la pantalla
+         * tendremos que crear de nuevo el sprite que ocupa toda la pantalla
+         * y el efecto de fadein que lo hace visible
+         */
+		sprite_efecto_apagado=NewObject("cuadrado_negro","GL_Sprite");
+        sprite_efecto_apagado.AddEmptyFrame(LEVEL_WIDTH,VIEWPORT_WIDTH);
+        sprite_efecto_apagado.SetColor(RGB(0,0,0));
+        sprite_efecto_apagado.SetAlpha(255);
+        _efecto_apagado=sprite_efecto_apagado.CreateFX("FADEOUT");
+       // _efecto_apagado.SetOnFinish(this, "cuando_acabe_efecto_encendido");
+        _efecto_apagado.Start(2000);
+    }
+
+    
 
 }

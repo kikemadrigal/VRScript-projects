@@ -26,7 +26,6 @@ class Player implements GL_sprite{
 	}
 	virtual Move(){
 		_tile_down=game.get_tile_down(GetX(), GetY());
-		//_tile=game.get_tile(GetX(), GetY());
 		//GetApp().GetEngine().LogPrint("incY: "+incrementoY+" acel: "+aceleracion+" tile: "+string(game.get_tile_down(GetX(), GetY())) );
 		if(_tile_down<TILE_TYPE_GROUND){
 			if(incrementoY>=0){	
@@ -56,8 +55,6 @@ class Player implements GL_sprite{
 				//Si ya no quedan llaves por recoger ponemos el objeto meta al final de la pantalla
 				if(keys_to_collect<=0){
 					//creamos la meta
-					//GetApp().GetEngine().LogPrint("meta dibujada");
-					//game.mapper.DrawTile(game.tileSet, 2, GetX(),GetY(), 1, ARGB(255,255,0,0) );
 					game.create_object(OBJECT_TYPE_META,LEVEL_WIDTH-60,GetApp().GetResY()-100);
 				}
 			//Si es unamoeda de 50 puntos
@@ -95,21 +92,6 @@ class Player implements GL_sprite{
 			player_die();
 		}
 		if( Class_Id(_sp2)=="Boss1" ){
-			//GetApp().GetEngine().LogPrint("Colison boss player");
-			/*if(attack){
-				//GetApp().GetEngine().LogPrint("player gana");
-				_sp2.boss_live--;
-				_fx=_sp2.CreateFX("TINT");
-				_fx.Start(2000, RGB(255,0,0));
-				//GetApp().stageGlobal.text_boss_live.SetText(""+_sp2.boss_live);
-				if(_sp2.boss_live<=0){
-					GetApp().GetEngine().LogPrint("boss terminado");
-					attack=false;
-					delete _sp2;
-					//game.create_object(OBJECT_TYPE_META,600,400); 
-					//game.change_stage();
-				} 
-			}else*/
 			 player_die();
 		}
 		//Si es un enemigo

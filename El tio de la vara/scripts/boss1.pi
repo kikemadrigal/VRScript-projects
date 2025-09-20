@@ -6,6 +6,7 @@ class Boss1 implements GL_sprite{
         player1=null;
         boss_live=100;
         boss_dead=false;
+    
 
 	virtual _operator_new(_name,_creator, _params){
         game=_params[0];

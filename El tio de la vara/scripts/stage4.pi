@@ -7,18 +7,25 @@ class Stage4{
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) _game.SetDebug(true);
-        _game.GetApp().boss_mode=true;
+        
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage4.png");
         bg.SetPriority(-1);
 
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap4.tmx", _game);
-        delete _tmx;
+        _ok=_tmx.Load(game.mapper, "resources/tilesmap4.tmx", game);
+        delete _tmx;        
+        if (_ok == false)
+		{
+			_game.GetApp().GetEngine().LogPrint("no cargado el tileset");
+		}
 
         //Colocamos al player
         _game.player1.SetPosition(20,GROUND_Y);
+        //posicionamos la cámara
+        game.SetCameraX(0);
+        //posicionamos el boss
         boss=_game.NewObject("boss1","Boss1",[this, _game.player1]);
         //pintamos el marcador
         _game.print_score();
