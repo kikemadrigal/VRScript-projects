@@ -23,11 +23,6 @@ class Stage1{
         bg.Addframe("images/stage1.png");
         bg.SetPriority(-1);
         bg.SetSize(800,450);
-  
-        //Vamos creando enemigos cada 2 segundos con ayuda del timer
-        //timer_create_enemies=_game.NewObject("timer", "GL_Timer");
-        //timer_create_enemies.SetFrequency(frecuency);
-        //timer_create_enemies.SetUserCallBack(this,"OnTimerCreateEnemiesCallBack");
         //creamos 10 buitres
         for (i=0; i < 10; i++){ 
             _x_random=rand(1000,LEVEL_WIDTH);
@@ -37,33 +32,15 @@ class Stage1{
        //Pintamos el marcador
         game.print_score();        
         //Mostramos la ayuda
-        //game.GetEngine().AlertDialogModal ("Información", "Pulsa espacio para golpear con la vara\nCursor arriba para saltar");
-        game.GetEngine().AlertDialog("Ayuda", "Pulsa espacio para golpear con la vara\nCursor arriba para saltar\nCursor derecha-izquierda para moverte", 0, game, null, null, null);
+        game.GetEngine().AlertDialog("Ayuda", "Pulsa espacio para golpear con la vara"+
+                                    "\nCursor arriba para saltar"+
+                                    "\nCursor derecha-izquierda para moverte"+
+                                    "\nMision: coge las 3 llaves para abrir el candado", 0, game, null, null, null);
     }
     function _operator_delete(){
         bg.Destroy();
-        //timer_create_enemies.Destroy();
         game.delete_objects();
         game.delete_enemies();
         delete game.layer;
-    }
-    /*
-    function OnTimerCreateEnemiesCallBack(_timer){
-        time++;
-        if (time>20) {
-            time=0;
-            //Vamos aumentando la velocidad en la que se crean los enemigos
-            if(frecuency>600)frecuency-=500;
-            timer_create_enemies.SetFrequency(frecuency);
-        }
-        //Creamos un enemigo aleatorio
-        _type_random=rand(1,4);
-        //Lo ponemos en la derecha de la pantalla
-        _x=game.player1.GetX()+VIEWPORT_WIDTH;
-        _y_random=rand(300,700);
-		_enemy=game.create_enemy(_type_random,_x,_y_random);
-	}
-    */
-
-    
+    }    
 }

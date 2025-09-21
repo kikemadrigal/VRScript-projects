@@ -21,13 +21,13 @@ class Stage12{
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap12.tmx", _game);
         delete _tmx;
-        
        
         //pintamos el marcador
         _game.print_score();
   
     }
     function _operator_delete(){
+        game.print_score("");
         bg.Destroy();
         game.delete_objects();
         game.delete_enemies();

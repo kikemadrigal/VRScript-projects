@@ -1,0 +1,57 @@
+class Boss2 implements GL_sprite{
+	properties:
+		incrementoX=0;
+		incrementoY=0;
+		game=null;
+        player1=null;
+        boss_live=100;
+        boss_dead=false;
+    
+
+	virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+        player1=_params[1];
+        //game.boss_live=100;
+   		//Colocamos al boss
+        Addanimationwithsheet("buitre-walk","images/objects-enemies.png",0,1,0,10*32,32,32,-1,-1,-1,.2);
+		Setanimation("buitre-walk");
+        SetCollision(True);
+        Setcollisionrect(0,10,128,118);
+        SetPos(500,GROUND_Y-64);
+        SetSize(32*4,32*4, true);
+
+        //game.GetApp().boss_mode=true;
+    }
+
+	virtual Move(){   
+        if(boss_dead){
+            if(GetAnimationLoops()>0) {
+                SetAnimationSpeedFactor(0);
+                SetColor(RGB(255,0,0));
+                SetCollision(false);
+                game.changeStage();
+            }
+        }else{
+            if(boss_live<=0){
+                //SetAnimation("buitre-die");
+                boss_dead=true;
+            }else{
+                if(GetX()>=player1.GetX()){
+                    incrementoX=-1;
+                    //SetHFlip(false);
+                }else if(GetX()<=player1.GetX()){
+                    incrementoX=1;
+                    //SetHFlip(true);
+                }
+                    
+                if(GetY()>=player1.GetY()){
+                    incrementoY=-1;
+                }else if(GetY()<=player1.GetY()){
+                    incrementoY=1;
+                }
+                
+                incPos(incrementoX, incrementoY);
+            }
+        }
+	}
+}

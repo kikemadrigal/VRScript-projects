@@ -75,6 +75,17 @@ class Object implements GL_sprite{
 				Setanimation("fire_death");
 				type=OBJECT_TYPE_FIRE_DEATH; 
 				break;
+			case OBJECT_TYPE_LAVA:
+				Addanimationwithsheet("fire_death","images/objects-enemies.png",0,8,9*32,4*32,32,32,-1,-1,-1,.2);
+				Setanimation("fire_death");
+				type=OBJECT_TYPE_LAVA; 
+				break;
+			//Si es un bloque de paja que podemos mover o romper
+			case OBJECT_TYPE_SAND:
+				Addanimationwithsheet("sand","images/objects-enemies.png",0,0,0,2*32,32,32);
+				Setanimation("sand");
+				type=OBJECT_TYPE_SAND; 
+				break;
 			default:
 				GetEngine().LogPrint("Tipo de bloque no definido: "+_type);
 				break;
@@ -88,18 +99,27 @@ class Object implements GL_sprite{
 	function Move(){     
 		if(type==OBJECT_TYPE_PLATFORM_HORIZONTAL){
 			//Plataforma horizontal
-			if(GetX()>=start_position_x+100){
+			if(GetX()>=start_position_x+150){
 				speedX=-2;
 			}else if(GetX()<=start_position_x){
 				speedX=2;
 			}
 		}else if(type==OBJECT_TYPE_PLATFORM_VERTICAL){
 			//Plataforma vertical
-			if(GetY()>=start_position_y+100){
+			if(GetY()>=start_position_y+150){
 				speedY=-2;
 			}else if(GetY()<=start_position_y){
 				speedY=2;
 			}
+		}else if(type==OBJECT_TYPE_SAND){
+			//if(DistanceTo(game.player1)<100){
+				_tile_down=game.get_tile_down_object(GetX(),GetY());
+
+				//GetEngine().LogPrint("Tile down: "+string(_tile_down));
+				if(_tile_down>TILE_TYPE_GROUND || _tile_down==TILE_TYPE_EMPTY ){
+					SetY(GetY()+3);
+				}
+			//}
 		}
 
 

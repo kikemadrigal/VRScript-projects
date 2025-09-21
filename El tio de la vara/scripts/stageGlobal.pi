@@ -38,10 +38,9 @@ class StageGlobal implements GL_Stage{
 		_text.SetColor(RGB(234,255,0));	
 		return _text;
 	}
-	function drawScore(){
+	/*function drawScore(){
 		text_score.SetText("Stage: "+GetApp().game.currentStage+"  Score: "+GetApp().game.player1.score+" Lives: "+GetApp().game.player1.lives);
-		fps.setText("FPS: "+GETFPS(1));
-	}
+	}*/
 
 
     function fadeInEffect(){

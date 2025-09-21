@@ -5,7 +5,7 @@
 */
 class main implements GL_Program {
     defines:
-        DEBUG_MODE=true;
+        DEBUG_MODE=false;
         //* Dimensiones del nivel
         LEVEL_WIDTH=3000;
         LEVEL_HEIGHT=450;
@@ -22,32 +22,34 @@ class main implements GL_Program {
 
         // Tiles
         //Los tiles sólidos (plataforma, muro) son hasta el 250
-        TILE_TYPE_GROUND=250;
-        TILE_TYPE_LADDER=300; //escalera
-        TILE_TYPE_WATER=325; //agua
-        TILE_TYPE_DIED=275; // muerte
-        TILE_TYPE_EMPTY=65535;
+        TILE_TYPE_GROUND=224;   // sólido, pared, suelo, plataforma, tile máximo en tiles
+        TILE_TYPE_LADDER=300;   // escalera
+        TILE_TYPE_WATER=325;    // agua
+        TILE_TYPE_DIED=275;     // muerte
+        TILE_TYPE_EMPTY=65535;  // vacio
 
         //Objects
         OBJECT_TYPE_META=1;
-        OBJECT_TYPE_COLLECTIBLE_HEALTH=2; //recogibles
-        OBJECT_TYPE_COLLECTIBLE_KEY=3; //recogibles
-        OBJECT_TYPE_COLLECTIBLE_COIN50=10; //recogibles
+        OBJECT_TYPE_COLLECTIBLE_HEALTH=2;   //recogibles
+        OBJECT_TYPE_COLLECTIBLE_KEY=3;      //recogibles
+        OBJECT_TYPE_COLLECTIBLE_COIN50=10;  //recogibles
         OBJECT_TYPE_COLLECTIBLE_COIN100=11;
-        OBJECT_TYPE_DESTRUCTIBLE=20; // destructible
-        OBJECT_TYPE_MOVIBLE=21; // Movible
+        OBJECT_TYPE_DESTRUCTIBLE=20;        // destructible
+        OBJECT_TYPE_MOVIBLE=21;             // Movible
         OBJECT_TYPE_PLATFORM_HORIZONTAL=30; //movible horizontal
-        OBJECT_TYPE_PLATFORM_VERTICAL=31; // movible vertical
-        OBJECT_TYPE_FIRE_DEATH=40;
+        OBJECT_TYPE_PLATFORM_VERTICAL=31;   // movible vertical
+        OBJECT_TYPE_FIRE_DEATH=40;          // Fuego que te mata
+        OBJECT_TYPE_LAVA=41;                // Lava que te mata
+        OBJECT_TYPE_SAND=42;                // paja
         
         // Enemigos
         ENEMY_TYPE_NONE=0;
-        ENEMY_TYPE_EAGLE=1; //Äguila
-        ENEMY_TYPE_RAVEN=2; // Cuervo
-        ENEMY_TYPE_BAT=3; // Murciélago
-        ENEMY_TYPE_HAWK=4; // Halcón
-        ENEMY_TYPE_VULTURE=5; // Buitre
-        ENEMY_TYPE_SQUIRREL=6; // Escorpión
+        ENEMY_TYPE_EAGLE=1;             // Äguila
+        ENEMY_TYPE_RAVEN=2;             // Cuervo
+        ENEMY_TYPE_BAT=3;               // Murciélago
+        ENEMY_TYPE_HAWK=4;              // Halcón
+        ENEMY_TYPE_VULTURE=5;           // Buitre
+        ENEMY_TYPE_SQUIRREL=6;          // Escorpión
         ENEMY_TYPE_UP_DOWN=7;
         ENEMY_TYPE_LEFT_RIGHT=8;
         ENEMY_TYPE_FOLLOW_PLAYER=9;
@@ -71,14 +73,11 @@ class main implements GL_Program {
     	menu=null;
         game=null;
         winner=null;
-	
-        game_over=false;
+
         camera_not_move=false;
-     
         
     virtual start(){
         AddScriptPackage("scripts");
-        AddScriptPackage("scripts/stages");
         Setbackcolor(RGB(0,0,0));
         Setresolution(VIEWPORT_WIDTH,VIEWPORT_HEIGHT);
         //Lo agrandamos solo en horizontal de 800 a 1280 que suele ser la resuloción habotual
@@ -86,47 +85,51 @@ class main implements GL_Program {
         Setframerate(30);
         //El stageGlobal es usado para los marcadores y elementos generales
         stageGlobal=newStage("stageGlobal","StageGlobal");
-        /*
+        
         menu=NewStage("stage","menu");
         menu.Setmain();
         menu.Setactive();   
-        */   
-        RunStage("menu","Menu");               
+         
+        //RunStage("menu","Menu");               
         _change ("menu");
     }
 
+
     function SetCameraNotMove(value){
         camera_not_move=value;
+    }
+    function CenterCamera(_player1){
+        _x_camera=_player1.GetX()-GetResX()/2;
+        _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
+        game.SetCameraX(_x_camera);
     }
 
 
     state "menu":
     {
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){ 	
-            game_over=false;    
+            if(winner!=null)delete winner;
 		    game=RunStage("game","Game");
             _change ("game");
         }
     }
     state "game":
     {
-        if(game_over){
-            return;
-        }
+        if(DEBUG_MODE) game.print_score();
+        
         _player1=game.player1;
         _player1.incrementoX=0;
         //Si se pulsa el cursor derecho
         if (stageGlobal.pad.IsButton(PAD_BUTTON_RIGHT)){
             tile_right=game.get_tile_right(_player1.GetX(),_player1.GetY());
-            if(tile_right>TILE_TYPE_GROUND || tile_right==TILE_TYPE_EMPTY )
-                _player1.incrementoX=_player1.speedX;	
+            if(tile_right>TILE_TYPE_GROUND || tile_right==TILE_TYPE_EMPTY  ) _player1.incrementoX=_player1.speedX;	
             _player1.SetHFlip(False);	
             if(!camera_not_move)CenterCamera(_player1);
         }
         else if (stageGlobal.pad.IsButton(PAD_BUTTON_LEFT)){
             tile_left=game.get_tile_left(_player1.GetX(),_player1.GetY());
-            if(tile_left>TILE_TYPE_GROUND || tile_left==TILE_TYPE_EMPTY)
-                _player1.incrementoX=-_player1.speedX;	
+            //Solo se moverá es si el tile es mayor que el último de los tíles sólidos
+            if(tile_left>TILE_TYPE_GROUND || tile_left==TILE_TYPE_EMPTY  ) _player1.incrementoX=-_player1.speedX;	
             _player1.SetHFlip(True);
             if(!camera_not_move)CenterCamera(_player1);
         }
@@ -140,22 +143,37 @@ class main implements GL_Program {
             _player1.attack=true;  
             _player1.SetAnimation("attack");
             //Fijate que el newObject del GL_Program es distinto al del GL_Stage
+            //La vara se elimina sola al medio segundo
             vara=NewObject("vara","Vara",null,[_player1, game]);
+
+            /*
+                TODO: ¿Como se borran los tiles?
+            */
+            // Si hay un bloque destructible a la derecha, lo borramos del tileset
+            /*if(game.get_tile_right(_player1.GetX(),_player1.GetY())<=TILE_TYPE_SAND && game.get_tile_right(_player1.GetX(),_player1.GetY())>TILE_TYPE_GROUND){
+                //game.set_tile(_player1.GetX(),_player1.GetY(),TILE_TYPE_EMPTY);
+            }*/
         }
-            
         _x=clamp(_player1.GetX(),0, LEVEL_WIDTH-_player1.GetWF());
-        _y=clamp(_player1.GetY(),0, LEVEL_HEIGHT+_player1.GetHF());
+        _y=clamp(_player1.GetY(),1, LEVEL_HEIGHT+_player1.GetHF());
         _player1.SetPos(_x,_y);
-        //_player1.SetX(_x);
         _player1.incpos(_player1.incrementoX,_player1.incrementoY);
 
         //Si el player está atacando
         if(_player1.attack){
             if(_player1.GetAnimationLoops()>=1) _player1.attack=false;  
         }else{  
-            if(_player1.aceleracion!=0){
+            if(_player1.aceleracion!=0){ 
                 //Si está subiendo	
-                if (_player1.incrementoY<0) _player1.Setanimation("jump");
+                if (_player1.incrementoY<0 && _player1.GetY()>0){ 
+                    _player1.Setanimation("jump");
+                    _tile_up=game.get_tile_up(_player1.GetX(),_player1.GetY());
+                    if(_tile_up<TILE_TYPE_GROUND && _tile_up!=TILE_TYPE_EMPTY || _player1.GetY()<=0){
+                        //_player1.SetY(_player1.GetY()+_player1.incrementoY);
+                        _player1.incrementoY=0;
+                        _player1.aceleracion=0;
+                    }
+                }
                     //Si está bajando
                 else _player1.Setanimation("fall"); 
             }else if(_player1.incrementoX) _player1.Setanimation("walk");   
@@ -172,32 +190,24 @@ class main implements GL_Program {
             _player1.incrementoY+=_player1.aceleracion*GetFTime();
             _player1.aceleracion+=GetFTime()*0.025f;
         } 
+
+ 
+        //_player1.SetX(_x);
+       
     }
     state "winner":
     {
-        GetEngine().LogPrint("Estamos en el estado winner");
-
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
-            GetEngine().LogPrint("vamos a cambiar al menu");
-            //RunStage("menu","Menu");
+            RunStage("menu","Menu");
             _change ("menu");
-           
         }
     }
 
-    function CenterCamera(_player1){
-        _x_camera=_player1.GetX()-GetResX()/2;
-        _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
-        game.SetCameraX(_x_camera);
-    }
 
     function changeWinnerScreen(){
-        GetEngine().LogPrint("vamos a cambiar al winner");
         delete game;
-        game_over=true;
+        RunStage("winner","Winner");
         _change ("winner");
-  
     }
-
 }
   

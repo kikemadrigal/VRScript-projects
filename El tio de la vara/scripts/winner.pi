@@ -8,20 +8,20 @@ class Winner implements GL_Stage{
 
         bg=NewObject("bg","gl_sprite");
         bg.Addframe("images/win.png");
-        bg.SetPriority(0);*/
+        bg.SetPriority(0);
        
        	_text=NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", size);
-		_text.SetAlign(DT_CENTER);
+		_text.SetFont("fonts/Vintage Black.ttf", 22);
+		//_text.SetAlign(DT_CENTER);
 		
 		_text.SetColor(RGB(234,255,0));	
-        _text.SetPos(100,200);
+        _text.SetPos(50,200);
         _text.SetPriority(1);
         _text.SetText("Eres el ganador!!!\n pulsa una tecla para volver al menu");
         text=_text;
     }
 
-    virtual _operator_delete()
+    virtual _operator_delete(){
         //bg.Destroy();
         //delete text;
     }

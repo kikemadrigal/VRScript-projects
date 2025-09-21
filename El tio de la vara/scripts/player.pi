@@ -25,15 +25,18 @@ class Player implements GL_sprite{
 		Setcollisionrect(20,20,24,44);
 	}
 	virtual Move(){
-		_tile_down=game.get_tile_down(GetX(), GetY());
-		//GetApp().GetEngine().LogPrint("incY: "+incrementoY+" acel: "+aceleracion+" tile: "+string(game.get_tile_down(GetX(), GetY())) );
-		if(_tile_down<TILE_TYPE_GROUND){
-			if(incrementoY>=0){	
-				//lo situamos encima de la plataforma
-				incrementoY=0;
-				aceleracion=0;
+		if(aceleracion>0){
+			_tile_down=game.get_tile_down(GetX(), GetY());
+			//GetApp().GetEngine().LogPrint("incY: "+incrementoY+" acel: "+aceleracion+" tile: "+string(game.get_tile_down(GetX(), GetY())) );
+			if(_tile_down<TILE_TYPE_GROUND){
+				if(incrementoY>=0){	
+					//lo situamos encima de la plataforma
+					incrementoY=0;
+					aceleracion=0;
+				}
 			}
 		}
+		
 	}
 
 
@@ -83,8 +86,28 @@ class Player implements GL_sprite{
 				incrementoY=0;
 				aceleracion=0;
 				incpos(0,_sp2.speedY);
-			}else if(_sp2.GetItemType()==OBJECT_TYPE_FIRE_DEATH){
+			}else if(_sp2.GetItemType()==OBJECT_TYPE_FIRE_DEATH || _sp2.GetItemType()==OBJECT_TYPE_LAVA){
 				player_die();
+			}else if(_sp2.GetItemType()==OBJECT_TYPE_SAND){
+				//GetApp().GetEngine().LogPrint("colison con la paja");
+				//Obetenmos los tiles que tiene a su alrededor para no moverlo si tiene sólidos junto a él
+				tile_right=game.get_tile_right_object(_sp2.GetX(),_sp2.GetY());
+				tile_left=game.get_tile_left_object(_sp2.GetX(),_sp2.GetY());
+				// Si está saltando el player sobre la paja paramos el salto
+				if(aceleracion>0){
+					incrementoY=0;
+					aceleracion=0;
+				}
+				//No queremos que haga nada cuando haya una colisión superior
+				if(GetHF()+GetY()>=_sp2.GetY() && GetHF()+GetY()<_sp2.GetY()+10){
+				}else{
+					if(incrementoX>0){
+					//GetApp().GetEngine().LogPrint("lo movemos a la dercha");
+					//Movemos el bloque cuando no haya ningún sólido al lado
+					if(tile_right>TILE_TYPE_GROUND || tile_right==TILE_TYPE_EMPTY) _sp2.SetX(_sp2.GetX()+incrementoX);
+					}else if(incrementoX<0)if(tile_left>TILE_TYPE_GROUND || tile_left==TILE_TYPE_EMPTY)_sp2.SetX(_sp2.GetX()+incrementoX);
+					
+				}				
 			}
 				
 		}

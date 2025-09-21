@@ -19,18 +19,38 @@ class Game implements GL_Stage{
      
         ChangeStage();
     }
-    function _operator_delete(){
-        bg.Destroy();
-        player1.Destroy();
+    virtual _operator_delete(){
+        /*bg.Destroy();
+        delete player1;
+        Objects=null; 
+        fires=null;
+        enemies=null;
+        currentStage=0;
+        mapper=null;
+        layer=null;
+        tileSet=null;
+        stage=null;*/
     }
 
     function print_score(){    
-        message="Stage: "+currentStage+"  Score: "+player1.score+" Lives: "+player1.lives+" Keys: "+player1.keys_to_collect;    
+        message="Stage: "+currentStage+
+                "  Score: "+player1.score+
+                " Lives: "+player1.lives+
+                " Keys: "+player1.keys_to_collect;    
         if(DEBUG_MODE){
-            message+="\nLayers: "+mapper.GetNumLayers()+" right: "+get_tile_right(player1.GetX(),player1.GetY())+" left: "+get_tile_left(player1.GetX(),player1.GetY());
-            message+="\nEnemies: "+sizeof(enemies)+" objects "+sizeof(Objects)+" fires "+sizeof(fires);
+            message+="\nLayers: "+mapper.GetNumLayers()+
+                     " right: "+get_tile_right(player1.GetX(),player1.GetY())+
+                     " left: "+get_tile_left(player1.GetX(),player1.GetY())+
+                     " down: "+get_tile_down(player1.GetX(),player1.GetY());
+            message+="\nEnemies: "+sizeof(enemies)+
+                    " objects "+sizeof(Objects)+
+                    " fires "+sizeof(fires);
+            message+="\nFPS: "+GETFPS(1);
         }
         GetApp().stageGlobal.text_score.SetText(message);
+    }
+    function print_score(_score){
+        GetApp().stageGlobal.text_score.SetText(""+_score);
     }
     function draw_boss_live(live){
 		 GetApp().stageGlobal.text_boss_live.SetText(""+live);
@@ -38,27 +58,59 @@ class Game implements GL_Stage{
     function get_tile(_x,_y){
         layer=mapper.GetLayer(1);
         tile=mapper.GetCellFromPos(_x+32,_y+32);
-        cell=layer.Get(tile[0] ,tile[1]);       
+        cell=layer.Get(tile[0] ,tile[1]);    
+        return cell[1];
+    }
+    function get_tile_up(_x,_y){
+        layer=mapper.GetLayer(1);
+        tile=mapper.GetCellFromPos(_x+32,_y);
+        cell=layer.Get(tile[0] ,tile[1]);    
         return cell[1];
     }
     function get_tile_down(_x,_y){
         layer=mapper.GetLayer(1);
-        tile=null;
         tile=mapper.GetCellFromPos(_x+32,_y+player1.GetHF());
         cell=layer.Get(tile[0] ,tile[1]);
         return cell[1];
     }
     function get_tile_right(_x,_y){
         layer=mapper.GetLayer(1);
-        tile=mapper.GetCellFromPos(_x+42,_y+32);
+        tile=mapper.GetCellFromPos(_x+42,_y+40);
         cell=layer.Get(tile[0] ,tile[1]);
         return cell[1];
     }
     function get_tile_left(_x,_y){
         layer=mapper.GetLayer(1);
-        tile=mapper.GetCellFromPos(_x+20,_y+32);
+        tile=mapper.GetCellFromPos(_x+20,_y+40);
         cell=layer.Get(tile[0] ,tile[1]);
         return cell[1];
+    }
+    function get_tile_right_object(_x,_y){
+        layer=mapper.GetLayer(1);
+        tile=mapper.GetCellFromPos(_x+32,_y);
+        cell=layer.Get(tile[0] ,tile[1]);
+        //GetEngine().LogPrint(""+cell[1]);
+        return cell[1];
+    }
+    function get_tile_left_object(_x,_y){
+        layer=mapper.GetLayer(1);
+        tile=mapper.GetCellFromPos(_x+32,_y);
+        cell=layer.Get(tile[0] ,tile[1]);
+        //GetEngine().LogPrint(""+cell[1]);
+        return cell[1];
+    }
+    function get_tile_down_object(_x,_y){
+        layer=mapper.GetLayer(1);
+        tile=mapper.GetCellFromPos(_x+32,_y+32);
+        cell=layer.Get(tile[0] ,tile[1]);
+        return cell[1];
+    }
+    function set_tile(_x,_y,_tile){
+        
+        layer=mapper.GetLayer(1);
+        //layer.Set(_x+42,_y+32, tileset, _tile);
+        layer.Set(0,0, 1, 1);
+    
     }
 
     function AddActor(_name, _type, _x, _y, _params)
@@ -85,6 +137,12 @@ class Game implements GL_Stage{
                 break; 
             case "fuego_que_mata":
                 create_object(OBJECT_TYPE_FIRE_DEATH,_x, _y);
+                break;  
+            case "lava":
+                create_object(OBJECT_TYPE_LAVA,_x, _y);
+                break;  
+            case "paja":
+                create_object(OBJECT_TYPE_SAND,_x, _y);
                 break;  
             /**
              * Enemigos
@@ -122,8 +180,6 @@ class Game implements GL_Stage{
         if(stage!=null) delete stage;
         switch (currentStage){
             case 1:
-                //player1.SetVisible(true);
-                GetApp().SetCameraNotMove(false);
                 stage=New Stage1(this);
                 break;
             case 2:
@@ -132,6 +188,7 @@ class Game implements GL_Stage{
             case 3:
                 stage=New Stage3(this);
                 break;
+            //Combate boss 1
             case 4:
                 GetApp().SetCameraNotMove(true);
                 stage=New Stage4(this);
@@ -146,6 +203,7 @@ class Game implements GL_Stage{
             case 7: 
                 stage=New Stage7(this);
                 break;
+            //Combate boss 2
             case 8: 
                 GetApp().SetCameraNotMove(true);
                 stage=New Stage8(this);
@@ -160,18 +218,18 @@ class Game implements GL_Stage{
             case 11: 
                 stage=New Stage11(this);
                 break;
+            //Combate final boss 3
             case 12: 
                 GetApp().SetCameraNotMove(false);
                 stage=New Stage12(this);
                 break;
-            case 13:
-                //player1.SetVisible(false);
-                
+            case 13: 
+                GetApp().SetCameraNotMove(false);               
                 GetApp().changeWinnerScreen();
                 break;
         }
         //Le ponemos un efecto de fade
-        //GetApp().stageGlobal.fadeInEffect();
+        GetApp().stageGlobal.fadeInEffect();
 	}
 
     //Objects

@@ -12,12 +12,13 @@ class menu implements GL_Stage
 		_background.SetSize(GetApp().GetResX(),450);
 		background=_background;
 
-		_text=NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", 32);
-		_text.SetPos(300,450);
-		_text.SetColor(RGB(255,255,255));
-		_text.SetText("->Coge 3 llaves para abrir \nlos candados y pasar de nivel<-");
-		text=_text;
+       	_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 22);
+		_text.SetColor(RGB(234,255,0));	
+        _text.SetPos(50,200);
+        _text.SetPriority(1);
+        _text.SetText("Misión coge las llaves para abrir el candado\n pulsa una tecla para empezar");
+        text=_text;
 	}
 
 	virtual _operator_delete()

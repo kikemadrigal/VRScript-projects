@@ -108,7 +108,7 @@ class Enemy implements GL_sprite{
 				type=ENEMY_TYPE_SAW; 
 				break;
 			case ENEMY_TYPE_PENDULUM:
-	   			Addanimationwithsheet("pendulum","images/objects-enemies.png",0,3,0,20*32,32,32,-1,-1,-1,.2);
+	   			Addanimationwithsheet("pendulum","images/objects-enemies.png",0,4,0,20*32,64,64,-1,-1,-1,.1);
 				Setanimation("pendulum");
 				type=ENEMY_TYPE_PENDULUM; 
 				break;
@@ -183,7 +183,16 @@ class Enemy implements GL_sprite{
 			}else if(GetY()>=start_position_y){
 				speedY=-3;
 			}
+		}else if(type==ENEMY_TYPE_PENDULUM){
+			if(GetAnimationLoops()>=1){
+				//if(GetHFlip()){
+					SetHFlip(!GetHFlip());
+				//}
+				//else SetHFlip(true);
+			}
+			
 		}
+		
 
 		incpos(speedX,speedY);
 	}
