@@ -112,14 +112,16 @@ class Object implements GL_sprite{
 				speedY=2;
 			}
 		}else if(type==OBJECT_TYPE_SAND){
-			//if(DistanceTo(game.player1)<100){
-				_tile_down=game.get_tile_down_object(GetX(),GetY());
-
-				//GetEngine().LogPrint("Tile down: "+string(_tile_down));
-				if(_tile_down>TILE_TYPE_GROUND || _tile_down==TILE_TYPE_EMPTY ){
+			_tile_down=TILE_TYPE_EMPTY;			
+			_tile_down=game.get_tile_down_object(GetX(), GetY());
+			if(_tile_down>TILE_TYPE_GROUND || _tile_down==TILE_TYPE_EMPTY){
+				//if(GetY()<GROUND_Y){
+					speedX=0;
 					SetY(GetY()+3);
-				}
-			//}
+				//}
+			}
+			
+		
 		}
 
 

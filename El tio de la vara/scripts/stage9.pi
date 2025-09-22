@@ -21,8 +21,6 @@ class Stage9{
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap9.tmx", _game);
         delete _tmx;
-        
-       
         //pintamos el marcador
         _game.print_score();
   

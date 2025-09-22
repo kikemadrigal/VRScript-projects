@@ -1,3 +1,6 @@
+/**
+ * La pantalla de los montes, el castillo al fondo y de enemigos buitres y escorpiones
+ */
 class Stage1{
     properties:
         game=null;
@@ -27,7 +30,7 @@ class Stage1{
         for (i=0; i < 10; i++){ 
             _x_random=rand(1000,LEVEL_WIDTH);
             _y=10;
-            _enemy=game.create_enemy(5,_x_random,_y);
+            _enemy=game.create_enemy(ENEMY_TYPE_VULTURE,_x_random,_y);
         }
        //Pintamos el marcador
         game.print_score();        
@@ -41,6 +44,7 @@ class Stage1{
         bg.Destroy();
         game.delete_objects();
         game.delete_enemies();
+        //game.delete_fires();
         delete game.layer;
     }    
 }

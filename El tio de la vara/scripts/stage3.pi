@@ -1,3 +1,7 @@
+
+/**
+ * Fondo castillo oscuro verde,ladrillos grises, de enemigos aves y fuegos
+ */
 class Stage2{
     properties:
         game=null;
@@ -24,8 +28,9 @@ class Stage2{
         delete _tmx;
         
         
-        //Creamos 40 pájaros aleatoriamente
+        //Creamos 20 pájaros aleatoriamente
         for(i=0;i<20;i++){
+            //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
             _type_random=rand(1,4);
             //Lo ponemos en la derecha de la pantalla
             _enemy=_game.create_enemy(_type_random,-100,-100);

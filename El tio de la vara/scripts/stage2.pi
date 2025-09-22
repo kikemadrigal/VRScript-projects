@@ -1,3 +1,6 @@
+/**
+ * La pantalla interior del castillo, de enemigos onstruos que lanzan fuego
+ */
 class Stage2{
     properties:
         game=null;
@@ -16,21 +19,19 @@ class Stage2{
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage2.png");
         bg.SetPriority(-1);
-        
+        // Dibujamos los tiles
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap2.tmx", _game);
         delete _tmx;
         
         //pintamos el marcador
         _game.print_score();
-
-        
     }
     function _operator_delete(){
         bg.Destroy();
         game.delete_objects();
-        game.delete_enemies();
         //game.delete_fires();
+        game.delete_enemies();
         delete game.layer;
     }
 }

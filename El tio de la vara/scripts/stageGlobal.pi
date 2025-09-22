@@ -1,10 +1,10 @@
 class StageGlobal implements GL_Stage{
     properties:
 		pad=null;
-		fps=null;
+
 		text_score=null;
 		text_boss_live=null;
-
+		text_game=null;
    		sprite_efecto_apagado=null;
 
 	virtual _operator_new(_name,_creator){
@@ -12,23 +12,22 @@ class StageGlobal implements GL_Stage{
 		//Pad
 		_pad=NewObject("pad", "GL_Pad");
 	    _pad.SetPreset("CURSORS");
-		_pad.SetPreset("Joystick1",1);
+		//_pad.SetPreset("Joystick1",1);
+		//Se utilizará para agarrar un paquete
+		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_A);
 		pad=_pad;
 
 		text_score=getNewText();
 		text_score.SetPos(200,10);
-		fps=getNewText("", 12);
-		fps.SetPos(0,10);
-
 		
         text_boss_live=getNewText();
 		text_boss_live.SetPos(700,40);
         text_boss_live.SetColor(RGB(255,0,0));
 
-		
-
+		text_game=getNewText("",30);
+		text_game.SetAlign(DT_CENTER | DT_VCENTER);
+		text_game.SetColor(RGB(234,255,0));
 	}	
-
 
 	function getNewText(text="", size=20){
 		_text=NewObject("text","GL_Text");
@@ -38,10 +37,6 @@ class StageGlobal implements GL_Stage{
 		_text.SetColor(RGB(234,255,0));	
 		return _text;
 	}
-	/*function drawScore(){
-		text_score.SetText("Stage: "+GetApp().game.currentStage+"  Score: "+GetApp().game.player1.score+" Lives: "+GetApp().game.player1.lives);
-	}*/
-
 
     function fadeInEffect(){
          /**
@@ -58,7 +53,4 @@ class StageGlobal implements GL_Stage{
        // _efecto_apagado.SetOnFinish(this, "cuando_acabe_efecto_encendido");
         _efecto_apagado.Start(2000);
     }
-
-    
-
 }

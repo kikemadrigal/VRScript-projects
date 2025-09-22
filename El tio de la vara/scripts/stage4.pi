@@ -1,3 +1,6 @@
+/**
+ * batalla con el escorpión grande
+ */
 class Stage4{
     properties:
         game=null;

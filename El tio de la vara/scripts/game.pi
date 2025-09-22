@@ -54,7 +54,10 @@ class Game implements GL_Stage{
     }
     function draw_boss_live(live){
 		 GetApp().stageGlobal.text_boss_live.SetText(""+live);
-	}   
+	}  
+    function print_text_game(_text){
+        GetApp().stageGlobal.text_game.SetText(_text);
+    } 
     function get_tile(_x,_y){
         layer=mapper.GetLayer(1);
         tile=mapper.GetCellFromPos(_x+32,_y+32);
@@ -94,7 +97,7 @@ class Game implements GL_Stage{
     }
     function get_tile_left_object(_x,_y){
         layer=mapper.GetLayer(1);
-        tile=mapper.GetCellFromPos(_x+32,_y);
+        tile=mapper.GetCellFromPos(_x,_y);
         cell=layer.Get(tile[0] ,tile[1]);
         //GetEngine().LogPrint(""+cell[1]);
         return cell[1];
@@ -165,6 +168,12 @@ class Game implements GL_Stage{
             case "ladrillo-que-aplasta":
                 create_enemy(ENEMY_TYPE_CRUSHING_BRICK,_x, _y);
                 break;
+            case "bomba":
+                create_enemy(ENEMY_TYPE_BOMB,_x, _y);
+                break;
+            case "murcielago":
+                create_enemy(ENEMY_TYPE_BAT,_x, _y);
+                break;
             default:
                 GetEngine().LogPrint("Tipo de actor no definido: "+_type);
                 break;
@@ -175,7 +184,7 @@ class Game implements GL_Stage{
 
     function ChangeStage(){
         currentStage++;
-        GetEngine().LogPrint("camniando a la escena "+currentStage);
+        //GetEngine().LogPrint("camniando a la escena "+currentStage);
         if(currentStage>13) currentStage=0;
         if(stage!=null) delete stage;
         switch (currentStage){
@@ -223,6 +232,7 @@ class Game implements GL_Stage{
                 GetApp().SetCameraNotMove(false);
                 stage=New Stage12(this);
                 break;
+            // Pantalla de winner
             case 13: 
                 GetApp().SetCameraNotMove(false);               
                 GetApp().changeWinnerScreen();
@@ -260,7 +270,8 @@ class Game implements GL_Stage{
     }
     function delete_enemy(_enemy){
         enemies-=[_enemy];
-        delete _enemy;
+        //delete _enemy;
+        _enemy.enemy_set_dead();
     }
 
     //Fires
@@ -271,6 +282,7 @@ class Game implements GL_Stage{
         fires+=[_fire];
     }
     function delete_fires(_fire){
+        if(fires==null || sizeof(fires)==0) return;
         for(x=0; x<sizeof(fires);x++) delete fires[x];
 		fires=[];
     }

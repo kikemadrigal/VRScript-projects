@@ -1,12 +1,13 @@
 class Player implements GL_sprite{
 	properties:
 		score=0;
-		lives=3;
+		lives=10;
 		speedX=4;
 		incrementoX=0;
 		incrementoY=0;
 		aceleracion=0;
 		attack=false;
+		pick=false;
 		game=null;
 		//Llaves a recoger (puede variar según pantalla
 		keys_to_collect=3;
@@ -19,6 +20,7 @@ class Player implements GL_sprite{
 		Addanimationwithsheet("jump","images/player.png",0,0,0,3*64,64,64);
 		Addanimationwithsheet("fall","images/player.png",0,0,0,4*64,64,64);
 		Addanimationwithsheet("dead","images/player.png",0,0,0,5*64,64,64);
+		Addanimationwithsheet("pick","images/player.png",0,0,0,6*64,64,64);
 		SetAnimation("idle");	
 		SetPriority(1);
 		SetColliderMode(True);
@@ -102,12 +104,31 @@ class Player implements GL_sprite{
 				if(GetHF()+GetY()>=_sp2.GetY() && GetHF()+GetY()<_sp2.GetY()+10){
 				}else{
 					if(incrementoX>0){
-					//GetApp().GetEngine().LogPrint("lo movemos a la dercha");
-					//Movemos el bloque cuando no haya ningún sólido al lado
-					if(tile_right>TILE_TYPE_GROUND || tile_right==TILE_TYPE_EMPTY) _sp2.SetX(_sp2.GetX()+incrementoX);
-					}else if(incrementoX<0)if(tile_left>TILE_TYPE_GROUND || tile_left==TILE_TYPE_EMPTY)_sp2.SetX(_sp2.GetX()+incrementoX);
+						//GetApp().GetEngine().LogPrint("lo movemos a la dercha");
+						//Movemos el bloque cuando no haya ningún sólido al lado
+						if(tile_right>TILE_TYPE_GROUND || tile_right==TILE_TYPE_EMPTY) {
+							if(pick){
+								_sp2.SetX(_sp2.GetX()+(incrementoX*-1));
+								//GetApp().GetEngine().LogPrint("agarrando");
+							}
+							else {
+								//GetApp().GetEngine().LogPrint("empujando");
+								_sp2.SetX(_sp2.GetX()+incrementoX);
+							}
+						}
+					}else if(incrementoX<0){
+						if(tile_left>TILE_TYPE_GROUND || tile_left==TILE_TYPE_EMPTY){
+							if(pick){
+								//GetApp().GetEngine().LogPrint("agarrando");
+								_sp2.SetX(_sp2.GetX()+incrementoX*-1);
+							}else{
+								//GetApp().GetEngine().LogPrint("empujando");
+								_sp2.SetX(_sp2.GetX()+(incrementoX));
+							}
+						}
+					}
 					
-				}				
+				}					
 			}
 				
 		}
@@ -117,15 +138,17 @@ class Player implements GL_sprite{
 		if( Class_Id(_sp2)=="Boss1" ){
 			 player_die();
 		}
+		
+		if( Class_Id(_sp2)=="Pendulum" ){
+			 player_die();
+		}
+		
 		//Si es un enemigo
 		if(Class_Id(_sp2)=="Enemy" ){
-			//Que sale de izquierda a derecha
-			//if (_sp2.GetItemType()==1 || _sp2.GetItemType()==2 || _sp2.GetItemType()==3 || _sp2.GetItemType()==4){
-				if(attack){
-					game.delete_enemy(_sp2);
-					//_sp2.Destroy();
-				}else player_die();
-			//}
+			if(attack){
+				game.delete_enemy(_sp2);
+				//_sp2.Destroy();
+			}else player_die();
 		}
 
 		/*
@@ -150,7 +173,19 @@ class Player implements GL_sprite{
 	function player_die(){
 		lives--;
 		if(lives<=0) {
-			lives=3;			
+			if(DEBUG_MODE){
+				lives=10;		
+			}else{
+				SetAnimation("dead");	
+				//game.GetApp().Stop();
+				game.print_text_game("GAME OVER");
+				game.GetApp().Sleep(7000);
+				//game.GetApp().Play();
+				
+				game.print_score("");
+				game.print_text_game("");
+				game.GetApp().changeMenuScreen();
+			}
 		}else{
 			//Efecto de color rojo durante 2 segundos
 			_fx=CreateFX("TINT");

@@ -1,17 +1,3 @@
-        /**
-         * Los enemigos pueden ser:
-         * 0. Estático / vacío
-         * 1. Aguila de izquierda a derecha y desaparece
-         * 2. Cuervo de izquierda a derecha y desaparece
-         * 3. Codorniz izquierda a derecha y desaparece
-         * 4. Halcon izquierda a derecha y desaparece
-         * 5. Murcielago de izquierda a derecha y desaparece
-         * 6. Ardilla de abajo hacia arriba y desaparece
-         * 7. Moviemiento repetitivo arriba - abajo
-         * 8. Moviemiento repetitivo izquierda - derecha
-         * 9. Enemigo que sigue al jugador
-         * 10. Enemigo que dispara al jugador
-         */
 class Enemy implements GL_sprite{
 	properties:
 		game=null;
@@ -20,6 +6,7 @@ class Enemy implements GL_sprite{
 		speedY=0;
 		start_position_x=0;
 		start_position_y=0;
+		pendulum=null;
 	
 	/**
 	 * Ene el copnstructor le pasamos:
@@ -35,31 +22,29 @@ class Enemy implements GL_sprite{
 		_y=_params[3];
 		SetPos(_x,_y);
 		SetStartPosition(_x, _y);
+		Addanimationwithsheet("enemy-dead","images/objects-enemies.png",0,4,0,3*32,32,32,-1,-1,-1,.2);
 		switch(_type){
 			//Enemigo Aguila de izquierda a derecha
 			case ENEMY_TYPE_EAGLE:
 				Addanimationwithsheet("eagle","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
 				Setanimation("eagle");
-				//speedX=-5.5;
 				type=ENEMY_TYPE_EAGLE; 
 				break;
 			//Enemigo Cuervo de izquierda a derecha
 			case ENEMY_TYPE_RAVEN:
 				Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
 				Setanimation("raven");
-				//speedX=-7.0;
 				type=ENEMY_TYPE_RAVEN; 
 				break;
 			//Enemigo 3
-			case 3:
-				Addanimationwithsheet("eagle","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
-				Setanimation("eagle");
+			case ENEMY_TYPE_EAGLE_WHITE:
+				Addanimationwithsheet("eagle_white","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
+				Setanimation("eagle_white");
 				SetColor(RGB(255,255,255));
-				//speedX=-7.5;
 				type=3; 
 				break;
 			//Enemigo 4
-			case 4:
+			case ENEMY_TYPE_RAVEN_BLACK:
        			Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
 				Setanimation("raven");
         		//SetColor(RGB(0,0,0));
@@ -81,13 +66,12 @@ class Enemy implements GL_sprite{
 				speedX=-3;
 				type=ENEMY_TYPE_SQUIRREL; 
 				break;
-			// 
-			case 7:
-       			/*Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,0,32,32,-1,-1,-1,.2);
-				Setanimation("raven");
-        		SetColor(RGB(0,0,0));
-				speedX=-20.5;
-				type=4; */
+			
+			case ENEMY_TYPE_BAT:
+       			Addanimationwithsheet("bat","images/objects-enemies.png",0,4,10*32,8*32,32,32,-1,-1,-1,.2);
+				Setanimation("bat");
+        		SetCircle(_x,_y,50);
+				type=4; 
 				break;
 			//monstruo que dispara derecha o izquierda
 			case ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL:
@@ -107,15 +91,24 @@ class Enemy implements GL_sprite{
 				SetSquare(_x,_y,100,100);
 				type=ENEMY_TYPE_SAW; 
 				break;
+			//péndolo
 			case ENEMY_TYPE_PENDULUM:
-	   			Addanimationwithsheet("pendulum","images/objects-enemies.png",0,4,0,20*32,64,64,-1,-1,-1,.1);
-				Setanimation("pendulum");
+				//parámteros x, y , lenght
+	   			pendulum=game.NewObject("pendulum","pendulum", [game,_x, _y, 50]);
 				type=ENEMY_TYPE_PENDULUM; 
 				break;
+			// Ladrillo que aplasta
 			case ENEMY_TYPE_CRUSHING_BRICK:
 	   			Addanimationwithsheet("crushing-brick","images/objects-enemies.png",0,0,3*32,1*32,32,32,-1,-1,-1,.2);
 				Setanimation("crushing-brick");
 				type=ENEMY_TYPE_CRUSHING_BRICK; 
+				break;
+			// Bomba andando
+			case ENEMY_TYPE_BOMB:
+	   			Addanimationwithsheet("bomb","images/objects-enemies.png",0,5,0,22*32,32,32,-1,-1,-1,.2);
+				Setanimation("bomb");
+				speedX=-3;
+				type=ENEMY_TYPE_BOMB; 
 				break;
 			/**
 			 * Otra forma de agregar sprites es
@@ -127,14 +120,28 @@ class Enemy implements GL_sprite{
 		//Setcollisionrect(0,0,32,32);
 		SetCollision(True);
 	}	
+	virtual _operator_delete(){
+		if(type==ENEMY_TYPE_PENDULUM){
+			delete pendulum;
+		}
+	}
+
+	function enemy_set_dead(){
+		Setanimation("enemy-dead");
+		SetCollision(False);
+	}
 	function Move(){   
+		if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			//GetApp().GetEngine().LogPrint("enemigo matado");
+			Destroy();
+			return;
+		}
+		
 		//Si es un pájaro y se sale por la izquierda
 		if(type==1 || type====2 || type==3 || type==4){
 			if(GetX()<game.player1.getX()-350){
 				SetPos(-100,-100);
 				speedX=0;
-				
-
 			}
 		}
 		//Si es un buitre que te persigue  
@@ -159,7 +166,8 @@ class Enemy implements GL_sprite{
 				SetHFlip(False);
 			}
 		}else if(type==ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL){
-			if(GetAnimationLoops()>10){
+			//Si el número de aimaciones repetidas es mayor que 14 animaciones creamos un fuego 
+			if(GetAnimationLoops()>12){
 				//GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
 				ResetAnimation ();
 				if(GetX()>=game.player1.GetX()){
@@ -167,7 +175,7 @@ class Enemy implements GL_sprite{
 				}else{
 					SetHFlip(False);
 				}
-				//parametros tipo(ver main.pi) y enemy
+				// Parámetros tipo (ver main.pi) y enemy
 				game.create_fire(FIRE_TYPE_MOVING_HORIZONTAL,this); 
 			}
 		}else if(type==ENEMY_TYPE_SHOOT_PLAYER_VERTICAL){
@@ -183,13 +191,45 @@ class Enemy implements GL_sprite{
 			}else if(GetY()>=start_position_y){
 				speedY=-3;
 			}
-		}else if(type==ENEMY_TYPE_PENDULUM){
-			if(GetAnimationLoops()>=1){
-				//if(GetHFlip()){
-					SetHFlip(!GetHFlip());
-				//}
-				//else SetHFlip(true);
+		}else if(type==ENEMY_TYPE_BOMB){
+			_tile_down=TILE_TYPE_EMPTY;
+			
+			if(speedX<0){
+				_tile_left=game.get_tile_left_object(GetX(),GetY());
+				//Si a la izquierda hay un tile vacío
+				if(_tile_left>TILE_TYPE_GROUND || _tile_left==TILE_TYPE_EMPTY){
+					//obtenemos el tile de abajo para comprobar si está vacío
+					_tile_down=game.get_tile_down_object(GetX()-32, GetY());
+				}else{
+					speedX=-3;
+				}
+				
+			}else{
+				_tile_right=game.get_tile_right_object(GetX(),GetY());
+				if(_tile_right>TILE_TYPE_GROUND ||_tile_right==TILE_TYPE_EMPTY){
+					_tile_down=game.get_tile_down_object(GetX(), GetY());
+				}else{
+					speedX=3;
+				}
+				
 			}
+			
+			
+			if(_tile_down>TILE_TYPE_GROUND || _tile_down==TILE_TYPE_EMPTY){
+				if(speedX>0){
+					SetHFlip(True);
+					speedX=-3;
+				}else{
+					SetHFlip(False);
+					speedX=3;
+				}
+			}
+		
+
+
+
+
+			
 			
 		}
 		
@@ -222,6 +262,24 @@ class Enemy implements GL_sprite{
 		_ct=CreateController();
 		_ct.SetSpeed(2);
 		_ct.SetRoute(_ruta, _ruta.MODE_LOOP);
+		_ct.Start();
+	}
+
+	function SetRouteZigZag(_x,_y){
+		_ruta=NewObject("ruta", "GL_Route");
+		_ruta.AddNode (_x+10,_y-2);
+		_ruta.AddNode (_x+20,_y-10);
+		_ruta.AddNode (_x+50,_y-20);
+		_ruta.AddNode (_x+100,_y-30);
+		_ruta.AddNode (_x+50,_y-20);
+		_ruta.AddNode (_x+20,_y-10);
+		_ruta.AddNode (_x+10,_y-2);
+		_ruta.AddNode (_x-10,_y-10);
+		_ruta.AddNode (_x-20,_y-20);
+		_ruta.AddNode (_x-50,_y-30);
+		_ct=CreateController();
+		_ct.SetSpeed(2);
+		_ct.SetRoute(_ruta, _ruta.MODE_PINGPONG);
 		_ct.Start();
 	}
 
