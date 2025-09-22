@@ -11,6 +11,8 @@ class Pendulum implements GL_Sprite{
         radius =0;
         lineSprite =null;
 
+        angle2=0;
+
     virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
 		ancla_x=_params[1];
@@ -22,22 +24,20 @@ class Pendulum implements GL_Sprite{
         angular_acceleration = 0;   // Aceleración angular
         gravity = 0.5;   // Gravedad (ajustar para el juego)
         radius = 20; 
-        //color = RGB(255, 0, 0);   // Rojo
-        //chain_color = RGB(100, 100, 100);   // Gris para la cadena+
 
-        Addanimationwithsheet("pendulum","images/objects-enemies.png",0,0,0,21*32,32,32,-1,-1,-1,.02);
+
+        Addanimationwithsheet("pendulum","images/objects-enemies.png",2,2,0,20*32,64,64,-1,-1,-1,.02);
 		Setanimation("pendulum");
         SetCollision(True);
+        Setcollisionrect(22,40,20,24);
         SetPos(ancla_x,ancla_y);
+        SetPivot(0, 1);
 
-        lineSprite=game.NewObject("lineSprite","GL_Sprite");
+        /*lineSprite=game.NewObject("lineSprite","GL_Sprite");
         lineSprite.Addanimationwithsheet("pendulum-chain","images/objects-enemies.png",0,0,0,20*32,64,32,-1,-1,-1,.02);
 		lineSprite.Setanimation("pendulum-chain");
         lineSprite.SetPos(ancla_x-32, ancla_y);
-        //inicio cadena, final cadena, inicio_bola,
-        //lineSprite=game.NewObject("lineSprite","lineSprite", [ancla_x+16,ancla_y]);
-        //lineSprite.SetHFlip(true);
-        lineSprite.SetPivot (0, 20);
+        lineSprite.SetPivot (0, 20);*/
     }
 
     virtual Move(){
@@ -51,8 +51,13 @@ class Pendulum implements GL_Sprite{
         _x = ancla_x + length * sin(angle); 
         _y = ancla_y + length * cos(angle); 
         SetPos(_x,_y);
+        SetAngle(-angle);
         //GetApp().GetEngine().LogPrint("rotacion: "+angular_velocity);
-        lineSprite.IncAngle(angle*0.10);
+        //lineSprite.IncAngle(angle*0.10);
+        /*angle2+=0.001;
+        if (angle2>=0.05) angle2*=-1;
+        GetApp().GetEngine().LogPrint("rotacion: "+angle2);
+        IncAngle(angle2);*/
     }
 
 

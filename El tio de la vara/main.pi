@@ -5,7 +5,7 @@
 */
 class main implements GL_Program {
    defines:
-        DEBUG_MODE=false;
+        DEBUG_MODE=true;
         //* Dimensiones del nivel
         LEVEL_WIDTH=3000;
         LEVEL_HEIGHT=450;
