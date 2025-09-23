@@ -1,5 +1,5 @@
 /**
- * La pantalla interior del castillo, de enemigos onstruos que lanzan fuego
+ * La pantalla interior del castillo, de enemigos monstruos que lanzan fuego
  */
 class Stage2{
     properties:

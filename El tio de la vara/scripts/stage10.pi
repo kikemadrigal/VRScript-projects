@@ -1,7 +1,14 @@
+/**
+ * En esta pantalla te irán saliendo dragones por la izquierda 
+ * que persiguen al player desde arriba 🐉
+ * cunado mates a 1 saldrá otro
+ * lanzan fuego hacia abajo
+ */
 class Stage10{
     properties:
         game=null;
         bg=null;
+        timer_create_enemies=null;
 
     function _operator_new(_game){
         game=_game;
@@ -21,7 +28,19 @@ class Stage10{
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap10.tmx", _game);
         delete _tmx;
+
+        //creamos 10 dragones
+        for (i=0; i < 10; i++){ 
+            _enemy=game.create_enemy(ENEMY_TYPE_DRAGON,-100,-100);
+            _enemy.speedX=0;
+        }
+        //creamos un enemigo dragón inicial que la vemocidad no es 0
+        _enemy=game.create_enemy(ENEMY_TYPE_DRAGON,0,200);
+        _enemy.speedX=2;
         
+        timer_create_enemies=_game.NewObject("timer", "GL_Timer");
+        timer_create_enemies.SetFrequency(2000);
+        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
        
         //pintamos el marcador
         _game.print_score();
@@ -32,6 +51,38 @@ class Stage10{
         game.delete_objects();
         game.delete_enemies();
         //game.delete_fires();
+        delete timer_create_enemies;
         delete game.layer;
+    }
+
+    function OnTimerEnemiesCallBack(_timer){
+        //game.GetEngine().LogPrint("Vamos a crear un pajaro");
+        //Escogemos el 1 pajaro que encontremos de la lista de enemigos de tipo pájaro
+        for(i=0;i<sizeof(game.enemies);i++){
+            _enemy=game.enemies[i];
+            if(_enemy.GetItemType()==ENEMY_TYPE_DRAGON){
+                if(_enemy.speedX==0 && get_dragons_with_speedX_zero()==0){
+                    _x=game.player1.GetX()-350;
+                    _y_random=rand(10,200);
+                    _enemy.SetPos(_x,_y_random);
+                    //Le ponemos una velocidad
+                    _enemy.speedX=2;
+                    break;
+                }
+            }
+        }
+    }
+
+    function get_dragons_with_speedX_zero(){
+        _count=0;
+        for(i=0;i<sizeof(game.enemies);i++){
+            _enemy=game.enemies[i];
+            if(_enemy.GetItemType()==ENEMY_TYPE_DRAGON){
+                if(_enemy.speedX!=0){
+                    _count++;
+                }
+            }
+        }
+        return _count;
     }
 }

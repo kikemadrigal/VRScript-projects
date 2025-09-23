@@ -13,7 +13,7 @@ class Game implements GL_Stage{
       
     virtual _operator_new(_name,_creators){
         mapper =NewObject("mapper","gl_mapper");
-        tileset=mapper.GetTileset(1);
+        //tileset=mapper.GetTileset(1);
 		
         player1=NewObject("player","Player",[this]);
      
@@ -173,6 +173,9 @@ class Game implements GL_Stage{
                 break;
             case "murcielago":
                 create_enemy(ENEMY_TYPE_BAT,_x, _y);
+                break;
+            case "martillo":
+                create_enemy(ENEMY_TYPE_HAMMER,_x, _y);
                 break;
             default:
                 GetEngine().LogPrint("Tipo de actor no definido: "+_type);

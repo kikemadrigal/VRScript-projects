@@ -29,7 +29,7 @@ class Player implements GL_sprite{
 	virtual Move(){
 		if(aceleracion>0){
 			_tile_down=game.get_tile_down(GetX(), GetY());
-			//GetApp().GetEngine().LogPrint("incY: "+incrementoY+" acel: "+aceleracion+" tile: "+string(game.get_tile_down(GetX(), GetY())) );
+			GetApp().GetEngine().LogPrint("aceleracion: "+aceleracion);
 			if(_tile_down<TILE_TYPE_GROUND){
 				if(incrementoY>=0){	
 					//lo situamos encima de la plataforma
@@ -123,7 +123,7 @@ class Player implements GL_sprite{
 								_sp2.SetX(_sp2.GetX()+incrementoX*-1);
 							}else{
 								//GetApp().GetEngine().LogPrint("empujando");
-								_sp2.SetX(_sp2.GetX()+(incrementoX));
+								_sp2.SetX(_sp2.GetX()+incrementoX);
 							}
 						}
 					}

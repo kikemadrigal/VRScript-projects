@@ -22,8 +22,13 @@ class Enemy implements GL_sprite{
 		_y=_params[3];
 		SetPos(_x,_y);
 		SetStartPosition(_x, _y);
-		Addanimationwithsheet("enemy-dead","images/objects-enemies.png",0,4,0,3*32,32,32,-1,-1,-1,.2);
+		_add_dead_animation=true;
+	
 		switch(_type){
+			/**
+			 * Los pájaros del 1 al 4 😍 son pájaros que salen por la izquierda
+			 * tienen una velocidad aleatoria y una atura aleatoria
+			 */
 			//Enemigo Aguila de izquierda a derecha
 			case ENEMY_TYPE_EAGLE:
 				Addanimationwithsheet("eagle","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
@@ -94,7 +99,11 @@ class Enemy implements GL_sprite{
 			//péndolo
 			case ENEMY_TYPE_PENDULUM:
 				//parámteros x, y , lenght
+				//_lenght_aleatory=rand(20,70);
+				_add_dead_animation=false;
 	   			pendulum=game.NewObject("pendulum","pendulum", [game,_x, _y, 50]);
+				//Al péndulo no se le puede matar
+				
 				type=ENEMY_TYPE_PENDULUM; 
 				break;
 			// Ladrillo que aplasta
@@ -110,6 +119,17 @@ class Enemy implements GL_sprite{
 				speedX=-3;
 				type=ENEMY_TYPE_BOMB; 
 				break;
+			case ENEMY_TYPE_DRAGON:
+	   			Addanimationwithsheet("dragon","images/objects-enemies.png",0,11,0,16*32,64,64,-1,-1,-1,.02);    
+				Setanimation("dragon");
+				SetSize(80,80,true);
+				type=ENEMY_TYPE_DRAGON; 
+				break;
+			case ENEMY_TYPE_HAMMER:
+	   			Addanimationwithsheet("hammer","images/objects-enemies.png",0,4,9*32,11*32,64,64,-1,-1,-1,.2);
+				Setanimation("hammer");
+				type=ENEMY_TYPE_HAMMER; 
+				break;
 			/**
 			 * Otra forma de agregar sprites es
 			 *  AddEmptyFrame (50,10);
@@ -117,8 +137,10 @@ class Enemy implements GL_sprite{
 			 */
 
 		}
+		if(_add_dead_animation)Addanimationwithsheet("enemy-dead","images/objects-enemies.png",0,4,0,3*32,32,32,-1,-1,-1,.2);
 		//Setcollisionrect(0,0,32,32);
 		SetCollision(True);
+	
 	}	
 	virtual _operator_delete(){
 		if(type==ENEMY_TYPE_PENDULUM){
@@ -191,6 +213,7 @@ class Enemy implements GL_sprite{
 			}else if(GetY()>=start_position_y){
 				speedY=-3;
 			}
+		// la bomba con piernas detecta colisiones con tiles sólidos y  si los de abajo están vacíos se mueve
 		}else if(type==ENEMY_TYPE_BOMB){
 			_tile_down=TILE_TYPE_EMPTY;
 			
@@ -224,13 +247,22 @@ class Enemy implements GL_sprite{
 					speedX=3;
 				}
 			}
-		
-
-
-
-
-			
-			
+		}else if(type==ENEMY_TYPE_DRAGON){
+			//Como para las instancias que se salen de la cámara
+			// si se aleja mucho lo acercamos al player
+			if(GetX()>game.player1.GetX()+450){
+				SetPos(GetX()-100,GetY());
+			}else if(GetX()<game.player1.GetX()-450){
+				SetPos(GetX()+64,GetY());
+			}
+			//Esto hace que persiga al player y qe se quede dando vueltas encima
+			if(GetX()>game.player1.GetX()+10 && GetX()>game.player1.GetX()+20){
+				speedX=-2;
+				SetHFlip(true);
+			}else if(GetX()<game.player1.GetX()-10 && GetX()<game.player1.GetX()-20){
+				SetHFlip(false);
+				speedX=2;
+			}
 		}
 		
 

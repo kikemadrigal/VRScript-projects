@@ -1,3 +1,8 @@
+/**
+ * El super dragón, pantalla fiinal
+ * lanza llamas en todas direcciones
+ */
+
 class Stage12{
     properties:
         game=null;

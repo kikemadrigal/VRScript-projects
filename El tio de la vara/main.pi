@@ -61,6 +61,8 @@ class main implements GL_Program {
         ENEMY_TYPE_PENDULUM=21;
         ENEMY_TYPE_CRUSHING_BRICK=22;
         ENEMY_TYPE_BOMB=23;
+        ENEMY_TYPE_DRAGON=24;
+        ENEMY_TYPE_HAMMER=25;
 
 
         //Fire
@@ -86,7 +88,7 @@ class main implements GL_Program {
         //Lo agrandamos solo en horizontal de 800 a 1280 que suele ser la resuloción habotual
         Setviewscale(-1);
         Setvsync(true);
-        Setframerate(40);
+        Setframerate(30);
         //El stageGlobal es usado para los marcadores y elementos generales
         stageGlobal=newStage("stageGlobal","StageGlobal");
         
@@ -222,7 +224,5 @@ class main implements GL_Program {
             _change ("menu");
         }
     }
-
-
 }
   

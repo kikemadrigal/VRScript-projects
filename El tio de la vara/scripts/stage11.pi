@@ -1,3 +1,7 @@
+/**
+ * El tio del martillo
+ * cuando da un golpe paraliza al player y tiembla la pantalla
+ */
 class Stage{
     properties:
         game=null;
