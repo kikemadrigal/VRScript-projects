@@ -27,8 +27,16 @@ class Vara implements GL_sprite{
         //GetApp().GetEngine().LogPrint("Colisión con: "+Class_Id(_sp2));
         //Si es un enemigo
         if(Class_Id(_sp2)=="Enemy" ){
+            if(_sp2.GetItemType()==ENEMY_TYPE_CRUSHING_BRICK || _sp2.GetItemType()==ENEMY_TYPE_PENDULUM) return;
+            //borramos la vara
             delete this;
-            game.delete_enemy(_sp2);
+            _sp2.touches++;
+            _fx=_sp2.CreateFX("TINT");
+            _fx.Start(1000, RGB(255,0,0));
+            if(_sp2.touches>_sp2.touches_for_died){
+                //borramos el enemigo
+                game.delete_enemy(_sp2);
+            }
         }
         if(Class_Id(_sp2)=="Boss1" ){
             if(_sp2.boss_live>0)_sp2.boss_live--;

@@ -1,6 +1,6 @@
 
 /**
- * Fondo castillo oscuro verde,ladrillos grises, de enemigos aves y fuegos
+ * Fondo castillo oscuro verde oscuro,ladrillos grises, de enemigos aves y fuegos que matan
  */
 class Stage2{
     properties:

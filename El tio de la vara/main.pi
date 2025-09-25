@@ -63,6 +63,9 @@ class main implements GL_Program {
         ENEMY_TYPE_BOMB=23;
         ENEMY_TYPE_DRAGON=24;
         ENEMY_TYPE_HAMMER=25;
+        ENEMY_TYPE_SPIDER=26;
+        ENEMY_TYPE_SMALL_SKULL=27;
+        ENEMY_TYPE_LARGE_SKULL=28;
 
 
         //Fire
@@ -214,7 +217,7 @@ class main implements GL_Program {
         }else{
             //Rollo aceleración
             _player1.incrementoY+=_player1.aceleracion*GetFTime();
-            _player1.aceleracion+=GetFTime()*0.025f;
+            if(_player1.aceleracion<0.3)_player1.aceleracion+=GetFTime()*0.025f;
         }
     }
     state "winner":

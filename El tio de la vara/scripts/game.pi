@@ -5,18 +5,14 @@ class Game implements GL_Stage{
         Objects=[]; 
         fires=[];
         enemies=[];
-        currentStage=0;
+        currentStage=2;
         mapper=null;
         layer=null;
-        tileSet=null;
         stage=null;
       
     virtual _operator_new(_name,_creators){
         mapper =NewObject("mapper","gl_mapper");
-        //tileset=mapper.GetTileset(1);
-		
         player1=NewObject("player","Player",[this]);
-     
         ChangeStage();
     }
     virtual _operator_delete(){
@@ -109,13 +105,10 @@ class Game implements GL_Stage{
         return cell[1];
     }
     function set_tile(_x,_y,_tile){
-        
         layer=mapper.GetLayer(1);
         //layer.Set(_x+42,_y+32, tileset, _tile);
         layer.Set(0,0, 1, 1);
-    
     }
-
     function AddActor(_name, _type, _x, _y, _params)
 	{
 		switch (_type)
@@ -177,6 +170,15 @@ class Game implements GL_Stage{
             case "martillo":
                 create_enemy(ENEMY_TYPE_HAMMER,_x, _y);
                 break;
+            case "araña":
+                create_enemy(ENEMY_TYPE_SPIDER,_x, _y);
+                break;
+            case "calavera-pequeña":
+                create_enemy(ENEMY_TYPE_SMALL_SKULL,_x, _y);
+                break;
+            case "calavera-grande":
+                create_enemy(ENEMY_TYPE_LARGE_SKULL,_x, _y);
+                break;
             default:
                 GetEngine().LogPrint("Tipo de actor no definido: "+_type);
                 break;
@@ -232,7 +234,7 @@ class Game implements GL_Stage{
                 break;
             //Combate final boss 3
             case 12: 
-                GetApp().SetCameraNotMove(false);
+                GetApp().SetCameraNotMove(true);
                 stage=New Stage12(this);
                 break;
             // Pantalla de winner
@@ -283,6 +285,7 @@ class Game implements GL_Stage{
         //parámetros game, tipo de fuego y enemigo  
         _fire=NewObject("fire","Fire",[this,_type,_enemy]);
         fires+=[_fire];
+        return _fire;
     }
     function delete_fires(_fire){
         if(fires==null || sizeof(fires)==0) return;

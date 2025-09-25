@@ -29,7 +29,7 @@ class Player implements GL_sprite{
 	virtual Move(){
 		if(aceleracion>0){
 			_tile_down=game.get_tile_down(GetX(), GetY());
-			GetApp().GetEngine().LogPrint("aceleracion: "+aceleracion);
+			//GetApp().GetEngine().LogPrint("aceleracion: "+aceleracion);
 			if(_tile_down<TILE_TYPE_GROUND){
 				if(incrementoY>=0){	
 					//lo situamos encima de la plataforma
@@ -44,7 +44,13 @@ class Player implements GL_sprite{
 
 	virtual OnSpriteCollision (_sp1,_sp2)
 	{
-		//Si es un objeto
+		/**
+		 * Colisón player con los enemigos 🩸
+		 */
+		if(Class_Id(_sp2)=="Enemy" ||Class_Id(_sp2)=="Fire" || Class_Id(_sp2)=="Boss1" || Class_Id(_sp2)=="Pendulum") player_die();
+		/**
+		 * Colisón player con los objetos
+		 */
 	    if(Class_Id(_sp2)=="Object" ){
 			//GetApp().GetEngine().LogPrint("colsionn con: "+_sp2.GetItemType());
 			//Si es la meta
@@ -129,28 +135,9 @@ class Player implements GL_sprite{
 					}
 					
 				}					
-			}
-				
-		}
-		if(Class_Id(_sp2)=="Fire"){
-			player_die();
-		}
-		if( Class_Id(_sp2)=="Boss1" ){
-			 player_die();
+			}	
 		}
 		
-		if( Class_Id(_sp2)=="Pendulum" ){
-			 player_die();
-		}
-		
-		//Si es un enemigo
-		if(Class_Id(_sp2)=="Enemy" ){
-			if(attack){
-				game.delete_enemy(_sp2);
-				//_sp2.Destroy();
-			}else player_die();
-		}
-
 		/*
 		//Otra forma sería con setype y getType en el main
 		if(_sp2.GetType()==GetApp().TYPE_SUELO){
