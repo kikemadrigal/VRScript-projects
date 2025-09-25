@@ -2,7 +2,7 @@
 
 ## El caballero de la vara
 
-<a href="https://github.com/kikemadrigal/VRScript-projects">Haz click aquí para ver sus datos</a>
+<a href="https://github.com/kikemadrigal/VRScript-projects/tree/main/El%20tio%20de%20la%20vara">Haz click aquí para ver sus datos</a>
 
 ## Helicopter
 
