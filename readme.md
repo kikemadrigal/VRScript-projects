@@ -4,6 +4,8 @@
 
 <a href="https://github.com/kikemadrigal/VRScript-projects/tree/main/El%20tio%20de%20la%20vara">Haz click aquí para ver sus datos</a>
 
+<img src="docs/caballerovara.png" width="400">
+
 ## Helicopter
 
 Testeo de movimiento de cámara en un fondo de 4000 px.
