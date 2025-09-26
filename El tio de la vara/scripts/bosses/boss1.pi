@@ -1,3 +1,9 @@
+namespace es_tipolisto_caballeroVara_bosses;
+/*
+    Boss 1 escorpión
+    Se mueve hacia el player solo en horizontal, si el player está
+    más alto se para.
+ */
 class Boss1 implements GL_sprite{
 	properties:
 		incrementoX=0;
@@ -11,19 +17,15 @@ class Boss1 implements GL_sprite{
 	virtual _operator_new(_name,_creator, _params){
         game=_params[0];
         player1=_params[1];
-        //game.boss_live=100;
-   		//Colocamos al boss
         Addanimationwithsheet("escorpion-idle","images/objects-enemies.png",0,0,0,11*32,32,32);
         Addanimationwithsheet("escorpion-walk","images/objects-enemies.png",0,5,0,11*32,32,32,-1,-1,-1,.2);
         Addanimationwithsheet("escorpion-atack","images/objects-enemies.png",0,1,0,12*32,32,32,-1,-1,-1,.1);
         Addanimationwithsheet("escorpion-die","images/objects-enemies.png",0,2,0,13*32,32,32,-1,-1,-1,0.2);
 		Setanimation("escorpion-walk");
         SetCollision(True);
-        Setcollisionrect(0,10,128,118);
+        Setcollisionrect(0,30,128,98);
         SetPos(500,GROUND_Y-64);
         SetSize(32*4,32*4, true);
-
-        //game.GetApp().boss_mode=true;
     }
 
 	virtual Move(){   
@@ -49,10 +51,10 @@ class Boss1 implements GL_sprite{
                 if(GetY()-32<=player1.GetY()){
                     if(GetX()>=player1.GetX()){
                         incrementoX=-2;
-                        SetHFlip(false);
+                        SetHFlip(true);
                     }else{
                         incrementoX=2;
-                        SetHFlip(true);
+                        SetHFlip(false);
                     }
                 }else{
                     incrementoX=0;

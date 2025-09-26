@@ -1,3 +1,5 @@
+namespace es_tipolisto_caballeroVara;
+
 class Fire implements GL_sprite{
 	properties:
 		incrementoX=0;

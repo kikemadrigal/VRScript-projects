@@ -1,3 +1,5 @@
+namespace es_tipolisto_caballeroVara_stages;
+
 /**
  * El fondo es un bosque
  * te irán saliendo dragones por la izquierda 

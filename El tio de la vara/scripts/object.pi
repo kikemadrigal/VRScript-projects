@@ -1,18 +1,4 @@
-        /**
-         * Los bloques pueden ser:
-         * 0. Meta
-         * 1. Vacío de ambientación
-         * 2. Escalera
-         * 3. Pared  / bloque estático
-         * 4. Agua
-         * 5. Pinchos de muerte
-         * 6. Destruible
-		 * 7 colectionable (llave)
-		 * 8 colectionable (moneda)
-         * 10. plataforma estática / suelo
-         * 11. Plataforma horizontal
-         * 12. Plataforma vertical
-         */
+namespace es_tipolisto_caballeroVara;
 
 class Object implements GL_sprite{
 	properties:

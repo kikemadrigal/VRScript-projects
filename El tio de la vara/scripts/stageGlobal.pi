@@ -1,3 +1,5 @@
+namespace es_tipolisto_caballeroVara;
+
 class StageGlobal implements GL_Stage{
     properties:
 		pad=null;

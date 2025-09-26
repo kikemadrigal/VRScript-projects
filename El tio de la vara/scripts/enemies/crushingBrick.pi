@@ -1,0 +1,28 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class CrushingBrick implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        Addanimationwithsheet("crushing-brick","images/objects-enemies.png",0,0,3*32,1*32,32,32,-1,-1,-1,.2);
+        Setanimation("crushing-brick");
+        _add_dead_animation=false;
+        type=ENEMY_TYPE_CRUSHING_BRICK; ; 
+    }
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        if (GetY()<=start_position_y-100){
+            speedY=3;
+        }else if(GetY()>=start_position_y){
+            speedY=-3;
+        }
+        incpos(speedX,speedY);
+    }
+
+    
+	virtual _operator_delete(){
+		
+	}
+}

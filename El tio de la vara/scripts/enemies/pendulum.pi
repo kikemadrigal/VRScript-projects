@@ -1,3 +1,5 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
 class Pendulum implements GL_Sprite{
     properties:
         game=null;

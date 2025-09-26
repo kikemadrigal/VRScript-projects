@@ -1,11 +1,11 @@
- /**
+/**
 @Title: El caballero de la bara
 @autor Kike Madrigal
 @Version: 1.0
 */
 class main implements GL_Program {
    defines:
-        DEBUG_MODE=true;
+        DEBUG_MODE=false;
         //* Dimensiones del nivel
         LEVEL_WIDTH=3000;
         LEVEL_HEIGHT=450;
@@ -86,6 +86,9 @@ class main implements GL_Program {
         
     virtual start(){
         AddScriptPackage("scripts");
+        AddScriptPackage("scripts/stages");
+        AddScriptPackage("scripts/bosses");
+        AddScriptPackage("scripts/enemies");
         Setbackcolor(RGB(0,0,0));
         Setresolution(VIEWPORT_WIDTH,VIEWPORT_HEIGHT);
         //Lo agrandamos solo en horizontal de 800 a 1280 que suele ser la resuloción habotual
@@ -223,6 +226,7 @@ class main implements GL_Program {
     state "winner":
     {
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
+            stageGlobal.text_score.SetText("");
             RunStage("menu","Menu");
             _change ("menu");
         }

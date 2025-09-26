@@ -1,0 +1,35 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class ShootPlayerHorizontal implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+        Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,14*32,32,32,-1,-1,-1,.2);
+        Setanimation("monstruo1");
+        type=ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL; 
+    }
+
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        //Si el número de animaciones repetidas es mayor que 12 animaciones creamos un fuego 
+        if(GetAnimationLoops()>12){
+            //GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
+            if(GetX()>=game.player1.GetX()){
+                SetHFlip(True);
+            }else{
+                SetHFlip(False);
+            }
+            // Creamos un fuego con parámetros tipo (ver main.pi) y enemy
+            game.create_fire(FIRE_TYPE_MOVING_HORIZONTAL,this); 
+            ResetAnimation ();
+        }
+        incpos(speedX,speedY);
+    }
+    
+	virtual _operator_delete(){
+		
+	}
+}

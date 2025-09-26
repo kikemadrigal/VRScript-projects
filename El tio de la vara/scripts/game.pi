@@ -1,3 +1,5 @@
+namespace es_tipolisto_caballeroVara;
+
 class Game implements GL_Stage{
     properties:
         bg=null;
@@ -5,7 +7,7 @@ class Game implements GL_Stage{
         Objects=[]; 
         fires=[];
         enemies=[];
-        currentStage=2;
+        currentStage=0;
         mapper=null;
         layer=null;
         stage=null;
@@ -264,10 +266,87 @@ class Game implements GL_Stage{
 
     //Enemies
     function create_enemy(_type,_x,_y){
+        //GetEngine().LogPrint("vamos a craer un aguila "+_type);
         //Los parámetros son el game y el tipo de enemigo
-        enemy=NewObject("enemy","Enemy",[this,_type,_x,_y]);
-        enemies+=[enemy];
-        return enemy;
+        _enemy=null;
+        switch(_type){
+			/**
+			 * Los pájaros del 1 al 4 😍 son pájaros que salen por la izquierda
+			 * tienen una velocidad aleatoria y una atura aleatoria
+			 */
+			//Enemigo Aguila de izquierda a derecha
+			case ENEMY_TYPE_EAGLE:
+				_enemy=NewObject("eagle","Eagle",[this,_type,_x,_y]);
+				break;
+			//Enemigo Cuervo de izquierda a derecha
+			case ENEMY_TYPE_RAVEN:
+                _enemy=NewObject("raven","Raven",[this,_type,_x,_y]);
+				break;
+			//Enemigo 3
+			case ENEMY_TYPE_EAGLE_WHITE:
+				_enemy=NewObject("eagleWhite","EagleWhite",[this,_type,_x,_y]);
+				break;
+			//Enemigo 4
+			case ENEMY_TYPE_RAVEN_BLACK:
+       			_enemy=NewObject("ravenBlack","RavenBlack",[this,_type,_x,_y]);
+				break;
+			//Buitre que te persigue
+			case ENEMY_TYPE_VULTURE:
+       			_enemy=NewObject("vulture","Vulture",[this,_type,_x,_y]);
+				break;
+			// Escorpión
+			case ENEMY_TYPE_SQUIRREL:
+	   			_enemy=NewObject("squirrel","Squirrel",[this,_type,_x,_y]);
+				break;
+			// El murciélago
+			case ENEMY_TYPE_BAT:
+       			_enemy=NewObject("bat","Bat",[this,_type,_x,_y]);
+				break;
+			//monstruo que dispara derecha o izquierda
+			case ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL:
+                _enemy=NewObject("shootPlayerHorizontal","ShootPlayerHorizontal",[this,_type,_x,_y]);
+				break;
+			//Monstruo que dispara fuego vertical
+			case ENEMY_TYPE_SHOOT_PLAYER_VERTICAL:
+                _enemy=NewObject("shootPlayerVertical","ShootPlayerVertical",[this,_type,_x,_y]);
+				break;
+			// La sierra
+			case ENEMY_TYPE_SAW:
+                _enemy=NewObject("saw","Saw",[this,_type,_x,_y]);
+				break;
+			//péndolo
+			case ENEMY_TYPE_PENDULUM:
+                _enemy=NewObject("pendulum","pendulum", [this,_x, _y, 50]);
+				break;
+			// Ladrillo que aplasta
+			case ENEMY_TYPE_CRUSHING_BRICK:
+                _enemy=NewObject("crushingBrick","CrushingBrick",[this,_type,_x,_y]);
+				break;
+			// Bomba andando
+			case ENEMY_TYPE_BOMB:
+                _enemy=NewObject("bomb","bomb",[this,_type,_x,_y]);
+				break;
+			case ENEMY_TYPE_DRAGON:
+                _enemy=NewObject("dragon","Dragon",[this,_type,_x,_y]);
+				break;
+			// El hombre con el martillo
+			case ENEMY_TYPE_HAMMER:
+                _enemy=NewObject("hammer","Hammer",[this,_type,_x,_y]);
+				break;
+			// La araña
+			case ENEMY_TYPE_SPIDER:
+                _enemy=NewObject("spider","Spider",[this,_type,_x,_y]);
+				break;
+			// calavera pequeña
+			case ENEMY_TYPE_SMALL_SKULL:
+                _enemy=NewObject("smallSkull","SmallSkull",[this,_type,_x,_y]);
+				break;
+			case ENEMY_TYPE_LARGE_SKULL:
+                _enemy=NewObject("largeSkull","LargeSkull",[this,_type,_x,_y]);
+				break;
+        }
+        enemies+=[_enemy];
+        return _enemy;
     }
     function delete_enemies(){
        	for(x=0; x<sizeof(enemies);x++) delete enemies[x];

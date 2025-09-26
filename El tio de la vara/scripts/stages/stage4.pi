@@ -1,5 +1,7 @@
+namespace es_tipolisto_caballeroVara_stages;
+
 /**
- * batalla con el escorpión grande
+ * batalla con el escorpión grande, Se mueve hacia tu posición y si está cerca te clava el aguijón.
  */
 class Stage4{
     properties:

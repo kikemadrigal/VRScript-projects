@@ -1,0 +1,54 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class Dragon implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        Addanimationwithsheet("dragon","images/objects-enemies.png",0,2,0,16*32,64,64,-1,-1,-1,.2);    
+        Setanimation("dragon");
+        touches_for_died=10;
+        Setcollisionrect(0,30,64,24);
+        type=ENEMY_TYPE_DRAGON; 
+    }
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        // Como para las instancias que se salen de la cámara
+        // si se aleja mucho lo acercamos al player
+        if(GetX()>game.player1.GetX()+450){
+            SetPos(GetX()-100,GetY());
+        }else if(GetX()<game.player1.GetX()-450){
+            SetPos(GetX()+64,GetY());
+        }
+        //Esto hace que persiga al player y qe se quede dando vueltas encima
+        if(GetX()>game.player1.GetX()+10 && GetX()>game.player1.GetX()+20){
+            speedX=-2;
+            SetHFlip(true);
+        }else if(GetX()<game.player1.GetX()-10 && GetX()<game.player1.GetX()-20){
+            SetHFlip(false);
+            speedX=2;
+        }
+
+        //Creamos el fuego cuando las animaciones sean mayor que 12
+        if(GetAnimationLoops()>12){
+            // Creamos un fuego con parámetros tipo (ver main.pi) y enemy
+            _fire=game.create_fire(FIRE_TYPE_MOVING_HORIZONTAL,this); 
+            //Lo bajamos un poco para que salga por la boca
+            _fire.SetPos(_fire.GetX(),_fire.GetY()+32);
+            //Le hacemos que caiga hacia abajo
+            _fire.incrementoY+=2;
+            //rotamos un poco el fuego para que sea más realista
+            if(speedX>0)_fire.SetAngle(0.45);
+            else _fire.SetAngle(-0.45);
+            ResetAnimation ();
+        }
+
+        incpos(speedX,speedY);
+    }
+
+    
+	virtual _operator_delete(){
+		
+	}
+}

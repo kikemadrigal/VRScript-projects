@@ -1,0 +1,24 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class Bat implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        _x=_params[2];
+        _y=_params[3];
+        Addanimationwithsheet("bat","images/objects-enemies.png",0,3,9*32,8*32,32,32,-1,-1,-1,.2);
+        Setanimation("bat");
+        ::SetCircle(_x,_y,50);
+        type=ENEMY_TYPE_BAT; 
+    }
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+    }
+
+    
+	virtual _operator_delete(){
+		
+	}
+}

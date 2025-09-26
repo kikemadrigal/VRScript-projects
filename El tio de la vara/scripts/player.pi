@@ -1,3 +1,5 @@
+namespace es_tipolisto_caballeroVara;
+
 class Player implements GL_sprite{
 	properties:
 		score=0;
@@ -47,7 +49,34 @@ class Player implements GL_sprite{
 		/**
 		 * Colisón player con los enemigos 🩸
 		 */
-		if(Class_Id(_sp2)=="Enemy" ||Class_Id(_sp2)=="Fire" || Class_Id(_sp2)=="Boss1" || Class_Id(_sp2)=="Pendulum") player_die();
+		//if(Class_Id(_sp2)=="Enemy"){
+		if(Class_Id(_sp2)=="Eagle" ||
+			Class_Id(_sp2)=="Raven" ||
+			Class_Id(_sp2)=="EagleWhite" ||
+			Class_Id(_sp2)=="RavenBlack" ||
+			Class_Id(_sp2)=="Bat" ||
+			Class_Id(_sp2)=="Vulture" ||
+			Class_Id(_sp2)=="Squirrel" ||
+			Class_Id(_sp2)=="ShootPlayerHorizontal" ||
+			Class_Id(_sp2)=="ShootPlayerVertical" ||
+			Class_Id(_sp2)=="Bomb" ||
+			Class_Id(_sp2)=="Dragon" ||
+			Class_Id(_sp2)=="Hammer" ||
+			Class_Id(_sp2)=="Spider" ||
+			Class_Id(_sp2)=="SmallSkull" ||
+			Class_Id(_sp2)=="LargeSkull" ){
+			if(attack){
+				_sp2.touches++;
+				_fx=_sp2.CreateFX("TINT");
+				_fx.Start(1000, RGB(255,0,0));
+				if(_sp2.touches>_sp2.touches_for_died){
+					//borramos el enemigo
+					game.delete_enemy(_sp2);
+				}
+			}else player_die();
+		}
+		
+		if(Class_Id(_sp2)=="Pendulum" ||Class_Id(_sp2)=="Fire" || Class_Id(_sp2)=="Boss1"|| Class_Id(_sp2)=="Boss2"|| Class_Id(_sp2)=="Boss3" ) player_die();
 		/**
 		 * Colisón player con los objetos
 		 */

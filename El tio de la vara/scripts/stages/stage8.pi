@@ -1,3 +1,5 @@
+namespace es_tipolisto_caballeroVara_stages;
+
 class Stage8{
     properties:
         game=null;
@@ -8,7 +10,7 @@ class Stage8{
         game=_game;
         if (DEBUG_MODE){
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100);
         } 
         
         //Colocamos el fondo
@@ -29,7 +31,7 @@ class Stage8{
         //posicionamos la cámara
         game.SetCameraX(0);
         //posicionamos el boss
-        boss=_game.NewObject("boss2","Boss2",[this, _game.player1]);
+        boss=_game.NewObject("boss2","Boss2",[game]);
         //pintamos el marcador
         _game.print_score();
         //Pintamos la vida que le queda al boss

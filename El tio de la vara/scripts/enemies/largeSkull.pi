@@ -1,0 +1,38 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class LargeSkull implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        Addanimationwithsheet("large-skull","images/objects-enemies.png",0,3,9*32,16*32,64,64,-1,-1,-1,.08);
+        Addanimationwithsheet("large-skull-atack","images/objects-enemies.png",0,3,9*32,18*32,64,64,-1,-1,-1,.2);
+        Setanimation("large-skull");
+        speedX=-3;
+        type=ENEMY_TYPE_LARGE_SKULL; 
+    }
+
+
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        if(DistanceTo(game.player1)<100){
+            //Setanimation("large-skull-atack");
+            incrementoX=0;
+        }else{
+            
+            Setanimation("large-skull");
+            if (GetX()<=start_position_x-200 && GetX()<start_position_x+100){
+                speedX=3;
+                SetHFlip(True);
+            }else if (GetX()>=start_position_x && GetX()>start_position_x-100){
+                speedX=-3;
+                SetHFlip(False);
+            }
+        }
+        incpos(speedX,speedY);
+    }
+	virtual _operator_delete(){
+		
+	}
+}

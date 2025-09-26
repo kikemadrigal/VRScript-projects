@@ -1,0 +1,94 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class Enemy implements GL_sprite{
+	properties:
+		game=null;
+		type=0;
+		speedX=0;
+		speedY=0;
+		start_position_x=0;
+		start_position_y=0;
+		touches=0;
+		touches_for_died=1;
+		//pendulum=null;
+
+
+	/**
+	 * Ene el copnstructor le pasamos:
+	 * game: la clase principal del juego
+	 * _type: tipo de enemigo
+	 * _x: posición x inicial
+	 * _y: posición y inicial
+	 */
+    virtual _operator_new(_name,_creator, _params){
+		game=_params[0];
+		_type=_params[1];
+		_x=_params[2];
+		_y=_params[3];
+		SetPos(_x,_y);
+		SetStartPosition(_x, _y);
+		_add_dead_animation=true;
+		if(_add_dead_animation)Addanimationwithsheet("enemy-dead","images/objects-enemies.png",0,4,0,3*32,32,32,-1,-1,-1,.2);
+		SetCollision(True);
+	
+	}	
+	virtual _operator_delete(){		
+		/*if(type==ENEMY_TYPE_PENDULUM){
+			delete pendulum;
+		}*/
+	}
+
+	function enemy_set_dead(){
+		Setanimation("enemy-dead");
+		SetCollision(False);
+	}
+
+	virtual Move(){	}
+
+	function GetItemType(){
+		return type;
+	}
+
+	function SetStartPosition(_x,_y){
+		start_position_x=_x;
+		start_position_y=_y;
+	}
+
+
+	function SetSquare(_x,_y,_w,_h){
+		_ct=CreateController();
+		_ruta=NewObject("ruta", "GL_Route");
+		_ruta.AddRect(_x,_y,_w,_h);
+		_ct.SetSpeed(2);
+		_ct.SetRoute(_ruta, _ruta.MODE_LOOP);
+		_ct.Start();
+	}
+
+	function SetCircle(_x,_y,_r){
+		_ruta=NewObject("ruta", "GL_Route");
+		_ruta.AddCircle(_x,_y,_r);
+		_ct=CreateController();
+		_ct.SetSpeed(2);
+		_ct.SetRoute(_ruta, _ruta.MODE_LOOP);
+		_ct.Start();
+	}
+
+	function SetRouteZigZag(_x,_y){
+		_ruta=NewObject("ruta", "GL_Route");
+		_ruta.AddNode (_x+10,_y-2);
+		_ruta.AddNode (_x+20,_y-10);
+		_ruta.AddNode (_x+50,_y-20);
+		_ruta.AddNode (_x+100,_y-30);
+		_ruta.AddNode (_x+50,_y-20);
+		_ruta.AddNode (_x+20,_y-10);
+		_ruta.AddNode (_x+10,_y-2);
+		_ruta.AddNode (_x-10,_y-10);
+		_ruta.AddNode (_x-20,_y-20);
+		_ruta.AddNode (_x-50,_y-30);
+		_ct=CreateController();
+		_ct.SetSpeed(2);
+		_ct.SetRoute(_ruta, _ruta.MODE_PINGPONG);
+		_ct.Start();
+	}
+
+}

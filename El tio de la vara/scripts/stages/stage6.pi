@@ -1,13 +1,10 @@
+namespace es_tipolisto_caballeroVara_stages;
 
-/**
- * Fondo castillo oscuro verde oscuro,ladrillos grises, de enemigos aves y fuegos que matan
- */
-class Stage2{
+class Stage6{
     properties:
         game=null;
         bg=null;
         timer_create_enemies=null;
-
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
@@ -20,17 +17,14 @@ class Stage2{
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage3.png");
+        bg.Addframe("images/stage6.png");
         bg.SetPriority(-1);
 
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap3.tmx", _game);
+        _tmx.Load(_game.mapper, "resources/tilesmap6.tmx", _game);
         delete _tmx;
-        
-        
-        //Creamos 20 pájaros aleatoriamente
+         //Creamos 40 pájaros aleatoriamente
         for(i=0;i<20;i++){
-            //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
             _type_random=rand(1,4);
             //Lo ponemos en la derecha de la pantalla
             _enemy=_game.create_enemy(_type_random,-100,-100);
@@ -40,10 +34,12 @@ class Stage2{
         timer_create_enemies.SetFrequency(2000);
         timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
 
+        
         //pintamos el marcador
         _game.print_score();
-  
-    }
+        //game.GetEngine().LogPrint("pantalla 6 cargada");
+        game.GetEngine().AlertDialog("Ayuda", "Empuja los bloques de paja\nPulsa espacio para romper los bloques de paja", 0, game, null, null, null);
+    }   
     function _operator_delete(){
         bg.Destroy();
         game.delete_objects();
@@ -52,6 +48,7 @@ class Stage2{
         //game.delete_fires();
         delete game.layer;
     }
+
 
     function OnTimerEnemiesCallBack(_timer){
         //game.GetEngine().LogPrint("Vamos a crear un pajaro");
@@ -70,5 +67,6 @@ class Stage2{
                 }
             }
         }
+
     }
 }

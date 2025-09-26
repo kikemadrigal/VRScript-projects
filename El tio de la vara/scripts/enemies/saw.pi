@@ -1,0 +1,19 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class Saw implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        _x=_params[2];
+        _y=_params[3];
+        Addanimationwithsheet("saw","images/objects-enemies.png",0,2,0,19*32,32,32,-1,-1,-1,.2);
+        Setanimation("saw");
+        ::SetSquare(_x,_y,100,100);
+        type=ENEMY_TYPE_SAW; 
+    }
+
+
+    
+	virtual _operator_delete(){
+		
+	}
+}

@@ -1,3 +1,5 @@
+namespace es_tipolisto_caballeroVara_stages;
+
 /**
  * La pantalla de los montes, el castillo al fondo y de enemigos buitres y escorpiones
  */

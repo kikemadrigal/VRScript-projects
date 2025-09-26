@@ -1,7 +1,10 @@
-class Stage7{
+namespace es_tipolisto_caballeroVara_stages;
+
+class Stage9{
     properties:
         game=null;
         bg=null;
+
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
@@ -14,14 +17,12 @@ class Stage7{
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage7.png");
+        bg.Addframe("images/stage9.png");
         bg.SetPriority(-1);
 
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap7.tmx", _game);
+        _tmx.Load(_game.mapper, "resources/tilesmap9.tmx", _game);
         delete _tmx;
-        
-       
         //pintamos el marcador
         _game.print_score();
   

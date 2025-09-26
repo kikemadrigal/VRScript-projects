@@ -1,0 +1,56 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class Bomb implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        Addanimationwithsheet("bomb","images/objects-enemies.png",0,5,0,22*32,32,32,-1,-1,-1,.2);
+        Setanimation("bomb");
+        speedX=-3;
+        type=ENEMY_TYPE_BOMB;  
+    }
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        _tile_down=TILE_TYPE_EMPTY;
+			
+        if(speedX<0){
+            _tile_left=game.get_tile_left_object(GetX(),GetY());
+            //Si a la izquierda hay un tile vacío
+            if(_tile_left>TILE_TYPE_GROUND || _tile_left==TILE_TYPE_EMPTY){
+                //obtenemos el tile de abajo para comprobar si está vacío
+                _tile_down=game.get_tile_down_object(GetX()-32, GetY());
+            }else{
+                speedX=-3;
+            }
+            
+        }else{
+            _tile_right=game.get_tile_right_object(GetX(),GetY());
+            if(_tile_right>TILE_TYPE_GROUND ||_tile_right==TILE_TYPE_EMPTY){
+                _tile_down=game.get_tile_down_object(GetX(), GetY());
+            }else{
+                speedX=3;
+            }
+            
+        }
+        
+        
+        if(_tile_down>TILE_TYPE_GROUND || _tile_down==TILE_TYPE_EMPTY){
+            if(speedX>0){
+                SetHFlip(True);
+                speedX=-3;
+            }else{
+                SetHFlip(False);
+                speedX=3;
+            }
+        }
+
+        incpos(speedX,speedY);
+    }
+
+    
+	virtual _operator_delete(){
+		
+	}
+}

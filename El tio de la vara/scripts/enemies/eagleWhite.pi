@@ -1,0 +1,27 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class EagleWhite implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        Addanimationwithsheet("eagle_white","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
+		Setanimation("eagle_white");
+		SetColor(RGB(255,255,255));
+        type=ENEMY_TYPE_EAGLE_WHITE;
+    }
+
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        if(GetX()<game.player1.getX()-350){
+            SetPos(-100,-100);
+            speedX=0;
+        }
+		incpos(speedX,speedY);
+    }
+    
+	virtual _operator_delete(){
+		
+	}
+}

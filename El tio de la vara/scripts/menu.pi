@@ -1,8 +1,9 @@
+namespace es_tipolisto_caballeroVara;
+
 class menu implements GL_Stage
 {
 	properties:
 		background=null;
-		text=null;
 	virtual _operator_new(_name,_creator)
 	{
 		//El pad está en el main
@@ -11,20 +12,11 @@ class menu implements GL_Stage
 		_bacKground.Setpos(0,0);
 		_background.SetSize(GetApp().GetResX(),450);
 		background=_background;
-
-       	/*_text=NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", 22);
-		_text.SetColor(RGB(234,255,0));	
-        _text.SetPos(50,200);
-        _text.SetPriority(1);
-        _text.SetText("Misión coge las llaves para abrir el candado\n pulsa una tecla para empezar");
-        text=_text;*/
 	}
 
 	virtual _operator_delete()
 	{
 		//background.Destroy();
-		//text.Destroy();
 	}
 }
 

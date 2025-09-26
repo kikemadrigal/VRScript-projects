@@ -1,9 +1,12 @@
+namespace es_tipolisto_caballeroVara;
+
 class Winner implements GL_Stage{
     properties:
         bg=null;
         text=null;
-
+        game=null;
     virtual _operator_new(_name,_creator){
+       
         //_game.player1.SetPosition(20,GROUND_Y);
 
         bg=NewObject("bg","gl_sprite");
@@ -17,7 +20,7 @@ class Winner implements GL_Stage{
 		_text.SetColor(RGB(234,255,0));	
         _text.SetPos(50,200);
         _text.SetPriority(1);
-        _text.SetText("Eres el ganador!!!\n pulsa una tecla para volver al menu");
+        _text.SetText("Eres el ganador!!!\npulsa una tecla para volver al menu");
         text=_text;
     }
 
