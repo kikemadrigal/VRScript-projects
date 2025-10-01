@@ -1,0 +1,65 @@
+namespace es_tipolisto_caballeroVara;
+
+class Fade implements GL_Stage
+{
+	properties:
+		rect = null;
+		speed = 4.0f;
+		alpha = 0;
+		toAlpha = 0;
+		onCompletedCtx = null;
+		onCompletedFun = "";
+		completed = 0;
+		
+	virtual _operator_new(_name, _creator)
+	{
+		SetGlobal(true);
+		rect = NewObject("rect", "gl_sprite");
+		rect.AddEmptyFrame(_creator.GetResX(), _creator.GetResY());
+		rect.SetColor(RGB(0,0,0));
+		rect.SetAlpha(0);
+		alpha = 0;
+		toAlpha = 0;
+		
+		timer = GetTime();
+	}
+	
+	function SetColor(_c)
+	{
+		alpha = Color_GetA(_c);
+		rect.SetColor(_c);
+	}
+	
+	function On()
+	{
+		toAlpha = 255;
+	}
+	
+	function Off()
+	{
+		toAlpha = 0;
+	}
+	
+	function SetOnCompleted(_ctx, _fun)
+	{
+		onCompletedCtx = _ctx;
+		onCompletedFun = _fun;
+	}
+
+	virtual Draw()
+	{
+		if (alpha == toAlpha && onCompletedCtx != null)
+		{
+		 	if (completed >= 2)
+			{
+				onCompletedCtx._call(onCompletedFun);
+				onCompletedCtx = null;
+				completed = 0;
+			}
+			else
+				completed++;
+		} 
+		alpha = IncreaseValue(alpha, toAlpha, speed);
+		rect.SetAlpha(alpha);
+	}
+}

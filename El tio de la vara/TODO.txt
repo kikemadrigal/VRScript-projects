@@ -1,13 +1,12 @@
-En la pantalla 7 pon muchos bichos
-El enemigo calavera grande si cmbias al sprite atacando no muere
-En el stage 2 los enemigos paralizan la pantalla y el fuego contoinua en el stage 3
-Crear carcaol en el stage 6 bosque de la madera?
 crear enemigo bomba en paracaidas
-crear enemigo avispa que pica
-haz uno comun de ememigos plataforma horizontal que englobe a la calavera pequeña, bomba y escorpion
 Intenta mejorar el borde del tile en el salto del player
 coger los paquetes
-animacion calavera atacando
 la 6 hace un efecto raro al inicio
 En la 10 las arañas no se mueven
 en la 9 pon algun dibujo bonito encima de los péndulos
+haz el fade de green house 
+crea una pantalla con un sprite egro que la ocupe toda y un circulo transaparente en el centro para hacer efecto oscurdad
+crea una pantalla vertical
+El boss 3 y el boss 2 no tienen buffer de enemigos y se paralizan cuando crean 1
+La pantalla 10 se inicia con la pantalla torida si llegas desde la 9
+faltan por meter las arañas y los gabalíes que los tienes que hacer de 64x64

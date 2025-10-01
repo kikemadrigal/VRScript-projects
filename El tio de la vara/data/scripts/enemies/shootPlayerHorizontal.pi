@@ -1,0 +1,66 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class ShootPlayerHorizontal implements Enemy{
+    properties:
+        fires=[];
+      
+
+    virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+        Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,14*32,32,32,-1,-1,-1,.2);
+        Setanimation("monstruo1");
+        type=ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL; 
+        // Este enemigo tendrá un buffer de 5 fuegos
+        for(i=0;i<5;i++){
+            _fire=game.create_fire(FIRE_TYPE_MOVING_HORIZONTAL,this); 
+            // Los sacamos de la pantalla
+            _fire.SetPos(-100,-100);
+            _fire.incrementoX=0;
+            fires+=[_fire];
+        }
+    }
+    /*virtual _operator_delete(){
+		for(x=0; x<sizeof(fires);x++) delete fires[x];
+		fires=[];
+	}*/
+
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        //Si el número de animaciones repetidas es mayor que 12 animaciones creamos un fuego 
+        if(GetAnimationLoops()>3){
+            game.GetApp().stageGlobal.play_sound_fire();
+            //GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
+            if(GetX()>=game.player1.GetX()){
+                SetHFlip(True);
+            }else{
+                SetHFlip(False);
+            }
+            // obtenemos un fire con una velocidad 0 y lo convertimos en un fuego horizontal
+            for(i=0;i<sizeof(fires);i++){
+                _fire=fires[i];
+                if(_fire.incrementoX==0){
+                    if(GetHFlip()){
+                        _fire.SetPos(GetX()-10,GetY()+10);
+                        _fire.incrementoX=-5;
+                        _fire.SetHFlip(True);
+                    }else{
+                        _fire.SetPos(GetX()+10,GetY()+10);
+                        _fire.incrementoX=5;
+                        _fire.SetHFlip(False);
+                    }
+                    break;
+                }
+            }
+            
+            ResetAnimation ();
+        }
+        incpos(speedX,speedY);
+    }
+    
+	virtual _operator_delete(){
+		
+	}
+}

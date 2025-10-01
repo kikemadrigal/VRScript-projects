@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<icon name="app.png" />
+<description 
+bundle="es_tipolisto_caballeroVara"
+name="The knight of the stick"
+developer="MSX Spain"
+date="01/11/2025" 
+/>
+<application 
+name="data/main.pi" 
+/>

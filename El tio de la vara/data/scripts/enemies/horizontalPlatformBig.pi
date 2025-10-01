@@ -1,0 +1,54 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class HorizontalPlatformBig implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+
+        switch (type)
+        {
+            case ENEMY_TYPE_LARGE_SKULL:
+                Addanimationwithsheet("large-skull","images/objects-enemies.png",0,3,9*32,16*32,64,64,-1,-1,-1,.08);
+                Addanimationwithsheet("large-skull-atack","images/objects-enemies.png",0,3,9*32,18*32,64,64,-1,-1,-1,.2);
+                Setanimation("large-skull");
+                type=ENEMY_TYPE_LARGE_SKULL; 
+                break;
+            case ENEMY_TYPE_THIEF:
+                Addanimationwithsheet("thief","images/objects-enemies.png",0,5,9*32,11*32,64,64,-1,-1,-1,.2);
+                Addanimationwithsheet("thief-atack","images/objects-enemies.png",0,5,9*32,13*32,64,64,-1,-1,-1,.2);
+                Setanimation("thief");
+                type=ENEMY_TYPE_THIEF;
+                break;
+            
+            default:
+                break;
+        }
+        SetCollisionRect(20,20,20,40);
+        speedX=-3;
+        //game.GetApp().GetEngine().LogPrint("Animaciones  "+GetNumAnimations());
+    }
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} else if(GetCurAnimation() !="enemy-dead"){
+            if(type==ENEMY_TYPE_THIEF){
+                if(DistanceTo(game.player1)<100) Setanimation("thief-atack");
+                else Setanimation("thief");
+               
+            }else if(type==ENEMY_TYPE_LARGE_SKULL){
+                if(DistanceTo(game.player1)<100) Setanimation("large-skull-atack");
+                else Setanimation("large-skull");
+            }
+            
+            if (GetX()<start_position_x-100){
+                speedX=3;
+                SetHFlip(True);
+            }else if (GetX()>start_position_x+100){
+                speedX=-3;
+                SetHFlip(False);
+            }
+        }        
+        incpos(speedX,speedY);
+    }
+	virtual _operator_delete(){}
+}

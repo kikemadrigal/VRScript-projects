@@ -1,0 +1,128 @@
+namespace es_tipolisto_caballeroVara;
+
+class Object implements GL_sprite{
+	properties:
+		game=null;
+		type=0;
+		speedX=0;
+		speedY=0;
+		start_position_x=0;
+		start_position_y=0;
+	
+
+    virtual _operator_new(_name,_creator, _params){
+		game=_params[0];
+		_type=_params[1];
+		_x=_params[2];
+		_y=_params[3];
+		switch(_type){
+			
+			//Meta 
+			case OBJECT_TYPE_META:
+       			Addanimationwithsheet("tile","images/objects-enemies.png",0,0,0,1*32,32,32);
+				type=OBJECT_TYPE_META;
+				break;
+			//LLaves 
+			case OBJECT_TYPE_COLLECTIBLE_KEY:
+       			Addanimationwithsheet("tile","images/objects-enemies.png",0,0,0,0,32,32);
+				//Setcollisionrect(0,0,20,45);
+				type=OBJECT_TYPE_COLLECTIBLE_KEY;
+				break;
+			case OBJECT_TYPE_COLLECTIBLE_COIN50:
+       			Addanimationwithsheet("tile","images/objects-enemies.png",0,0,4*32,0,32,32);
+				//Setcollisionrect(0,0,32,32);
+				type=OBJECT_TYPE_COLLECTIBLE_COIN50;
+				break;
+			case OBJECT_TYPE_COLLECTIBLE_COIN100:
+       			Addanimationwithsheet("tile","images/objects-enemies.png",0,0,5*32,0,32,32);
+				//Setcollisionrect(0,0,32,32);
+				type=OBJECT_TYPE_COLLECTIBLE_COIN100;
+				break;
+			
+			//platafporma horizontal
+			case OBJECT_TYPE_PLATFORM_HORIZONTAL:
+				Addanimationwithsheet("tile","images/objects-enemies.png",0,0,2*32,1*32,32,32);
+				speedX=2;
+				//start_position_y=GetY();
+				start_position_x=GetX();
+				type=OBJECT_TYPE_PLATFORM_HORIZONTAL; 
+				break;
+			//plataforma vertical
+			case OBJECT_TYPE_PLATFORM_VERTICAL:
+	   			//AddEmptyFrame (32,32);
+				Addanimationwithsheet("tile","images/objects-enemies.png",0,0,1*32,1*32,32,32);
+				speedY=2;
+				start_position_y=GetY();
+				//start_position_x=GetX();
+				type=OBJECT_TYPE_PLATFORM_VERTICAL; 
+				break;
+			case OBJECT_TYPE_FIRE_DEATH:
+				Addanimationwithsheet("fire_death","images/objects-enemies.png",0,7,0,4*32,32,32,-1,-1,-1,.2);
+				Setanimation("fire_death");
+				type=OBJECT_TYPE_FIRE_DEATH; 
+				break;
+			case OBJECT_TYPE_LAVA:
+				Addanimationwithsheet("fire_death","images/objects-enemies.png",0,8,9*32,4*32,32,32,-1,-1,-1,.2);
+				Setanimation("fire_death");
+				type=OBJECT_TYPE_LAVA; 
+				break;
+			//Si es un bloque de paja que podemos mover o romper
+			case OBJECT_TYPE_SAND:
+				Addanimationwithsheet("sand","images/objects-enemies.png",0,0,0,2*32,32,32);
+				Setanimation("sand");
+				type=OBJECT_TYPE_SAND; 
+				break;
+			default:
+				GetEngine().LogPrint("Tipo de bloque no definido: "+_type);
+				break;
+		}
+		SetPos(_x,_y);
+		SetStartPosition(_x, _y);
+		SetCollision(True);
+	}	
+
+
+	function Move(){     
+		if(type==OBJECT_TYPE_PLATFORM_HORIZONTAL){
+			//Plataforma horizontal
+			if(GetX()>=start_position_x+150){
+				speedX=-2;
+			}else if(GetX()<=start_position_x){
+				speedX=2;
+			}
+		}else if(type==OBJECT_TYPE_PLATFORM_VERTICAL){
+			//Plataforma vertical
+			if(GetY()>=start_position_y+150){
+				speedY=-2;
+			}else if(GetY()<=start_position_y){
+				speedY=2;
+			}
+		}else if(type==OBJECT_TYPE_SAND){
+			_tile_down=TILE_TYPE_EMPTY;			
+
+			_tile_down=game.get_tile_down_object(GetX(), GetY());
+	
+
+			if(_tile_down>TILE_TYPE_GROUND || _tile_down==TILE_TYPE_EMPTY){
+				//if(GetY()<GROUND_Y){
+					speedX=0;
+					SetY(GetY()+3);
+				//}
+			}
+			
+		
+		}
+
+
+		incpos(speedX,speedY);
+	}
+
+	function GetItemType(){
+		return type;
+	}
+
+	function SetStartPosition(_x,_y){
+		start_position_x=_x;
+		start_position_y=_y;
+	}
+}

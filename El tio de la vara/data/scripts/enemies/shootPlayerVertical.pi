@@ -1,0 +1,55 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class ShootPlayerVertical implements Enemy{
+    properties:
+        fires=[];
+
+    virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+        Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,15*32,32,32,-1,-1,-1,.2);
+        Setanimation("monstruo1");
+        type=ENEMY_TYPE_SHOOT_PLAYER_VERTICAL; 
+        // Este enemigo tendrá un buffer de 5 fuegos
+        for(i=0;i<5;i++){
+            _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
+            // Los sacamos de la pantalla
+            _fire.SetPos(-100,-100);
+            _fire.incrementoY=0;
+            fires+=[_fire];
+        }
+    }
+    /*virtual _operator_delete(){
+		for(x=0; x<sizeof(fires);x++) delete fires[x];
+		fires=[];
+	}*/
+
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        if(GetAnimationLoops()>3){
+            game.GetApp().stageGlobal.play_sound_fire();
+             // obtenemos un fire con una velocidad 0 y lo convertimos en un fuego horizontal
+            for(i=0;i<sizeof(fires);i++){
+                _fire=fires[i];
+                if(_fire.incrementoY==0){
+                
+                    _fire.SetPos(GetX()-10,GetY()+10);
+                    _fire.incrementoY=-5;
+                       
+                    
+                    break;
+                }
+            }
+            //GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
+            ResetAnimation ();
+           
+        }
+        incpos(speedX,speedY);
+    }
+    
+	virtual _operator_delete(){
+		
+	}
+}
