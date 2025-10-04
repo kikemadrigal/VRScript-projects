@@ -23,7 +23,7 @@
 
 <img src="docs/stage1.png" width="100%">
 
-<img src="images/stage1.png" width="100%">
+<img src="data/images/stage1.png" width="100%">
 
 ## Level 2
 
@@ -33,7 +33,7 @@
 
 <img src="docs/stage2.png" width="100%">
 
-<img src="images/stage2.png" width="100%">
+<img src="data/images/stage2.png" width="100%">
 
 ## Level 3
 
@@ -43,7 +43,7 @@
 
 <img src="docs/stage3.png" width="100%">
 
-<img src="images/stage3.png" width="100%">
+<img src="data/images/stage3.png" width="100%">
 
 ## Level 4, el enermigo escorpión
 
@@ -51,7 +51,7 @@
 
 <img src="docs/stage4.png" width="500px">
 
-<img src="images/stage4.png" width="500px">
+<img src="data/images/stage4.png" width="500px">
 
 ## Level 5, el reino bomba
 
@@ -61,7 +61,7 @@
 
 <img src="docs/stage5.png" width="100%">
 
-<img src="images/stage5.png" width="100%">
+<img src="data/images/stage5.png" width="100%">
 
 ## Level 6
 
@@ -71,7 +71,7 @@
 
 <img src="docs/stage6.png" width="100%">
 
-<img src="images/stage6.png" width="100%">
+<img src="data/images/stage6.png" width="100%">
 
 ## Level 7
 
@@ -81,7 +81,7 @@
 
 <img src="docs/stage7.png" width="100%">
 
-<img src="images/stage7.png" width="100%">
+<img src="data/images/stage7.png" width="100%">
 
 ## Level 8, el águila
 
@@ -90,7 +90,7 @@
 
 <img src="docs/stage8.png" width="500px">
 
-<img src="images/stage8.png" width="500px">
+<img src="data/images/stage8.png" width="500px">
 
 
 ## Level 9
@@ -101,7 +101,7 @@
 
 <img src="docs/stage9.png" width="100%">
 
-<img src="images/stage9.png" width="100%">
+<img src="data/images/stage9.png" width="100%">
 
 
 ## Level 10
@@ -112,7 +112,7 @@
 
 <img src="docs/stage10.png" width="100%">
 
-<img src="images/stage10.png" width="100%">
+<img src="data/images/stage10.png" width="100%">
 
 ## Level 11
 
@@ -122,7 +122,7 @@
 
 <img src="docs/stage11.png" width="100%">
 
-<img src="images/stage11.png" width="100%">
+<img src="data/images/stage11.png" width="100%">
 
 
 ## Level 12, el dragón de fuego
@@ -132,4 +132,44 @@
 
 <img src="docs/stage12.png" width="500px">
 
-<img src="images/stage12.png" width="500px">
+<img src="data/images/stage12.png" width="500px">
+
+
+## Level 13, la sombra
+
+* Fondo: 
+* Tiles: 
+
+<img src="docs/stage13.png" width="500px">
+
+<img src="data/images/stage13.png" width="500px">
+
+
+## Level 14, vetical
+
+* Fondo: 
+* Tiles: 
+
+<img src="docs/stage14.png" width="500px">
+
+<img src="data/images/stage14.png" height="500px">
+
+
+## Level 15, a correr
+
+* Fondo: 
+* Tiles: 
+
+<img src="docs/stage15.png" width="500px">
+
+<img src="data/images/stage15.png" width="500px">
+
+
+## Level 16, la batalla final
+
+* Fondo: 
+* Tiles: 
+
+<img src="docs/stage16.png" width="500px">
+
+<img src="data/images/stage16.png" width="500px">
