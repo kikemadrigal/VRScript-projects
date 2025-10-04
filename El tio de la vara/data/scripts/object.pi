@@ -104,13 +104,9 @@ class Object implements GL_sprite{
 	
 
 			if(_tile_down>TILE_TYPE_GROUND || _tile_down==TILE_TYPE_EMPTY){
-				//if(GetY()<GROUND_Y){
-					speedX=0;
-					SetY(GetY()+3);
-				//}
+				speedX=0;
+				SetY(GetY()+3);
 			}
-			
-		
 		}
 
 

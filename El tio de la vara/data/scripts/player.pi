@@ -8,8 +8,14 @@ class Player implements GL_sprite{
 		incrementoX=0;
 		incrementoY=0;
 		aceleracion=0;
+		//atacando
 		attack=false;
+		//Cogiendo algo
 		pick=false;
+		//corriendo
+		walking=false;
+		//Aganchado
+		crouching=false;
 		game=null;
 		//Llaves a recoger (puede variar según pantalla
 		keys_to_collect=3;
@@ -23,10 +29,11 @@ class Player implements GL_sprite{
 		Addanimationwithsheet("fall","images/player.png",0,0,0,4*64,64,64);
 		Addanimationwithsheet("dead","images/player.png",0,0,0,5*64,64,64);
 		Addanimationwithsheet("pick","images/player.png",0,5,0,6*64,64,64);
+		Addanimationwithsheet("crouching","images/player.png",0,0,0,7*64,64,64);
 		SetAnimation("idle");	
 		SetPriority(1);
 		SetColliderMode(True);
-		Setcollisionrect(20,20,24,44);
+		SetcollisionRect(20,20,24,44);
 	}
 	virtual Move(){
 		if(aceleracion>0){
@@ -40,6 +47,8 @@ class Player implements GL_sprite{
 				}
 			}
 		}
+		if(crouching) SetcollisionRect(20,35,24,29);
+		else SetcollisionRect(20,20,24,44);
 		
 	}
 
@@ -50,10 +59,7 @@ class Player implements GL_sprite{
 		 * Colisón player con los enemigos 🩸
 		 */
 		//if(Class_Id(_sp2)=="Enemy"){
- 		if( Class_Id(_sp2)=="Eagle" ||
-			Class_Id(_sp2)=="Raven" ||
-			Class_Id(_sp2)=="EagleWhite" ||
-			Class_Id(_sp2)=="RavenBlack" ||
+ 		if( Class_Id(_sp2)=="BouncesLeftToRight" ||
 			Class_Id(_sp2)=="Bat" ||
 			Class_Id(_sp2)=="Vulture" ||
 			Class_Id(_sp2)=="HorizontalPlatform" ||

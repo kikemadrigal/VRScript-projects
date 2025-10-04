@@ -29,10 +29,7 @@ class Vara implements GL_sprite{
         // GetApp().GetEngine().LogPrint("Colisión con: "+Class_Id(_sp2));
         //Si es un enemigo
         //if(Class_Id(_sp2)=="Enemy"){
-        if( Class_Id(_sp2)=="Eagle" ||
-			Class_Id(_sp2)=="Raven" ||
-			Class_Id(_sp2)=="EagleWhite" ||
-			Class_Id(_sp2)=="RavenBlack" ||
+        if( Class_Id(_sp2)=="BouncesLeftToRight" ||
 			Class_Id(_sp2)=="Bat" ||
 			Class_Id(_sp2)=="Vulture" ||
 			Class_Id(_sp2)=="HorizontalPlatform" ||

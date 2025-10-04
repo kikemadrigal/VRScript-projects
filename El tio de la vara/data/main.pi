@@ -5,12 +5,13 @@ class main implements GL_Program partial myConstants{
         game=null;
         winner=null;
         camera_not_move=false;
-    
+        is_vertical_stage=false;
  
     virtual Init()
 	{
 		_wnd = CreateWindow();
-		_wnd.AddStyle(_wnd.STYLE_SHOW_FULLSCREEN);
+		//_wnd.AddStyle(_wnd.STYLE_SHOW_FULLSCREEN);
+		_wnd.AddStyle(_wnd.STYLE_CLOSE_BOX);
 		_wnd.SetTitle("El tio de la vara [Build:" + string(APP_BUILD_VERSION) + "]");
 
 		_menu = _wnd.CreateMenu();
@@ -51,10 +52,18 @@ class main implements GL_Program partial myConstants{
     function SetCameraNotMove(value){
         camera_not_move=value;
     }
+
     function CenterCamera(_player1){
-        _x_camera=_player1.GetX()-GetResX()/2;
-        _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
-        game.SetCameraX(_x_camera);
+        if(is_vertical_stage){
+            _y_camera=_player1.GetY()-VIEWPORT_HEIGHT/2;
+            _y_camera=Clamp(_y_camera,0, 3000-VIEWPORT_HEIGHT);
+            game.SetCameraY(_y_camera);
+        }else{
+            _x_camera=_player1.GetX()-GetResX()/2;
+            _x_camera=Clamp(_x_camera,0, LEVEL_WIDTH-GetResX());
+            game.SetCameraX(_x_camera);
+        }
+        
     }
     function changeWinnerScreen(){
         stageGlobal.play_sound_click();
@@ -110,6 +119,7 @@ class main implements GL_Program partial myConstants{
             _player1.pick=true;
             _player1.SetAnimation("pick");
         }
+        
 
 
         // Si se pulsa arriba y no estamos ya saltando
@@ -117,6 +127,16 @@ class main implements GL_Program partial myConstants{
             stageGlobal.play_sound_jump();
             _player1.incrementoY=-5;
             _player1.aceleracion=0;
+        }
+
+
+        if(stageGlobal.pad.IsButton(PAD_BUTTON_DOWN) && _player1.aceleracion==0){
+            _player1.SetAnimation("crouching");
+            _player1.crouching=true;
+        }
+        if(stageGlobal.pad.IsButtonUp(PAD_BUTTON_DOWN)){
+            _player1.crouching=false;
+            _player1.SetAnimation("idle");
         }
      
         
@@ -138,9 +158,11 @@ class main implements GL_Program partial myConstants{
             }*/
         }
         _x=clamp(_player1.GetX(),0, LEVEL_WIDTH-_player1.GetWF());
-        _y=clamp(_player1.GetY(),1, LEVEL_HEIGHT+_player1.GetHF());
-        _player1.SetPos(_x,_y);
+        //_y=clamp(_player1.GetY(),1, LEVEL_HEIGHT+_player1.GetHF());
+        //_player1.SetPos(_x,_y);
+        _player1.SetX(_x);
         _player1.incpos(_player1.incrementoX,_player1.incrementoY);
+
 
         //Si el player está atacando
         if(_player1.attack){
@@ -149,6 +171,7 @@ class main implements GL_Program partial myConstants{
             if(_player1.GetAnimationLoops()>0) _player1.pick=false;  
         }else{  
             if(_player1.aceleracion!=0){ 
+                if(!camera_not_move)CenterCamera(_player1);
                 //Si está subiendo	
                 if (_player1.incrementoY<0 && _player1.GetY()>0){ 
                     _player1.Setanimation("jump");
@@ -162,12 +185,16 @@ class main implements GL_Program partial myConstants{
                 //Si está bajando
                 else _player1.Setanimation("fall"); 
             }else if(_player1.incrementoX) _player1.Setanimation("walk");   
+            else if(_player1.crouching) _player1.SetAnimation("crouching");	 
+            else if(_player1.walking) _player1.SetAnimation("walk");	  
             else _player1.SetAnimation("idle");
+                
+             
         }
 
         //Rollo gravedad hasta el suelo		
-        if(_player1.GetY()>=GROUND_Y){
-            _player1.SetY(GROUND_Y);
+        if(_player1.GetY()>=game.GROUND_Y){
+            _player1.SetY(game.GROUND_Y);
             _player1.incrementoY=0;
             _player1.aceleracion=0;
         }else{

@@ -17,7 +17,7 @@ class Stage1{
             _game.SetDebug(true);
             _game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100);
         }
-        _game.player1.SetPosition(20,GROUND_Y);
+        _game.player1.SetPosition(20,_game.GROUND_Y);
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap.tmx", _game);
         delete _tmx;

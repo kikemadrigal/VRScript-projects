@@ -31,7 +31,7 @@ class ShootPlayerHorizontal implements Enemy{
 		} 
         //Si el número de animaciones repetidas es mayor que 12 animaciones creamos un fuego 
         if(GetAnimationLoops()>3){
-            game.GetApp().stageGlobal.play_sound_fire();
+           game.GetApp().stageGlobal.play_sound_fire();
             //GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
             if(GetX()>=game.player1.GetX()){
                 SetHFlip(True);

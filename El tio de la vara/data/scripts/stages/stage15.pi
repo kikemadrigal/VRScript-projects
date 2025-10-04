@@ -1,75 +1,90 @@
 namespace es_tipolisto_caballeroVara_stages;
 
 /**
- * Fondo castillo oscuro verde oscuro,ladrillos grises, de enemigos aves y fuegos que matan
+ * El super dragón, pantalla fiinal
+ * lanza llamas en todas direcciones
  */
-class Stage2{
+
+class Stage15{
     properties:
         game=null;
-        bg=null;
+        bgr=null;
         timer_create_enemies=null;
 
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
         _game.player1.SetPosition(20,_game.GROUND_Y);
- 
+    
+     
         //Colocamos el fondo
-        bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage3.png");
-        bg.SetPriority(-1);
+        _bgr=_game.NewObject("bg","gl_sprite");
+        //Con esto le decimos que el frame que vamos a cargar queremos poder repertirlo, por defecto se dibuja el frame completo
+        _bgr.Setflags(_bgr.FLAG_WRAP);
+        _bgr.Addframe("images/stage15.png", 800,450);
+        _bgr.SetPriority(-1);
+        //le decimos que se repita 1 por 1 vez en pantalla
+        _bgr.SetUV(0,0,1,1);
+        bgr=_bgr;
 
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap3.tmx", _game);
+        _tmx.Load(_game.mapper, "resources/tilesmap15.tmx", _game);
         delete _tmx;
-        
-        
-        //Creamos 20 pájaros aleatoriamente
-        for(i=0;i<20;i++){
+
+        game.background_moving=true;
+        game.player1.walking=true;
+        //pintamos el marcador
+        _game.print_score();
+
+        //Podemos tener como unos 5 pájaros en pantalla
+        for(i=0;i<10;i++){
             //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
             _type_random=rand(1,4);
             //Lo ponemos en la derecha de la pantalla
             _enemy=_game.create_enemy(_type_random,-100,-100);
+            _enemy.speedX=0;
         }
-        //Vamos creando enemigos cada 2 segundos con ayuda del timer
-        timer_create_enemies=_game.NewObject("timer", "GL_Timer");
+
+                //cada 10 segundos tira 4 águilas qpor la derecha
+        timer_create_enemies=game.NewObject("timer", "GL_Timer");
         timer_create_enemies.SetFrequency(2000);
         timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
-
-        //pintamos el marcador
-        _game.print_score();
-  
     }
     function _operator_delete(){
-        bg.Destroy();
+        game.background_moving=false;
+        game.player1.walking=false;
+        delete timer_create_enemies;
+        bgr.Destroy();
         game.delete_objects();
         game.delete_enemies();
-        delete timer_create_enemies;
         //game.delete_fires();
         delete game.layer;
     }
 
+
     function OnTimerEnemiesCallBack(_timer){
-        //game.GetEngine().LogPrint("Vamos a crear un pajaro");
-        //Escogemos el 1 pajaro que encontremos de la lista de enemigos de tipo pájaro
+        //_count=0;
+       //Escogemos 4 pajaros que encontremos de la lista de enemigos de tipo pájaro y le ponemos la velocidad a -5
         for(i=0;i<sizeof(game.enemies);i++){
             _enemy=game.enemies[i];
             if(_enemy.GetItemType()==1 || _enemy.GetItemType()==2 || _enemy.GetItemType()==3 || _enemy.GetItemType()==4){
-                if(_enemy.speedX==0 && game.player1.GetX()>VIEWPORT_WIDTH/2){
+                if(_enemy.speedX==0){
                     //lo colocamos a la derecha de la pantalla
-                    _x_right_screen=game.player1.GetX()+350;
-                    _y_random=rand(100,400);
+                    _x_right_screen=VIEWPORT_WIDTH-32;
+                    _y_random=rand(300,370);
                     _enemy.SetPos(_x_right_screen,_y_random);
                     //Le ponemos una velocidad
                     _enemy.speedX=-5;
+                    //_count++;
                     break;
                 }
             }
         }
     }
+
 }

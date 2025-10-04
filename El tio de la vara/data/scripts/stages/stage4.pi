@@ -27,7 +27,7 @@ class Stage4{
 		}
 
         //Colocamos al player
-        _game.player1.SetPosition(20,GROUND_Y);
+        _game.player1.SetPosition(20,_game.GROUND_Y);
         //posicionamos la cámara
         game.SetCameraX(0);
         //posicionamos el boss

@@ -11,7 +11,16 @@ class Game implements GL_Stage{
         layer=null;
         stage=null;
 
-        currentStage=0;
+        //GROUND_Y=20*32;
+        //450 de alto /32 = 14, pero el player ocupa 2 tiles (64x64px), por lo tanto nuestro player estara en 10
+        GROUND_Y=10*32;
+        //la pantalla 12 es la oscura
+        // la 13 es  la vertical
+        //La 14 es la que va corriendo
+        currentStage=8;
+        shadow_mode=false;
+        background_moving=false;
+
       
     virtual _operator_new(_name,_creators){
         mapper =NewObject("mapper","gl_mapper");
@@ -29,6 +38,33 @@ class Game implements GL_Stage{
         layer=null;
         tileSet=null;
         stage=null;*/
+    }
+    virtual Move(){
+        //Esto es olo para la pantalla 13 que sale una sombra
+        if(shadow_mode){
+            stage.shadow.SetPos(player1.GetX()-736+32,player1.GetY()-450); 
+            //vamos a motrar solo los objetos que estén a menos de 100 pixeles
+            for(x=0; x<sizeof(objects);x++) {
+                if(player1.DistanceTo(objects[x])<160) objects[x].SetVisible(true);
+                else objects[x].SetVisible(false);
+            }
+            for(y=0; y<sizeof(enemies);y++) {
+                if(player1.DistanceTo(enemies[y])<160){
+                    enemies[y].Start();
+                    enemies[y].SetVisible(true);
+                } else {
+                    enemies[y].SetVisible(false);
+                    if( enemies[y].GetItemType()==ENEMY_TYPE_VULTURE)enemies[y].pause();
+                }
+            }
+        } 
+        //GetEngine().LogPrint("moving !"+background_moving);
+        if(background_moving){
+            stage.bgr.IncUV(0.005f,0);
+            //GetEngine().LogPrint("moviendo fondo "+background_moving_speedX); 
+            //IncUV: Incrementa el valor de las coordenadas de textura en un delta (u, v).
+            stage.bgr.IncUV(0.001f,0);
+        }
     }
 
     function print_score(){    
@@ -214,7 +250,7 @@ class Game implements GL_Stage{
         GetApp().StageGlobal.GetMusicIngame().Stop();
         currentStage++;
         //GetEngine().LogPrint("camniando a la escena "+currentStage);
-        if(currentStage>13) currentStage=0;
+        if(currentStage>16) currentStage=0;
         if(stage!=null) delete stage;
         if(currentStage>1) GetApp().stageGlobal.play_sound_change_level();
    
@@ -261,10 +297,21 @@ class Game implements GL_Stage{
             //Combate final boss 3
             case 12: 
                 stage=New Stage12(this);
-                //_gaem.GetApp().SetCameraNotMove(true);
+                GetApp().SetCameraNotMove(true);
+                break;
+            case 13: 
+                GetApp().SetCameraNotMove(false);
+                stage=New Stage13(this);
+                break;
+            case 14: 
+                stage=New Stage14(this);
+             break;
+            case 15: 
+                GetApp().SetCameraNotMove(true);
+                stage=New Stage15(this);
                 break;
             // Pantalla de winner
-            case 13: 
+            case 16: 
                 GetApp().SetCameraNotMove(false);               
                 GetApp().changeWinnerScreen();
                 break;
@@ -301,19 +348,19 @@ class Game implements GL_Stage{
 			 */
 			//Enemigo Aguila de izquierda a derecha
 			case ENEMY_TYPE_EAGLE:
-				_enemy=NewObject("eagle","Eagle",[this,_type,_x,_y]);
+				_enemy=NewObject("eagle","BouncesLeftToRight",[this,_type,_x,_y]);
 				break;
 			//Enemigo Cuervo de izquierda a derecha
 			case ENEMY_TYPE_RAVEN:
-                _enemy=NewObject("raven","Raven",[this,_type,_x,_y]);
+                _enemy=NewObject("raven","BouncesLeftToRight",[this,_type,_x,_y]);
 				break;
 			//Enemigo 3
 			case ENEMY_TYPE_EAGLE_WHITE:
-				_enemy=NewObject("eagleWhite","EagleWhite",[this,_type,_x,_y]);
+				_enemy=NewObject("eagleWhite","BouncesLeftToRight",[this,_type,_x,_y]);
 				break;
 			//Enemigo 4
 			case ENEMY_TYPE_RAVEN_BLACK:
-       			_enemy=NewObject("ravenBlack","RavenBlack",[this,_type,_x,_y]);
+       			_enemy=NewObject("ravenBlack","BouncesLeftToRight",[this,_type,_x,_y]);
 				break;
 			//Buitre que te persigue
 			case ENEMY_TYPE_VULTURE:

@@ -7,8 +7,6 @@ class Winner implements GL_Stage{
         game=null;
     virtual _operator_new(_name,_creator){
        
-        //_game.player1.SetPosition(20,GROUND_Y);
-
         bg=NewObject("bg","gl_sprite");
         bg.Addframe("images/win.png");
         bg.SetPriority(0);

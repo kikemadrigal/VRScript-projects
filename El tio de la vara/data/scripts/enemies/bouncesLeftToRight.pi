@@ -1,0 +1,48 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class BouncesLeftToRight implements Enemy{
+
+    virtual _operator_new(_name,_creator, _params){
+        switch (type){
+            case ENEMY_TYPE_EAGLE:
+                Addanimationwithsheet("eagle","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
+                Setanimation("eagle");
+                type=ENEMY_TYPE_EAGLE; 
+                break;
+            case ENEMY_TYPE_EAGLE_WHITE:
+                 Addanimationwithsheet("eagle_white","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
+                Setanimation("eagle_white");
+                SetColor(RGB(255,255,255));
+                type=ENEMY_TYPE_EAGLE_WHITE;
+                break;
+            case ENEMY_TYPE_RAVEN:
+                Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
+                Setanimation("raven");
+                type=ENEMY_TYPE_RAVEN; 
+                break;
+            case ENEMY_TYPE_RAVEN_BLACK:
+                Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
+                Setanimation("raven");
+                SetColor(RGB(0,0,0));
+                type=ENEMY_TYPE_RAVEN_BLACK;
+                break;
+        
+        }
+    }
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+        if(GetX()<game.player1.getX()-350 || GetX()<32){
+            SetPos(-100,-100);
+            speedX=0;
+        }
+        incpos(speedX,speedY);
+    }
+
+    
+	virtual _operator_delete(){
+		
+	}
+}

@@ -32,6 +32,9 @@ class Cloud implements Enemy{
             SetHFlip(false);
             speedX=2;
         }
+        incpos(speedX,speedY);
+
+
         if(GetAnimationLoops()>3){
             //GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
              // obtenemos un fire con una velocidad 0 y lo convertimos en un fuego horizontal
@@ -40,13 +43,13 @@ class Cloud implements Enemy{
                 if(_fire.incrementoY==0){
                     _fire.SetPos(GetX()-10,GetY()+10);
                     _fire.incrementoY=5;
-                    _fire.SetFlip(false);
+                    _fire.SetHFlip(false);
                     break;
                 }
             }
             ResetAnimation ();
         }
-        incpos(speedX,speedY);
+        
     }
 
     

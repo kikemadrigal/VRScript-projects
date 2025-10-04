@@ -13,7 +13,7 @@ class Stage6{
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
-        _game.player1.SetPosition(20,GROUND_Y);
+        _game.player1.SetPosition(20,_game.GROUND_Y);
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");

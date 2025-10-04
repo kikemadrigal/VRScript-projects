@@ -1,38 +1,49 @@
 namespace es_tipolisto_caballeroVara_stages;
 
-class Stage7{
+/**
+ * la pantalla vertical
+ */
+
+class Stage14{
     properties:
         game=null;
         bg=null;
+
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,700,5*32);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
+        _game.GROUND_Y=90*32;
+        _game.SetCameraY(80*32);
         _game.player1.SetPosition(20,_game.GROUND_Y);
+        _game.GetApp().is_vertical_stage=true;
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage7.png");
+        bg.Addframe("images/stage14.png");
         bg.SetPriority(-1);
 
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap7.tmx", _game);
+        _tmx.Load(_game.mapper, "resources/tilesmap14.tmx", _game);
         delete _tmx;
-        
-       
         //pintamos el marcador
         _game.print_score();
-  
+
+   
     }
     function _operator_delete(){
+        game.GetApp().is_vertical_stage=false;
+        game.GROUND_Y=10*32;
         bg.Destroy();
         game.delete_objects();
         game.delete_enemies();
         //game.delete_fires();
         delete game.layer;
     }
+
+
 }
