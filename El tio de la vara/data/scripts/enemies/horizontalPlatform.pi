@@ -14,9 +14,10 @@ class HorizontalPlatform implements Enemy{
                 type=ENEMY_TYPE_SQUIRREL; 
                 break;
             case ENEMY_TYPE_SPIDER:
-                Addanimationwithsheet("spider","images/objects-enemies.png",0,7,9*32,21*32,32,32,-1,-1,-1,.2);
+                Addanimationwithsheet("spider","images/objects-enemies.png",0,2,9*32,20*32,32,32,-1,-1,-1,.2);
                 Setanimation("spider");
                 type=ENEMY_TYPE_SPIDER;  
+                break;
             //cangrejo
             case ENEMY_TYPE_CRAB:
                 Addanimationwithsheet("carb","images/objects-enemies.png",0,3,9*32,7*32,32,32,-1,-1,-1,.2);

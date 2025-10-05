@@ -53,7 +53,7 @@
 
 <img src="data/images/stage4.png" width="500px">
 
-## Level 5, el reino bomba
+## Level 5, el reino del águila
 
 * Fondo: Catillo interior de fondo lila
 * Tiles: Ladrillos grises.
@@ -83,7 +83,7 @@
 
 <img src="data/images/stage7.png" width="100%">
 
-## Level 8, el águila
+## Level 8, el reino de la araña
 
 * Fondo: Balcón de marmol
 * Tiles: Ladrillos grises claros.
@@ -125,7 +125,7 @@
 <img src="data/images/stage11.png" width="100%">
 
 
-## Level 12, el dragón de fuego
+## Level 12, la araña
 
 * Fondo: 
 * Tiles: 

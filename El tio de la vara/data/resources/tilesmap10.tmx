@@ -15,7 +15,7 @@
   <object id="1" name="moneda50" type="moneda50" gid="605" x="511" y="96" width="32" height="32"/>
   <object id="2" name="murcielago" type="murcielago" gid="810" x="226" y="96" width="32" height="32"/>
   <object id="3" name="araña" type="araña" gid="1135" x="736" y="130" width="32" height="32"/>
-  <object id="4" name="araña" type="araña" gid="1135" x="739" y="289" width="32" height="32"/>
+  <object id="4" name="araña" type="araña" gid="1135" x="739" y="288" width="32" height="32"/>
   <object id="5" name="araña" type="araña" gid="1135" x="1217" y="96" width="32" height="32"/>
   <object id="6" name="araña" type="araña" gid="1135" x="2786" y="352" width="32" height="32"/>
   <object id="7" name="araña" type="araña" gid="1135" x="2177" y="256" width="32" height="32"/>

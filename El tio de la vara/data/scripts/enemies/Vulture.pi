@@ -3,12 +3,9 @@ class Vulture implements Enemy{
     virtual _operator_new(_name,_creator, _params){
         Addanimationwithsheet("buitre","images/objects-enemies.png",0,1,0,10*32,32,32,-1,-1,-1,.2);
         Setanimation("buitre");
-        //SetColor(RGB(255,0,255));
         speedX=-2;
         type=ENEMY_TYPE_VULTURE; 
     }
-
-
 
     virtual Move(){
         if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){

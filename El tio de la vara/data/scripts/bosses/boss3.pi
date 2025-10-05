@@ -1,5 +1,7 @@
 namespace es_tipolisto_caballeroVara_bosses;
-
+/**
+ * La araña gigante
+ */
 class Boss3 implements GL_sprite{
 	properties:
 		incrementoX=0;
@@ -8,14 +10,24 @@ class Boss3 implements GL_sprite{
         //player1=null;
         boss_live=100;
         boss_dead=false;
+        posiciones=[
+            [1,4],
+            [2,5],
+            [3,6],
+            [4,7],
+            [5,8],
+            [6,9],
+            [7,10],
+            [8,11],
+            [9,12],
+            [10,13]
+        ];
     
 
 	virtual _operator_new(_name,_creator, _params){
         game=_params[0];
-        //player1=_params[1];
-        //game.boss_live=100;
    		//Colocamos al boss
-        Addanimationwithsheet("boss3","images/objects-enemies.png",0,2,0,16*32,64,64,-1,-1,-1,.2);    
+        Addanimationwithsheet("boss3","images/objects-enemies.png",0,2,9*32,21*32,32,32,-1,-1,-1,.2);  
 		Setanimation("boss3");
         SetCollision(True);
         Setcollisionrect(0,32,32*3,32*2);
@@ -23,9 +35,17 @@ class Boss3 implements GL_sprite{
         SetSize(32*3,32*3, true);
 
 
+        //Vamos a crear un buffer de 10 telarañas
+        for(i=0;i<30;i++){
+            _web=game.create_fire(FIRE_TYPE_WEB,this);
+            _web.SetPos(-100,-100);
+            _web.incrementoX=0;
+            _web.incrementoY=0;
+        }
+
         //cada 10 segundos tira 4 fuegos en circulo
         timer_create_enemies=game.NewObject("timer", "GL_Timer");
-        timer_create_enemies.SetFrequency(10000);
+        timer_create_enemies.SetFrequency(5000);
         timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
     }
 
@@ -44,93 +64,49 @@ class Boss3 implements GL_sprite{
             }else{
                 //Si el número de repeticiones del sprite es mayor que 12 creamos un fuego y lo mandamos al player
                 // modificamos el angulo de su sprite para q
-                if(GetAnimationLoops()>12){
-                    _angle=0;
-                    // Creamos un fuego con parámetros tipo (ver main.pi) y enemy
-                    _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
-                    //Lo bajamos un poco para que salga por la boca
-                    _fire.SetPos(_fire.GetX()+GetWf(),_fire.GetY()+32);
-                    
-                    _fire.MoveDir(game.player1.GetX(),game.player1.GetY(),2);
-                    /*
-                                            0 grados
-                    3 posibilidad -x,+y --215  |   1 posibilidad +x,+y--45
-                                               |
-                                    270 º---------------- 90 º
-                                               |
-                    4 posibilidad -x,-y--225   |   2 posibilidad +x,-y --135
-                                             180 º
-                    */
+                if(GetAnimationLoops()>2){
+                   //lanzamod una telaraña
+                  // game.GetApp().GetEngine().LogPrint("lanzamos una telaraña");
+                    for(i=0;i<sizeof(game.fires);i++){
+                            _web=game.fires[i];
+                            if(_web.incrementoX==0){
+                                // Creamos un fuego con parámetros tipo (ver main.pi) y enemy
+                                _web.SetPos(GetX()+GetWf(),GetY()+GetHF()/2);  
+                                //_web.MoveDir(game.player1.GetX(),game.player1.GetY(),2);
+                                _web.incrementoX=2;
+                                if(game.player1.GetX()<_web.GetX()) _web.incrementoX=-2;
+                                else _web.incrementoX=2;
+                                    
+                                if(game.player1.GetY()<_web.GetY()) _web.incrementoY=-2;
+                                else _web.incrementoY=2;
 
+                                if(_web.incrementoX<0) _web.SetHFlip(true);
+                                else _web.SetHFlip(false);
 
+                                if(_web.incrementoY<0) _web.SetVFlip(true);
+                                else _web.SetVFlip(false);
+                              
 
-
-
-                    //rotamos un poco el fuego para que sea más realista, tenemos 4 posibilidades
-                    /* 1 pisbilidad +x +y
-                                                            dragon    | 
-                                                                      | 
-                                                                -------------
-                                                                      |   player
-                                                                      |                                    
-                     */
-                    if(GetX()>=game.player1.GetX() && GetY()>=game.player1.GetY()){
-                        _angle=315;
-                    }
-                    /* 2 pisbilidad +x -y
-                                                             player | 
-                                                                    | 
-                                                              -------------
-                                                                    |   Dragón
-                                                                    |
-
-                     */   
-                                                             
-                    else if(GetX()>=game.player1.GetX() && GetY()<game.player1.GetY()){
-                        _angle+=225;
-                    }
-
-                    /*                                                
-                     3 pisbilidad -x +y: 315=5.50 radianes
-                                                                      |  player
-                                                                      | 
-                                                                -------------
-                                                            Dragón    |  
-                                                                      |
-                        tendremos que ponerle al fuego 225º                                              
-                     */
-                    else if(GetX()<game.player1.GetX() && GetY()>=game.player1.GetY()){
-                        _angle+=225;
-                    }
-                    /*                                       Dragón   |  
-                     4 pisbilidad -x -y: 315=5.50 radianes            |  
-                                                                -------------
-                                                                      |  player
-                                                                      |
-                        tendremos que ponerle al fuego 225º                                              
-                     */
-                
-                    else if(GetX()<game.player1.GetX() && GetY()<game.player1.GetY()){
-                        _angle+=315;
-                    }
-                    _rad=degtorad(_angle);
-                    //GetApp().GetEngine().LogPrint("fire creado con el angulo: "+_angle+", radianes: "+_rad);
-                    _fire.SetAngle(_rad);
-                    ResetAnimation();
+                                break;
+                            }
+                     }
+                     ResetAnimation();
                 }
 
                 if(GetX()>=game.player1.GetX()){
                     incrementoX=-1;
-                    SetHFlip(true);
+                   
                 }else if(GetX()<=game.player1.GetX()){
                     incrementoX=1;
-                    SetHFlip(false);
+                    
                 }
                     
                 if(GetY()>=game.player1.GetY()){
                     incrementoY=-1;
+                    SetVFlip(false);
                 }else if(GetY()<=game.player1.GetY()){
                     incrementoY=1;
+                    SetVFlip(true);
                 }
                 
                 incPos(incrementoX, incrementoY);
@@ -141,7 +117,7 @@ class Boss3 implements GL_sprite{
     function OnTimerEnemiesCallBack(_setUserCallBack){
         //crcemos 10 fuegos
             // este va izquierda arriba
-             _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
+             /*_fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
              _fire.SetPos(GetX()+GetWf(),GetY()+GetHF()/2);  
              _fire.MoveDir(0,0,2);    
              _fire.SetAngle(degtorad(315));
@@ -162,6 +138,72 @@ class Boss3 implements GL_sprite{
             _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
              _fire.SetPos(GetX()+GetWf(),GetY()+GetHF()/2);  
              _fire.MoveDir(VIEWPORT_WIDTH,0,2);    
-             _fire.SetAngle(45);
+             _fire.SetAngle(45);*/
+        //Lanzamos 10 telarañas en circulo
+        for(i=0;i<5;i++){
+            for(j=0;j<sizeof(game.fires);j++){
+                _web=game.fires[j];
+                if(_web.incrementoX==0){
+                    // Creamos un fuego con parámetros tipo (ver main.pi) y enemy
+                    if(i==0){
+                        _web.SetPos(GetX(),GetY()+GetHF()/2);
+                        _web.incrementoX=0;
+                        _web.incrementoY=1;
+                    } 
+                    else if(i==1){
+                        _web.SetPos(GetX()+10,GetY()+GetHF()/2);
+                        _web.incrementoX=1;
+                        _web.incrementoY=2;
+                    } 
+                    else if(i==2){
+                        _web.SetPos(GetX()+20,GetY()+GetHF());
+                        _web.incrementoX=1;
+                        _web.incrementoY=1;
+                    } 
+                    else if(i==3){
+                        _web.SetPos(GetX()+GetWf(),GetY()+GetHF()/2-10);
+                        _web.incrementoX=1;
+                        _web.incrementoY=3;
+                    } 
+                    else if(i==4){
+                        _web.SetPos(GetX()+GetWf(),GetY()+GetHF()/2+10);
+                        _web.incrementoX=3;
+                        _web.incrementoY=1;
+                    } 
+                    else if(i==5){
+                        _web.SetPos(GetX()+GetWf(),GetY()+GetHF()/2+20);
+                        _web.incrementoX=4;
+                        _web.incrementoY=1;
+                    } 
+                    else if(i==6){
+                        _web.incrementoX=1;
+                        _web.incrementoY=4;
+                        _web.SetPos(GetX()+GetWf(),GetY()+GetHF());
+                    } 
+                    /*else if(i==7) _web.SetPos(GetX()+GetWf()-10,GetY()+GetHF());
+                    else if(i==8) _web.SetPos(GetX()+GetWf()-20,GetY()+GetHF());
+                    else if(i==9) _web.SetPos(GetX(),GetY()+GetHF());*/
+
+                  
+         
+                    _web.SetAngle(degtorad(i*36));
+                    if(cos(degtorad(i*36))<0) _web.SetHFlip(true);
+                    else _web.SetHFlip(false);
+
+                    if(sin(degtorad(i*36))<0) _web.SetVFlip(true);
+                    else _web.SetVFlip(false);
+                  
+
+                    break;
+                }
+            }
+        }
+
+        
+        /*_enemy=game.create_enemy(ENEMY_TYPE_SPIDER,100,100);
+        _enemy=game.create_enemy(ENEMY_TYPE_SPIDER,200,200);
+        _enemy=game.create_enemy(ENEMY_TYPE_SPIDER,300,300);
+        _enemy=game.create_enemy(ENEMY_TYPE_SPIDER,400,400);*/
+        
     }
 }

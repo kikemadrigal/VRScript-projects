@@ -1,0 +1,36 @@
+namespace es_tipolisto_caballeroVara_enemies;
+
+class ParachuteBomb implements Enemy{
+    properties:
+        increase_angle=0.015f;
+
+    virtual _operator_new(_name,_creator, _params){
+        Addanimationwithsheet("parachuteBomb","images/objects-enemies.png",0,0,6*32,11*32,64,64,-1,-1,-1,.08);
+        //Addanimationwithsheet("parachuteBomb","images/objects-enemies.png",0,0,19*32,16*32,64,64,-1,-1,-1,.08);
+        Setanimation("parachuteBomb");
+        speedY=1;
+        SetPivot(0, 0.5f);
+        SetCollisionRect(20,40,24,24);
+        type=ENEMY_TYPE_PARACHUTE_BOMB; 
+    }
+    virtual Move(){
+        if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+       
+        if (getAngle()>1.1416 || getAngle()<-0.1416) increase_angle=-increase_angle;
+   
+        IncAngle(increase_angle);
+        if(GetY()>game.player1.getY()+150){
+            SetPos(-100,-100);
+            speedY=0;
+        }
+        incpos(0,speedY);
+    }
+
+    
+	virtual _operator_delete(){
+		
+	}
+}

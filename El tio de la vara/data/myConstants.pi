@@ -68,12 +68,17 @@ class{
         ENEMY_TYPE_CLOUD=31; //nube
         ENEMY_TYPE_THIEF=32; //ladrón
         ENEMY_TYPE_HEDGEHOG=33; //erizo
-        ENEMY_TYPE_WILD_PIG=34; //pez
+        ENEMY_TYPE_WILD_PIG=34; //Jabalí
+        ENEMY_TYPE_SLEEPING_BAT=35; //murciélago dormido
+        ENEMY_TYPE_PARACHUTE_BOMB=36; //murciélago dormido
+        ENEMY_TYPE_RHINOCEROS=37; //murciélago dormido
+
         
         //Fire
         FIRE_TYPE_NORMAL=1;
         FIRE_TYPE_MOVING_HORIZONTAL=2;
         FIRE_TYPE_MOVING_VERTICAL=3;
+        FIRE_TYPE_WEB=4;
 
 
         //Audios

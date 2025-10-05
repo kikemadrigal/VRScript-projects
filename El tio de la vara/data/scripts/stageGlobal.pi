@@ -105,6 +105,7 @@ class StageGlobal implements GL_Stage{
 		audios[AUDIO_FIRE].Play();
 	}
 	function play_sound_change_level(){
+		audios[AUDIO_CHANGE_LEVEL].SetVolume(50);
 		audios[AUDIO_CHANGE_LEVEL].Play();
 	}
 	function play_sound_game_over(){

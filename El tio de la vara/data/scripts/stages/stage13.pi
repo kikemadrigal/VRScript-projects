@@ -12,7 +12,7 @@ class Stage13{
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,220,_game.GetApp().GetResY()-100);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
@@ -40,6 +40,8 @@ class Stage13{
     }
     function _operator_delete(){
         bg.Destroy();
+        shadow.Destroy();
+        game.shadow_mode=false;
         game.delete_objects();
         game.delete_enemies();
         //game.delete_fires();

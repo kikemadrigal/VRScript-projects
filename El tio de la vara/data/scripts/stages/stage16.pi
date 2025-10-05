@@ -1,17 +1,11 @@
 namespace es_tipolisto_caballeroVara_stages;
-/*
- 
- enemigos: 
 
-* Fondo: Catillo interior de fondo lila
-* Tiles: Ladrillos grises, plataformas gris claro y lila
-* Enemigos: 
-*    Bloques que aplastan
-*    Sierras
-*    Eladrones enmascarados
-*    Murciélagos
-*/
-class Stage5{
+/**
+ * El super dragón, pantalla fiinal
+ * lanza llamas en todas direcciones
+ */
+
+class Stage16{
     properties:
         game=null;
         bg=null;
@@ -20,7 +14,7 @@ class Stage5{
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,100,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
@@ -28,23 +22,29 @@ class Stage5{
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage5.png");
+        bg.Addframe("images/stage16.png");
         bg.SetPriority(-1);
 
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap5.tmx", _game);
+        _tmx.Load(_game.mapper, "resources/tilesmap16.tmx", _game);
         delete _tmx;
-        
-       
+
+        //creamos al boss 3: parámtero game y player1
+        boss=_game.NewObject("boss4","Boss4",[game]);
         //pintamos el marcador
         _game.print_score();
-  
+        //Pintamos la vida que le queda al boss
+        _game.draw_boss_live(boss.boss_live);  
+       
     }
     function _operator_delete(){
+        game.draw_boss_live("");
         bg.Destroy();
         game.delete_objects();
         game.delete_enemies();
         //game.delete_fires();
         delete game.layer;
     }
+
+
 }

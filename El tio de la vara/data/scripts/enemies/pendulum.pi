@@ -11,9 +11,9 @@ class Pendulum implements GL_Sprite{
         angular_acceleration =0;
         gravity =0;
         radius =0;
-        lineSprite =null;
 
-        angle2=0;
+
+
 
     virtual _operator_new(_name,_creator, _params){
 		game=_params[0];

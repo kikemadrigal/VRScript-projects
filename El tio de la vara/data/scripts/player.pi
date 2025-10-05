@@ -66,9 +66,11 @@ class Player implements GL_sprite{
 			Class_Id(_sp2)=="ShootPlayerHorizontal" ||
 			Class_Id(_sp2)=="ShootPlayerVertical" ||
 			Class_Id(_sp2)=="Dragon" ||
+			Class_Id(_sp2)=="Cloud" ||
 			Class_Id(_sp2)=="Hammer" ||
 			Class_Id(_sp2)=="HorizontalPlatformBig" ||
-			Class_Id(_sp2)=="Saw" ){
+			Class_Id(_sp2)=="ParachuteBomb" ||
+			Class_Id(_sp2)=="SleepingBat" ){
 			game.GetApp().StageGlobal.play_sound_hit();
 			if(attack){
 				_sp2.touches++;
@@ -81,7 +83,7 @@ class Player implements GL_sprite{
 			}else player_die();
 		}
 		
-		if(Class_Id(_sp2)=="Pendulum" ||Class_Id(_sp2)=="Fire" || Class_Id(_sp2)=="Boss1"|| Class_Id(_sp2)=="Boss2"|| Class_Id(_sp2)=="Boss3" || Class_Id(_sp2)=="CrushingBrick") player_die();
+		if(Class_Id(_sp2)=="Pendulum" ||Class_Id(_sp2)=="Fire" || Class_Id(_sp2)=="Boss1"|| Class_Id(_sp2)=="Boss2"|| Class_Id(_sp2)=="Boss3"|| Class_Id(_sp2)=="Boss4" || Class_Id(_sp2)=="CrushingBrick"|| Class_Id(_sp2)=="Saw") player_die();
 		/**
 		 * Colisón player con los objetos
 		 */
@@ -101,7 +103,9 @@ class Player implements GL_sprite{
 				//Si ya no quedan llaves por recoger ponemos el objeto meta al final de la pantalla
 				if(keys_to_collect<=0){
 					//creamos la meta
-					game.create_object(OBJECT_TYPE_META,LEVEL_WIDTH-60,GetApp().GetResY()-100);
+					//Si es la pantalla vertical lo ponemos arriba
+					if(game.currentStage==14) game.create_object(OBJECT_TYPE_META,700,5*32);
+					else game.create_object(OBJECT_TYPE_META,LEVEL_WIDTH-60,GetApp().GetResY()-100);
 				}
 				game.GetApp().StageGlobal.play_sound_keys();
 			//Si es unamoeda de 50 puntos

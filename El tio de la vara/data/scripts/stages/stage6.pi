@@ -1,4 +1,14 @@
 namespace es_tipolisto_caballeroVara_stages;
+/**
+ * Pantalla 6, los bloques de paja
+ * Fondo: Bosque verde, lleno de arboles
+ * Tiles: plataformas de madera
+ * Enemigos: 
+ *    Pájaros que salen por la izquierda
+ *    Erizos
+ *    Cangrejos
+ * 
+ */
 
 class Stage6{
     properties:

@@ -6,6 +6,7 @@ class ShootPlayerVertical implements Enemy{
 
     virtual _operator_new(_name,_creator, _params){
         game=_params[0];
+        
         Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,15*32,32,32,-1,-1,-1,.2);
         Setanimation("monstruo1");
         type=ENEMY_TYPE_SHOOT_PLAYER_VERTICAL; 
@@ -34,11 +35,15 @@ class ShootPlayerVertical implements Enemy{
             for(i=0;i<sizeof(fires);i++){
                 _fire=fires[i];
                 if(_fire.incrementoY==0){
-                
                     _fire.SetPos(GetX()-10,GetY()+10);
-                    _fire.incrementoY=-5;
-                       
-                    
+                    if(game.player1.GetY()<GetY()){
+                        _fire.incrementoY=-5;
+                        _fire.SetVFlip(false);
+                    }
+                    else {
+                        _fire.incrementoY=5;
+                        _fire.SetVFlip(true);
+                    }
                     break;
                 }
             }

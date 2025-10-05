@@ -1,5 +1,11 @@
 namespace es_tipolisto_caballeroVara_stages;
-
+/**
+ * Pantalla 7: la cueva del fuego
+ * Fondo: Cueva marrón
+ * Enemigos: 
+ *    Jabalís
+ *    Sierras
+ */
 class Stage7{
     properties:
         game=null;

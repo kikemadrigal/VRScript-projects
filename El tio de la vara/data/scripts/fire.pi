@@ -31,12 +31,19 @@ class Fire implements GL_sprite{
 			Setanimation("fire3");
 			Setcollisionrect(5,0,22,32);
 			if(game.player1.GetX()<_enemy.GetX()){
-				incrementoY=-2;
-				SetVFlip(true);
-			}else{
-				incrementoY=2;
+				//GetApp().GetEngine().LogPrint("el player está más hacia abajo ");
+				incrementoY=-5;
 				SetVFlip(false);
+			}else{
+				//GetApp().GetEngine().LogPrint("el player está más arriba ");
+				incrementoY=5;
+				SetVFlip(true);
 			}
+		}
+		else if(type==FIRE_TYPE_WEB){
+			Addanimationwithsheet("web","images/objects-enemies.png",0,1,0,7*32,32,32,-1,-1,-1,.2);
+			Setanimation("web");
+			Setcollisionrect(5,0,22,32);
 		}
 		
 		
@@ -53,11 +60,13 @@ class Fire implements GL_sprite{
 		if(GetX()<game.player1.GetX()-380 || GetX()>game.player1.GetX()+380) {
 			SetPos(-100,-100);
             incrementoX=0;
+			incrementoY=0;
 		}
 		
 
 		if(GetY()<20 || GetY()>LEVEL_HEIGHT-20){
  			SetPos(-100,-100);
+			incrementoX=0;
             incrementoY=0;
 		} 
 	}

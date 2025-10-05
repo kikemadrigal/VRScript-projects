@@ -26,6 +26,14 @@ class BouncesLeftToRight implements Enemy{
                 SetColor(RGB(0,0,0));
                 type=ENEMY_TYPE_RAVEN_BLACK;
                 break;
+                //Lo rinocerontes
+            case ENEMY_TYPE_RHINOCEROS:
+                //game.GetApp().GetEngine().LogPrint("Creando rinoceronte");
+                Addanimationwithsheet("rhinoceros","images/objects-enemies.png",0,3,14*32,7*32,64,64,-1,-1,-1,.2);
+                Setanimation("rhinoceros");
+                SetcollisionRect(0,0,64,64);
+                type=ENEMY_TYPE_RHINOCEROS;
+                break;
         
         }
     }

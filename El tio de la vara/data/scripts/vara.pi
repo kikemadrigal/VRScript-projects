@@ -36,8 +36,11 @@ class Vara implements GL_sprite{
 			Class_Id(_sp2)=="ShootPlayerHorizontal" ||
 			Class_Id(_sp2)=="ShootPlayerVertical" ||
 			Class_Id(_sp2)=="Dragon" ||
+			Class_Id(_sp2)=="Cloud" ||
 			Class_Id(_sp2)=="Hammer" ||
-			Class_Id(_sp2)=="HorizontalPlatformBig" ){
+			Class_Id(_sp2)=="HorizontalPlatformBig" ||
+			Class_Id(_sp2)=="ParachuteBomb" ||
+            Class_Id(_sp2)=="SleepingBat" ){
                 game.GetApp().StageGlobal.play_sound_hit();
                 if(_sp2.GetItemType()==ENEMY_TYPE_CRUSHING_BRICK || _sp2.GetItemType()==ENEMY_TYPE_PENDULUM) return;
                 //borramos la vara
@@ -50,17 +53,10 @@ class Vara implements GL_sprite{
                     game.delete_enemy(_sp2);
                 }
         }
-        if(Class_Id(_sp2)=="Boss1" ){
-            if(_sp2.boss_live>0)_sp2.boss_live--;
-            _fx=_sp2.CreateFX("TINT");
-			_fx.Start(1000, RGB(255,255,255));
-            game.draw_boss_live(_sp2.boss_live);
-        }else if(Class_Id(_sp2)=="Boss2" ){
-            if(_sp2.boss_live>0)_sp2.boss_live--;
-            _fx=_sp2.CreateFX("TINT");
-			_fx.Start(1000, RGB(255,255,255));
-            game.draw_boss_live(_sp2.boss_live);
-        }else if(Class_Id(_sp2)=="Boss3" ){
+        if(Class_Id(_sp2)=="Boss1" || 
+           Class_Id(_sp2)=="Boss2" || 
+           Class_Id(_sp2)=="Boss3" || 
+           Class_Id(_sp2)=="Boss4" ){
             if(_sp2.boss_live>0)_sp2.boss_live--;
             _fx=_sp2.CreateFX("TINT");
 			_fx.Start(1000, RGB(255,255,255));

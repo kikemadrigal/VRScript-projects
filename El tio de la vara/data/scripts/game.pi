@@ -17,11 +17,10 @@ class Game implements GL_Stage{
         //la pantalla 12 es la oscura
         // la 13 es  la vertical
         //La 14 es la que va corriendo
-        currentStage=8;
+        currentStage=12;
         shadow_mode=false;
         background_moving=false;
 
-      
     virtual _operator_new(_name,_creators){
         mapper =NewObject("mapper","gl_mapper");
         player1=NewObject("player","Player",[this]);
@@ -50,20 +49,17 @@ class Game implements GL_Stage{
             }
             for(y=0; y<sizeof(enemies);y++) {
                 if(player1.DistanceTo(enemies[y])<160){
-                    enemies[y].Start();
+                    //enemies[y].Start();
                     enemies[y].SetVisible(true);
                 } else {
                     enemies[y].SetVisible(false);
-                    if( enemies[y].GetItemType()==ENEMY_TYPE_VULTURE)enemies[y].pause();
+                    //if( enemies[y].GetItemType()==ENEMY_TYPE_VULTURE)enemies[y].pause();
                 }
             }
         } 
-        //GetEngine().LogPrint("moving !"+background_moving);
+    
         if(background_moving){
             stage.bgr.IncUV(0.005f,0);
-            //GetEngine().LogPrint("moviendo fondo "+background_moving_speedX); 
-            //IncUV: Incrementa el valor de las coordenadas de textura en un delta (u, v).
-            stage.bgr.IncUV(0.001f,0);
         }
     }
 
@@ -236,6 +232,15 @@ class Game implements GL_Stage{
             case "jabali":
                 create_enemy(ENEMY_TYPE_WILD_PIG,_x, _y);
                 break;
+            case "murcielago-dormido":
+                create_enemy(ENEMY_TYPE_SLEEPING_BAT,_x, _y);
+                break;
+            case "bomba-paracidas":
+                create_enemy(ENEMY_TYPE_PARACHUTE_BOMB,_x, _y);
+                break;
+            case "rinoceronte":
+                create_enemy(ENEMY_TYPE_RHINOCEROS,_x, _y);
+                break;
                 
             default:
                 GetEngine().LogPrint("Tipo de actor no definido: "+_type);
@@ -250,7 +255,7 @@ class Game implements GL_Stage{
         GetApp().StageGlobal.GetMusicIngame().Stop();
         currentStage++;
         //GetEngine().LogPrint("camniando a la escena "+currentStage);
-        if(currentStage>16) currentStage=0;
+        if(currentStage>17) currentStage=0;
         if(stage!=null) delete stage;
         if(currentStage>1) GetApp().stageGlobal.play_sound_change_level();
    
@@ -294,29 +299,38 @@ class Game implements GL_Stage{
             case 11: 
                 stage=New Stage11(this);
                 break;
-            //Combate final boss 3
+            //Combate boss 3: araña gigante
             case 12: 
                 stage=New Stage12(this);
                 GetApp().SetCameraNotMove(true);
                 break;
+            // La oscuridad
             case 13: 
                 GetApp().SetCameraNotMove(false);
                 stage=New Stage13(this);
                 break;
+            // Pantalla vertical
             case 14: 
                 stage=New Stage14(this);
-             break;
+                break;
+            // a correr!
             case 15: 
-                GetApp().SetCameraNotMove(true);
+                //GetApp().SetCameraNotMove(true);
                 stage=New Stage15(this);
                 break;
-            // Pantalla de winner
+            //El boss 4 final: el dragón de fuego
             case 16: 
-                GetApp().SetCameraNotMove(false);               
+                stage=New Stage16(this);
+                break;
+            // Pantalla de winner
+            case 17:      
+                GetApp().SetCameraNotMove(false);
                 GetApp().changeWinnerScreen();
                 break;
         }
         GetApp().StageGlobal.GetMusicIngame().Play();
+        //ponemos la cámara en la posición inicial
+        //SetCameraX(0);
         //Le ponemos un efecto de fade
         GetApp().stageGlobal.fadeInEffect();
 	}
@@ -433,6 +447,15 @@ class Game implements GL_Stage{
                 break;
             case ENEMY_TYPE_CLOUD:
                 _enemy=NewObject("cloud","Cloud",[this,_type,_x,_y]);
+                break;
+            case ENEMY_TYPE_SLEEPING_BAT:
+                _enemy=NewObject("sleepingBat","SleepingBat",[this,_type,_x,_y]);
+                break;
+            case ENEMY_TYPE_PARACHUTE_BOMB:
+                _enemy=NewObject("parachuteBomb","ParachuteBomb",[this,_type,_x,_y]);
+                break;
+            case ENEMY_TYPE_RHINOCEROS:
+                _enemy=NewObject("rhinoceros","BouncesLeftToRight",[this,_type,_x,_y]);
                 break;
             default:
                 GetEngine().LogPrint("Tipo de enemigo no definido: "+_type);
