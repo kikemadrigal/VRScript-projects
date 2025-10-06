@@ -1,0 +1,50 @@
+namespace es_tipolisto_caballeroVara_stages;
+/*
+ 
+ enemigos: 
+
+* Fondo: Catillo interior de fondo lila
+* Tiles: Ladrillos grises, plataformas gris claro y lila
+* Enemigos: 
+*    Bloques que aplastan
+*    Sierras
+*    Eladrones enmascarados
+*    Murciélagos
+*/
+class Stage5{
+    properties:
+        game=null;
+        bg=null;
+
+    function _operator_new(_game){
+        game=_game;
+        if (DEBUG_MODE) {
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,100,_game.GetApp().GetResY()-100);
+        }
+        //ponemos que tenemos que coger 3 llaves
+        _game.player1.keys_to_collect=3;
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+ 
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        bg.Addframe("images/stage5.png");
+        bg.SetPriority(-1);
+
+        _tmx = new TMX_Loader();
+        _tmx.Load(_game.mapper, "resources/tilesmap5.tmx", _game);
+        delete _tmx;
+        
+       
+        //pintamos el marcador
+        _game.print_score();
+  
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        game.delete_objects();
+        game.delete_enemies();
+        game.delete_fires();
+        delete game.layer;
+    }
+}

@@ -1,0 +1,224 @@
+namespace es_tipolisto_caballeroVara_bosses;
+/**
+ * Boss 3: La araña gigante (Pantalla 12)
+ */
+class Boss3 implements GL_sprite{
+	properties:
+		incrementoX=0;
+		incrementoY=0;
+		game=null;
+        //player1=null;
+        boss_live=300;
+        boss_dead=false;
+        timer_create_enemies=null;
+        // timer que hace play para escuchar una risa del jefe cada 10 segundos
+        timer_play_laugh_boss=null;
+        /*posiciones=[
+            [1,4],
+            [2,5],
+            [3,6],
+            [4,7],
+            [5,8],
+            [6,9],
+            [7,10],
+            [8,11],
+            [9,12],
+            [10,13]
+        ];*/
+    
+
+	virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+   		//Colocamos al boss
+        Addanimationwithsheet("boss3","images/objects-enemies.png",0,2,9*32,21*32,32,32,-1,-1,-1,.2);  
+		Setanimation("boss3");
+        SetCollision(True);
+        Setcollisionrect(0,20,32*3,32*2);
+        SetPos(400,200);
+        SetSize(32*3,32*3, true);
+
+
+        //Vamos a crear un buffer de 10 telarañas
+        for(i=0;i<30;i++){
+            _web=game.create_fire(FIRE_TYPE_WEB,this);
+            _web.SetPos(-100,-100);
+            _web.incrementoX=0;
+            _web.incrementoY=0;
+        }
+
+        //cada 10 segundos tira 4 fuegos en circulo
+        timer_create_enemies=game.NewObject("timer", "GL_Timer");
+        timer_create_enemies.SetFrequency(5000);
+        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
+
+        //Cada 10 segundos se escuchará una risa
+        timer_play_laugh_boss=NewObject("timer", "GL_Timer");
+        timer_play_laugh_boss.SetFrequency(15000);
+        timer_play_laugh_boss.SetUserCallBack(this,"OnTimerLaughBossCallBack");
+    }
+    virtual _operator_delete(){
+        delete timer_create_enemies;
+        delete timer_play_laugh_boss;
+    }
+
+	virtual Move(){   
+        if(boss_dead){
+            if(GetAnimationLoops()>0) {
+                SetAnimationSpeedFactor(0);
+                SetColor(RGB(255,0,0));
+                SetCollision(false);
+                game.changeStage();
+            }
+        }else{
+            if(boss_live<=0){
+                //SetAnimation("buitre-die");
+                boss_dead=true;
+            }else{
+                //Si el número de repeticiones del sprite es mayor que 12 creamos un fuego y lo mandamos al player
+                // modificamos el angulo de su sprite para q
+                if(GetAnimationLoops()>2){
+                   //lanzamod una telaraña
+                  // game.GetApp().GetEngine().LogPrint("lanzamos una telaraña");
+                    for(i=0;i<sizeof(game.fires);i++){
+                            _web=game.fires[i];
+                            if(_web.incrementoX==0){
+                                // Creamos un fuego con parámetros tipo (ver main.pi) y enemy
+                                _web.SetPos(GetX()+GetWf(),GetY()+GetHF()/2);  
+                                //_web.MoveDir(game.player1.GetX(),game.player1.GetY(),2);
+                                _web.incrementoX=2;
+                                if(game.player1.GetX()<_web.GetX()) _web.incrementoX=-2;
+                                else _web.incrementoX=2;
+                                    
+                                if(game.player1.GetY()<_web.GetY()) _web.incrementoY=-2;
+                                else _web.incrementoY=2;
+
+                                if(_web.incrementoX<0) _web.SetHFlip(true);
+                                else _web.SetHFlip(false);
+
+                                if(_web.incrementoY<0) _web.SetVFlip(true);
+                                else _web.SetVFlip(false);
+                              
+                                //Hacemos un sonido de fuego
+                                GetApp().stageGlobal.play_sound_fire();
+
+                                break;
+                            }
+                     }
+                     ResetAnimation();
+                }
+
+                if(GetX()>=game.player1.GetX()){
+                    incrementoX=-1;
+                   
+                }else if(GetX()<=game.player1.GetX()){
+                    incrementoX=1;
+                    
+                }
+                    
+                if(GetY()>=game.player1.GetY()){
+                    incrementoY=-1;
+                    SetVFlip(false);
+                }else if(GetY()<=game.player1.GetY()){
+                    incrementoY=1;
+                    SetVFlip(true);
+                }
+                
+                incPos(incrementoX, incrementoY);
+            }
+        }
+	}
+
+    function OnTimerEnemiesCallBack(_setUserCallBack){
+        //crcemos 10 fuegos
+            // este va izquierda arriba
+             /*_fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
+             _fire.SetPos(GetX()+GetWf(),GetY()+GetHF()/2);  
+             _fire.MoveDir(0,0,2);    
+             _fire.SetAngle(degtorad(315));
+
+            // abajo izquierda
+            _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
+             _fire.SetPos(GetX()+GetWf(),GetY()+GetHF()/2);  
+             _fire.MoveDir(0,VIEWPORT_HEIGHT,2);    
+             _fire.SetAngle(degtorad(225));
+
+            //Este va arriba izquierda
+             _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
+             _fire.SetPos(GetX()+GetWf(),GetY()+GetHF()/2);  
+             _fire.MoveDir(VIEWPORT_WIDTH,VIEWPORT_HEIGHT,2);   
+             _fire.SetAngle(degtorad(135)); 
+
+            //este va hacia arriba derecha
+            _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
+             _fire.SetPos(GetX()+GetWf(),GetY()+GetHF()/2);  
+             _fire.MoveDir(VIEWPORT_WIDTH,0,2);    
+             _fire.SetAngle(45);*/
+        //Lanzamos 10 telarañas en circulo
+        for(i=0;i<5;i++){
+            for(j=0;j<sizeof(game.fires);j++){
+                _web=game.fires[j];
+                if(_web.incrementoX==0){
+                    // Creamos un fuego con parámetros tipo (ver main.pi) y enemy
+                    if(i==0){
+                        _web.SetPos(GetX(),GetY()+GetHF()/2);
+                        _web.incrementoX=0;
+                        _web.incrementoY=1;
+                    } 
+                    else if(i==1){
+                        _web.SetPos(GetX()+10,GetY()+GetHF()/2);
+                        _web.incrementoX=1;
+                        _web.incrementoY=2;
+                    } 
+                    else if(i==2){
+                        _web.SetPos(GetX()+20,GetY()+GetHF());
+                        _web.incrementoX=1;
+                        _web.incrementoY=1;
+                    } 
+                    else if(i==3){
+                        _web.SetPos(GetX()+GetWf(),GetY()+GetHF()/2-10);
+                        _web.incrementoX=1;
+                        _web.incrementoY=3;
+                    } 
+                    else if(i==4){
+                        _web.SetPos(GetX()+GetWf(),GetY()+GetHF()/2+10);
+                        _web.incrementoX=3;
+                        _web.incrementoY=1;
+                    } 
+                    else if(i==5){
+                        _web.SetPos(GetX()+GetWf(),GetY()+GetHF()/2+20);
+                        _web.incrementoX=4;
+                        _web.incrementoY=1;
+                    } 
+                    else if(i==6){
+                        _web.incrementoX=1;
+                        _web.incrementoY=4;
+                        _web.SetPos(GetX()+GetWf(),GetY()+GetHF());
+                    } 
+                    /*else if(i==7) _web.SetPos(GetX()+GetWf()-10,GetY()+GetHF());
+                    else if(i==8) _web.SetPos(GetX()+GetWf()-20,GetY()+GetHF());
+                    else if(i==9) _web.SetPos(GetX(),GetY()+GetHF());*/
+
+
+         
+                    _web.SetAngle(degtorad(i*36));
+                    if(cos(degtorad(i*36))<0) _web.SetHFlip(true);
+                    else _web.SetHFlip(false);
+
+                    if(sin(degtorad(i*36))<0) _web.SetVFlip(true);
+                    else _web.SetVFlip(false);
+                  
+                    //Hacemos un sonido de fuego
+                    GetApp().stageGlobal.play_sound_fire();
+                    
+                    break;
+                }
+            }
+        }        
+    }
+
+
+
+    function OnTimerLaughBossCallBack(_timer){
+        GetApp().StageGlobal.play_sound_laugh_boss();
+    }
+}

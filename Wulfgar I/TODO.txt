@@ -1,0 +1,21 @@
+Ponle la música de game_over y de winner
+
+Intenta cargar los sprites y tilemaps al principio
+
+No se repite el mosaico en el menu
+
+Intenta mejorar el borde del tile en el salto del player
+
+Hax que el player ataque y se mueva agachado
+
+mejorar coger los paquetes
+
+haz el sqlite y la web de los records
+
+quita todos los 350 y pon VIEWPORT_WIDTH-GetWf()
+
+pon una animación con tu amada en el winner
+
+ponle sonido de explosión a las bombas cuando las mates
+
+La araña(el boss 3 pantalla 12) manda casi todas las telarañas hacia abajo
