@@ -1,49 +1,115 @@
 namespace es_tipolisto_caballeroVara_stages;
+
 /**
- * Pantalla 7: la cueva del fuego
- * Fondo: Cueva marrón
- * Tiles: Rocas marrones y grises oscuras
- * Enemigos: 
- *    Jabalís
- *    Sierras
- *    Murciélagos
- *    Buitres
- *    Lava que quema
- *    Llamas de fuego que queman
+ * Pantalla 6, a correr!
  */
+
 class Stage7{
     properties:
         game=null;
-        bg=null;
+        bgr=null;
+        timer_create_enemies=null;
+        time=20;
+
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100);
         }
+
+        //Colocamos el fondo
+        _bgr=_game.NewObject("bg","gl_sprite");
+        //Con esto le decimos que el frame que vamos a cargar queremos poder repertirlo, por defecto se dibuja el frame completo
+        _bgr.Setflags(_bgr.FLAG_WRAP);
+        _bgr.Addframe("images/stage7.png", 800,450);
+        _bgr.SetPriority(-1);
+        //le decimos que se repita 1 por 1 vez en pantalla
+        _bgr.SetUV(0,0,1,1);
+        bgr=_bgr;
+
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
         _game.player1.SetPosition(20,_game.GROUND_Y);
- 
-        //Colocamos el fondo
-        bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage7.png");
-        bg.SetPriority(-1);
-
+    
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap7.tmx", _game);
         delete _tmx;
-        
-       
+
+        game.background_moving=true;
+        game.player1.walking=true;
         //pintamos el marcador
         _game.print_score();
-  
+
+        //Podemos tener como unos 5 pájaros en pantalla
+        for(i=0;i<10;i++){
+            //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
+            _type_random=rand(1,4);
+            //Lo ponemos en la derecha de la pantalla
+            _enemy=_game.create_enemy(_type_random,-100,-100);
+            _enemy.speedX=0;
+            //Creamos un rinocerante cada 2 pájaros
+            if(i%2==0){
+                //Lo ponemos en la derecha de la pantalla
+                _enemy_rhinoceros=_game.create_enemy(ENEMY_TYPE_RHINOCEROS,-100,-100);
+                _enemy_rhinoceros.speedX=0;
+            }
+        }
+
+        // Creamos un enemigo que esté persiguiendo al player desde arriba
+        _game.create_enemy(ENEMY_TYPE_CLOUD,100,32);
+
+        //cada 10 segundos tira 4 águilas qpor la derecha
+        timer_create_enemies=game.NewObject("timer", "GL_Timer");
+        timer_create_enemies.SetFrequency(2000);
+        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
     }
     function _operator_delete(){
-        bg.Destroy();
+        game.background_moving=false;
+        game.player1.walking=false;
+        delete timer_create_enemies;
+        bgr.Destroy();
         game.delete_objects();
         game.delete_enemies();
         game.delete_fires();
         delete game.layer;
     }
+
+
+    function OnTimerEnemiesCallBack(_timer){
+       time--;
+       if(time<=0){
+            game.background_moving=false;
+            game.player1.walking=false;
+           return;
+       }
+       //Escogemos 4 pajaros que encontremos de la lista de enemigos de tipo pájaro y le ponemos la velocidad a -5
+        for(i=0;i<sizeof(game.enemies);i++){
+            _enemy=game.enemies[i];
+            if(_enemy.GetItemType()==1 || _enemy.GetItemType()==2 || _enemy.GetItemType()==3 || _enemy.GetItemType()==4 ){
+                if(_enemy.speedX==0){
+                    //lo colocamos a la derecha de la pantalla
+                    _x_right_screen=VIEWPORT_WIDTH-32;
+                    _y_random=rand(300,370);
+                    _enemy.SetPos(_x_right_screen,_y_random);
+                    //Le ponemos una velocidad
+                    _enemy.speedX=-5;
+                    //_count++;
+                    break;
+                }
+            }else if(_enemy.GetItemType()==ENEMY_TYPE_RHINOCEROS){
+                if(_enemy.speedX==0){
+                    //game.GetApp().GetEngine().LogPrint("hay un rinocronte con verlocidad 0");
+                    //lo colocamos a la derecha de la pantalla
+                    _x_right_screen=VIEWPORT_WIDTH-32;
+                    _y=game.GROUND_Y;
+                    _enemy.SetPos(_x_right_screen,_y);
+                    //Le ponemos una velocidad
+                    _enemy.speedX=-10;
+                    break;
+                }
+            }
+        }
+    }
+
 }

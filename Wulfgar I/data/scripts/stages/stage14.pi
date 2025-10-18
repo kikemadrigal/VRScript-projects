@@ -1,33 +1,34 @@
 namespace es_tipolisto_caballeroVara_stages;
-
 /**
- * la pantalla vertical
- * Fondo: montaña muy alta
- * Tiles: de 3 tipos según altura ladrillos marrones oscuros, marrones claros y marrones verdosos
- * Enemigos:
- *    Bombas con paracaidas que caen del cielo
- *    1 nivel de ladrillos: caracoles con pinchos
- *    2 nivel jabalíes
- *    3 nivel Erizos
- */
+ * Pantalla 14: fuego horizontal
+ * Fondo: Cueva marrón
+ * Tiles: Rocas marrones y grises oscuras
+ * Enemigos 13: 
+ *    Jabalís
+ *    Sierras
+ *    Murciélagos
+ *    Buitres
 
+ * Objetos 20:
+ *   Llaves, 
+ *   candado, 
+ *   monedas,
+ *   Lava que quema
+ *   Llamas de fuego que queman
+ */
 class Stage14{
     properties:
         game=null;
         bg=null;
-        timer_create_enemies=null;
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,300,2900);
+            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
-        _game.GROUND_Y=90*32;
-        _game.SetCameraY(80*32);
         _game.player1.SetPosition(20,_game.GROUND_Y);
-        _game.GetApp().is_vertical_stage=true;
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
@@ -37,49 +38,17 @@ class Stage14{
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap14.tmx", _game);
         delete _tmx;
+        
+       
         //pintamos el marcador
         _game.print_score();
-
-        //Creamos u buffer de 20 bombas en paracaidas
-        for(i=0;i<20;i++){ 
-            _enemy=_game.create_enemy(ENEMY_TYPE_PARACHUTE_BOMB,-100,-100);
-            _enemy.speedY=0;
-        }
-        //Vamos creando enemigos cada 2 segundos con ayuda del timer
-        timer_create_enemies=_game.NewObject("timer", "GL_Timer");
-        timer_create_enemies.SetFrequency(2000);
-        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
-
-   
+  
     }
     function _operator_delete(){
-        game.GetApp().is_vertical_stage=false;
-        delete timer_create_enemies;
-        game.GROUND_Y=10*32;
         bg.Destroy();
         game.delete_objects();
         game.delete_enemies();
         game.delete_fires();
         delete game.layer;
     }
-    function OnTimerEnemiesCallBack(_timer){
-        //game.GetEngine().LogPrint("Vamos a crear un pajaro");
-        //Escogemos el 1 pajaro que encontremos de la lista de enemigos de tipo pájaro
-        for(i=0;i<sizeof(game.enemies);i++){
-            _enemy=game.enemies[i];
-            if(_enemy.GetItemType()==ENEMY_TYPE_PARACHUTE_BOMB){
-                if(_enemy.speedY==0){
-                    //lo colocamos a la derecha de la pantalla
-                    _x_random=rand(32,VIEWPORT_WIDTH-64);
-                    _y_up_screen= game.player1.GetY()-200;
-                    _enemy.SetPos(_x_random,_y_up_screen);
-                    //Le ponemos una velocidad
-                    _enemy.speedY=1;
-                    break;
-                }
-            }
-        }
-    }
-
-
 }

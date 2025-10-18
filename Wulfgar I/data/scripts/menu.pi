@@ -6,13 +6,12 @@ class menu implements GL_Stage
 		background=null;
 		resources=null;
 		mosaico=null;
-		
+
 	virtual _operator_new(_name,_creator)
 	{
 		//El pad está en el main
 		_background=newobject("titulo","gl_sprite");
-		if(PRODUCTION_MODE) _background.Addframe(GetApp().GetBundleDriveName() + "/data/images/menu.png");
-		else _background.Addframe("images/menu.png");
+		_background.Addframe(GetApp().path+"images/menu.png");
 		//GetEngine().LogPrint("la ruta es: "+GetApp().GetBundleDriveName());
 		_bacKground.Setpos(0,0);
 		_background.SetSize(GetApp().GetResX(),450);
@@ -23,12 +22,14 @@ class menu implements GL_Stage
 		_mosaico= NewObject("bg","gl_sprite");
         //Con esto le decimos que el frame que vamos a cargar queremos poder repertirlo, por defecto se dibuja el frame completo
         _mosaico.Setflags(_mosaico.FLAG_WRAP);
-		_mosaico.AddFrame("images/objects-enemies.png",VIEWPORT_WIDTH,VIEWPORT_HEIGHT);
+		_mosaico.AddFrame(GetApp().path+"images/objects-enemies.png",VIEWPORT_WIDTH,VIEWPORT_HEIGHT);
         //_mosaico.Addanimationwithsheet("mosaico","images/objects-enemies.png",0,0,7*32,2*32,64,64);
         _mosaico.SetPriority(-1);
         //le decimos que se repita 10 por 10 vez en pantalla
         _mosaico.SetUV(0,0,1,1);
 		mosaico=_mosaico;
+
+
 	}
 	virtual Move(){
 		//El mosaico se mueve lentamente
@@ -37,9 +38,10 @@ class menu implements GL_Stage
 
 	virtual _operator_delete()
 	{
-
-		
+		//background.Destroy();
+		//mosaico.Destroy();
 	}
+
 }
 
 

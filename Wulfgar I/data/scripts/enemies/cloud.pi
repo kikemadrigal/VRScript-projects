@@ -9,7 +9,7 @@ class Cloud implements Enemy{
 
     virtual _operator_new(_name,_creator, _params){
         //game.GetApp().GetEngine().LogPrint("Enemigo cloud creado");
-        Addanimationwithsheet("cloud","images/objects-enemies.png",0,3,15*32,6*32,32,32,-1,-1,-1,.2);
+        Addanimationwithsheet("cloud",game.GetApp().path+"images/objects-enemies.png",0,3,20*32,4*32,32,32,-1,-1,-1,.2);
         Setanimation("cloud");
         type=ENEMY_TYPE_CLOUD; 
         for(i=0;i<5;i++){

@@ -3,7 +3,7 @@ namespace es_tipolisto_caballeroVara;
 class Player implements GL_sprite{
 	properties:
 		score=0;
-		lives=10;
+		lives=50;
 		speedX=4;
 		incrementoX=0;
 		incrementoY=0;
@@ -22,14 +22,14 @@ class Player implements GL_sprite{
 
 	virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
-		Addanimationwithsheet("idle","images/player.png",0,0,0,0,64,64);
-		Addanimationwithsheet("walk","images/player.png",0,5,0,64,64,64,-1,-1,-1,0.1);
-		Addanimationwithsheet("attack","images/player.png",0,4,0,128,64,64,-1,-1,-1,0.3);
-		Addanimationwithsheet("jump","images/player.png",0,0,0,3*64,64,64);
-		Addanimationwithsheet("fall","images/player.png",0,0,0,4*64,64,64);
-		Addanimationwithsheet("dead","images/player.png",0,0,0,5*64,64,64);
-		Addanimationwithsheet("pick","images/player.png",0,5,0,6*64,64,64);
-		Addanimationwithsheet("crouching","images/player.png",0,0,0,7*64,64,64);
+		Addanimationwithsheet("idle",GetApp().path+"images/player.png",0,0,0,0,64,64);
+		Addanimationwithsheet("walk",GetApp().path+"images/player.png",0,5,0,64,64,64,-1,-1,-1,0.1);
+		Addanimationwithsheet("attack",GetApp().path+"images/player.png",0,4,0,128,64,64,-1,-1,-1,0.3);
+		Addanimationwithsheet("jump",GetApp().path+"images/player.png",0,0,0,3*64,64,64);
+		Addanimationwithsheet("fall",GetApp().path+"images/player.png",0,0,0,4*64,64,64);
+		Addanimationwithsheet("dead",GetApp().path+"images/player.png",0,0,0,5*64,64,64);
+		Addanimationwithsheet("pick",GetApp().path+"images/player.png",0,5,0,6*64,64,64);
+		Addanimationwithsheet("crouching",GetApp().path+"images/player.png",0,0,0,7*64,64,64);
 		SetAnimation("idle");	
 		SetPriority(1);
 		SetColliderMode(True);
@@ -60,13 +60,12 @@ class Player implements GL_sprite{
 		 */
 		//if(Class_Id(_sp2)=="Enemy"){
  		if( Class_Id(_sp2)=="BouncesLeftToRight" ||
-			Class_Id(_sp2)=="Bat" ||
+			Class_Id(_sp2)=="Circle" ||
 			Class_Id(_sp2)=="Vulture" ||
 			Class_Id(_sp2)=="HorizontalPlatform" ||
 			Class_Id(_sp2)=="ShootPlayerHorizontal" ||
 			Class_Id(_sp2)=="ShootPlayerVertical" ||
-			Class_Id(_sp2)=="Dragon" ||
-			Class_Id(_sp2)=="Cloud" ||
+			Class_Id(_sp2)=="CloudBalancing" ||
 			Class_Id(_sp2)=="Hammer" ||
 			Class_Id(_sp2)=="HorizontalPlatformBig" ||
 			Class_Id(_sp2)=="ParachuteBomb" ||
@@ -114,7 +113,7 @@ class Player implements GL_sprite{
 				if(keys_to_collect<=0){
 					//creamos la meta
 					//Si es la pantalla vertical lo ponemos arriba
-					if(game.currentStage==14) game.create_object(OBJECT_TYPE_META,700,5*32);
+					if(game.currentStage==4) game.create_object(OBJECT_TYPE_META,700,5*32);
 					else game.create_object(OBJECT_TYPE_META,LEVEL_WIDTH-60,GetApp().GetResY()-100);
 				}
 				game.GetApp().StageGlobal.play_sound_keys();
@@ -216,13 +215,14 @@ class Player implements GL_sprite{
 
 	function player_die(){
 		lives--;
-		if(lives<=0) {
+		if(lives<0) {
 			if(DEBUG_MODE){
 				lives=10;		
 			}else{
 				SetAnimation("dead");	
+				game.GetApp().stageGlobal.play_sound_game_over();
 				game.print_text_game("GAME OVER");
-				game.GetApp().Sleep(7000);				
+				game.GetApp().Sleep(8000);				
 				game.print_score("");
 				game.print_text_game("");
 				game.GetApp().changeMenuScreen();

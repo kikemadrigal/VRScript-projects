@@ -27,7 +27,7 @@ class Pendulum implements GL_Sprite{
         gravity = 0.5;   // Gravedad (ajustar para el juego)
         radius = 20; 
 
-        Addanimationwithsheet("pendulum","images/objects-enemies.png",0,0,6*32,13*32,64,64,-1,-1,-1,.02);    
+        Addanimationwithsheet("pendulum",game.GetApp().path+"images/objects-enemies.png",0,0,6*32,13*32,64,64,-1,-1,-1,.02);    
 		Setanimation("pendulum");
         SetCollision(True);
         Setcollisionrect(22,40,20,24);

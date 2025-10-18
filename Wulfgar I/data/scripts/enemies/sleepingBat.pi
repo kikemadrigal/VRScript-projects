@@ -5,8 +5,8 @@ class SleepingBat implements Enemy{
         can_fly=false;
 
     virtual _operator_new(_name,_creator, _params){
-        Addanimationwithsheet("sleepingBat","images/objects-enemies.png",0,3,17*32,20*32,32,32,-1,-1,-1,.2);
-        Addanimationwithsheet("sleepingBat-fly","images/objects-enemies.png",0,3,17*32,21*32,32,32,-1,-1,-1,.2);
+        Addanimationwithsheet("sleepingBat",game.GetApp().path+"images/objects-enemies.png",0,3,17*32,20*32,32,32,-1,-1,-1,.2);
+        Addanimationwithsheet("sleepingBat-fly",game.GetApp().path+"images/objects-enemies.png",0,3,17*32,21*32,32,32,-1,-1,-1,.2);
         Setanimation("sleepingBat");
         speedX=0;
         type=ENEMY_TYPE_SLEEPING_BAT; 
@@ -16,7 +16,7 @@ class SleepingBat implements Enemy{
 			Destroy();
 			return;
 		} 
-        if(DistanceTo(game.player1)<100 && !can_fly){
+        if(DistanceTo(game.player1)<200 && !can_fly){
             SetAnimation("sleepingBat-fly");
             can_fly=true;
         }

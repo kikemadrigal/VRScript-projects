@@ -1,22 +1,24 @@
 namespace es_tipolisto_caballeroVara_stages;
 
 /**
-* Fondo: La pantalla de los montes con el castillo al fondo.
+* Pantalla 1: 7 segundo, la pantalla del dragón rojo
+* Fondo: La pantalla de los montes con un rio
 * Tiles: Ladrillos marrones y verdes.
-* Enemigos 20: 
-    Buitres que te persiguen,
-    escorpiones, 
-    caracoles con pinchos
-* Objetos: 
+* Enemigos 13: 
+    Dragón rojo que escupe fuego
+    arañas que te persiguen,
+    escorpiones
+* Objetos 9: 
     Llaves, 
     candado, 
     monedas
+* Fuegos: 12
  */
 class Stage1{
     properties:
         game=null;
         bg=null;
-        timer_delete_messages=null;
+        //timer_delete_messages=null;
 
     function _operator_new(_game){
         game=_game;
@@ -24,15 +26,17 @@ class Stage1{
             _game.SetDebug(true);
             _game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100);
         }
+
         _game.player1.SetPosition(20,_game.GROUND_Y);
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap1.tmx", _game);
+        _tmx.Load(_game.mapper,game.GetApp().path+"resources/tilesmap1.tmx", _game);
         delete _tmx;
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage1.png");
+        bg.Addframe(game.GetApp().path+"images/stage1.png");
         bg.SetPriority(-1);
         bg.SetSize(800,450);
+
         //creamos 10 buitres
         for (i=0; i < 10; i++){ 
             _x_random=rand(1000,LEVEL_WIDTH);
@@ -47,24 +51,24 @@ class Stage1{
                                     "\nCursor arriba para saltar"+
                                     "\nCursor derecha-izquierda para moverte"+
                                     "\nMision: coge las 3 llaves para abrir el candado", 0, game, null, null, null);*/
-        game.print_text_game("Pulsa espacio para golpear con la vara"+
+        /*game.print_text_game("Pulsa espacio para golpear con la vara"+
                             "\nCursor arriba para saltar"+
                             "\nCursor derecha-izquierda para moverte"+
                             "\nMision: coge las 3 llaves para abrir el candado");     
         timer_delete_messages=_game.NewObject("timer", "GL_Timer");
         timer_delete_messages.SetFrequency(8000);
-        timer_delete_messages.SetUserCallBack(this,"OnTimerDeleteMessagesCallBack");     
+        timer_delete_messages.SetUserCallBack(this,"OnTimerDeleteMessagesCallBack");*/
     }
     function _operator_delete(){
         bg.Destroy();
         game.delete_objects();
         game.delete_enemies();
         game.delete_fires();
-        delete timer_delete_messages;
+        //delete timer_delete_messages;
         delete game.layer;
     }   
-    function OnTimerDeleteMessagesCallBack(_timer){
+    /*function OnTimerDeleteMessagesCallBack(_timer){
         game.print_text_game("");
         timer_delete_messages.Stop();
-    } 
+    } */
 }

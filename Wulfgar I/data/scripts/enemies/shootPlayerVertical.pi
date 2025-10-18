@@ -7,11 +7,11 @@ class ShootPlayerVertical implements Enemy{
     virtual _operator_new(_name,_creator, _params){
         game=_params[0];
         
-        Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,15*32,32,32,-1,-1,-1,.2);
+        Addanimationwithsheet("monstruo1",game.GetApp().path+"images/objects-enemies.png",0,3,0,15*32,32,32,-1,-1,-1,.2);
         Setanimation("monstruo1");
         type=ENEMY_TYPE_SHOOT_PLAYER_VERTICAL; 
         // Este enemigo tendrá un buffer de 5 fuegos
-        for(i=0;i<5;i++){
+        for(i=0;i<3;i++){
             _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 
             // Los sacamos de la pantalla
             _fire.SetPos(-100,-100);
@@ -30,11 +30,12 @@ class ShootPlayerVertical implements Enemy{
 			return;
 		} 
         if(GetAnimationLoops()>3){
-            game.GetApp().stageGlobal.play_sound_fire();
+            
              // obtenemos un fire con una velocidad 0 y lo convertimos en un fuego horizontal
             for(i=0;i<sizeof(fires);i++){
                 _fire=fires[i];
                 if(_fire.incrementoY==0){
+                    game.GetApp().stageGlobal.play_sound_fire();
                     _fire.SetPos(GetX()-10,GetY()+10);
                     if(game.player1.GetY()<GetY()){
                         _fire.incrementoY=-5;

@@ -1,21 +1,29 @@
 namespace es_tipolisto_caballeroVara_stages;
-
 /**
- * El super dragón, pantalla fiinal
- * lanza llamas en todas direcciones
+ * Pantalla 8, castillo interior rojizo
+ * Fondo: 
+ * Tiles: plataformas marrón claro
+ * Enemigos 6: 
+ *    Erizos
+ *    Cangrejos
+ * Objetos 14:
+ *   Llaves, 
+ *   candado, 
+ *   monedas,
+
  */
 
 class Stage16{
     properties:
         game=null;
         bg=null;
-        boss=null;
-
+        //timer_create_enemies=null;
+        //timer_delete_messages=null;
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
@@ -29,24 +37,59 @@ class Stage16{
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap16.tmx", _game);
         delete _tmx;
+         //Creamos 40 pájaros aleatoriamente
+        /*for(i=0;i<20;i++){
+            _type_random=rand(1,4);
+            //Lo ponemos en la derecha de la pantalla
+            _enemy=_game.create_enemy(_type_random,-100,-100);
+        }*/
+        //Vamos creando enemigos cada 2 segundos con ayuda del timer
+        /*timer_create_enemies=_game.NewObject("timer", "GL_Timer");
+        timer_create_enemies.SetFrequency(2000);
+        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");*/
 
-        //creamos al boss 3: parámtero game y player1
-        boss=_game.NewObject("boss4","Boss4",[game]);
+        
         //pintamos el marcador
         _game.print_score();
-        //Pintamos la vida que le queda al boss
-        _game.draw_boss_live(boss.boss_live);  
-       
-    }
+        //game.GetEngine().LogPrint("pantalla 6 cargada");
+        /*game.GetEngine().AlertDialog("Ayuda", "Empuja los bloques de paja\nPulsa Control para cogerlos", 0, game, null, null, null);*/
+        /*game.print_text_game("Empuja los bloques de paja\nPulsa Control para cogerlos");     
+        timer_delete_messages=_game.NewObject("timer", "GL_Timer");
+        timer_delete_messages.SetFrequency(8000);
+        timer_delete_messages.SetUserCallBack(this,"OnTimerDeleteMessagesCallBack");   */  
+    }   
     function _operator_delete(){
-        delete boss;
-        game.draw_boss_live("");
         bg.Destroy();
         game.delete_objects();
         game.delete_enemies();
         game.delete_fires();
+        //delete timer_create_enemies;
+        //delete timer_delete_messages;
         delete game.layer;
     }
 
 
+    /*function OnTimerEnemiesCallBack(_timer){
+        //game.GetEngine().LogPrint("Vamos a crear un pajaro");
+        //Escogemos el 1 pajaro que encontremos de la lista de enemigos de tipo pájaro
+        for(i=0;i<sizeof(game.enemies);i++){
+            _enemy=game.enemies[i];
+            if(_enemy.GetItemType()==1 || _enemy.GetItemType()==2 || _enemy.GetItemType()==3 || _enemy.GetItemType()==4){
+                if(_enemy.speedX==0 && game.player1.GetX()>VIEWPORT_WIDTH/2){
+                    //lo colocamos a la derecha de la pantalla
+                    _x_right_screen=game.player1.GetX()+350;
+                    _y_random=rand(100,400);
+                    _enemy.SetPos(_x_right_screen,_y_random);
+                    //Le ponemos una velocidad
+                    _enemy.speedX=-5;
+                    break;
+                }
+            }
+        }
+    }*/
+
+    /*function OnTimerDeleteMessagesCallBack(_timer){
+        game.print_text_game("");
+        timer_delete_messages.Stop();
+    } */
 }

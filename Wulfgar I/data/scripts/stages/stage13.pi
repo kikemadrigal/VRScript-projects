@@ -1,34 +1,39 @@
 namespace es_tipolisto_caballeroVara_stages;
-
 /**
- *la pantalla oscura
+ * Pantalla 13:  fuego horizontal
+ * Fondo: Cueva marrón
+ * Tiles: Rocas marrones y grises oscuras
+ * Enemigos 13: 
+ *    Jabalís
+ *    Sierras
+ *    Murciélagos
+ *    Buitres
+
+ * Objetos 20:
+ *   Llaves, 
+ *   candado, 
+ *   monedas,
+ *   Lava que quema
+ *   Llamas de fuego que queman
  */
 class Stage13{
     properties:
         game=null;
         bg=null;
-        shadow=null;
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,220,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,190,_game.GetApp().GetResY()-100);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
-        _game.player1.SetPosition(20,_game.GROUND_Y);;
+        _game.player1.SetPosition(20,_game.GROUND_Y);
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage13.png");
         bg.SetPriority(-1);
-
-        shadow=_game.NewObject("shadow","gl_sprite");
-        shadow.Addframe("images/stage13-shadow.png");
-        shadow.SetPriority(100);
-        game.shadow_mode=true;
-
-        shadow.SetPos(_game.GetCameraX(),_game.GetCameraY());
 
         _tmx = new TMX_Loader();
         _tmx.Load(_game.mapper, "resources/tilesmap13.tmx", _game);
@@ -37,11 +42,10 @@ class Stage13{
        
         //pintamos el marcador
         _game.print_score();
+  
     }
     function _operator_delete(){
         bg.Destroy();
-        shadow.Destroy();
-        game.shadow_mode=false;
         game.delete_objects();
         game.delete_enemies();
         game.delete_fires();

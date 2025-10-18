@@ -1,92 +1,95 @@
 namespace es_tipolisto_caballeroVara_stages;
-/**
- * Pantalla 6, los bloques de paja
- * Fondo: Bosque verde, lleno de arboles
- * Tiles: plataformas de madera
- * Enemigos: 
- *    Pájaros que salen por la izquierda
- *    Erizos
- *    Cangrejos
- * 
- */
 
+/**
+* Pantalla 7: 6 segundos, la pantalñla de los muelles
+* Fondo: bosque en el fondo con prado verde
+* Tiles: Ladrillos marrones y marrones claros.
+* Enemigos 11: 
+    Enemigo dragón azul tirando fuego, 
+    
+* Objetos 18:
+    Llaves, 
+    candado, 
+    monedas
+
+*/
 class Stage6{
     properties:
         game=null;
         bg=null;
         timer_create_enemies=null;
-        timer_delete_messages=null;
+
     function _operator_new(_game){
         game=_game;
-        if (DEBUG_MODE) {
+        if (DEBUG_MODE){
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,192,_game.GetApp().GetResY()-100);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
         _game.player1.SetPosition(20,_game.GROUND_Y);
- 
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage6.png");
+        bg.Addframe(game.GetApp().path+"images/stage6.png");
         bg.SetPriority(-1);
-
+        // Dibujamos los tiles
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap6.tmx", _game);
+        _tmx.Load(_game.mapper, game.GetApp().path+"resources/tilesmap6.tmx", _game);
         delete _tmx;
-         //Creamos 40 pájaros aleatoriamente
-        for(i=0;i<20;i++){
-            _type_random=rand(1,4);
-            //Lo ponemos en la derecha de la pantalla
-            _enemy=_game.create_enemy(_type_random,-100,-100);
+
+        for(i=0;i<5;i++){
+            _enemy=_game.create_enemy(ENEMY_TYPE_DRAGON_BLUE,-100,-100);
+            _enemy.speedX=0; // Muy importante que la velocidad sea 0
         }
-        //Vamos creando enemigos cada 2 segundos con ayuda del timer
+        // Creamos 1 enemigo de tipo nube
+        _enemy=game.create_enemy(ENEMY_TYPE_DRAGON_BLUE,32,32);
+        _enemy.speedX=2;
+        //Este timer nos sirve para comprobar si no  hay ningún enemigo de tipo nube
         timer_create_enemies=_game.NewObject("timer", "GL_Timer");
         timer_create_enemies.SetFrequency(2000);
         timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
-
-        
         //pintamos el marcador
         _game.print_score();
-        //game.GetEngine().LogPrint("pantalla 6 cargada");
-        /*game.GetEngine().AlertDialog("Ayuda", "Empuja los bloques de paja\nPulsa Control para cogerlos", 0, game, null, null, null);*/
-        game.print_text_game("Empuja los bloques de paja\nPulsa Control para cogerlos");     
-        timer_delete_messages=_game.NewObject("timer", "GL_Timer");
-        timer_delete_messages.SetFrequency(8000);
-        timer_delete_messages.SetUserCallBack(this,"OnTimerDeleteMessagesCallBack");     
-    }   
+    }
     function _operator_delete(){
         bg.Destroy();
         game.delete_objects();
-        game.delete_enemies();
-        game.delete_fires();
         delete timer_create_enemies;
-        delete timer_delete_messages;
+        game.delete_fires();
+        game.delete_enemies();
         delete game.layer;
     }
 
-
     function OnTimerEnemiesCallBack(_timer){
         //game.GetEngine().LogPrint("Vamos a crear un pajaro");
-        //Escogemos el 1 pajaro que encontremos de la lista de enemigos de tipo pájaro
+        // Escogemos el 1 nube que esté parado de la lista que creamos cuando se inició el stage
+        // muy importante que la velocidad sea 0
         for(i=0;i<sizeof(game.enemies);i++){
             _enemy=game.enemies[i];
-            if(_enemy.GetItemType()==1 || _enemy.GetItemType()==2 || _enemy.GetItemType()==3 || _enemy.GetItemType()==4){
-                if(_enemy.speedX==0 && game.player1.GetX()>VIEWPORT_WIDTH/2){
-                    //lo colocamos a la derecha de la pantalla
-                    _x_right_screen=game.player1.GetX()+350;
-                    _y_random=rand(100,400);
-                    _enemy.SetPos(_x_right_screen,_y_random);
+            if(_enemy.GetItemType()==ENEMY_TYPE_DRAGON_BLUE){
+                if(_enemy.speedX==0 && get_clouds_with_speedX_zero()==0){
+                    _x=32;
+                    if(game.player1.GetX()>VIEWPORT_WIDTH/2)_x=game.player1.GetX()-350;
+                    _y=32;
+                    _enemy.SetPos(_x,_y);
                     //Le ponemos una velocidad
-                    _enemy.speedX=-5;
+                    _enemy.speedX=2;
                     break;
                 }
             }
         }
     }
 
-    function OnTimerDeleteMessagesCallBack(_timer){
-        game.print_text_game("");
-        timer_delete_messages.Stop();
-    } 
+    function get_clouds_with_speedX_zero(){
+        _count=0;
+        for(i=0;i<sizeof(game.enemies);i++){
+            _enemy=game.enemies[i];
+            if(_enemy.GetItemType()==ENEMY_TYPE_DRAGON_BLUE){
+                if(_enemy.speedX!=0){
+                    _count++;
+                }
+            }
+        }
+        return _count;
+    }
 }

@@ -1,97 +1,57 @@
 namespace es_tipolisto_caballeroVara_stages;
 /**
- * Pantalla 10: 
- * Fondo:  El fondo es un bosque con un rio
- * Tiles: naranja fuerte y azul claro fuerte
- * Objetos:
- *    Llaves: 3
- *    Monedas: 10
- * Enemigos: 
- *    Dragones que vuelan y tiran fuego, si lo matas sale otro por la i<quierda,lanzan fuego hacia abajo
- *    Arañas
- *    Murciélagos
- *    Escorpiones
+ * Pantalla 10: Boss 2: el aguila 
+ *    Se mueve en todas direcciones
  */
 class Stage10{
     properties:
         game=null;
         bg=null;
-        timer_create_enemies=null;
-
+        boss=null;
+        
     function _operator_new(_game){
         game=_game;
-        if (DEBUG_MODE) {
+        if (DEBUG_MODE){
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
-        }
-        //ponemos que tenemos que coger 3 llaves
-        _game.player1.keys_to_collect=3;
-        _game.player1.SetPosition(20,_game.GROUND_Y);
- 
+            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100);
+        } 
+        
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage10.png");
         bg.SetPriority(-1);
 
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap10.tmx", _game);
-        delete _tmx;
+        _ok=_tmx.Load(game.mapper, "resources/tilesmap10.tmx", game);
+        delete _tmx;        
+        if (_ok == false)
+		{
+			_game.GetApp().GetEngine().LogPrint("no cargado el tileset");
+		}
 
-        //creamos 10 dragones
-        for (i=0; i < 10; i++){ 
-            _enemy=game.create_enemy(ENEMY_TYPE_DRAGON,-100,-100);
-            _enemy.speedX=0;
-        }
-        //creamos un enemigo dragón inicial que la vemocidad no es 0
-        _enemy=game.create_enemy(ENEMY_TYPE_DRAGON,32,32);
-        _enemy.speedX=2;
-        
-        timer_create_enemies=_game.NewObject("timer", "GL_Timer");
-        timer_create_enemies.SetFrequency(2000);
-        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
-       
+        //Colocamos al player
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+        //posicionamos la cámara
+        game.SetCameraX(0);
+        //posicionamos el boss
+        boss=_game.NewObject("boss2","Boss2",[game]);
         //pintamos el marcador
         _game.print_score();
-  
+        //Pintamos la vida que le queda al boss
+        _game.draw_boss_live(boss.boss_live);
     }
+    
     function _operator_delete(){
+        game.draw_boss_live("");
         bg.Destroy();
+        boss.Destroy();
         game.delete_objects();
         game.delete_enemies();
         game.delete_fires();
-        delete timer_create_enemies;
         delete game.layer;
     }
-
-    function OnTimerEnemiesCallBack(_timer){
-        //game.GetEngine().LogPrint("Vamos a crear un pajaro");
-        // Escogemos el 1 dragón que esté parado de la lista que creamos cuando se inició el stage
-        // muy importante que la velocidad sea 0
-        for(i=0;i<sizeof(game.enemies);i++){
-            _enemy=game.enemies[i];
-            if(_enemy.GetItemType()==ENEMY_TYPE_DRAGON){
-                if(_enemy.speedX==0 && get_dragons_with_speedX_zero()==0){
-                    _x=game.player1.GetX()-350;
-                    _y_random=rand(32,32);
-                    _enemy.SetPos(_x,_y_random);
-                    //Le ponemos una velocidad
-                    _enemy.speedX=2;
-                    break;
-                }
-            }
-        }
-    }
-
-    function get_dragons_with_speedX_zero(){
-        _count=0;
-        for(i=0;i<sizeof(game.enemies);i++){
-            _enemy=game.enemies[i];
-            if(_enemy.GetItemType()==ENEMY_TYPE_DRAGON){
-                if(_enemy.speedX!=0){
-                    _count++;
-                }
-            }
-        }
-        return _count;
+    function changeStage(){
+        //game.GetApp().Sleep(2000);
+        game.changeStage();
     }
 }

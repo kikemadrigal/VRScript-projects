@@ -1,50 +1,60 @@
 namespace es_tipolisto_caballeroVara_stages;
-/*
- 
- enemigos: 
 
-* Fondo: Catillo interior de fondo lila
-* Tiles: Ladrillos grises, plataformas gris claro y lila
-* Enemigos: 
-*    Bloques que aplastan
-*    Sierras
-*    Eladrones enmascarados
-*    Murciélagos
-*/
+/**
+ * batalla con el escorpión grande:
+ *    Se mueve hacia tu posición solo en horizontal
+ *    si está cerca te clava el aguijón.
+ *    Si estás por encima de él se queda quieto
+ */
 class Stage5{
     properties:
         game=null;
         bg=null;
-
+        boss=null;
+        
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,100,_game.GetApp().GetResY()-100);
-        }
-        //ponemos que tenemos que coger 3 llaves
-        _game.player1.keys_to_collect=3;
-        _game.player1.SetPosition(20,_game.GROUND_Y);
- 
+            _game.create_object(OBJECT_TYPE_META,192,_game.GetApp().GetResY()-100);
+        } 
+    
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         bg.Addframe("images/stage5.png");
         bg.SetPriority(-1);
 
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap5.tmx", _game);
-        delete _tmx;
-        
-       
+        _ok=_tmx.Load(game.mapper, "resources/tilesmap5.tmx", game);
+        delete _tmx;        
+        if (_ok == false)
+		{
+			_game.GetApp().GetEngine().LogPrint("no cargado el tileset");
+		}
+
+        //Colocamos al player
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+        //posicionamos la cámara
+        game.SetCameraX(0);
+        //posicionamos el boss
+        boss=_game.NewObject("boss1","Boss1",[this, _game.player1]);
         //pintamos el marcador
         _game.print_score();
-  
+        //Pintamos la vida que le queda al boss
+        _game.draw_boss_live(boss.boss_live);
     }
+    
     function _operator_delete(){
+        game.draw_boss_live("");
         bg.Destroy();
+        boss.Destroy();
         game.delete_objects();
         game.delete_enemies();
         game.delete_fires();
         delete game.layer;
+    }
+    function changeStage(){
+        //game.GetApp().Sleep(2000);
+        game.changeStage();
     }
 }

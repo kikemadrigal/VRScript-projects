@@ -1,57 +1,92 @@
 namespace es_tipolisto_caballeroVara_stages;
+
 /**
- * Pantalla 8: Boss 2: el aguila 
- *    Se mueve en todas direcciones
- */
+* Pantalla 8: 7 segundos
+* Dificultad: los pájaros de la izquierda salen de 2 en 2 y
+* las plataformas son muy verticales
+* Fondo: prado fuego
+* Tiles: Ladrillos marrones y blancos.
+* Enemigos 17: 
+    Enemigo en una nube tirándote fuego, 
+    monstruos tirando fuego en horizontal y vertical
+* Objetos 16:
+    Llaves, 
+    candado, 
+    monedas
+
+*/
 class Stage8{
     properties:
         game=null;
         bg=null;
-        boss=null;
-        
+        timer_create_enemies=null;
+
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE){
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100);
-        } 
-        
+            _game.create_object(OBJECT_TYPE_META,192,_game.GetApp().GetResY()-100);
+        }
+        //ponemos que tenemos que coger 3 llaves
+        _game.player1.keys_to_collect=3;
+        _game.player1.SetPosition(20,_game.GROUND_Y);
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage8.png");
+        bg.Addframe(game.GetApp().path+"images/stage8.png");
         bg.SetPriority(-1);
-
+        // Dibujamos los tiles
         _tmx = new TMX_Loader();
-        _ok=_tmx.Load(game.mapper, "resources/tilesmap8.tmx", game);
-        delete _tmx;        
-        if (_ok == false)
-		{
-			_game.GetApp().GetEngine().LogPrint("no cargado el tileset");
-		}
+        _tmx.Load(_game.mapper, game.GetApp().path+"resources/tilesmap8.tmx", _game);
+        delete _tmx;
 
-        //Colocamos al player
-        _game.player1.SetPosition(20,_game.GROUND_Y);
-        //posicionamos la cámara
-        game.SetCameraX(0);
-        //posicionamos el boss
-        boss=_game.NewObject("boss2","Boss2",[game]);
+        //Creamos 10 pájaros aleatoriamente
+        for(i=0;i<10;i++){
+            //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
+            _type_random=rand(1,4);
+            //Lo ponemos en la derecha de la pantalla
+            _enemy=_game.create_enemy(_type_random,-100,-100);
+            _enemy.speedX=0;
+        }
+        //Vamos creando enemigos cada 2 segundos con ayuda del timer
+        timer_create_enemies=_game.NewObject("timer", "GL_Timer");
+        timer_create_enemies.SetFrequency(2000);
+        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
         //pintamos el marcador
         _game.print_score();
-        //Pintamos la vida que le queda al boss
-        _game.draw_boss_live(boss.boss_live);
     }
-    
     function _operator_delete(){
-        game.draw_boss_live("");
         bg.Destroy();
-        boss.Destroy();
         game.delete_objects();
-        game.delete_enemies();
+        delete timer_create_enemies;
         game.delete_fires();
+        game.delete_enemies();
         delete game.layer;
     }
-    function changeStage(){
-        //game.GetApp().Sleep(2000);
-        game.changeStage();
+
+    
+    function OnTimerEnemiesCallBack(_timer){
+        _count_enemies=0;
+        //game.GetEngine().LogPrint("Vamos a crear un pajaro");
+        //Escogemos el 1 pajaro que encontremos de la lista de enemigos de tipo pájaro
+        for(i=0;i<sizeof(game.enemies);i++){
+            _enemy=game.enemies[i];
+            if(_enemy.GetItemType()==ENEMY_TYPE_EAGLE || 
+               _enemy.GetItemType()==ENEMY_TYPE_RAVEN || 
+               _enemy.GetItemType()==ENEMY_TYPE_EAGLE_WHITE || 
+               _enemy.GetItemType()==ENEMY_TYPE_RAVEN_BLACK){
+                if(_enemy.speedX==0 && game.player1.GetX()>VIEWPORT_WIDTH/2){
+                    _count_enemies++;
+                    //lo colocamos a la derecha de la pantalla
+                    _x_right_screen=game.player1.GetX()+350;
+                    _y_random=rand(100,400);
+                    _enemy.SetPos(_x_right_screen,_y_random);
+                    //Le ponemos una velocidad
+                    _enemy.speedX=-5;
+                    if(_count_enemies==2){
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

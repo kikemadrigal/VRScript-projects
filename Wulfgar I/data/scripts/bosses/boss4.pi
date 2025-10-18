@@ -8,7 +8,7 @@ class Boss4 implements GL_sprite{
 		incrementoY=0;
 		game=null;
         //player1=null;
-        boss_live=400;
+        boss_live=300;
         boss_dead=false;
         fires=[];
         timer_play_laugh_boss=null;
@@ -52,22 +52,23 @@ class Boss4 implements GL_sprite{
 	virtual Move(){   
         if(boss_dead){
             if(GetAnimationLoops()>0) {
-                SetAnimationSpeedFactor(0);
+                //SetAnimationSpeedFactor(0);
                 SetColor(RGB(255,0,0));
                 SetCollision(false);
-                game.changeStage();
+                game.GetApp().changeWinnerScreen();
             }
         }else{
             if(boss_live<=0){
                 //SetAnimation("buitre-die");
                 boss_dead=true;
+              
             }else{
                 //Si el número de repeticiones del sprite es mayor que 12 creamos un fuego y lo mandamos al player
                 // modificamos el angulo de su sprite para q
                 if(GetAnimationLoops()>12){
                     for(i=0;i<sizeof(fires);i++){
                         _fire=game.fires[i];
-                        if(_fire.incrementoX==0){
+                        if(_fire.incrementoX==0 && _fire.incrementoY==0){
                             _angle=0;
                             // Creamos un fuego con parámetros tipo (ver main.pi) y enemy
                             //_fire=game.create_fire(FIRE_TYPE_NORMAL,this); 

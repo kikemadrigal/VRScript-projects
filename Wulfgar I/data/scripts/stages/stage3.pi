@@ -1,19 +1,19 @@
 namespace es_tipolisto_caballeroVara_stages;
 
 /**
- * 
+ * Pantalla 3: 7 segundos
  * Fondo: Castillo oscuro verde oscuro,ladrillos grises
  * Tiles: Ladrillos grises
- * Enemigos 25: 
+ * Enemigos 13: 
  *     Pájaros que van de derecha a izquierda
  *     Llamas de fuego que queman
  *     Cangrejos locos
- * Objetos 32:
+ * Objetos 19:
  *     Llaves, 
  *     candado, 
  *     monedas
  */
-class Stage2{
+class Stage3{
     properties:
         game=null;
         bg=null;
@@ -39,8 +39,8 @@ class Stage2{
         delete _tmx;
         
         
-        //Creamos 20 pájaros aleatoriamente
-        for(i=0;i<20;i++){
+        //Creamos 10 pájaros aleatoriamente que salen por la izquierda y swsaparecen por la derecha
+        for(i=0;i<10;i++){
             //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
             _type_random=rand(1,4);
             //Lo ponemos en la derecha de la pantalla

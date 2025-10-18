@@ -5,23 +5,37 @@ class BouncesLeftToRight implements Enemy{
     virtual _operator_new(_name,_creator, _params){
         switch (type){
             case ENEMY_TYPE_EAGLE:
-                Addanimationwithsheet("eagle","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
+                Addanimationwithsheet("eagle",game.GetApp().path+"images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
                 Setanimation("eagle");
                 type=ENEMY_TYPE_EAGLE; 
                 break;
+            case ENEMY_TYPE_EAGLE_LEFT:
+                Addanimationwithsheet("eagle-left",game.GetApp().path+"images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
+                Setanimation("eagle-left");
+                //speedX=3;
+                SetHFlip(True);
+                type=ENEMY_TYPE_EAGLE_LEFT; 
+                break;
             case ENEMY_TYPE_EAGLE_WHITE:
-                 Addanimationwithsheet("eagle_white","images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
+                 Addanimationwithsheet("eagle_white",game.GetApp().path+"images/objects-enemies.png",0,5,0,8*32,32,32,-1,-1,-1,.2);
                 Setanimation("eagle_white");
                 SetColor(RGB(255,255,255));
                 type=ENEMY_TYPE_EAGLE_WHITE;
                 break;
             case ENEMY_TYPE_RAVEN:
-                Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
+                Addanimationwithsheet("raven",game.GetApp().path+"images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
                 Setanimation("raven");
                 type=ENEMY_TYPE_RAVEN; 
                 break;
+            case ENEMY_TYPE_RAVEN_LEFT:
+                Addanimationwithsheet("raven-left",game.GetApp().path+"images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
+                Setanimation("raven-left");
+                //speedX=3;
+                SetHFlip(True);
+                type=ENEMY_TYPE_RAVEN_LEFT; 
+                break;
             case ENEMY_TYPE_RAVEN_BLACK:
-                Addanimationwithsheet("raven","images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
+                Addanimationwithsheet("raven",game.GetApp().path+"images/objects-enemies.png",0,4,0,9*32,32,32,-1,-1,-1,.2);
                 Setanimation("raven");
                 SetColor(RGB(0,0,0));
                 type=ENEMY_TYPE_RAVEN_BLACK;
@@ -29,7 +43,7 @@ class BouncesLeftToRight implements Enemy{
                 //Lo rinocerontes
             case ENEMY_TYPE_RHINOCEROS:
                 //game.GetApp().GetEngine().LogPrint("Creando rinoceronte");
-                Addanimationwithsheet("rhinoceros","images/objects-enemies.png",0,3,14*32,7*32,64,64,-1,-1,-1,.2);
+                Addanimationwithsheet("rhinoceros",game.GetApp().path+"images/objects-enemies.png",0,3,14*32,7*32,64,64,-1,-1,-1,.2);
                 Setanimation("rhinoceros");
                 SetcollisionRect(0,0,64,64);
                 type=ENEMY_TYPE_RHINOCEROS;
@@ -42,10 +56,19 @@ class BouncesLeftToRight implements Enemy{
 			Destroy();
 			return;
 		} 
-        if(GetX()<game.player1.getX()-350 || GetX()<32){
-            SetPos(-100,-100);
-            speedX=0;
+        if(type==ENEMY_TYPE_EAGLE_LEFT || type==ENEMY_TYPE_RAVEN_LEFT){
+            if(GetX()>game.player1.getX()+350 || GetX()>LEVEL_WIDTH-32){
+                SetPos(-100,-100);
+                speedX=0;
+            }
+            
+        }else{
+            if(GetX()<game.player1.getX()-350 || GetX()<32){
+                SetPos(-100,-100);
+                speedX=0;
+            }
         }
+
         incpos(speedX,speedY);
     }
 

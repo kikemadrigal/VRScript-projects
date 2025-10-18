@@ -15,7 +15,11 @@
 
 # Levels
 
-## Level 1 - El reino escorpión
+## Level 1 - El bosque
+
+<hr>
+
+### Pantalla 1
 
 * Fondo: La pantalla de los montes con el castillo al fondo.
 * Tiles: Ladrillos marrones y verdes.
@@ -25,7 +29,7 @@
 
 <img src="data/images/stage1.png" width="100%">
 
-## Level 2
+### Pantalla 2
 
 * Fondo: El interior del castillo.
 * Tiles: Marrones y blancos.
@@ -35,7 +39,7 @@
 
 <img src="data/images/stage2.png" width="100%">
 
-## Level 3
+### Pantalla 3
 
 * Fondo castillo oscuro verde
 * Tiles: Ladrillos grises
@@ -45,25 +49,41 @@
 
 <img src="data/images/stage3.png" width="100%">
 
-## Level 4, el enermigo escorpión
-
-* Se mueve hacia tu posición y si está cerca te clava el aguijón.
+### Pantalla 4
 
 <img src="docs/stage4.png" width="500px">
 
 <img src="data/images/stage4.png" width="500px">
 
-## Level 5, el reino del águila
+### Pantalla 5 , el enermigo escorpión
+
+* Se mueve hacia tu posición y si está cerca te clava el aguijón.
+
+<img src="docs/stage5.png" width="500px">
+
+<img src="data/images/stage5.png" width="500px">
+
+## Level 2, El prado
+
+<hr>
+
+* Fondo: Catillo interior de fondo lila
+* Tiles: Ladrillos grises.
+* Enemigos: bolques que aplastan, sierras, bolas de fuego.
+* 
+### Pantalla 6, El prado
+
+<hr>
 
 * Fondo: Catillo interior de fondo lila
 * Tiles: Ladrillos grises.
 * Enemigos: bolques que aplastan, sierras, bolas de fuego.
 
-<img src="docs/stage5.png" width="100%">
+<img src="docs/stage6.png" width="100%">
 
-<img src="data/images/stage5.png" width="100%">
+<img src="data/images/stage6.png" width="100%">
 
-## Level 6
+### Pantalla 7
 
 * Fondo: El bosque de la madera
 * Tiles: listones marrones.
@@ -73,7 +93,7 @@
 
 <img src="data/images/stage6.png" width="100%">
 
-## Level 7
+### Pantalla 7
 
 * Fondo: dentro de la cueva
 * Tiles: Piedras grises y oscuras, bloques marrones claros.
@@ -83,7 +103,7 @@
 
 <img src="data/images/stage7.png" width="100%">
 
-## Level 8, el reino de la araña
+### Pantalla 8
 
 * Fondo: Balcón de marmol
 * Tiles: Ladrillos grises claros.
@@ -93,7 +113,7 @@
 <img src="data/images/stage8.png" width="500px">
 
 
-## Level 9
+### Pantalla 9
 
 * Fondo: Palacio interior, color violeta
 * Tiles: marrones claros, azul claro
@@ -104,7 +124,7 @@
 <img src="data/images/stage9.png" width="100%">
 
 
-## Level 10
+### Pantalla 10, batalla con el águila del prado
 
 * Fondo: El bosque del dragón
 * Tiles: Marrones claros con cesped por encima
@@ -114,7 +134,11 @@
 
 <img src="data/images/stage10.png" width="100%">
 
-## Level 11
+### Level 3, Las cuevas
+
+<hr>
+
+## Pantalla 11
 
 * Fondo: Pasillo palacio interior
 * Tiles: Grises claros

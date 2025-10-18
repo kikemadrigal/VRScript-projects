@@ -3,10 +3,12 @@ namespace es_tipolisto_caballeroVara;
 class StageGlobal implements GL_Stage{
     properties:
 		pad=null;
+		map=null;
 
 		text_score=null;
 		text_boss_live=null;
 		text_game=null;
+		//energy_bar=null;
    		sprite_efecto_apagado=null;
 		
 		musics=[];
@@ -15,16 +17,37 @@ class StageGlobal implements GL_Stage{
 
 	virtual _operator_new(_name,_creator){	
 		SetGlobal(True);
+
+		map=NewObject("map","gl_sprite"); 
+		map.AddAnimationWithSheet ("map1",GetApp().path+"images/map1.png" , 0, 0, 0, 0, 800, 450);
+        map.AddAnimationWithSheet ("map2",GetApp().path+"images/map2.png" , 0, 0, 0, 0, 800, 450);
+        map.AddAnimationWithSheet ("map3",GetApp().path+"images/map3.png" , 0, 0, 0, 0, 800, 450);
+        map.AddAnimationWithSheet ("map4",GetApp().path+"images/map4.png" , 0, 0, 0, 0, 800, 450);
+		map.SetAnimation("map1");
+        map.SetPriority(-1);
+        map.SetSize(800,450);
+		map.SetVisible(false);
+
 		//Pad
 		_pad=NewObject("pad", "GL_Pad");
 	    _pad.SetPreset("CURSORS");
 		//_pad.SetPreset("Joystick1",1);
 		//Se utilizará para agarrar un paquete
 		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_LCONTROL);
+		// el 3 se utiliza para salir de la pantalla y entrar en la siguiente
+		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
 		pad=_pad;
 
 		text_score=getNewText();
 		text_score.SetPos(200,10);
+
+		/*energy_bar=NewObject("energyBar","gl_sprite");
+		energy_bar.AddEmptyFrame(20,20);
+		energy_bar.SetColor(RGB(255,0,0));
+		energy_bar.SetSize(10,20, true);
+		energy_bar.SetPos(520,15);*/
+
+	
 		
         text_boss_live=getNewText("",16);
 		text_boss_live.SetPos(700,40);
@@ -34,9 +57,10 @@ class StageGlobal implements GL_Stage{
 		text_game.SetAlign(DT_CENTER | DT_VCENTER);
 		text_game.SetColor(RGB(255,0,0));
 
-		LoadMusic("sounds/music_menu.ogg");
-		LoadMusic("sounds/music_ingame.ogg");
-		LoadMusic("sounds/music_boss_fighting.ogg");
+		LoadMusic(GetApp().path+"sounds/music_menu.ogg");
+		LoadMusic(GetApp().path+"sounds/music_ingame.ogg");
+		LoadMusic(GetApp().path+"sounds/music_boss_fighting.ogg");
+		LoadMusic(GetApp().path+"sounds/music_winner.ogg");
 		
 		sound_list_names=[
 			"hit",
@@ -54,35 +78,35 @@ class StageGlobal implements GL_Stage{
 			"hammer" //11
 		];
 		for(i=0; i<sizeof(sound_list_names); i++){
-			LoadAudio("sounds/"+sound_list_names[i]+".ogg");
+			LoadAudio(GetApp().path+"sounds/"+sound_list_names[i]+".ogg");
 		}
 		
 	}	
 
 	function getNewText(text="", size=20){
 		_text=NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", size);
+		_text.SetFont(GetApp().path+"fonts/Vintage Black.ttf", size);
 		//_text.SetAlign(DT_CENTER);
 		_text.SetText(text);
 		_text.SetColor(RGB(234,255,0));	
 		return _text;
 	}
 
-    function fadeInEffect(){
-         /**
-         * EFECTO DEL FADEIn
-         * Recuerda que Runstage borra todo lo que haya en la pantalla
-         * tendremos que crear de nuevo el sprite que ocupa toda la pantalla
-         * y el efecto de fadein que lo hace visible
-         */
+    /*function fadeInEffect(){
+         //
+         //EFECTO DEL FADEIn
+         //Recuerda que Runstage borra todo lo que haya en la pantalla
+         //tendremos que crear de nuevo el sprite que ocupa toda la pantalla
+         //y el efecto de fadein que lo hace visible
+         //
 		sprite_efecto_apagado=NewObject("cuadrado_negro","GL_Sprite");
         sprite_efecto_apagado.AddEmptyFrame(LEVEL_WIDTH,VIEWPORT_WIDTH);
         sprite_efecto_apagado.SetColor(RGB(0,0,0));
         sprite_efecto_apagado.SetAlpha(255);
         _efecto_apagado=sprite_efecto_apagado.CreateFX("FADEOUT");
-       // _efecto_apagado.SetOnFinish(this, "cuando_acabe_efecto_encendido");
+        // _efecto_apagado.SetOnFinish(this, "cuando_acabe_efecto_encendido");
         _efecto_apagado.Start(2000);
-    }
+    }*/
 
 	function play_sound_click(){
 		audios[AUDIO_CLICK].Play();
@@ -174,7 +198,19 @@ class StageGlobal implements GL_Stage{
 	function get_music_boss_fighting(){
 		return musics[MUSIC_BOSS_FIGHTING];
 	}
-
+	function play_music_winner(){
+		musics[MUSIC_WINNER].Play();
+		musics[MUSIC_WINNER].Setvolume(0);
+		musics[MUSIC_WINNER].FadeTo(100,0.2);
+	}
+	function get_music_winner(){
+		return musics[MUSIC_WINNER];
+	}
+	function stop_music_winner(){
+		//parámetros volumen y velocidad del efecto
+		//musics[MUSIC_winner].FadeTo(0,-2);
+		musics[MUSIC_WINNER].Stop();
+	}
 
 
 

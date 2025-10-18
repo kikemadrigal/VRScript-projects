@@ -15,13 +15,13 @@ class Fire implements GL_sprite{
 		enemy=_enemy;
 		SetPos(_enemy.GetX(), _enemy.GetY());
 		if(type==FIRE_TYPE_NORMAL){
-			Addanimationwithsheet("fire1","images/objects-enemies.png",0,2,5*32,5*32,32,32,-1,-1,-1,.2);
+			Addanimationwithsheet("fire1",GetApp().path+"images/objects-enemies.png",0,2,5*32,5*32,32,32,-1,-1,-1,.2);
 			Setanimation("fire1");
 			Setcollisionrect(0,0,32,32);
 		// El fuego horizontal tendrá un movimiento en el eje X
 		}else if(type==FIRE_TYPE_MOVING_HORIZONTAL){
 			//GetApp().GetEngine().LogPrint("vamos a crear un fuego de tipo horizontal");
-			Addanimationwithsheet("fire2","images/objects-enemies.png",0,3,0,6*32,64,32,-1,-1,-1,.2);
+			Addanimationwithsheet("fire2",GetApp().path+"images/objects-enemies.png",0,3,0,6*32,64,32,-1,-1,-1,.2);
 			Setanimation("fire2");
 			Setcollisionrect(20,5,34,22);
 			if(game.player1.GetX()<_enemy.GetX()){
@@ -32,7 +32,7 @@ class Fire implements GL_sprite{
 				SetHFlip(false);
 			}
 		}else if(type==FIRE_TYPE_MOVING_VERTICAL){
-			Addanimationwithsheet("fire3","images/objects-enemies.png",0,3,0,5*32,32,32,-1,-1,-1,.2);
+			Addanimationwithsheet("fire3",GetApp().path+"images/objects-enemies.png",0,3,0,5*32,32,32,-1,-1,-1,.2);
 			Setanimation("fire3");
 			Setcollisionrect(5,0,22,32);
 			if(game.player1.GetX()<_enemy.GetX()){
@@ -46,7 +46,7 @@ class Fire implements GL_sprite{
 			}
 		}
 		else if(type==FIRE_TYPE_WEB){
-			Addanimationwithsheet("web","images/objects-enemies.png",0,1,0,7*32,32,32,-1,-1,-1,.2);
+			Addanimationwithsheet("web",GetApp().path+"images/objects-enemies.png",0,1,0,7*32,32,32,-1,-1,-1,.2);
 			Setanimation("web");
 			Setcollisionrect(5,0,22,32);
 		}
@@ -60,10 +60,11 @@ class Fire implements GL_sprite{
 		//if(GetX()<game.player1.GetX()-500 || GetX()>game.player1.GetX()+500) delete this;
 		//if(GetY<-120 || GetY()>GetY()>LEVEL_HEIGHT+120) delete this;
 		//if(type==FIRE_TYPE_MOVING_VERTICAL) GetApp().GetEngine().LogPrint(" y es "+GetY());
-		if(GetX()<game.player1.GetX()-380 || GetX()>game.player1.GetX()+380) {
+		if(GetX()<game.player1.GetX()-380 || GetX()>game.player1.GetX()+380 || GetX()<20 || GetX()>LEVEL_WIDTH-20) {
 			SetPos(-100,-100);
             incrementoX=0;
 			incrementoY=0;
+			//GetApp().GetEngine().LogPrint("getx es menor o mayor que player");
 		}
 		
 
@@ -71,6 +72,7 @@ class Fire implements GL_sprite{
  			SetPos(-100,-100);
 			incrementoX=0;
             incrementoY=0;
+			//GetApp().GetEngine().LogPrint("getx es menor o mayor que player");
 		} 
 	}
 }

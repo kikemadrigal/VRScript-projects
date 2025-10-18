@@ -7,22 +7,31 @@ class HorizontalPlatformBig implements Enemy{
         switch (type)
         {
             case ENEMY_TYPE_LARGE_SKULL:
-                Addanimationwithsheet("large-skull","images/objects-enemies.png",0,3,9*32,16*32,64,64,-1,-1,-1,.08);
-                Addanimationwithsheet("large-skull-atack","images/objects-enemies.png",0,3,9*32,18*32,64,64,-1,-1,-1,.2);
+                Addanimationwithsheet("large-skull",game.GetApp().path+"images/objects-enemies.png",0,3,9*32,16*32,64,64,-1,-1,-1,.08);
+                Addanimationwithsheet("large-skull-atack",game.GetApp().path+"images/objects-enemies.png",0,3,9*32,18*32,64,64,-1,-1,-1,.2);
                 Setanimation("large-skull");
+                SetCollisionRect(20,20,20,40);
                 type=ENEMY_TYPE_LARGE_SKULL; 
                 break;
             case ENEMY_TYPE_THIEF:
-                Addanimationwithsheet("thief","images/objects-enemies.png",0,5,9*32,11*32,64,64,-1,-1,-1,.2);
-                Addanimationwithsheet("thief-atack","images/objects-enemies.png",0,5,9*32,13*32,64,64,-1,-1,-1,.2);
+                Addanimationwithsheet("thief",game.GetApp().path+"images/objects-enemies.png",0,5,9*32,11*32,64,64,-1,-1,-1,.2);
+                Addanimationwithsheet("thief-atack",game.GetApp().path+"images/objects-enemies.png",0,5,9*32,13*32,64,64,-1,-1,-1,.2);
                 Setanimation("thief");
+                SetCollisionRect(20,20,20,40);
                 type=ENEMY_TYPE_THIEF;
+                break;
+            case ENEMY_TYPE_BEAR:
+                Addanimationwithsheet("bear",game.GetApp().path+"images/objects-enemies.png",0,5,13*32,5*32,64,64,-1,-1,-1,.2);
+                Setanimation("bear");
+                SetCollisionRect(0,0,64,64);
+                touches_for_died=5;
+                type=ENEMY_TYPE_BEAR;
                 break;
             
             default:
                 break;
         }
-        SetCollisionRect(20,20,20,40);
+        
         speedX=-3;
         //game.GetApp().GetEngine().LogPrint("Animaciones  "+GetNumAnimations());
     }

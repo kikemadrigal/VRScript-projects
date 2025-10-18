@@ -33,16 +33,16 @@ class Boss2 implements GL_sprite{
         timer_play_laugh_boss.SetFrequency(15000);
         timer_play_laugh_boss.SetUserCallBack(this,"OnTimerLaughBossCallBack");
 
-        //Creamos un buffer de 20 pájaros aleatoriamente, importante la velocidad a 0 que la vamos a necesitar
-        for(i=0;i<20;i++){
+        //Creamos un buffer de 10 pájaros aleatoriamente, importante la velocidad a 0 que la vamos a necesitar
+        for(i=0;i<10;i++){
             //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
             _type_random=rand(1,4);
             //Lo ponemos fuera de la pantalla
             _enemy=game.create_enemy(_type_random,-100,-100);
             _enemy.speedX=0;
         }
-        // Creamos un buffer de 20 buitres para ir disparando
-        for(i=0;i<20;i++){
+        // Creamos un buffer de 3 buitres para ir disparando
+        for(i=0;i<3;i++){
             //Lo ponemos fuera de la pantalla
             _enemy=game.create_enemy(ENEMY_TYPE_VULTURE,-100,-100);
             _enemy.speedX=0;

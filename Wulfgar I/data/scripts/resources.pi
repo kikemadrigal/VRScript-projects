@@ -7,15 +7,15 @@
 	//virtual _operator_new(_app){
 	function _operator_new(_app){	
 		app=_app;
-		LoadMusic("sounds/music_menu.ogg");
-		LoadMusic("sounds/ingame.ogg");
+		LoadMusic(app.path+"sounds/music_menu.ogg");
+		LoadMusic(app.path+"sounds/ingame.ogg");
 		
-		LoadAudio("sounds/hit.ogg");
-		LoadAudio("sounds/caught.ogg");
-		LoadAudio("sounds/click.ogg");
-		LoadAudio("sounds/jump.ogg");
-		LoadAudio("sounds/change_level.ogg");
-		LoadAudio("sounds/game_over.ogg");
+		LoadAudio(app.path+"sounds/hit.ogg");
+		LoadAudio(app.path+"sounds/caught.ogg");
+		LoadAudio(app.path+"sounds/click.ogg");
+		LoadAudio(app.path+"sounds/jump.ogg");
+		LoadAudio(app.path+"sounds/change_level.ogg");
+		LoadAudio(app.path+"sounds/game_over.ogg");
 	}
 	
 	//function operator_delete(){

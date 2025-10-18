@@ -4,7 +4,7 @@ class Fade implements GL_Stage
 {
 	properties:
 		rect = null;
-		speed = 4.0f;
+		speed = 15.0f;
 		alpha = 0;
 		toAlpha = 0;
 		onCompletedCtx = null;
@@ -59,6 +59,7 @@ class Fade implements GL_Stage
 			else
 				completed++;
 		} 
+		//IncreaseValue: Dado un valor (alpha), nos permite avanzar un paso (speed) hasta llega al valor(toAlpha)
 		alpha = IncreaseValue(alpha, toAlpha, speed);
 		rect.SetAlpha(alpha);
 	}

@@ -10,7 +10,7 @@ class Boss1 implements GL_sprite{
 		incrementoY=0;
 		game=null;
         player1=null;
-        boss_live=100;
+        boss_live=200;
         boss_dead=false;
 
         timer_play_laugh_boss=null;

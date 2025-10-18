@@ -5,21 +5,55 @@ class Winner implements GL_Stage{
         bg=null;
         text=null;
         game=null;
+        gentleman=null;
+        lady=null;
     virtual _operator_new(_name,_creator){
        
         bg=NewObject("bg","gl_sprite");
-        bg.Addframe("images/win.png");
+        bg.Addframe(GetApp().path+"images/win.png");
         bg.SetPriority(0);
        
        	_text=NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", 22);
+		_text.SetFont(GetApp().path+"fonts/Vintage Black.ttf", 22);
 		//_text.SetAlign(DT_CENTER);
 		
 		_text.SetColor(RGB(234,255,0));	
-        _text.SetPos(50,200);
+        _text.SetPos(450,200);
         _text.SetPriority(1);
-        _text.SetText("Eres el ganador!!!\npulsa una tecla para volver al menu");
+        _text.SetText("Final de la batalla!!!\nDeveloper: Kike Madrigal && \nMSXSpain amigos\nGracias por jugar a mi juego.");
         text=_text;
+
+        //creamos al player para la animación
+        gentleman=NewObject("gentleman","Player",[this]);
+        gentleman.SetAnimation("walk");
+        gentleman.SetPos(100, 360);
+
+        //Creamos la dama
+        //lady=NewObject("lady","Object",[this,OBJECT_TYPE_LADY,32, 32]);
+     
+        lady = NewObject("lady","GL_Sprite");
+        lady.Addanimationwithsheet("imprisonedLady",GetApp().path+"images/objects-enemies.png",0,2,12*32,64,64,64,-1,-1,-1,.08);
+		lady.Addanimationwithsheet("waitLady",GetApp().path+"images/objects-enemies.png",0,0,12*32,64,64,64,-1,-1,-1,.08);
+		lady.SetAnimation("waitLady");	
+        lady.SetPos(GetApp().GetResX()-100, 360);
+        lady.SetPriority(100);
+    }   
+
+    virtual Move(){
+        if(lady.GetCurAnimation() =="imprisonedLady" && lady.GetAnimationLoops()>20){
+            gentleman.SetPos(100, 360);
+            lady.SetPos(GetApp().GetResX()-100, 360);
+            lady.SetAnimation("waitLady");
+            gentleman.SetAnimation("walk");
+            return;
+        }else{
+            if(gentleman.GetX()<GetApp().GetResX()-130) gentleman.SetPos(gentleman.GetX()+1f, gentleman.GetY());
+            else {
+                lady.SetAnimation("imprisonedLady");
+                gentleman.SetAnimation("idle");
+            }
+        }
+
     }
 
     virtual _operator_delete(){

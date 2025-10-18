@@ -22,7 +22,8 @@ class{
         TILE_TYPE_GROUND=224;   // sólido, pared, suelo, plataforma, a prtir de ahí hacia abajo son todos sólidos
         TILE_TYPE_LADDER=300;   // escalera
         TILE_TYPE_WATER=325;    // agua
-        TILE_TYPE_DIED=275;     // muerte
+        TILE_TYPE_DIED=275;     // muert
+        TILE_TYPE_BOUNCY=211;   // muelle
         TILE_TYPE_EMPTY=65535;  // vacio
 
         //Objects
@@ -30,6 +31,8 @@ class{
         OBJECT_TYPE_COLLECTIBLE_HEALTH=2;   //recogibles
         OBJECT_TYPE_COLLECTIBLE_KEY=3;      //recogibles
         OBJECT_TYPE_IMPRISONED_LADY=4;      //dama encarcelada
+        //OBJECT_TYPE_IN_LOVE_LADY=5;         //dama enamorada / rescatada
+        //OBJECT_TYPE_LADY=6;                 //dama esperando
         OBJECT_TYPE_COLLECTIBLE_COIN50=10;  //recogibles
         OBJECT_TYPE_COLLECTIBLE_COIN100=11;
         OBJECT_TYPE_DESTRUCTIBLE=20;        // destructible
@@ -73,8 +76,11 @@ class{
         ENEMY_TYPE_SLEEPING_BAT=35; //murciélago dormido
         ENEMY_TYPE_PARACHUTE_BOMB=36; //murciélago dormido
         ENEMY_TYPE_RHINOCEROS=37; //murciélago dormido
-
-        
+        ENEMY_TYPE_DRAGON_BLUE=38; //dragón azul
+        ENEMY_TYPE_BEAR=39; //oso
+        ENEMY_TYPE_VULTURE_CIRCLE=40; //águila que vuela en círculos
+        ENEMY_TYPE_EAGLE_LEFT=41; //águila que viene de izquierda a derecha
+        ENEMY_TYPE_RAVEN_LEFT=42; //cuervo que viene de izquierda a derecha
         //Fire
         FIRE_TYPE_NORMAL=1;
         FIRE_TYPE_MOVING_HORIZONTAL=2;
@@ -86,6 +92,7 @@ class{
         MUSIC_MENU=0;
 		MUSIC_INGAME=1;
         MUSIC_BOSS_FIGHTING=2; 
+        MUSIC_WINNER=3;
 
 		AUDIO_HIT=0;
 		AUDIO_CAUGHT=1;

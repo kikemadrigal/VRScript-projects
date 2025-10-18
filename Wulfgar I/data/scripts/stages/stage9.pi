@@ -1,50 +1,120 @@
 namespace es_tipolisto_caballeroVara_stages;
+
 /**
- * Pantalla 9: 
- * Fondo: Palacio interior, colores lilas y rojizos
- * Tiles: naranja fuerte y azul claro fuerte
- * Objetos:
- *    Llaves: 3
- *    Paquetes de paja: 3
- * Enemigos: 
- *    Bolques que aplastan
- *    Péndulos
- *    Bombas con piernas
- *    Buitres
- *    Llamas de fuego que queman
- */
+* 11 segundos
+* Pantalla 8
+* Fondo: Cueva de fuego
+* Tiles: Ladrillos marrones y blancos.
+* Enemigos 17: 
+    Enemigo en una nube tirándote fuego, 
+    monstruos tirando fuego en horizontal y vertical
+* Objetos 16:
+    Llaves, 
+    candado, 
+    monedas
+
+*/
 class Stage9{
     properties:
         game=null;
         bg=null;
+        timer_create_enemies=null;
+        counter_enemies=0;
 
     function _operator_new(_game){
         game=_game;
-        if (DEBUG_MODE) {
+        if (DEBUG_MODE){
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,192,_game.GetApp().GetResY()-100);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
         _game.player1.SetPosition(20,_game.GROUND_Y);
- 
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage9.png");
+        bg.Addframe(game.GetApp().path+"images/stage9.png");
         bg.SetPriority(-1);
-
+        // Dibujamos los tiles
         _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap9.tmx", _game);
+        _tmx.Load(_game.mapper, game.GetApp().path+"resources/tilesmap9.tmx", _game);
         delete _tmx;
+
+        for(i=0;i<3;i++){
+             _type_random=rand(1,4);
+            //Lo ponemos en la derecha de la pantalla
+            _enemy=_game.create_enemy(_type_random,-100,-100);
+             _enemy.speedX=0;
+        }
+
+        for(i=0;i<13;i++){
+            _enemy=_game.create_enemy(ENEMY_TYPE_EAGLE_LEFT,-100,-100);
+             _enemy.speedX=0;
+        }
+        //creamos 3 cuervos que salen por la izquierda
+        for(i=0;i<13;i++){
+            _enemy=_game.create_enemy(ENEMY_TYPE_RAVEN_LEFT,-100,-100);
+             _enemy.speedX=0;
+        }
+        // Creamos 1 enemigo de tipo nube
+        _enemy=game.create_enemy(ENEMY_TYPE_CLOUD,32,32);
+        _enemy.speedX=2;
+        //Este timer nos sirve para comprobar si no  hay ningún enemigo de tipo nube
+        timer_create_enemies=_game.NewObject("timer", "GL_Timer");
+        timer_create_enemies.SetFrequency(2000);
+        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
         //pintamos el marcador
         _game.print_score();
-  
     }
     function _operator_delete(){
         bg.Destroy();
         game.delete_objects();
-        game.delete_enemies();
+        delete timer_create_enemies;
         game.delete_fires();
+        game.delete_enemies();
         delete game.layer;
+    }
+
+    function OnTimerEnemiesCallBack(_timer){
+        counter_enemies++;
+        if(counter_enemies>10)counter_enemies=0;
+        if(counter_enemies%2==0){
+            for(i=0;i<sizeof(game.enemies);i++){
+                _enemy=game.enemies[i];
+                if(_enemy.GetItemType()==ENEMY_TYPE_EAGLE || 
+                _enemy.GetItemType()==ENEMY_TYPE_RAVEN || 
+                _enemy.GetItemType()==ENEMY_TYPE_EAGLE_WHITE || 
+                _enemy.GetItemType()==ENEMY_TYPE_RAVEN_BLACK ){
+                    if(_enemy.speedX==0 && game.player1.GetX()>VIEWPORT_WIDTH/2){
+                        //game.GetEngine().LogPrint("encontrado un pajaro en la derecha");
+                        //lo colocamos a la derecha de la pantalla
+                        _x_right_screen=game.player1.GetX()+350;
+                        _y_random=rand(100,400);
+                        _enemy.SetPos(_x_right_screen,_y_random);
+                        //Le ponemos una velocidad
+                        _enemy.speedX=-5;
+                        break;
+                    }
+                }
+            }
+        }else{
+            for(i=0;i<sizeof(game.enemies);i++){
+                _enemy=game.enemies[i];
+                if( _enemy.GetItemType()==ENEMY_TYPE_EAGLE_LEFT || 
+                    _enemy.GetItemType()==ENEMY_TYPE_RAVEN_LEFT){
+                        //game.GetEngine().LogPrint("encontrado un pajaro en la izquierda");
+                        if(_enemy.speedX==0 && game.player1.GetX()>VIEWPORT_WIDTH/2){
+                            //lo colocamos a la izquierda de la pantalla
+                            _x_screen=game.player1.GetX()-320;
+                            _y_random=rand(100,400);
+                            _enemy.SetPos(_x_screen,_y_random);
+                            //Le ponemos una velocidad
+                            _enemy.speedX=5;
+                            break;
+                        }
+                }
+            }
+        }
+        
+        
     }
 }

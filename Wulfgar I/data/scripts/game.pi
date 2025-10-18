@@ -1,5 +1,7 @@
 namespace es_tipolisto_caballeroVara;
-
+/**
+ * Stage principal del juego
+ */
 class Game implements GL_Stage{
     properties:
         bg=null;
@@ -20,14 +22,20 @@ class Game implements GL_Stage{
         currentStage=0;
         shadow_mode=false;
         background_moving=false;
-
+        //Variable para hacer el efecto oscurer lentamente
         fade_game=null;
+        //Esto es para ver la hora del sistema
+        time=null;
+        time_str="";
 
     virtual _operator_new(_name,_creators){
         mapper =NewObject("mapper","gl_mapper");
         player1=NewObject("player","Player",[this]);
         fade_game = GetApp().NewStage("fade","fade");
+        time=SysTime_New();
+        //GetApp().stageGlobal.energy_bar.SetVisible(true);
         ChangeStage();
+
     }
     virtual _operator_delete(){
         /*bg.Destroy();
@@ -42,9 +50,19 @@ class Game implements GL_Stage{
         stage=null;*/
     }
     virtual Move(){
+        if(DEBUG_MODE){
+            //Para ver la hora del sistema ponemos esto
+            SysTime_Update(time);
+            time_str = SysTime_ToString(time, "time: mm:ss");
+            //Con esto vamos a la siguiente pantalla al pulsar en escape
+            if(GetApp().stageGlobal.pad.IsButton(PAD_BUTTON_3)){
+                Change_stage();
+            }
+        }
         //Esto es olo para la pantalla 13 que sale una sombra
         if(shadow_mode){
-            stage.shadow.SetPos(player1.GetX()-736+32,player1.GetY()-450); 
+            //La imagen negra son 1600*900
+            stage.shadow.SetPos(player1.GetX()-800,player1.GetY()-450); 
             //vamos a motrar solo los objetos que estén a menos de 100 pixeles
             for(x=0; x<sizeof(objects);x++) {
                 if(player1.DistanceTo(objects[x])<160) objects[x].SetVisible(true);
@@ -52,11 +70,9 @@ class Game implements GL_Stage{
             }
             for(y=0; y<sizeof(enemies);y++) {
                 if(player1.DistanceTo(enemies[y])<160){
-                    //enemies[y].Start();
                     enemies[y].SetVisible(true);
                 } else {
                     enemies[y].SetVisible(false);
-                    //if( enemies[y].GetItemType()==ENEMY_TYPE_VULTURE)enemies[y].pause();
                 }
             }
         } 
@@ -66,22 +82,38 @@ class Game implements GL_Stage{
         }
     }
 
+    function get_time_seconds_str(){
+        SysTime_Update(time);
+        //_str = SysTime_ToString(st, "Fecha: YYYY/MM/DD Hora: hh:mm:ss");
+        time_str = SysTime_ToString(time, "ss");
+        return time_str;
+    }
+    function get_time_minutes(){
+        SysTime_Update(time);
+        //[0]Año (a partir del 1900) //[2] Mes en formato del 1 al 12  
+        //[2] Día en formato del 1 al 31 //[3] Hora	en formato del 0 al 23 // 
+        //[4] Minuto en formato del 0 al 59 //[5] Segundo en formato del 0 al 59
+        _time = SysTime_Get(time);
+        return _time[5];
+    }
+
     function print_score(){    
-        message="Stage: "+currentStage+
+        _message="Stage: "+currentStage+
                 "  Score: "+player1.score+
-                " Lives: "+player1.lives+
-                " Keys: "+player1.keys_to_collect;    
+                " Keys: "+player1.keys_to_collect+
+                " Energy: "+player1.lives;    
         if(DEBUG_MODE){
-            message+="\nLayers: "+mapper.GetNumLayers()+
+            _message+="\nLayers: "+mapper.GetNumLayers()+
                      " right: "+get_tile_right(player1.GetX(),player1.GetY())+
                      " left: "+get_tile_left(player1.GetX(),player1.GetY())+
                      " down: "+get_tile_down(player1.GetX(),player1.GetY());
-            message+="\nEnemies: "+sizeof(enemies)+
+            _message+="\nEnemies: "+sizeof(enemies)+
                     " objects "+sizeof(Objects)+
                     " fires "+sizeof(fires);
-            message+="\nFPS: "+GETFPS(1);
+            _message+="\nFPS: "+GETFPS(1);
         }
-        GetApp().stageGlobal.text_score.SetText(message);
+        GetApp().stageGlobal.text_score.SetText(_message);
+        //GetApp().stageGlobal.energy_bar.SetSize(10*player1.lives,20, true);
     }
     function print_score(_score){
         GetApp().stageGlobal.text_score.SetText(""+_score);
@@ -247,6 +279,12 @@ class Game implements GL_Stage{
             case "rinoceronte":
                 create_enemy(ENEMY_TYPE_RHINOCEROS,_x, _y);
                 break;
+            case "oso":
+                create_enemy(ENEMY_TYPE_BEAR,_x, _y);
+                break;
+            case "buitre-circulo":
+                create_enemy(ENEMY_TYPE_VULTURE_CIRCLE,_x, _y);
+                break;  
                 
             default:
                 GetEngine().LogPrint("Tipo de actor no definido: "+_type);
@@ -256,20 +294,29 @@ class Game implements GL_Stage{
 
 
     function change_stage(){
+        player1.SetCollision(false);
         fade_game.SetOnCompleted(this,"ChangeStage");
         fade_game.On();
     }
 
+
     function ChangeStage(){
+        
         currentStage++;
+        fade_game.Off();
         //GetEngine().LogPrint("camniando a la escena "+currentStage);
-        if(currentStage>17) currentStage=0;
+        //if(currentStage>21) currentStage=0;
         if(stage!=null) delete stage;
         if(currentStage>1) GetApp().stageGlobal.play_sound_change_level();
-        if(currentStage==5 || currentStage==9 || currentStage==13 || currentStage==17) GetApp().StageGlobal.get_music_boss_fighting().Stop();
+        if(currentStage==6 || currentStage==11 || currentStage==16) GetApp().StageGlobal.get_music_boss_fighting().Stop();
         else  GetApp().StageGlobal.GetMusicIngame().Stop();
         switch (currentStage){
-            case 1:
+            /**
+             * El bosque
+             */
+            case 1: 
+                GetApp().stageGlobal.map.SetAnimation("map1");
+                GetApp().SetShowMap(true);
                 stage=New Stage1(this);
                 break;
             case 2:
@@ -278,74 +325,103 @@ class Game implements GL_Stage{
             case 3:
                 stage=New Stage3(this);
                 break;
-            //Combate boss 1
-            case 4:
-                GetApp().SetCameraNotMove(true);
+            // Pantalla vertical
+            case 4: 
                 stage=New Stage4(this);
                 break;
-            case 5: 
-                GetApp().SetCameraNotMove(false);
+            //Combate boss 1: el escorpión gigante
+            case 5:
+                GetApp().SetCameraNotMove(true);
                 stage=New Stage5(this);
                 break;
+
+            /**
+             * El prado
+             */
+            //Pantalla de los muelles
             case 6: 
+                GetApp().SetCameraNotMove(false);
+                GetApp().stageGlobal.map.SetAnimation("map2");
+                GetApp().SetShowMap(true);
                 stage=New Stage6(this);
                 break;
+            //pantalla a correr
             case 7: 
+                GetApp().SetCameraNotMove(true);
                 stage=New Stage7(this);
                 break;
-            //Combate boss 2
             case 8: 
-                GetApp().SetCameraNotMove(true);
+                GetApp().SetCameraNotMove(false);
                 stage=New Stage8(this);
                 break;
             case 9: 
-                GetApp().SetCameraNotMove(false);
                 stage=New Stage9(this);
                 break;
             case 10: 
+                GetApp().SetCameraNotMove(true);
                 stage=New Stage10(this);
                 break;
+
+
+            /**
+             * Las cuevas
+             */
             case 11: 
+                GetApp().SetCameraNotMove(false);
+                GetApp().stageGlobal.map.SetAnimation("map3");
+                GetApp().SetShowMap(true);
                 stage=New Stage11(this);
                 break;
-            //Combate boss 3: araña gigante
             case 12: 
                 stage=New Stage12(this);
-                GetApp().SetCameraNotMove(true);
                 break;
-            // La oscuridad
             case 13: 
-                GetApp().SetCameraNotMove(false);
                 stage=New Stage13(this);
                 break;
-            // Pantalla vertical
+            // La oscuridad
             case 14: 
                 stage=New Stage14(this);
                 break;
-            // a correr!
+            //Combate boss 3: araña gigante
             case 15: 
                 GetApp().SetCameraNotMove(true);
                 stage=New Stage15(this);
                 break;
-            //El boss 4 final: el dragón de fuego
+
+
+            /**
+             * El castillo
+             */
             case 16: 
-                GetApp().SetCameraNotMove(true);
+                GetApp().stageGlobal.map.SetAnimation("map4");
+                GetApp().SetShowMap(true);
+                GetApp().SetCameraNotMove(false);
                 stage=New Stage16(this);
                 break;
-            // Pantalla de winner
-            case 17:      
-                GetApp().SetCameraNotMove(false);
-                GetApp().changeWinnerScreen();
+            case 17: 
+                stage=New Stage17(this);
                 break;
+            case 18: 
+                stage=New Stage18(this);
+                break;
+            case 19: 
+                stage=New Stage19(this);
+                break;
+            //Combate boss 2: El dragón rojo
+            case 20: 
+                GetApp().SetCameraNotMove(true);
+                stage=New Stage20(this);
+                break;
+            
         }
-        if(currentStage==4 || currentStage==8 || currentStage==12 || currentStage==16) GetApp().StageGlobal.play_music_boss_fighting();
+        if(currentStage==5 || currentStage==10 || currentStage==15 || currentStage==20) GetApp().StageGlobal.play_music_boss_fighting();
         else GetApp().StageGlobal.play_music_ingame();
         
         //ponemos la cámara en la posición inicial
         if(!GetApp().is_vertical_stage)SetCameraPos(0,0);
         //Le ponemos un efecto de fade
-        GetApp().stageGlobal.fadeInEffect();
-        fade_game.Off();
+       // GetApp().stageGlobal.fadeInEffect();
+        player1.SetCollision(true);
 	}
 
     //Objects
@@ -399,7 +475,7 @@ class Game implements GL_Stage{
 				break;
 			// El murciélago
 			case ENEMY_TYPE_BAT:
-       			_enemy=NewObject("bat","Bat",[this,_type,_x,_y]);
+       			_enemy=NewObject("bat","Circle",[this,_type,_x,_y]);
 				break;
 			//monstruo que dispara derecha o izquierda
 			case ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL:
@@ -432,7 +508,7 @@ class Game implements GL_Stage{
                 _enemy=NewObject("hedgehog","HorizontalPlatform",[this,_type,_x,_y]);
 				break;
 			case ENEMY_TYPE_DRAGON:
-                _enemy=NewObject("dragon","Dragon",[this,_type,_x,_y]);
+                _enemy=NewObject("dragon","CloudBalancing",[this,_type,_x,_y]);
 				break;
 			// El hombre con el martillo
 			case ENEMY_TYPE_HAMMER:
@@ -459,7 +535,7 @@ class Game implements GL_Stage{
 	   			_enemy=NewObject("crab","HorizontalPlatform",[this,_type,_x,_y]);
                 break;
             case ENEMY_TYPE_CLOUD:
-                _enemy=NewObject("cloud","Cloud",[this,_type,_x,_y]);
+                _enemy=NewObject("cloud","CloudBalancing",[this,_type,_x,_y]);
                 break;
             case ENEMY_TYPE_SLEEPING_BAT:
                 _enemy=NewObject("sleepingBat","SleepingBat",[this,_type,_x,_y]);
@@ -469,6 +545,21 @@ class Game implements GL_Stage{
                 break;
             case ENEMY_TYPE_RHINOCEROS:
                 _enemy=NewObject("rhinoceros","BouncesLeftToRight",[this,_type,_x,_y]);
+                break;
+            case ENEMY_TYPE_DRAGON_BLUE:
+                _enemy=NewObject("dragonBlue","CloudBalancing",[this,_type,_x,_y]);
+                break;
+            case ENEMY_TYPE_BEAR:
+                _enemy=NewObject("bear","HorizontalPlatformBig",[this,_type,_x,_y]);
+                break;
+            case ENEMY_TYPE_VULTURE_CIRCLE:
+                _enemy=NewObject("vultureCircle","Circle",[this,_type,_x,_y]);
+                break;
+            case ENEMY_TYPE_EAGLE_LEFT:
+                _enemy=NewObject("eagleLeft","BouncesLeftToRight",[this,_type,_x,_y]);
+                break;
+            case ENEMY_TYPE_RAVEN_LEFT:
+                _enemy=NewObject("ravenLeft","BouncesLeftToRight",[this,_type,_x,_y]);
                 break;
             default:
                 GetEngine().LogPrint("Tipo de enemigo no definido: "+_type);

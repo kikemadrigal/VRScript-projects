@@ -1,4 +1,4 @@
-class main implements GL_Program partial myConstants{
+ class main implements GL_Program partial myConstants{
     properties:
         stageGlobal=null;
     	//menu=null;
@@ -8,6 +8,8 @@ class main implements GL_Program partial myConstants{
         is_vertical_stage=false;
 
         fade_menu=null;
+        path="";
+        show_map=false;
  
     virtual Init()
 	{
@@ -49,11 +51,17 @@ class main implements GL_Program partial myConstants{
 
         fade_menu = NewStage("fade", "fade");
         
+        if(PRODUCTION_MODE) path=GetBundleDriveName() + "data/";
+        else path="";
 
 
         changeMenuScreen();
     }
-
+    function SetShowMap(value){
+        show_map=value;
+        stageGlobal.map.SetVisible(value);
+        
+    }
 
     function SetCameraNotMove(value){
         camera_not_move=value;
@@ -73,20 +81,27 @@ class main implements GL_Program partial myConstants{
         
     }
     function changeWinnerScreen(){
+        stageGlobal.text_boss_live.SetText("");
         stageGlobal.play_sound_click();
         if(game!=null)delete game;
         RunStage("winner", "Winner");
         _change ("winner");
-        
+        StageGlobal.play_music_winner();
     }
 
     function changeMenuScreen(){
-        
-        if(game!=null) delete game;
+        //if(game!=null) delete game;
         RunStage("menu","Menu");
-        StageGlobal.play_music_menu();
         _change ("menu");
+        StageGlobal.play_music_menu();
+        fade_menu.Off();
     }
+
+    /*function run_menu(){
+        RunStage("menu","Menu");
+        _change ("menu");
+        fade_menu.Off();
+    }*/
 
     function run_game(){
         if(winner!=null) delete winner;
@@ -99,13 +114,22 @@ class main implements GL_Program partial myConstants{
     {
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){ 	
             stageGlobal.play_sound_click();
-            StageGlobal.stop_music_menu();
+            StageGlobal.stop_music_winner();
             fade_menu.SetOnCompleted(this,"run_game");
             fade_menu.On();
         }
     }
+
+
+
+
+
     state "game":
     {
+        if(show_map) {
+            if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)) SetShowMap(false);            
+            return;
+        }
         if(DEBUG_MODE) game.print_score();
         _player1=game.player1;
         _player1.incrementoX=0;
@@ -137,7 +161,9 @@ class main implements GL_Program partial myConstants{
          // Si se pulsa arriba y no estamos ya saltando
         if(stageGlobal.pad.IsButton(PAD_BUTTON_UP) && _player1.aceleracion==0){
             stageGlobal.play_sound_jump();
-            _player1.incrementoY=-5;
+            //Si en el tile de abajo es un muelle
+            if(game.get_tile_down(_player1.GetX(),_player1.GetY())==TILE_TYPE_BOUNCY) _player1.incrementoY=-10;
+            else _player1.incrementoY=-5;
             _player1.aceleracion=0;
         }
 
@@ -158,6 +184,7 @@ class main implements GL_Program partial myConstants{
             //Fijate que el newObject del GL_Program es distinto al del GL_Stage
             //La vara se elimina sola al medio segundo
             vara=NewObject("vara","Vara",null,[_player1, game]);
+            
 
             /*
                 TODO: ¿Como se borran los tiles?
@@ -221,9 +248,9 @@ class main implements GL_Program partial myConstants{
     {
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
             stageGlobal.text_score.SetText("");
-            RunStage("menu",,GetBundleDriveName()+"Menu");
-            _change ("menu");
+            fade_menu.SetOnCompleted(this,"changeMenuScreen");
+            fade_menu.On();
         }
     }
 }
-  
+   

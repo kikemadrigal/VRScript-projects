@@ -7,11 +7,11 @@ class ShootPlayerHorizontal implements Enemy{
 
     virtual _operator_new(_name,_creator, _params){
         game=_params[0];
-        Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,14*32,32,32,-1,-1,-1,.2);
+        Addanimationwithsheet("monstruo1",game.GetApp().path+"images/objects-enemies.png",0,3,0,14*32,32,32,-1,-1,-1,.2);
         Setanimation("monstruo1");
         type=ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL; 
         // Este enemigo tendrá un buffer de 5 fuegos
-        for(i=0;i<5;i++){
+        for(i=0;i<2;i++){
             _fire=game.create_fire(FIRE_TYPE_MOVING_HORIZONTAL,this); 
             // Los sacamos de la pantalla
             _fire.SetPos(-100,-100);
@@ -31,7 +31,6 @@ class ShootPlayerHorizontal implements Enemy{
 		} 
         //Si el número de animaciones repetidas es mayor que 12 animaciones creamos un fuego 
         if(GetAnimationLoops()>3){
-           game.GetApp().stageGlobal.play_sound_fire();
             //GetApp().GetEngine().LogPrint("Vamos a crear un fuego");
             if(GetX()>=game.player1.GetX()){
                 SetHFlip(True);
@@ -42,6 +41,8 @@ class ShootPlayerHorizontal implements Enemy{
             for(i=0;i<sizeof(fires);i++){
                 _fire=fires[i];
                 if(_fire.incrementoX==0){
+                    //GetApp().GetEngine().LogPrint("vamos a disparar un fuego");
+                    game.GetApp().stageGlobal.play_sound_fire();
                     if(GetHFlip()){
                         _fire.SetPos(GetX()-10,GetY()+10);
                         _fire.incrementoX=-5;
@@ -54,8 +55,7 @@ class ShootPlayerHorizontal implements Enemy{
                     break;
                 }
             }
-            
-            ResetAnimation ();
+            ResetAnimation();
         }
         incpos(speedX,speedY);
     }

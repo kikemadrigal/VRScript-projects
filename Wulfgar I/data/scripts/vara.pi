@@ -30,13 +30,12 @@ class Vara implements GL_sprite{
         //Si es un enemigo
         //if(Class_Id(_sp2)=="Enemy"){
         if( Class_Id(_sp2)=="BouncesLeftToRight" ||
-			Class_Id(_sp2)=="Bat" ||
+			Class_Id(_sp2)=="Circle" ||
 			Class_Id(_sp2)=="Vulture" ||
 			Class_Id(_sp2)=="HorizontalPlatform" ||
 			Class_Id(_sp2)=="ShootPlayerHorizontal" ||
 			Class_Id(_sp2)=="ShootPlayerVertical" ||
-			Class_Id(_sp2)=="Dragon" ||
-			Class_Id(_sp2)=="Cloud" ||
+			Class_Id(_sp2)=="CloudBalancing" ||
 			Class_Id(_sp2)=="Hammer" ||
 			Class_Id(_sp2)=="HorizontalPlatformBig" ||
 			Class_Id(_sp2)=="ParachuteBomb" ||
