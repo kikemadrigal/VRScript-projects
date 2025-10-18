@@ -1,0 +1,30 @@
+class Records implements GL_Stage {
+	properties:
+		db=null;
+		text=null;
+
+	virtual _operator_new(_name,_creator){
+		_text=NewObject("text","GL_Text");
+        _text.SetFont("fonts/Vintage Black.ttf", 16);
+		_text.SetPos(300,50);
+        _text.Settext("Records");
+		text=_text;
+		
+		_ret=GetApp().db.GetAll();
+		if(sizeof(_ret)>0){
+			text.SetText("Record    Name   Date\n");
+			for(i=0;i<sizeof(_ret);i++){
+				id=_ret[i][0];
+				name=_ret[i][1];
+				record=_ret[i][2];
+				date=_ret[i][3];
+				text.Settext(text.GetText()+Record+" "+name+","+date+"\n");	
+			}
+		}else{
+			text.SetText("Sin records");
+		}
+        text.Settext(text.GetText()+"\n\nPulsa la U para subir tu record a https://wulfgarI.tipolisto.es\nEspacio para salir");
+	}	
+}
+
+

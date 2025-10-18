@@ -36,6 +36,8 @@ class StageGlobal implements GL_Stage{
 		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_LCONTROL);
 		// el 3 se utiliza para salir de la pantalla y entrar en la siguiente
 		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
+		//Al pulsar la tecla R vamos al menú de records
+		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_R);
 		pad=_pad;
 
 		text_score=getNewText();

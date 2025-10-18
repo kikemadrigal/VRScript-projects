@@ -10,13 +10,16 @@
         fade_menu=null;
         path="";
         show_map=false;
+
+        db=null;
  
     virtual Init()
 	{
 		_wnd = CreateWindow();
 		//_wnd.AddStyle(_wnd.STYLE_SHOW_FULLSCREEN);
-		_wnd.AddStyle(_wnd.STYLE_CLOSE_BOX);
-		_wnd.SetTitle("El tio de la vara [Build:" + string(APP_BUILD_VERSION) + "]");
+		//_wnd.AddStyle(_wnd.STYLE_CLOSE_BOX);
+		_wnd.AddStyle(_wnd.STYLE_HIDE_MOUSE_CURSOR);
+		_wnd.SetTitle("Wulfgar I [Build:" + string(APP_BUILD_VERSION) + "]");
 
 		_menu = _wnd.CreateMenu();
 		_section = _menu.AddSection ("File");
@@ -42,6 +45,9 @@
         Setviewscale(-1);
         Setvsync(true);
         Setframerate(30);
+
+        //la base de datos
+		db=new Db(this);
 
         // Forma de hacer referencia a las carpetas cuando esté en un zip como app para MSXVR
          if (GetBundleDriveName() == "")	AddScriptPackage("data/", false);	
@@ -97,11 +103,11 @@
         fade_menu.Off();
     }
 
-    /*function run_menu(){
-        RunStage("menu","Menu");
-        _change ("menu");
+    function change_records_screen(){
+        RunStage("records","Records");
+        _change ("records");
         fade_menu.Off();
-    }*/
+    }
 
     function run_game(){
         if(winner!=null) delete winner;
@@ -116,6 +122,19 @@
             stageGlobal.play_sound_click();
             StageGlobal.stop_music_winner();
             fade_menu.SetOnCompleted(this,"run_game");
+            fade_menu.On();
+        }
+        //Al pulsar la tecla R vamos al menú de records
+        else if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_4)){ 	
+            stageGlobal.play_sound_click();
+            fade_menu.SetOnCompleted(this,"change_records_screen");
+            fade_menu.On();
+        }
+    }
+    state "records":
+    {
+        if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){ 	
+            fade_menu.SetOnCompleted(this,"changeMenuScreen");
             fade_menu.On();
         }
     }
