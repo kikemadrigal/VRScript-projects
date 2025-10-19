@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class ShootPlayerVertical implements Enemy{
     properties:
@@ -9,7 +9,7 @@ class ShootPlayerVertical implements Enemy{
         
         Addanimationwithsheet("monstruo1",game.GetApp().path+"images/objects-enemies.png",0,3,0,15*32,32,32,-1,-1,-1,.2);
         Setanimation("monstruo1");
-        type=ENEMY_TYPE_SHOOT_PLAYER_VERTICAL; 
+        //ENEMY_TYPE_SHOOT_PLAYER_VERTICAL; 
         // Este enemigo tendrá un buffer de 5 fuegos
         for(i=0;i<3;i++){
             _fire=game.create_fire(FIRE_TYPE_MOVING_VERTICAL,this); 

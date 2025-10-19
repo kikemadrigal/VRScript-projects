@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class Pendulum implements GL_Sprite{
     properties:

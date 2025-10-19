@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class Saw implements Enemy{
 
@@ -8,7 +8,6 @@ class Saw implements Enemy{
         Addanimationwithsheet("saw",game.GetApp().path+"images/objects-enemies.png",0,2,0,19*32,32,32,-1,-1,-1,.2);
         Setanimation("saw");
         ::SetSquare(_x,_y,100,100);
-        type=ENEMY_TYPE_SAW; 
     }
 
 

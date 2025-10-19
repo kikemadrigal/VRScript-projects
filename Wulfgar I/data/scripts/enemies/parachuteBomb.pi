@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class ParachuteBomb implements Enemy{
     properties:
@@ -11,7 +11,6 @@ class ParachuteBomb implements Enemy{
         speedY=1;
         SetPivot(0, 0.5f);
         SetCollisionRect(20,40,24,24);
-        type=ENEMY_TYPE_PARACHUTE_BOMB; 
     }
     virtual Move(){
         if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){

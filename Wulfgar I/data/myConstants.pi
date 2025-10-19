@@ -43,52 +43,70 @@ class{
         OBJECT_TYPE_LAVA=41;                // Lava que te mata
         OBJECT_TYPE_SAND=42;                // paja
         
-        // Enemigos
+        /**
+         * Enemigos
+         */
         ENEMY_TYPE_NONE=0;
+
+    
+        // Pájaros
         ENEMY_TYPE_EAGLE=1;             // Äguila
         ENEMY_TYPE_RAVEN=2;             // Cuervo
         ENEMY_TYPE_EAGLE_WHITE=3;       // Äguila blanca
         ENEMY_TYPE_RAVEN_BLACK=4;       // Cuervo negro
-        ENEMY_TYPE_BAT=5;               // Murciélago
-        ENEMY_TYPE_HAWK=6;              // Halcón
-        ENEMY_TYPE_VULTURE=7;           // Buitre
-        ENEMY_TYPE_SQUIRREL=8;          // Escorpión
-        ENEMY_TYPE_UP_DOWN=9;
-        ENEMY_TYPE_LEFT_RIGHT=10;
-        ENEMY_TYPE_FOLLOW_PLAYER=11;
-        ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL=12;
-        ENEMY_TYPE_SHOOT_PLAYER_VERTICAL=13;
-        ENEMY_TYPE_SAW=20;
-        ENEMY_TYPE_PENDULUM=21;
-        ENEMY_TYPE_CRUSHING_BRICK=22;
-        ENEMY_TYPE_BOMB=23;
-        ENEMY_TYPE_DRAGON=24;
-        ENEMY_TYPE_HAMMER=25;
-        ENEMY_TYPE_SPIDER=26;
-        ENEMY_TYPE_SMALL_SKULL=27;
-        ENEMY_TYPE_LARGE_SKULL=28;
-        ENEMY_TYPE_CRAB=29; //Cangrejo
-        ENEMY_TYPE_TURTLE=30;
-        ENEMY_TYPE_CLOUD=31; //nube
-        ENEMY_TYPE_THIEF=32; //ladrón
-        ENEMY_TYPE_HEDGEHOG=33; //erizo
-        ENEMY_TYPE_WILD_PIG=34; //Jabalí
-        ENEMY_TYPE_SLEEPING_BAT=35; //murciélago dormido
-        ENEMY_TYPE_PARACHUTE_BOMB=36; //murciélago dormido
-        ENEMY_TYPE_RHINOCEROS=37; //murciélago dormido
-        ENEMY_TYPE_DRAGON_BLUE=38; //dragón azul
-        ENEMY_TYPE_BEAR=39; //oso
-        ENEMY_TYPE_VULTURE_CIRCLE=40; //águila que vuela en círculos
-        ENEMY_TYPE_EAGLE_LEFT=41; //águila que viene de izquierda a derecha
-        ENEMY_TYPE_RAVEN_LEFT=42; //cuervo que viene de izquierda a derecha
-        //Fire
+        ENEMY_TYPE_VULTURE=5;           // Buitre
+        ENEMY_TYPE_VULTURE_CIRCLE=6;    // Buitre que vuela en círculos
+        ENEMY_TYPE_EAGLE_LEFT=7;        // Águila que viene de izquierda a derecha
+        ENEMY_TYPE_RAVEN_LEFT=8;        // Cuervo que viene de izquierda a derecha
+        ENEMY_TYPE_BAT=9;               // Murciélago
+        ENEMY_TYPE_SLEEPING_BAT=10;     // Murciélago dormido
+        // Dragones
+        ENEMY_TYPE_DRAGON=20;           //dragón rojo
+        ENEMY_TYPE_DRAGON_BLUE=21;      //dragón azul
+        // Animales
+        ENEMY_TYPE_SQUIRREL=30;         // Escorpión
+        ENEMY_TYPE_SPIDER=31;           // Arña
+        ENEMY_TYPE_CRAB=32;             // Cangrejo
+        ENEMY_TYPE_HEDGEHOG=33;         // Erizo
+        ENEMY_TYPE_WILD_PIG=34;         // Jabalí
+        ENEMY_TYPE_TURTLE=35;
+        ENEMY_TYPE_RHINOCEROS=36;       //ronoceronte grande
+        ENEMY_TYPE_BEAR=37;             //oso
+        // Monstruos con fuego
+        ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL=50; //Monstruo rojo que dispara en horizontal
+        ENEMY_TYPE_SHOOT_PLAYER_VERTICAL=51;   //Monstruo azul que dispara en vertical
+        // Objetos
+        ENEMY_TYPE_SAW=60;              // La sierra
+        ENEMY_TYPE_PENDULUM=61;         //El péndolo
+        ENEMY_TYPE_CRUSHING_BRICK=62;   //El bloque que aplasta
+        ENEMY_TYPE_BOMB=63;             //La bomba andado con patas
+        ENEMY_TYPE_PARACHUTE_BOMB=64;   // La bomba que cae en paracaidas
+        // Personas y calaveras
+        ENEMY_TYPE_HAMMER=80;           //Hombre con el martillo
+        ENEMY_TYPE_CLOUD=81;            // hombre en la nube tirando fuego
+        ENEMY_TYPE_THIEF=82;            //ladrón
+        ENEMY_TYPE_SMALL_SKULL=83;      // Calavera pequeña
+        ENEMY_TYPE_LARGE_SKULL=84;      //Calavera grande
+
+
+        //ENEMY_TYPE_HAWK=6;              // Halcón
+        //ENEMY_TYPE_UP_DOWN=9;
+        //ENEMY_TYPE_LEFT_RIGHT=10;
+        //ENEMY_TYPE_FOLLOW_PLAYER=11;
+
+
+        /*
+        * Fire
+        */
         FIRE_TYPE_NORMAL=1;
         FIRE_TYPE_MOVING_HORIZONTAL=2;
         FIRE_TYPE_MOVING_VERTICAL=3;
         FIRE_TYPE_WEB=4;
 
 
-        //Audios
+        /*
+        * Audios
+        */
         MUSIC_MENU=0;
 		MUSIC_INGAME=1;
         MUSIC_BOSS_FIGHTING=2; 

@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class Hammer implements Enemy{
     properties:
@@ -14,7 +14,6 @@ class Hammer implements Enemy{
         Addanimationwithsheet("hammer-stop",game.GetApp().path+"images/objects-enemies.png",0,0,17*32,9*32,64,64,-1,-1,-1,.2);
         Setanimation("hammer");
         SetCollisionRect(5,32,34,32);
-        type=ENEMY_TYPE_HAMMER; 
     }
 
     virtual Move(){

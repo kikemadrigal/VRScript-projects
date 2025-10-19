@@ -20,8 +20,6 @@ ponle sonido de explosión a las bombas cuando las mates
 
 La araña(el boss 3 pantalla 12) manda casi todas las telarañas hacia abajo
 
-elimina los types= dentro de las clases que heredan ya que la clase padre ya lo hace
-
 que malo escorpión pantalla 5 clave el aguijón en el suelo y salga fuegos en el suelo
 
 

@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara;
+namespace es_tipolisto_WulfgarI;
 
 class StageGlobal implements GL_Stage{
     properties:

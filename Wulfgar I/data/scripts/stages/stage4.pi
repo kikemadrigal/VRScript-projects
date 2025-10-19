@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_stages;
+namespace es_tipolisto_WulfgarI;
 
 /**
  * la pantalla vertical
@@ -25,9 +25,10 @@ class Stage4{
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
         _game.GROUND_Y=90*32;
-        _game.SetCameraY(80*32);
         _game.player1.SetPosition(20,_game.GROUND_Y);
-        _game.GetApp().is_vertical_stage=true;
+        _game.SetCameraPos(0,80*32);
+        
+        //_game.GetApp().is_vertical_stage=true;
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");

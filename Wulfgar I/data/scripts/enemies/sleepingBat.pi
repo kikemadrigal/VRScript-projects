@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class SleepingBat implements Enemy{
     properties:
@@ -9,7 +9,7 @@ class SleepingBat implements Enemy{
         Addanimationwithsheet("sleepingBat-fly",game.GetApp().path+"images/objects-enemies.png",0,3,17*32,21*32,32,32,-1,-1,-1,.2);
         Setanimation("sleepingBat");
         speedX=0;
-        type=ENEMY_TYPE_SLEEPING_BAT; 
+        //ENEMY_TYPE_SLEEPING_BAT; 
     }
     virtual Move(){
         if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){

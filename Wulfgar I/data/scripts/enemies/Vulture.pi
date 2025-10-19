@@ -1,10 +1,12 @@
+namespace es_tipolisto_WulfgarI;
+
 class Vulture implements Enemy{
     
     virtual _operator_new(_name,_creator, _params){
         Addanimationwithsheet("buitre",game.GetApp().path+"images/objects-enemies.png",0,1,0,10*32,32,32,-1,-1,-1,.2);
         Setanimation("buitre");
         speedX=-2;
-        type=ENEMY_TYPE_VULTURE; 
+        //ENEMY_TYPE_VULTURE; 
     }
 
     virtual Move(){

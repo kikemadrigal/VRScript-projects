@@ -1,4 +1,6 @@
-﻿class Resources{
+﻿namespace es_tipolisto_WulfgarI;
+
+class Resources{
 	properties:
 		app=null;
 		musics=[];

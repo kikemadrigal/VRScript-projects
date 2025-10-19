@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class Circle implements Enemy{
 
@@ -10,12 +10,10 @@ class Circle implements Enemy{
             case ENEMY_TYPE_BAT:
                 Addanimationwithsheet("bat",game.GetApp().path+"images/objects-enemies.png",0,3,9*32,8*32,32,32,-1,-1,-1,.2);
                 Setanimation("bat");
-                type=ENEMY_TYPE_BAT; 
                 break;
             case ENEMY_TYPE_VULTURE_CIRCLE:
                 Addanimationwithsheet("buitre",game.GetApp().path+"images/objects-enemies.png",0,1,0,10*32,32,32,-1,-1,-1,.2);
                 Setanimation("buitre");
-                type=ENEMY_TYPE_VULTURE_CIRCLE;
                 break;
             default:
                 break;

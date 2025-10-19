@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class CrushingBrick implements Enemy{
 
@@ -6,7 +6,6 @@ class CrushingBrick implements Enemy{
         Addanimationwithsheet("crushing-brick",game.GetApp().path+"images/objects-enemies.png",0,0,3*32,1*32,32,32,-1,-1,-1,.2);
         Setanimation("crushing-brick");
         _add_dead_animation=false;
-        type=ENEMY_TYPE_CRUSHING_BRICK; ; 
     }
     virtual Move(){
         if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){

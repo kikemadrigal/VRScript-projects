@@ -1,3 +1,5 @@
+namespace es_tipolisto_WulfgarI;
+
 class Db {
     properties:
         db=null;

@@ -1,3 +1,4 @@
+namespace es_tipolisto_WulfgarI;
 class Records implements GL_Stage {
 	properties:
 		db=null;

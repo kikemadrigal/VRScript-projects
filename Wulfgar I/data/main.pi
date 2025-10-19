@@ -1,3 +1,5 @@
+ //namespace es_tipolisto_WulfgarI;
+ 
  class main implements GL_Program partial myConstants{
     properties:
         stageGlobal=null;
@@ -45,22 +47,11 @@
         Setviewscale(-1);
         Setvsync(true);
         Setframerate(30);
-
         //la base de datos
 		db=new Db(this);
-
-        // Forma de hacer referencia a las carpetas cuando esté en un zip como app para MSXVR
-         if (GetBundleDriveName() == "")	AddScriptPackage("data/", false);	
-		gl.SetResourceBaseFolder(GetBundleDriveName());
         //El stageGlobal es usado para los marcadores y elementos generales
         stageGlobal=newStage("stageGlobal","StageGlobal");
-
         fade_menu = NewStage("fade", "fade");
-        
-        if(PRODUCTION_MODE) path=GetBundleDriveName() + "data/";
-        else path="";
-
-
         changeMenuScreen();
     }
     function SetShowMap(value){
@@ -68,7 +59,11 @@
         stageGlobal.map.SetVisible(value);
         
     }
-
+    function set_vertical_stage(value){
+        //CenterCamera(game.player1);
+        is_vertical_stage=value;
+        //CenterCamera(game.player1);
+    }
     function SetCameraNotMove(value){
         camera_not_move=value;
 

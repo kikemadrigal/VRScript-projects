@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara;
+namespace es_tipolisto_WulfgarI;
 /**
  * Stage principal del juego
  */
@@ -109,7 +109,7 @@ class Game implements GL_Stage{
                      " down: "+get_tile_down(player1.GetX(),player1.GetY());
             _message+="\nEnemies: "+sizeof(enemies)+
                     " objects "+sizeof(Objects)+
-                    " fires "+sizeof(fires);
+                    " fires "+sizeof(fires)+"X: "+GetCameraX()+" y: "+GetCameraY();
             _message+="\nFPS: "+GETFPS(1);
         }
         GetApp().stageGlobal.text_score.SetText(_message);
@@ -327,6 +327,7 @@ class Game implements GL_Stage{
                 break;
             // Pantalla vertical
             case 4: 
+                GetApp().set_vertical_stage(true);
                 stage=New Stage4(this);
                 break;
             //Combate boss 1: el escorpión gigante

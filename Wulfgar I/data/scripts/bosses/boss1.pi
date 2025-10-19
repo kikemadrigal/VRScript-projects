@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_bosses;
+namespace es_tipolisto_WulfgarI;
 /*
     Boss 1 escorpión
     Se mueve hacia el player solo en horizontal, si el player está

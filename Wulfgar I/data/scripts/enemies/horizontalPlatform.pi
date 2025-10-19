@@ -1,4 +1,4 @@
-namespace es_tipolisto_caballeroVara_enemies;
+namespace es_tipolisto_WulfgarI;
 
 class HorizontalPlatform implements Enemy{
     properties:
@@ -11,12 +11,10 @@ class HorizontalPlatform implements Enemy{
                 Addanimationwithsheet("escorpion",game.GetApp().path+"images/objects-enemies.png",0,5,0,11*32,32,32,-1,-1,-1,.2);
                 Setanimation("escorpion");
                 speedX=3;
-                type=ENEMY_TYPE_SQUIRREL; 
                 break;
             case ENEMY_TYPE_SPIDER:
                 Addanimationwithsheet("spider",game.GetApp().path+"images/objects-enemies.png",0,2,9*32,20*32,32,32,-1,-1,-1,.2);
                 Setanimation("spider");
-                type=ENEMY_TYPE_SPIDER;  
                 speedX=3;
                 break;
             //cangrejo
@@ -24,37 +22,31 @@ class HorizontalPlatform implements Enemy{
                 Addanimationwithsheet("carb",game.GetApp().path+"images/objects-enemies.png",0,3,9*32,7*32,32,32,-1,-1,-1,.2);
                 Setanimation("carb");
                 speedX=3;
-                type=ENEMY_TYPE_CRAB; 
                 break;
             case ENEMY_TYPE_SMALL_SKULL:
                 Addanimationwithsheet("small-skull",game.GetApp().path+"images/objects-enemies.png",0,3,9*32,15*32,32,32,-1,-1,-1,.2);
                 Setanimation("small-skull");
                 speedX=-3;
-                type=ENEMY_TYPE_SMALL_SKULL; 
                 break;
             case ENEMY_TYPE_BOMB:
                 Addanimationwithsheet("bomb",game.GetApp().path+"images/objects-enemies.png",0,5,0,22*32,32,32,-1,-1,-1,.2);
                 Setanimation("bomb");
                 speedX=-3;
-                type=ENEMY_TYPE_BOMB;  
                 break;
             case ENEMY_TYPE_TURTLE:
                 Addanimationwithsheet("turtle",game.GetApp().path+"images/objects-enemies.png",0,3,9*32,6*32,32,32,-1,-1,-1,.2);
                 Setanimation("turtle");
                 speedX=-3;
-                type=ENEMY_TYPE_TURTLE;  
                 break;
             case ENEMY_TYPE_HEDGEHOG:
                 Addanimationwithsheet("Hedgehog",game.GetApp().path+"images/objects-enemies.png",0,3,0,18*32,32,32,-1,-1,-1,.2);    
                 Setanimation("Hedgehog");
                 speedX=-3;
-                type=ENEMY_TYPE_HEDGEHOG;  
                 break;
             case ENEMY_TYPE_WILD_PIG:
                 Addanimationwithsheet("wildpig",game.GetApp().path+"images/objects-enemies.png",0,3,0,23*32,32,32,-1,-1,-1,.2);    
                 Setanimation("wildpig");
                 speedX=-3;
-                type=ENEMY_TYPE_WILD_PIG;  
                 break;
         }
         
