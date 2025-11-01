@@ -1,7 +1,6 @@
 class{
     defines:
         DEBUG_MODE=false;
-        PRODUCTION_MODE=false;
         APP_BUILD_VERSION = "1.0";
         //* Dimensiones del nivel
         LEVEL_WIDTH=3000;
@@ -9,7 +8,6 @@ class{
         // Dimensiones del viewport o cámara
         // Si la resolucion fullhd son 1280*720, si queremos trabajar con 800px de ancho
         // (800*720)/1280=450 px de alto, tendremos que poner el alto en 450 pixeles
-
         VIEWPORT_WIDTH=800;  // Esto es lo mismo que GetApp().GetResX()  
         VIEWPORT_HEIGHT=450; // Esto es lo mismo que GetApp().GetResY()  
         //otros
@@ -81,13 +79,14 @@ class{
         ENEMY_TYPE_CRUSHING_BRICK=62;   //El bloque que aplasta
         ENEMY_TYPE_BOMB=63;             //La bomba andado con patas
         ENEMY_TYPE_PARACHUTE_BOMB=64;   // La bomba que cae en paracaidas
+        ENEMY_TYPE_WINDMILL=65;         //El molino
         // Personas y calaveras
         ENEMY_TYPE_HAMMER=80;           //Hombre con el martillo
         ENEMY_TYPE_CLOUD=81;            // hombre en la nube tirando fuego
         ENEMY_TYPE_THIEF=82;            //ladrón
         ENEMY_TYPE_SMALL_SKULL=83;      // Calavera pequeña
         ENEMY_TYPE_LARGE_SKULL=84;      //Calavera grande
-
+        
 
         //ENEMY_TYPE_HAWK=6;              // Halcón
         //ENEMY_TYPE_UP_DOWN=9;
@@ -125,4 +124,6 @@ class{
         AUDIO_LAUGH_BOSS=10;
         AUDIO_HIT_BOSS=11;
         AUDIO_HAMMER=12;
+        AUDIO_EXPLOSION=13;
+        AUDIO_PLAYER_HIT=14;
 }

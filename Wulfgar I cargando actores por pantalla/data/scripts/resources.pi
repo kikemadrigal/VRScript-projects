@@ -1,0 +1,30 @@
+﻿namespace es_tipolisto_WulfgarI;
+
+class Resources{
+	properties:
+		game=null;
+		stages_bg=[];
+
+	//virtual _operator_new(_app){
+	function _operator_new(_game){	
+		game=_game;
+		_menu=game.GetEngine().LoadImage("images/menu.png");
+		stages_bg+=[_menu];
+		
+		for (i=1; i < 5; i++){
+			_bg=game.GetEngine().LoadImage("images/stage"+i+".png");
+			stages_bg+=[_bg];
+			_tmx = new TMX_Loader();	 
+        	_tmx.Load(_game.mapper,game.GetApp().path+"resources/tilesmap"+i+".tmx", i,_game);
+			delete _tmx;
+		}
+	}
+	
+
+	function get_bg_image(stage){
+		_image=stages_bg[stage];
+		//game.GetEngine().LogPrint("vamos a devlver la textura "+stage+" ancho "+_image.GetWidth()+" alto "+_image.GetHeight());
+		return _image.GetTexture();
+	}
+	
+}

@@ -3,7 +3,7 @@
  class main implements GL_Program partial myConstants{
     properties:
         stageGlobal=null;
-    	//menu=null;
+    	menu=null;
         game=null;
         winner=null;
         camera_not_move=false;
@@ -11,12 +11,15 @@
 
         fade_menu=null;
         path="";
-        show_map=false;
+        //show_map=false;
 
         db=null;
+  
  
     virtual Init()
 	{
+        //if(sizeof(GetNumParams())>0)GetEngine().LogPrint("el parámetro es "+GetParam(0));
+        //else GetEngine().LogPrint("no hay parámetros");
 		_wnd = CreateWindow();
 		//_wnd.AddStyle(_wnd.STYLE_SHOW_FULLSCREEN);
 		//_wnd.AddStyle(_wnd.STYLE_CLOSE_BOX);
@@ -25,14 +28,17 @@
 
 		_menu = _wnd.CreateMenu();
 		_section = _menu.AddSection ("File");
-        _section.AddItem("vara.tipolisto.es", this, "OnAddLink");
+        _section.AddItem("wulfgar.tipolisto.es", this, "OnAddLink");
         _section.AddItem("", null, "");
 		_section.AddItem ("Exit", this, "OnFileExit");
         _wnd.AddHotKey ([KEY_LCONTROL, KEY_Q], this, "OnFileExit");
 	}
+    function OnAddLink() {
+        GetEngine().RunProgramWithParams("openurl.bat", []);
+    }
 	
-	function OnFileExit()
-	{
+	function OnFileExit() {
+        gl.Stop();
 		End(0);
 	}
         
@@ -49,6 +55,7 @@
         Setframerate(30);
         //la base de datos
 		db=new Db(this);
+
         //El stageGlobal es usado para los marcadores y elementos generales
         stageGlobal=newStage("stageGlobal","StageGlobal");
         fade_menu = NewStage("fade", "fade");
@@ -82,7 +89,7 @@
         
     }
     function changeWinnerScreen(){
-        stageGlobal.text_boss_live.SetText("");
+         stageGlobal.text_boss_live.SetText("");
         stageGlobal.play_sound_click();
         if(game!=null)delete game;
         RunStage("winner", "Winner");
@@ -92,7 +99,7 @@
 
     function changeMenuScreen(){
         //if(game!=null) delete game;
-        RunStage("menu","Menu");
+        menu=RunStage("menu","Menu");
         _change ("menu");
         StageGlobal.play_music_menu();
         fade_menu.Off();
@@ -105,10 +112,13 @@
     }
 
     function run_game(){
+        //fade_menu.Off();
         if(winner!=null) delete winner;
+        if(menu!=null) delete menu;
         game=RunStage("game","Game");
         _change ("game"); 
-        fade_menu.Off();
+        
+       
     }
 
     state "menu":
@@ -116,8 +126,15 @@
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){ 	
             stageGlobal.play_sound_click();
             StageGlobal.stop_music_winner();
+            for (i = 255; i > 0; i--) {
+                GetEngine().Sleep(1);
+                menu.background.SetAlpha(i);
+                menu.mosaico.SetAlpha(i);
+            }
+            menu.background.SetAnimation("map1");
+            menu.background.SetAlpha(255);
             fade_menu.SetOnCompleted(this,"run_game");
-            fade_menu.On();
+            //fade_menu.On();
         }
         //Al pulsar la tecla R vamos al menú de records
         else if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_4)){ 	
@@ -126,11 +143,26 @@
             fade_menu.On();
         }
     }
+
+
+
     state "records":
     {
+        //Si se pulsa espacio volvemos al menú
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){ 	
             fade_menu.SetOnCompleted(this,"changeMenuScreen");
             fade_menu.On();
+        //Si se pulsa la tecla s se envia el score
+        }else if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_5)){
+			send_score();
+        //Si se pulsa la tecla d se reinician los scores
+		}else if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_6)){
+            _res=GetEngine().InputDialogModal("Escribe Si para resetar la base de datos","",View.AD_OK,"");
+            if(_res=="Si"){
+                db.reset_records();
+                fade_menu.SetOnCompleted(this,"changeMenuScreen");
+                fade_menu.On();
+            }
         }
     }
 
@@ -140,10 +172,6 @@
 
     state "game":
     {
-        if(show_map) {
-            if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)) SetShowMap(false);            
-            return;
-        }
         if(DEBUG_MODE) game.print_score();
         _player1=game.player1;
         _player1.incrementoX=0;
@@ -192,12 +220,15 @@
         
         //Fíjate que el isButtonDown solo devuelve verdadero una vez
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
-            stageGlobal.play_sound_atack();
-            _player1.attack=true;  
-            _player1.SetAnimation("attack");
-            //Fijate que el newObject del GL_Program es distinto al del GL_Stage
-            //La vara se elimina sola al medio segundo
-            vara=NewObject("vara","Vara",null,[_player1, game]);
+            
+                stageGlobal.play_sound_atack();
+                _player1.attack=true;  
+                _player1.SetAnimation("attack");
+                //Fijate que el newObject del GL_Program es distinto al del GL_Stage
+                //La vara se elimina sola al medio segundo
+                vara=NewObject("vara","Vara",null,[_player1, game]);
+            
+
             
 
             /*
@@ -226,7 +257,7 @@
             if(_player1.GetAnimationLoops()>0) _player1.pick=false;  
         }else{  
             if(_player1.aceleracion!=0){ 
-                if(!camera_not_move)CenterCamera(_player1);
+                if(camera_not_move && game.currentStage==5)CenterCamera(_player1);
                 //Si está subiendo	
                 if (_player1.incrementoY<0 && _player1.GetY()>0){ 
                     _player1.Setanimation("jump");
@@ -266,5 +297,30 @@
             fade_menu.On();
         }
     }
+
+
+    function send_score(){
+         Log("enviando score");
+        _http=GetEngine().CreateHTTPManager();
+        //Recogemos la puntación máxima
+        _textModal="Escribe tu nombre";
+        _name="";
+        do{
+            _name=GetEngine().InputDialogModal(_textModal,"",View.AD_OK,"");
+            _textModal="El nombre no puede estar vacío ni ser menor de 4 caracteres";
+        }while(_name=="" || strlen(_name)<=3);
+        //mostramos un formaulario para que introduzca su nombre
+        _score=db.get_max_player();
+        //Hacemos la petición al servidor
+        _ret=_http.GetString("https://games.tipolisto.es/api/wulfgar-savescore.php?score="+_score+"&name="+_name+"&game=wulfgar");
+        //Log(_ret);
+        stageGlobal.text_game.SetText("Server response: "+_ret);
+        GetEngine().Sleep(2000);
+        stageGlobal.text_game.SetText("");
+        //stageGlobal.text_game.SetPos(100, 10);
+        delete _http;
+    }
+
+
 }
    

@@ -4,12 +4,16 @@
 		speedY=0;
 		speedx=0;
 		type=0;
+		app=null;
+
 		
-		
-	virtual _operator_new(_name,_creator, _type)
+	virtual _operator_new(_name,_creator, _params)
 	{
+		_type=_params[0];
 		type=_type;
+		app=_params[1];
 	
+
 		switch(_type){
 			//Aguila que aparece por la izquierda, al salir por la derecha volverá a salir por la izquierda en un y aleatorio
 			case 0:
@@ -43,12 +47,12 @@
 			case 4:
 				Addanimationwithsheet("buitre","textures/animals/buitre.png",0,4,0,0,32,32,-1,-1,-1,.2);
 				Setanimation("buitre");
-				//SetScale=4;
-				SetPos(10,10);
+				SetPos(100,100);
+				break;
 		}
 		SetCollision(True);
-		
 	}
+
 	function GetType(){
 		return type;
 	}
@@ -63,21 +67,17 @@
 	
 	virtual Move()
 	{
-		
 		if(type==0 && GetX()<0){
 		 	SetY(FRand(10,500));
 			SetX(GetApp().GetResX());
 		}else if(type==1 && GetX()>GetApp().GetResX()){
 			SetY(FRand(10,500));
 			SetX(0);
-		}else if(type==4){
-			if(creator.asesino_creado){				
-				if(creator.player.GetX()<=GetX()) speedX=-0.2;	
-				else speedX=0.2;
-				if(creator.player.GetY()<=GetY()) speedY=-0.2;
-				else speedY=0.2;
-			}
-			
+		}else if(type==4){	
+			if(app.player.GetX()<=GetX()) speedX=-0.2;	
+			else speedX=0.2;
+			if(app.player.GetY()<=GetY()) speedY=-0.2;
+			else speedY=0.2;
 		}
 		incpos(speedX,speedY);
 	}

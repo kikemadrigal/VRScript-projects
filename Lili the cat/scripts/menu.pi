@@ -1,47 +1,34 @@
-﻿class Menu implements GL_Stage{
+﻿class Menu implements App{
 	properties:
-		pad=null;
-		gotoStage=False;
-		click_sound=null;
-	virtual _operator_new(_name, _creator){
-		_bg=NewObject("bg", "GL_Sprite");
+	function Init(){
+		//La imagen del fondo
+		_bg=app.NewObject("bg", "GL_Sprite");
 		_bg.AddFrame("textures/menu.png");
 		_bg.SetPos(0,0);
-		
-		//Esto es para que pueda pulsar el espacio
-		_pad=NewObject("pad", "GL_Pad");
-		_pad.SetPreset("CURSORS");
-		pad=_pad;
-		
-		_text=DrawText("Lili the cat",32);
+			
+		//Fíjate que la función DrawText() aparece en main.pi
+		_text=app.DrawText("Lili the cat",32);
 		_text.SetPos(0,20);
-		_text=Drawtext("Press space to continue",14);
-		_text.SetPos(0,500);
 		
-		//Mï¿½sica
-		_music_menu=NewObject("music_menu", "Gl_Music");
-		_music_menu.Load("audios/music_menu.ogg");
-		_music_menu.SetLoop(True);
-		_music_menu.Play();
-		
-		//Efecto click
-		//click_sound=NewObject("click_sound", "GL_Sound");
-		//click_sound.Load("audios/click.ogg");
+		app.resources.GetMusicMenu().Play();
+		app.player.SetVisible(False);
+		app.hud.cursor.SetVisible(True);
+		cantidad_botones=sizeof(app.hud.buttonsMenu);
+		//app.Log("la cantidad de botones menu es "+cantidad_botones);
+		if(cantidad_botones==0){
+			_buttonStart=app.hud.CreateButtonMenu(350, 370, 100, 25, "    Start", this, "OnClickButtonStart");
+			//_buttonStart.SetOnClick(this,"OnClickButtonStart");
+			_buttonRecords=app.hud.CreateButtonMenu(350, 420, 100, 25,"  Records", this, "OnClickButtonRecords");
+			//_buttonRecords.SetOnClick(this,"OnClickButtonRecords");
+			_buttonSettings=app.hud.CreateButtonMenu(350, 470, 100, 25,"  Settings", this, "OnClickButtonSettings");
+			//_buttonSettings.SetOnClick(this,"OnClickButtonSettings");
+			_buttonExit=app.hud.CreateButtonMenu(350, 520, 100, 25,"    Exit", this, "OnClickButtonExit");
+			//_buttonExit.SetOnClick(this,"OnClickButtonExit");
+		}else {
+			//app.Log("hagamos visible los botones de menu");
+			app.hud.SetButtonsMenuVisible();
+			app.hud.SetNewStageButtonsMenu(this);
+		}	
 	}
-	virtual Move(){
-		if(gotoStage){
-			GetApp().RunStage("stage", "stage0");
-		}else if(pad.IsButtonDown(PAD_BUTTON_1)){
-			gotoStage=True;
-			//click_sound.Play();
-		}
-	}
-	function DrawText(text, size){
-		_text=NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", size);
-		_text.SetAlign(DT_CENTER);
-		_text.SetText(text);
-		_text.SetColor(RGB(234,255,0));
-		return _text;
-	}
+
 }

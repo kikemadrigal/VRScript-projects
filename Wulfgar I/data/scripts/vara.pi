@@ -48,6 +48,7 @@ class Vara implements GL_sprite{
                 _fx=_sp2.CreateFX("TINT");
                 _fx.Start(1000, RGB(255,0,0));
                 if(_sp2.touches>_sp2.touches_for_died){
+                    if(Class_Id(_sp2)=="ParachuteBomb" ) game.GetApp().StageGlobal.play_sound_explosion();
                     //borramos el enemigo
                     game.delete_enemy(_sp2);
                 }
@@ -56,11 +57,14 @@ class Vara implements GL_sprite{
            Class_Id(_sp2)=="Boss2" || 
            Class_Id(_sp2)=="Boss3" || 
            Class_Id(_sp2)=="Boss4" ){
-            if(_sp2.boss_live>0)_sp2.boss_live--;
-            _fx=_sp2.CreateFX("TINT");
-			_fx.Start(1000, RGB(245,0,254));
-            game.draw_boss_live(_sp2.boss_live);
             GetApp().stageGlobal.play_sound_hit_boss();
+            delete this;
+            _sp2.boss_live--;
+            _fx=_sp2.CreateFX("TINT");
+            _fx.Start(1000, RGB(245,0,254));
+            game.draw_boss_live(_sp2.boss_live);
+           
+            
         }
         if(Class_Id(_sp2)=="Object" ){
             //if(_sp2.GetItemType()==OBJECT_TYPE_SAND)game.delete_object(_sp2);

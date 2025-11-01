@@ -1,8 +1,9 @@
 namespace es_tipolisto_WulfgarI;
 
-class Pendulum implements GL_Sprite{
+//class Pendulum implements GL_Sprite{
+class Pendulum implements Enemy{
     properties:
-        game=null;
+        //game=null;
         ancla_x =0;
         ancla_y =0;
         length =0;
@@ -16,7 +17,7 @@ class Pendulum implements GL_Sprite{
 
 
     virtual _operator_new(_name,_creator, _params){
-		game=_params[0];
+		//game=_params[0];
 		ancla_x=_params[1];
 		ancla_y=_params[2];
         length=_params[3];
@@ -27,7 +28,7 @@ class Pendulum implements GL_Sprite{
         gravity = 0.5;   // Gravedad (ajustar para el juego)
         radius = 20; 
 
-        Addanimationwithsheet("pendulum",game.GetApp().path+"images/objects-enemies.png",0,0,6*32,13*32,64,64,-1,-1,-1,.02);    
+        Addanimationwithsheet("pendulum","images/objects-enemies.png",0,0,6*32,13*32,64,64,-1,-1,-1,.02);    
 		Setanimation("pendulum");
         SetCollision(True);
         Setcollisionrect(22,40,20,24);

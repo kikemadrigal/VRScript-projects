@@ -1,17 +1,8 @@
 namespace es_tipolisto_WulfgarI;
+
 /**
- * Pantalla 9: 
- * Fondo: Palacio interior, colores lilas y rojizos
- * Tiles: naranja fuerte y azul claro fuerte
- * Enemigos 11: 
- *    Bolques que aplastan
- *    Péndulos
- *    Bombas con piernas
- *    Buitres
- *    Llamas de fuego que queman
- * Objetos 19:
- *    Llaves: 3
- *    Paquetes de paja: 3
+* Pantalla 19,mapa 4
+*
  */
 class Stage19{
     properties:
@@ -22,29 +13,31 @@ class Stage19{
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100);
+            //_game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100,game.currentStage);
         }
-        //ponemos que tenemos que coger 3 llaves
-        _game.player1.keys_to_collect=3;
-        _game.player1.SetPosition(20,_game.GROUND_Y);
- 
+
+         _game.player1.SetVisible(false);
+        
+        _tmx = new TMX_tiles();
+        _tmx.Load(_game.mapper,"resources/tilesmap19.tmx", _game);
+        delete _tmx;
+
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage19.png");
+        _texture=game.resources.get_bg_image(game.currentStage);
+        bg.AddTexFrame(_texture);
         bg.SetPriority(-1);
+        bg.SetSize(800,450);
 
-        _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap19.tmx", _game);
-        delete _tmx;
-        //pintamos el marcador
-        _game.print_score();
-  
+
+        
+       //Pintamos el marcador
+        game.print_score();  
+        game.GetApp().Sleep(2000);         
     }
     function _operator_delete(){
         bg.Destroy();
-        game.delete_objects();
-        game.delete_enemies();
-        game.delete_fires();
+        game.player1.SetVisible(true);
         delete game.layer;
-    }
+    }   
 }

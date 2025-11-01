@@ -1,25 +1,25 @@
 namespace es_tipolisto_WulfgarI;
 
 class CloudBalancing implements Enemy{
-    properties:
-        fires=[];
+    //properties:
+        //fires=[];
 
     virtual _operator_new(_name,_creator, _params){
         switch (type){
             case ENEMY_TYPE_DRAGON:
-                Addanimationwithsheet("dragon",game.GetApp().path+"images/objects-enemies.png",0,2,0,16*32,64,64,-1,-1,-1,.2);    
+                Addanimationwithsheet("dragon","images/objects-enemies.png",0,2,0,16*32,64,64,-1,-1,-1,.2);    
                 Setanimation("dragon");
                 touches_for_died=10;
                 Setcollisionrect(0,30,64,24);
                 break;
             case ENEMY_TYPE_DRAGON_BLUE:
-                 Addanimationwithsheet("dragon_blue",game.GetApp().path+"images/objects-enemies.png",0,2,0,20*32,64,64,-1,-1,-1,.2);
+                 Addanimationwithsheet("dragon_blue","images/objects-enemies.png",0,2,0,20*32,64,64,-1,-1,-1,.2);
                 Setanimation("dragon_blue");
                 touches_for_died=10;
-                Setcollisionrect(0,20,64,44);
+                Setcollisionrect(0,20,64,34);
                 break;
             case ENEMY_TYPE_CLOUD:
-                Addanimationwithsheet("cloud",game.GetApp().path+"images/objects-enemies.png",0,3,20*32,4*32,32,32,-1,-1,-1,.2);
+                Addanimationwithsheet("cloud","images/objects-enemies.png",0,3,20*32,4*32,32,32,-1,-1,-1,.2);
                 Setanimation("cloud");
                 break;
         }
@@ -31,7 +31,7 @@ class CloudBalancing implements Enemy{
             _fire.SetPos(-100,-100);
             _fire.incrementoY=0;
             _fire.incrementoX=0;
-            fires+=[_fire];
+            //fires+=[_fire];
         }
     }
     virtual Move(){
@@ -60,14 +60,14 @@ class CloudBalancing implements Enemy{
         //Creamos el fuego cuando las animaciones sean mayor que 12
         if(GetAnimationLoops()>3){
             // obtenemos un fire con una velocidad 0 y le cambiamos el ámgulo
-            for(i=0;i<sizeof(fires);i++){
-                _fire=fires[i];
+            for(i=0;i<sizeof(game.fires);i++){
+                _fire=game.fires[i];
                 /*if(_fire.incrementoY==0){
                     _fire.SetPos(GetX(),GetY()+32);
                     _fire.incrementoY=2;
                     break;
                 }*/
-               if(_fire.incrementoY==0){
+               if(_fire.incrementoY==0 && _fire.incrementoX==0){
                     _fire.SetPos(GetX()-10,GetY()+10);
                     if(game.player1.GetY()<GetY()){
                         _fire.incrementoY=-5;

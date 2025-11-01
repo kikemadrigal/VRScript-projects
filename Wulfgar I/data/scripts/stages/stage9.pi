@@ -1,120 +1,129 @@
 namespace es_tipolisto_WulfgarI;
 
 /**
-* 11 segundos
-* Pantalla 8
-* Fondo: Cueva de fuego
-* Tiles: Ladrillos marrones y blancos.
-* Enemigos 17: 
-    Enemigo en una nube tirándote fuego, 
-    monstruos tirando fuego en horizontal y vertical
-* Objetos 16:
-    Llaves, 
-    candado, 
-    monedas
+ * Pantalla 9, a correr!
+ */
 
-*/
 class Stage9{
     properties:
         game=null;
         bg=null;
         timer_create_enemies=null;
-        counter_enemies=0;
-
+        time=12;
+        controller=null;
     function _operator_new(_game){
         game=_game;
-        if (DEBUG_MODE){
+        if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,192,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100, game.currentStage);
         }
+
+        //Colocamos el fondo
+        _bg= _game.NewObject("bg","gl_sprite");
+        _bg.SetSize(800,450);
+        //Con esto le decimos que el frame que vamos a cargar queremos poder repertirlo, por defecto se dibuja el frame completo
+        _bg.Setflags(_bg.FLAG_WRAP);
+		_bg.AddFrame("images/stage9.jpg",VIEWPORT_WIDTH,VIEWPORT_HEIGHT);
+        //_texture=game.resources.get_bg_image(game.currentStage);
+        //_bg.AddTexFrame(_texture);
+        _bg.SetPriority(-1);
+        //le decimos que se repita 10 por 10 vez en pantalla
+        //_bg.SetUV(0,0,1,1);
+        bg=_bg;
+
+        _controller=_bg.CreateController();
+        _controller.SetCustom(this, "OnController");
+        controller=_controller;
+
+
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
         _game.player1.SetPosition(20,_game.GROUND_Y);
-        //Colocamos el fondo
-        bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe(game.GetApp().path+"images/stage9.png");
-        bg.SetPriority(-1);
-        // Dibujamos los tiles
-        _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, game.GetApp().path+"resources/tilesmap9.tmx", _game);
+    
+        _tmx = new TMX_tiles();
+        _tmx.Load(_game.mapper, "resources/tilesmap9.tmx", _game);
         delete _tmx;
 
-        for(i=0;i<3;i++){
-             _type_random=rand(1,4);
-            //Lo ponemos en la derecha de la pantalla
-            _enemy=_game.create_enemy(_type_random,-100,-100);
-             _enemy.speedX=0;
-        }
-
-        for(i=0;i<13;i++){
-            _enemy=_game.create_enemy(ENEMY_TYPE_EAGLE_LEFT,-100,-100);
-             _enemy.speedX=0;
-        }
-        //creamos 3 cuervos que salen por la izquierda
-        for(i=0;i<13;i++){
-            _enemy=_game.create_enemy(ENEMY_TYPE_RAVEN_LEFT,-100,-100);
-             _enemy.speedX=0;
-        }
-        // Creamos 1 enemigo de tipo nube
-        _enemy=game.create_enemy(ENEMY_TYPE_CLOUD,32,32);
-        _enemy.speedX=2;
-        //Este timer nos sirve para comprobar si no  hay ningún enemigo de tipo nube
-        timer_create_enemies=_game.NewObject("timer", "GL_Timer");
-        timer_create_enemies.SetFrequency(2000);
-        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
+        //game.background_moving=true;
+        game.player1.walking=true;
         //pintamos el marcador
         _game.print_score();
+
+        //Podemos tener como unos 5 pájaros en pantalla
+        for(i=0;i<10;i++){
+            //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
+            _type_random=rand(1,4);
+            //Lo ponemos en la derecha de la pantalla
+            _enemy=_game.create_enemy(_type_random,-100,-100, game.currentStage);
+            _enemy.speedX=0;
+            //Creamos un rinocerante cada 2 pájaros
+            if(i%2==0){
+                //Lo ponemos en la derecha de la pantalla
+                _enemy_rhinoceros=_game.create_enemy(ENEMY_TYPE_RHINOCEROS,-100,-100, game.currentStage);
+                _enemy_rhinoceros.speedX=0;
+            }
+        }
+
+        // Creamos un enemigo que esté persiguiendo al player desde arriba
+        _game.create_enemy(ENEMY_TYPE_CLOUD,100,32, game.currentStage);
+
+        //cada 10 segundos tira 4 águilas qpor la derecha
+        timer_create_enemies=game.NewObject("timer", "GL_Timer");
+        timer_create_enemies.SetFrequency(2000);
+        timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
     }
     function _operator_delete(){
-        bg.Destroy();
-        game.delete_objects();
+        //game.background_moving=false;
+        game.player1.walking=false;
         delete timer_create_enemies;
+        bg.Destroy();
+        //delete controller;
         game.delete_fires();
-        game.delete_enemies();
         delete game.layer;
     }
 
+    function OnController(_controller){
+        //spr=_controller.GetTarget();
+        bg.IncUV(0.005f,0);
+    }
+
+
     function OnTimerEnemiesCallBack(_timer){
-        counter_enemies++;
-        if(counter_enemies>10)counter_enemies=0;
-        if(counter_enemies%2==0){
-            for(i=0;i<sizeof(game.enemies);i++){
-                _enemy=game.enemies[i];
-                if(_enemy.GetItemType()==ENEMY_TYPE_EAGLE || 
-                _enemy.GetItemType()==ENEMY_TYPE_RAVEN || 
-                _enemy.GetItemType()==ENEMY_TYPE_EAGLE_WHITE || 
-                _enemy.GetItemType()==ENEMY_TYPE_RAVEN_BLACK ){
-                    if(_enemy.speedX==0 && game.player1.GetX()>VIEWPORT_WIDTH/2){
-                        //game.GetEngine().LogPrint("encontrado un pajaro en la derecha");
-                        //lo colocamos a la derecha de la pantalla
-                        _x_right_screen=game.player1.GetX()+350;
-                        _y_random=rand(100,400);
-                        _enemy.SetPos(_x_right_screen,_y_random);
-                        //Le ponemos una velocidad
-                        _enemy.speedX=-5;
-                        break;
-                    }
+       time--;
+       if(time<=0){
+            game.create_object(OBJECT_TYPE_META,700,game.GetApp().GetResY()-100, game.currentStage);
+            controller.Stop();
+            game.player1.walking=false;
+            time=12;
+           return;
+       }
+       //Escogemos 4 pajaros que encontremos de la lista de enemigos de tipo pájaro y le ponemos la velocidad a -5
+        for(i=0;i<sizeof(game.enemies);i++){
+            _enemy=game.enemies[i];
+            if(_enemy.GetItemType()==1 || _enemy.GetItemType()==2 || _enemy.GetItemType()==3 || _enemy.GetItemType()==4 ){
+                if(_enemy.speedX==0){
+                    //lo colocamos a la derecha de la pantalla
+                    _x_right_screen=VIEWPORT_WIDTH-32;
+                    _y_random=rand(300,370);
+                    _enemy.SetPos(_x_right_screen,_y_random);
+                    //Le ponemos una velocidad
+                    _enemy.speedX=-5;
+                    //_count++;
+                    break;
                 }
-            }
-        }else{
-            for(i=0;i<sizeof(game.enemies);i++){
-                _enemy=game.enemies[i];
-                if( _enemy.GetItemType()==ENEMY_TYPE_EAGLE_LEFT || 
-                    _enemy.GetItemType()==ENEMY_TYPE_RAVEN_LEFT){
-                        //game.GetEngine().LogPrint("encontrado un pajaro en la izquierda");
-                        if(_enemy.speedX==0 && game.player1.GetX()>VIEWPORT_WIDTH/2){
-                            //lo colocamos a la izquierda de la pantalla
-                            _x_screen=game.player1.GetX()-320;
-                            _y_random=rand(100,400);
-                            _enemy.SetPos(_x_screen,_y_random);
-                            //Le ponemos una velocidad
-                            _enemy.speedX=5;
-                            break;
-                        }
+            }else if(_enemy.GetItemType()==ENEMY_TYPE_RHINOCEROS){
+                if(_enemy.speedX==0){
+                    //game.GetApp().GetEngine().LogPrint("hay un rinocronte con verlocidad 0");
+                    //lo colocamos a la derecha de la pantalla
+                    _x_right_screen=VIEWPORT_WIDTH-32;
+                    _y=game.GROUND_Y;
+                    _enemy.SetPos(_x_right_screen,_y);
+                    //Le ponemos una velocidad
+                    _enemy.speedX=-10;
+                    break;
                 }
             }
         }
-        
-        
     }
+
 }

@@ -2,51 +2,87 @@
 
 class Resources{
 	properties:
-		app=null;
-		musics=[];
-		music=null;
-		audios=[];
+		game=null;
+		stages_bg=[];
+
 	//virtual _operator_new(_app){
-	function _operator_new(_app){	
-		app=_app;
-		LoadMusic(app.path+"sounds/music_menu.ogg");
-		LoadMusic(app.path+"sounds/ingame.ogg");
+	function _operator_new(_game){	
+		game=_game;
+		//_menu=game.GetEngine().LoadImage("images/menu.png");
+		//stages_bg+=[_menu];
 		
-		LoadAudio(app.path+"sounds/hit.ogg");
-		LoadAudio(app.path+"sounds/caught.ogg");
-		LoadAudio(app.path+"sounds/click.ogg");
-		LoadAudio(app.path+"sounds/jump.ogg");
-		LoadAudio(app.path+"sounds/change_level.ogg");
-		LoadAudio(app.path+"sounds/game_over.ogg");
-	}
-	
-	//function operator_delete(){
-	function _operator_delete(){
-		for (i=0;i<sizeof(musics);i++) delete musics[i];
-		for (j=0;j<sizeof(audios);j++) delete audios[j];
-	}
-	function GetMusicMenu(){
-		app.GetEngine().LogPrint("GetMusicMenu");
-		return musics[MUSIC_MENU];
-	}
-	function GetMusicIngame(){
-		return musics[MUSIC_INGAME];
-	}
-	function LoadMusic(path){
-		_music=app.NewObject("music", "Gl_Music");
-		//_music=app.NewMusic("music");
-		_music.Load(path);
-		_music.SetVolume(50);
-		_music.SetLoop(True);
-		musics+=[_music];
-	}
-	
-	function LoadAudio(path){
-		_audio=app.NewObject("sound", "GL_Sound");
-		//_audio=app.NewSound("audio");
-		_audio.Load(path);
-		_audio.SetVolume(255);
-		audios+=[_audio];
+		/*for (i=1; i < 5; i++){
+			_bg=game.GetEngine().LoadImage("images/stage"+i+".png");
+			stages_bg+=[_bg];
+			_tmx = new TMX_Loader();	 
+        	_tmx.Load(_game.mapper,game.GetApp().path+"resources/tilesmap"+i+".tmx", i,_game);
+			delete _tmx;
+		}*/
 	}
 
+	function load_bgs(_level){
+		//Los mapas están en la 1,7,13,19
+		//Los bosses son en la  0,6,12,18,24
+		_start=0;
+		_stop=0;
+		switch(_level){
+			case 1:
+				_start=0;
+				_stop=6;
+				break;
+			case 2:
+				_start=7;
+				_stop=12;
+				break;
+			case 3:
+				_start=13;
+				_stop=18;
+				break;
+			case 4:
+				_start=19;
+				_stop=24;	
+		}	
+		
+		for (i=_start; i <= _stop; i++){
+			_bg=game.GetEngine().LoadImage("images/stage"+i+".png");
+			stages_bg+=[_bg];
+		}
+	}
+
+	function load_actors(_level){
+		_start=0;
+		_stop=0;
+		switch(_level){
+			case 1:
+				_start=0;
+				_stop=6;
+				break;
+			case 2:
+				//antes comenzaba en el 87
+				_start=7;
+				_stop=12;
+				break;
+			case 3:
+				_start=13;
+				_stop=18;
+				break;
+			case 4:
+				_start=19;
+				_stop=24;
+				break;
+		}
+		for (i=_start; i < =_stop; i++){
+			_tmx = new TMX_Loader();	 
+        	_tmx.Load(game.mapper,"resources/tilesmap"+i+".tmx", i,game);
+			delete _tmx;
+		}
+	}
+	
+
+	function get_bg_image(stage){
+		_image=stages_bg[stage];
+		//game.GetEngine().LogPrint("vamos a devlver la textura "+stage+" ancho "+_image.GetWidth()+" alto "+_image.GetHeight());
+		return _image.GetTexture();
+	}
+	
 }

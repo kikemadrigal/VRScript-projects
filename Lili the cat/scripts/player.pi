@@ -7,13 +7,13 @@ class player implements GL_Sprite
 		pad=null;
 		lives=7;
 		caught=0;
-		stage=Null;
-		
-	virtual _operator_new(_name,_creator, _stage)
+		score=0;
+		app=null;
+	virtual _operator_new(_name,_creator, _params)
 	{
-		stage=_stage;
+		app=_params[0];
+		stage=app.GetActiveStage();
 		//name, path, frame_inicio, frame_fin, offect_X, offest_Y, ancho_hoja, alto_hoja, ancho_sprite,alto_sprite, velocidad, jump_frames  
-		//Addanimationwithsheet("walk","textures/cat-walk.png",0,3,0,0,32,32,-1,-1,1,-1);
 		Addanimationwithsheet("walk","textures/cat-walk.png",0,3,0,0,32,32);
 		Addanimationwithsheet("stop","textures/cat-stop.png",0,3,0,0,32,32,-1,-1,-1,0.02);
 		Addanimationwithsheet("jump","textures/cat-jump1.png",0,0,0,0,32,32);
@@ -22,19 +22,19 @@ class player implements GL_Sprite
 		
 		Setcollidermode(true);
 		//Setcollisionrect(6,10,20,20);
+		// Para poder mover el sprite por la pantalla creamos un pad
 		_pad=NewObject("pad","gl_pad");
 		_pad.SetPreset("CURSORS");
+		//_pad.SetPreset("Joystick1",1);
 		pad=_pad;
-		//pad.SetPreset("Joystick1",1);
 		
-		/*
-		hit=NewObject("hit","gl_sound");
-		hit.Load("audios/hit.ogg");
-		*/		
+
+		//Pintamos el marcador		
+
 	}
 	
 	virtual Move(){	
-		stage.HUD();
+		//stage.HUD();
 		_incrementoX=0;
 		if (pad.IsButton(PAD_BUTTON_RIGHT)){
 			_incrementoX=2;
@@ -50,6 +50,7 @@ class player implements GL_Sprite
 		if(pad.IsButtonDown(PAD_BUTTON_1) && aceleracion==0){
 			incrementoY=-5;
 			aceleracion=0;
+			app.resources.audios[app.resources.AUDIO_JUMP].Play();
 		}	
 		
 		//si estamos subiendo o bajando
@@ -77,58 +78,86 @@ class player implements GL_Sprite
 	}
 	virtual OnSpriteCollision (_sp1,_sp2)
 	{
-		if(Class_Id(_sp2)=="Enemy"){
-			//GetEngine().LogPrint("colision con enemigo");
-			_fx=CreateFx("Tint");
-			_fx.Start(100,RGB(255,0,0));
-			
-		}else if(Class_Id(_sp2)=="Fruit"){
-			//GetEngine().LogPrint("colision con fruta");
-			_sp2.Destroy();
-			caught++;
-			stage.HUD();
-			
-			if(caught>=5){
-				currentStage++;
-				if (currentStage==2) currentStage=0;
-			 	GetApp().RunStage("stage", "stage"+currentStage);
-			}
-		}else if(Class_Id(_sp2)=="Animal" ){
-			stage.DestroyAnimal(_sp2);
-			//_type=_sp2.GetType();			
-			//stage.CreateAnimal(_type);
-			if(_sp2.type==4)stage.asesino_creado=False;
+	    if(Class_Id(_sp2)=="Animal" ){
+			app.resources.audios[app.resources.AUDIO_HIT].Play();
+			app.animals-=[_sp2];
+			_sp2.Destroy();			
 			playerDie();
 		}else if(Class_Id(_sp2)=="Vehicle"){
+			app.resources.audios[app.resources.AUDIO_HIT].Play();
+			app.cars-=[_sp2];
 			_sp2.Destroy();
 			playerDie();
 		}else if(Class_Id(_sp2)=="Platform"){
+			//app.Log("El tipo es "+_sp2.GetName());
 			if(GetY()<_sp2.GetY() && incrementoY>=0 && _sp2.GetName()=="plataforma"){	
 				//lo situamos encima de la plataforma
 				SetY(_sp2.GetY()-GetHF()+1);
 				incrementoY=0;
 				aceleracion=0;
 			}else if(GetY()<_sp2.GetY() && incrementoY>=0 && _sp2.GetName()=="toldo"){	
-				//lo situamos encima de la plataforma
 				SetY(_sp2.GetY()-GetHF()+1);
 				incrementoY=-10;
 				aceleracion=0;
 			}else if(_sp2.GetName()=="muerte"){	
+				SetPos(30,60);
 				playerDie();
-				if(lives>0) SetPos(0,60);	
 			}
+		}else if(Class_Id(_sp2)=="Fruit"){
+			app.resources.audios[app.resources.AUDIO_CAUGHT].Play();
+			app.fruits-=[_sp2];
+			_sp2.Destroy();
+			caught++;
+			score+=10;
+			//Si hemos cogido 5 piezas de comida cambiamos de pantalla
+			if(caught>=5){
+				app.DeshabilitarColisionEnemigos();
+				app.timer_text_completed.Start();	
+			}
+		
 		}
 	}	
 	
 	function playerDie(){
 		//Efecto de color rojo durante 2 segundos
-		_fx=CreateFX("TINT");
-		_fx.Start(2000, RGB(255,0,0));
-		//Efecto de parpadep
-		_fx=CreateFX("BLINK");
-		_fx.Start(100,15);
+		
 		lives--;
-		stage.HUD();
-		if(lives<=0) GetApp().RunStage("menu", "menu");
+		if(lives<=0) {
+			//app.resources.audios[app.resources.AUDIO_GAME_OVER].Play();	 
+			app.resources.GetMusicIngame().Stop();
+			app.mapper.ClearLayers();
+			app.Restablecer();
+			lives=7;
+			caught=0;
+			//Comprobamos si tiene algun record
+			if (app.db.CheckRecord(score)){
+				//gl.Stop();
+				app.Log("Se ha encontrado un nuevo record!");
+				//name=app.GetEngine().InputDialogModal("New record, enter your name", "", 0, "OnOkDialog");
+				name=app.GetEngine().AlertDialog("New record, enter your name", "", 0, "OnAlertDialogOk", "OnAlertDialogcancel");
+			
+				
+			}else{
+				app.Log("no hay nuevo record");
+				stage=new Menu(app);
+			}
+			
+		}else{
+			_fx=CreateFX("TINT");
+			_fx.Start(2000, RGB(255,0,0));
+			//Efecto de parpadeo
+			_fx=CreateFX("BLINK");
+			_fx.Start(100,15);
+			app.hud.DrawScore();
+		}
+	}
+	
+	function OnAlertDialogOk(){
+		app.Log("El nombre introducido es "+name);
+		app.db.InsertRecord(name, score);
+	}
+	
+	function OnAlertDialogcancel(){
+		stage=new Menu(app);
 	}
 }

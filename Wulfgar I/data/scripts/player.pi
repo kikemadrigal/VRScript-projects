@@ -20,6 +20,7 @@ class Player implements GL_sprite{
 		//Llaves a recoger (puede variar según pantalla
 		keys_to_collect=3;
 
+
 	virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
 		Addanimationwithsheet("idle",GetApp().path+"images/player.png",0,0,0,0,64,64);
@@ -70,7 +71,7 @@ class Player implements GL_sprite{
 			Class_Id(_sp2)=="HorizontalPlatformBig" ||
 			Class_Id(_sp2)=="ParachuteBomb" ||
 			Class_Id(_sp2)=="SleepingBat" ){
-			game.GetApp().StageGlobal.play_sound_hit();
+			
 			if(attack){
 				_sp2.touches++;
 				_fx=_sp2.CreateFX("TINT");
@@ -89,6 +90,7 @@ class Player implements GL_sprite{
 		   Class_Id(_sp2)=="Boss3"|| 
 		   Class_Id(_sp2)=="Boss4" || 
 		   Class_Id(_sp2)=="CrushingBrick"|| 
+		   Class_Id(_sp2)=="Windmill"|| 
 		   Class_Id(_sp2)=="Saw"){
 		   		player_die();
 		   }
@@ -99,6 +101,7 @@ class Player implements GL_sprite{
 			//GetApp().GetEngine().LogPrint("colsionn con: "+_sp2.GetItemType());
 			//Si es la meta
 			if(_sp2.GetItemType()==OBJECT_TYPE_META){
+				//GetApp().GetEngine().LogPrint("colision con meta");
 				//game.ChangeStage();	
 				game.change_stage();
 			}
@@ -113,8 +116,8 @@ class Player implements GL_sprite{
 				if(keys_to_collect<=0){
 					//creamos la meta
 					//Si es la pantalla vertical lo ponemos arriba
-					if(game.currentStage==4) game.create_object(OBJECT_TYPE_META,700,5*32);
-					else game.create_object(OBJECT_TYPE_META,LEVEL_WIDTH-60,GetApp().GetResY()-100);
+					if(game.currentStage==5) game.create_object(OBJECT_TYPE_META,700,5*32, game.currentStage);
+					else game.create_object(OBJECT_TYPE_META,LEVEL_WIDTH-60,GetApp().GetResY()-100, game.currentStage);
 				}
 				game.GetApp().StageGlobal.play_sound_keys();
 			//Si es unamoeda de 50 puntos
@@ -225,11 +228,19 @@ class Player implements GL_sprite{
 				game.GetApp().Sleep(8000);				
 				game.print_score("");
 				game.print_text_game("");
-				game.GetApp().changeMenuScreen();
+				if (GetApp().db.CheckRecord(score)){
+					_name_for_new_record=GetApp().GetEngine().InputDialogModal("New record, enter your name", "", 0, " ");
+					//GetApp().GetEngine().LogPrint("El nombre introducido es "+name_for_new_record);
+					//name_for_new_record=GetApp().GetEngine().AlertDialog("New record, enter your name", "Your name", 0, "OnAlertDialogOk", "OnAlertDialogcancel");
+					if(strlen(_name_for_new_record)>0 && _name_for_new_record!="")OnAlertDialogOk(_name_for_new_record);
+					else game.GetApp().changeMenuScreen();
+				}else{
+					game.GetApp().changeMenuScreen();
+				}
 			}
 		}else{
 			// Hacemos un sonido de golpe
-			GetApp().stageGlobal.play_sound_hit();
+			game.GetApp().StageGlobal.play_sound_player_hit();
 			//Efecto de color rojo durante 2 segundos
 			_fx=CreateFX("TINT");
 			_fx.Start(2000, RGB(255,0,0));
@@ -240,5 +251,14 @@ class Player implements GL_sprite{
 			game.print_score();
 		}
 	}
+
+	
+	function OnAlertDialogOk(_name_for_new_record){
+		//GetApp().GetEngine().LogPrint("El nombre introducido es "+_name_for_new_record);
+		game.GetApp().db.InsertRecord(_name_for_new_record, score);
+		game.GetApp().changeMenuScreen();
+	}
+	
+
 
 }

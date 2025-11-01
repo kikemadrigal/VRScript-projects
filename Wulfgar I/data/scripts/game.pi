@@ -9,6 +9,7 @@ class Game implements GL_Stage{
         Objects=[]; 
         fires=[];
         enemies=[];
+        enemies_for_screen=[];
         mapper=null;
         layer=null;
         stage=null;
@@ -16,25 +17,44 @@ class Game implements GL_Stage{
         //GROUND_Y=20*32;
         //450 de alto /32 = 14, pero el player ocupa 2 tiles (64x64px), por lo tanto nuestro player estara en 10
         GROUND_Y=10*32;
-        //la pantalla 12 es la oscura
-        // la 13 es  la vertical
-        //La 14 es la que va corriendo
+        //niveles=1(escribe), 7(escribe 6), 13, 19
         currentStage=0;
         shadow_mode=false;
-        background_moving=false;
+        //background_moving=false;
         //Variable para hacer el efecto oscurer lentamente
         fade_game=null;
         //Esto es para ver la hora del sistema
         time=null;
         time_str="";
+        resources=null;
+
 
     virtual _operator_new(_name,_creators){
         mapper =NewObject("mapper","gl_mapper");
         player1=NewObject("player","Player",[this]);
         fade_game = GetApp().NewStage("fade","fade");
         time=SysTime_New();
+
+        //Las imágenes
+        //print_text_game("Cargando texturas de fondos...");
+        resources=new Resources(this);
+        //print_text_game("");
         //GetApp().stageGlobal.energy_bar.SetVisible(true);
+        if(currentStage==2 || currentStage==3 || currentStage==4 || currentStage==5 ){
+            resources.load_bgs(1);
+            resources.load_actors(1);
+        }else if(currentStage==8 || currentStage==9 || currentStage==10 || currentStage==11 ){
+            resources.load_bgs(2);
+            resources.load_actors(2);
+        }else if(currentStage==14 || currentStage==15 || currentStage==16 || currentStage==17 ){
+            resources.load_bgs(3);
+            resources.load_actors(3);
+        }else if(currentStage==20 || currentStage==21 || currentStage==22 || currentStage==23 ){
+            resources.load_bgs(4);
+            resources.load_actors(4);
+        }
         ChangeStage();
+             
 
     }
     virtual _operator_delete(){
@@ -49,37 +69,50 @@ class Game implements GL_Stage{
         tileSet=null;
         stage=null;*/
     }
+
     virtual Move(){
         if(DEBUG_MODE){
             //Para ver la hora del sistema ponemos esto
             SysTime_Update(time);
             time_str = SysTime_ToString(time, "time: mm:ss");
-            //Con esto vamos a la siguiente pantalla al pulsar en escape
-            if(GetApp().stageGlobal.pad.IsButton(PAD_BUTTON_3)){
-                Change_stage();
-            }
+           
+           
         }
+        //Con esto vamos a la siguiente pantalla al pulsar left control +n
+        if(GetApp().stageGlobal.pad.IsButton(PAD_BUTTON_2) && GetApp().stageGlobal.pad.IsButton(PAD_BUTTON_3)){
+            Change_stage();
+        }
+
+  
+        /*if(background_moving){
+		    stage.mosaico.IncUV(0.001f,0);
+        }*/
+        /*if(load_level){
+            resources.load_bgs(1);
+            resources.load_actors(1);
+            load_level=false;
+        }*/
         //Esto es olo para la pantalla 13 que sale una sombra
         if(shadow_mode){
             //La imagen negra son 1600*900
             stage.shadow.SetPos(player1.GetX()-800,player1.GetY()-450); 
             //vamos a motrar solo los objetos que estén a menos de 100 pixeles
             for(x=0; x<sizeof(objects);x++) {
-                if(player1.DistanceTo(objects[x])<160) objects[x].SetVisible(true);
-                else objects[x].SetVisible(false);
+                //if(objects[x].screen==15){
+                    if(player1.DistanceTo(objects[x])<160 && !objects[x].GetStop()) objects[x].SetVisible(true);
+                    //else objects[x].SetVisible(false);
+                //}
             }
             for(y=0; y<sizeof(enemies);y++) {
-                if(player1.DistanceTo(enemies[y])<160){
-                    enemies[y].SetVisible(true);
-                } else {
-                    enemies[y].SetVisible(false);
-                }
+                //if(objects[x].screen==15){
+                    if(player1.DistanceTo(enemies[y])<160  && !enemies[y].GetStop()) enemies[y].SetVisible(true);
+                    //} else {
+                       // enemies[y].SetVisible(false);
+                    //}
+               // }
             }
         } 
-    
-        if(background_moving){
-            stage.bgr.IncUV(0.005f,0);
-        }
+
     }
 
     function get_time_seconds_str(){
@@ -98,8 +131,7 @@ class Game implements GL_Stage{
     }
 
     function print_score(){    
-        _message="Stage: "+currentStage+
-                "  Score: "+player1.score+
+        _message=" Score: "+player1.score+
                 " Keys: "+player1.keys_to_collect+
                 " Energy: "+player1.lives;    
         if(DEBUG_MODE){
@@ -107,10 +139,11 @@ class Game implements GL_Stage{
                      " right: "+get_tile_right(player1.GetX(),player1.GetY())+
                      " left: "+get_tile_left(player1.GetX(),player1.GetY())+
                      " down: "+get_tile_down(player1.GetX(),player1.GetY());
-            _message+="\nEnemies: "+sizeof(enemies)+
+            _message+="\nStage: "+currentStage+
+                    " enemies: "+sizeof(enemies)+
                     " objects "+sizeof(Objects)+
-                    " fires "+sizeof(fires)+"X: "+GetCameraX()+" y: "+GetCameraY();
-            _message+="\nFPS: "+GETFPS(1);
+                    " fires "+sizeof(fires)+" X: "+GetCameraX()+" y: "+GetCameraY();
+            _message+="\nFPS: "+GETFPS(1)+" vertical: "+GetApp().is_vertical_stage+", camara: "+GetApp().camera_not_move;
         }
         GetApp().stageGlobal.text_score.SetText(_message);
         //GetApp().stageGlobal.energy_bar.SetSize(10*player1.lives,20, true);
@@ -181,109 +214,119 @@ class Game implements GL_Stage{
     }
     function AddActor(_name, _type, _x, _y, _params)
 	{
+        //GetEngine().LogPrint("Tipo de actor: "+_type);
+        counter=_params[0];
+        
 		switch (_type)
 		{
             /**
              * Objetos
              */
             case "llaves":
-                create_object(OBJECT_TYPE_COLLECTIBLE_KEY,_x, _y);
+                create_object(OBJECT_TYPE_COLLECTIBLE_KEY,_x, _y, counter);
                 break;  
             case "moneda50":
-                create_object(OBJECT_TYPE_COLLECTIBLE_COIN50,_x, _y);
+                create_object(OBJECT_TYPE_COLLECTIBLE_COIN50,_x, _y, counter);
                 break;  
             case "moneda100":
-                create_object(OBJECT_TYPE_COLLECTIBLE_COIN100,_x, _y);
+                create_object(OBJECT_TYPE_COLLECTIBLE_COIN100,_x, _y, counter);
                 break;  
             case "plataforma_horizontal":
-                create_object(OBJECT_TYPE_PLATFORM_HORIZONTAL,_x, _y);
+                create_object(OBJECT_TYPE_PLATFORM_HORIZONTAL,_x, _y, counter);
                 break; 
             case "plataforma_vertical":
-                create_object(OBJECT_TYPE_PLATFORM_VERTICAL,_x, _y);
+                create_object(OBJECT_TYPE_PLATFORM_VERTICAL,_x, _y, counter);
                 break; 
             case "fuego_que_mata":
-                create_object(OBJECT_TYPE_FIRE_DEATH,_x, _y);
+                create_object(OBJECT_TYPE_FIRE_DEATH,_x, _y, counter);
                 break;  
             case "lava":
-                create_object(OBJECT_TYPE_LAVA,_x, _y);
+                create_object(OBJECT_TYPE_LAVA,_x, _y, counter);
                 break;  
             case "paja":
-                create_object(OBJECT_TYPE_SAND,_x, _y);
+                create_object(OBJECT_TYPE_SAND,_x, _y, counter);
                 break;  
             case "dama-encarcelada":
-                create_object(OBJECT_TYPE_IMPRISONED_LADY,_x, _y);
+                create_object(OBJECT_TYPE_IMPRISONED_LADY,_x, _y, counter);
                 break;  
+
+
+
             /**
              * Enemigos
              */
             case "escorpion":
-                create_enemy(ENEMY_TYPE_SQUIRREL,_x, _y);
+                create_enemy(ENEMY_TYPE_SQUIRREL,_x, _y, counter);
                 break;  
             case "buitre":
-                create_enemy(ENEMY_TYPE_VULTURE,_x, _y);
+                create_enemy(ENEMY_TYPE_VULTURE,_x, _y, counter);
                 break;  
             case "monstruo1":
-                create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,_x, _y);
+                create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,_x, _y, counter);
                 break; 
             case "monstruo2":
-                create_enemy(ENEMY_TYPE_SHOOT_PLAYER_VERTICAL,_x, _y);
+                create_enemy(ENEMY_TYPE_SHOOT_PLAYER_VERTICAL,_x, _y, counter);
                 break; 
             case "sierra":
-                create_enemy(ENEMY_TYPE_SAW,_x, _y);
+                create_enemy(ENEMY_TYPE_SAW,_x, _y, counter);
                 break;
             case "pendulo":
-                create_enemy(ENEMY_TYPE_PENDULUM,_x, _y);
+                create_enemy(ENEMY_TYPE_PENDULUM,_x, _y, counter);
                 break;
             case "ladrillo-que-aplasta":
-                create_enemy(ENEMY_TYPE_CRUSHING_BRICK,_x, _y);
+                create_enemy(ENEMY_TYPE_CRUSHING_BRICK,_x, _y, counter);
                 break;
             case "bomba":
-                create_enemy(ENEMY_TYPE_BOMB,_x, _y);
+                create_enemy(ENEMY_TYPE_BOMB,_x, _y, counter);
                 break;
             case "murcielago":
-                create_enemy(ENEMY_TYPE_BAT,_x, _y);
+                create_enemy(ENEMY_TYPE_BAT,_x, _y, counter);
                 break;
             case "martillo":
-                create_enemy(ENEMY_TYPE_HAMMER,_x, _y);
+                create_enemy(ENEMY_TYPE_HAMMER,_x, _y, counter);
                 break;
             case "araña":
-                create_enemy(ENEMY_TYPE_SPIDER,_x, _y);
+                create_enemy(ENEMY_TYPE_SPIDER,_x, _y, counter);
                 break;
             case "calavera-pequeña":
-                create_enemy(ENEMY_TYPE_SMALL_SKULL,_x, _y);
+                create_enemy(ENEMY_TYPE_SMALL_SKULL,_x, _y, counter);
                 break;
             case "calavera-grande":
-                create_enemy(ENEMY_TYPE_LARGE_SKULL,_x, _y);
+                create_enemy(ENEMY_TYPE_LARGE_SKULL,_x, _y, counter);
                 break;
             case "tortuga":
-                create_enemy(ENEMY_TYPE_TURTLE,_x, _y);
+                create_enemy(ENEMY_TYPE_TURTLE,_x, _y, counter);
                 break;
             case "cangrejo":
-                create_enemy(ENEMY_TYPE_CRAB,_x, _y);
+                create_enemy(ENEMY_TYPE_CRAB,_x, _y, counter);
                 break;
             case "erizo":
-                create_enemy(ENEMY_TYPE_HEDGEHOG,_x, _y);
+                create_enemy(ENEMY_TYPE_HEDGEHOG,_x, _y, counter);
                 break;
             case "ladron":
-                create_enemy(ENEMY_TYPE_THIEF,_x, _y);
+                create_enemy(ENEMY_TYPE_THIEF,_x, _y, counter);
                 break;
             case "jabali":
-                create_enemy(ENEMY_TYPE_WILD_PIG,_x, _y);
+                create_enemy(ENEMY_TYPE_WILD_PIG,_x, _y, counter);
                 break;
             case "murcielago-dormido":
-                create_enemy(ENEMY_TYPE_SLEEPING_BAT,_x, _y);
+                create_enemy(ENEMY_TYPE_SLEEPING_BAT,_x, _y, counter);
                 break;
             case "bomba-paracidas":
-                create_enemy(ENEMY_TYPE_PARACHUTE_BOMB,_x, _y);
+                create_enemy(ENEMY_TYPE_PARACHUTE_BOMB,_x, _y, counter);
                 break;
             case "rinoceronte":
-                create_enemy(ENEMY_TYPE_RHINOCEROS,_x, _y);
+                create_enemy(ENEMY_TYPE_RHINOCEROS,_x, _y, counter);
                 break;
             case "oso":
-                create_enemy(ENEMY_TYPE_BEAR,_x, _y);
+                create_enemy(ENEMY_TYPE_BEAR,_x, _y, counter);
                 break;
             case "buitre-circulo":
-                create_enemy(ENEMY_TYPE_VULTURE_CIRCLE,_x, _y);
+                create_enemy(ENEMY_TYPE_VULTURE_CIRCLE,_x, _y, counter);
+                break;  
+            case "molino":
+
+                create_enemy(ENEMY_TYPE_WINDMILL,_x, _y, counter);
                 break;  
                 
             default:
@@ -296,126 +339,180 @@ class Game implements GL_Stage{
     function change_stage(){
         player1.SetCollision(false);
         fade_game.SetOnCompleted(this,"ChangeStage");
+        //if(currentStage!=7 && currentStage!=13)
         fade_game.On();
     }
 
 
     function ChangeStage(){
-        
+        getApp().stageGlobal.pad.SetStop(true);
+        gl.Stop();
+        //Los mapas están en la 19,13,7 y 1
         currentStage++;
+        // if(currentStage!=7 && currentStage!=13)
         fade_game.Off();
         //GetEngine().LogPrint("camniando a la escena "+currentStage);
-        //if(currentStage>21) currentStage=0;
         if(stage!=null) delete stage;
-        if(currentStage>1) GetApp().stageGlobal.play_sound_change_level();
-        if(currentStage==6 || currentStage==11 || currentStage==16) GetApp().StageGlobal.get_music_boss_fighting().Stop();
+        if(currentStage!=1 && currentStage!=2 && currentStage!=8 && currentStage!=14 && currentStage!=19 ) GetApp().stageGlobal.play_sound_change_level();
+        if(currentStage==7 || currentStage==13 || currentStage==19 ) GetApp().StageGlobal.get_music_boss_fighting().Stop();
         else  GetApp().StageGlobal.GetMusicIngame().Stop();
+
+
         switch (currentStage){
             /**
              * El bosque
              */
+            //El mapa 1
             case 1: 
-                GetApp().stageGlobal.map.SetAnimation("map1");
-                GetApp().SetShowMap(true);
+                resources.load_bgs(1);
+                resources.load_actors(1);
                 stage=New Stage1(this);
+                change_stage();
                 break;
             case 2:
                 stage=New Stage2(this);
+                    
                 break;
             case 3:
                 stage=New Stage3(this);
                 break;
-            // Pantalla vertical
             case 4: 
-                GetApp().set_vertical_stage(true);
                 stage=New Stage4(this);
                 break;
-            //Combate boss 1: el escorpión gigante
+            //pantalla vertical
             case 5:
+                GetApp().set_vertical_stage(true);
                 GetApp().SetCameraNotMove(true);
                 stage=New Stage5(this);
                 break;
+            //Combate rey escorpión
+            case 6: 
+                GetApp().SetCameraNotMove(true);
+                stage=New Stage6(this);
+
+                break;
+
+
 
             /**
              * El prado
              */
-            //Pantalla de los muelles
-            case 6: 
-                GetApp().SetCameraNotMove(false);
-                GetApp().stageGlobal.map.SetAnimation("map2");
-                GetApp().SetShowMap(true);
-                stage=New Stage6(this);
-                break;
-            //pantalla a correr
+            //el mapa
             case 7: 
-                GetApp().SetCameraNotMove(true);
-                stage=New Stage7(this);
-                break;
-            case 8: 
+                //GetEngine().LogPrint("Vamos a cargar el mapa 2");
+                resources.load_bgs(2);
+                resources.load_actors(2);
                 GetApp().SetCameraNotMove(false);
+                //stage=New Stage7(this);
+                //change_stage();
+                //break;
+                //delete stage;
+                currentStage++;
+            //Pantalla de los muelles
+            //case 8: 
+                //GetEngine().LogPrint("Vamos a cargar la pantalla de los muelles");
                 stage=New Stage8(this);
                 break;
+            //pantalla a correr
             case 9: 
+                GetApp().SetCameraNotMove(true);
                 stage=New Stage9(this);
                 break;
             case 10: 
-                GetApp().SetCameraNotMove(true);
+                GetApp().SetCameraNotMove(false);
                 stage=New Stage10(this);
                 break;
-
-
-            /**
-             * Las cuevas
-             */
             case 11: 
-                GetApp().SetCameraNotMove(false);
-                GetApp().stageGlobal.map.SetAnimation("map3");
-                GetApp().SetShowMap(true);
                 stage=New Stage11(this);
                 break;
+            //Combate aguila
             case 12: 
+                GetApp().SetCameraNotMove(true);
                 stage=New Stage12(this);
                 break;
+            /**
+             * 
+             * Las cuevas: enemigos 42, objetos: 51-> 49,56
+             */
+            //mapa
             case 13: 
-                stage=New Stage13(this);
-                break;
-            // La oscuridad
-            case 14: 
+                GetApp().SetCameraNotMove(false);
+                resources.load_bgs(3);
+                resources.load_actors(3);
+                currentStage++;
+                //stage=New Stage13(this);
+                //change_stage();
+                //break;
+            //case 14: 
                 stage=New Stage14(this);
                 break;
-            //Combate boss 3: araña gigante
+            //la sombra
             case 15: 
-                GetApp().SetCameraNotMove(true);
+                //GetEngine().LogPrint("vamos a cargar el stage 15");
                 stage=New Stage15(this);
                 break;
-
-
-            /**
-             * El castillo
-             */
             case 16: 
-                GetApp().stageGlobal.map.SetAnimation("map4");
-                GetApp().SetShowMap(true);
-                GetApp().SetCameraNotMove(false);
                 stage=New Stage16(this);
                 break;
             case 17: 
                 stage=New Stage17(this);
                 break;
+            // COmbate araña
             case 18: 
+                GetApp().SetCameraNotMove(true);
                 stage=New Stage18(this);
                 break;
+
+
+
+
+            /**
+             * El castillo
+             */
             case 19: 
-                stage=New Stage19(this);
-                break;
-            //Combate boss 2: El dragón rojo
-            case 20: 
-                GetApp().SetCameraNotMove(true);
+                //GetEngine().LogPrint("vamos a ver el mapa");
+                GetApp().SetCameraNotMove(false);
+                resources.load_bgs(4);
+                resources.load_actors(4);
+                currentStage++;
+                //stage=New Stage19(this);
+                //change_stage();
+                //break;
+            //case 20: 
+                //GetEngine().LogPrint("Vamos a cargar la pantalla 20");
                 stage=New Stage20(this);
+                break;
+            case 21: 
+                stage=New Stage21(this);
+                break;
+            case 22: 
+                stage=New Stage22(this);
+                break;
+            case 23: 
+                stage=New Stage23(this);
+                break;
+            //Combate final
+            case 24: 
+                GetEngine().LogPrint("Vamos a cargar la pantalla 24");
+                GetApp().SetCameraNotMove(true);
+                stage=New Stage24(this);
                 break;
             
         }
-        if(currentStage==5 || currentStage==10 || currentStage==15 || currentStage==20) GetApp().StageGlobal.play_music_boss_fighting();
+
+
+
+
+
+        update_objects_for_change_stage(currentStage);
+
+   
+        //mostramos u ocultamos los enemigos y objetos según la pantalla
+       update_enemies_for_change_stage(currentStage);
+        
+
+
+        if(currentStage==6 || currentStage==12 || currentStage==18 || currentStage==24) GetApp().StageGlobal.play_music_boss_fighting();
         else GetApp().StageGlobal.play_music_ingame();
         
         //ponemos la cámara en la posición inicial
@@ -423,12 +520,14 @@ class Game implements GL_Stage{
         //Le ponemos un efecto de fade
        // GetApp().stageGlobal.fadeInEffect();
         player1.SetCollision(true);
+        gl.Play();
+        getApp().stageGlobal.pad.SetStop(false);
 	}
 
     //Objects
-    function create_object(_type, _x, _y){
+    function create_object(_type, _x, _y,_counter_screen){
         //Crea los objectos del juego, parámetros game, tipo de objeto y posición
-        object=NewObject(_type,"object",[this,_type,_x, _y]);
+        object=NewObject(_type,"object",[this,_type,_x, _y,_counter_screen]);
         objects+=[object];
     }
     function delete_objects(){
@@ -441,7 +540,7 @@ class Game implements GL_Stage{
     }
 
     //Enemies
-    function create_enemy(_type,_x,_y){
+    function create_enemy(_type,_x,_y, _counter){
         //GetEngine().LogPrint("vamos a craer un aguila "+_type);
         //Los parámetros son el game y el tipo de enemigo
         _enemy=null;
@@ -452,115 +551,119 @@ class Game implements GL_Stage{
 			 */
 			//Enemigo Aguila de izquierda a derecha
 			case ENEMY_TYPE_EAGLE:
-				_enemy=NewObject("eagle","BouncesLeftToRight",[this,_type,_x,_y]);
+				_enemy=NewObject("eagle","BouncesLeftToRight",[this,_type,_x,_y,_counter]);
 				break;
 			//Enemigo Cuervo de izquierda a derecha
 			case ENEMY_TYPE_RAVEN:
-                _enemy=NewObject("raven","BouncesLeftToRight",[this,_type,_x,_y]);
+                _enemy=NewObject("raven","BouncesLeftToRight",[this,_type,_x,_y,_counter]);
 				break;
 			//Enemigo 3
 			case ENEMY_TYPE_EAGLE_WHITE:
-				_enemy=NewObject("eagleWhite","BouncesLeftToRight",[this,_type,_x,_y]);
+				_enemy=NewObject("eagleWhite","BouncesLeftToRight",[this,_type,_x,_y,_counter]);
 				break;
 			//Enemigo 4
 			case ENEMY_TYPE_RAVEN_BLACK:
-       			_enemy=NewObject("ravenBlack","BouncesLeftToRight",[this,_type,_x,_y]);
+       			_enemy=NewObject("ravenBlack","BouncesLeftToRight",[this,_type,_x,_y,_counter]);
 				break;
 			//Buitre que te persigue
 			case ENEMY_TYPE_VULTURE:
-       			_enemy=NewObject("vulture","Vulture",[this,_type,_x,_y]);
+       			_enemy=NewObject("vulture","Vulture",[this,_type,_x,_y,_counter]);
 				break;
 			// Escorpión
 			case ENEMY_TYPE_SQUIRREL:
-	   			_enemy=NewObject("squirrel","HorizontalPlatform",[this,_type,_x,_y]);
+	   			_enemy=NewObject("squirrel","HorizontalPlatform",[this,_type,_x,_y,_counter]);
 				break;
 			// El murciélago
 			case ENEMY_TYPE_BAT:
-       			_enemy=NewObject("bat","Circle",[this,_type,_x,_y]);
+       			_enemy=NewObject("bat","Circle",[this,_type,_x,_y,_counter]);
 				break;
 			//monstruo que dispara derecha o izquierda
 			case ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL:
-                _enemy=NewObject("shootPlayerHorizontal","ShootPlayerHorizontal",[this,_type,_x,_y]);
+                _enemy=NewObject("shootPlayerHorizontal","ShootPlayerHorizontal",[this,_type,_x,_y,_counter]);
 				break;
 			//Monstruo que dispara fuego vertical
 			case ENEMY_TYPE_SHOOT_PLAYER_VERTICAL:
-                _enemy=NewObject("shootPlayerVertical","ShootPlayerVertical",[this,_type,_x,_y]);
+                _enemy=NewObject("shootPlayerVertical","ShootPlayerVertical",[this,_type,_x,_y,_counter]);
 				break;
 			// La sierra
 			case ENEMY_TYPE_SAW:
-                _enemy=NewObject("saw","Saw",[this,_type,_x,_y]);
+                _enemy=NewObject("saw","Saw",[this,_type,_x,_y,_counter]);
 				break;
 			//péndolo
 			case ENEMY_TYPE_PENDULUM:
-                _enemy=NewObject("pendulum","pendulum", [this,_x, _y, 50]);
+                _enemy=NewObject("pendulum","pendulum", [this,_x, _y, 50,_counter]);
 				break;
 			// Ladrillo que aplasta
 			case ENEMY_TYPE_CRUSHING_BRICK:
-                _enemy=NewObject("crushingBrick","CrushingBrick",[this,_type,_x,_y]);
+                _enemy=NewObject("crushingBrick","CrushingBrick",[this,_type,_x,_y,_counter]);
 				break;
 			// Bomba andando
 			case ENEMY_TYPE_BOMB:
-                _enemy=NewObject("bomb","HorizontalPlatform",[this,_type,_x,_y]);
+                _enemy=NewObject("bomb","HorizontalPlatform",[this,_type,_x,_y,_counter]);
 				break;
 			case ENEMY_TYPE_HEDGEHOG:
-                _enemy=NewObject("hedgehog","HorizontalPlatform",[this,_type,_x,_y]);
+                _enemy=NewObject("hedgehog","HorizontalPlatform",[this,_type,_x,_y,_counter]);
 				break;
 			case ENEMY_TYPE_WILD_PIG:
-                _enemy=NewObject("hedgehog","HorizontalPlatform",[this,_type,_x,_y]);
+                _enemy=NewObject("hedgehog","HorizontalPlatform",[this,_type,_x,_y,_counter]);
 				break;
 			case ENEMY_TYPE_DRAGON:
-                _enemy=NewObject("dragon","CloudBalancing",[this,_type,_x,_y]);
+                _enemy=NewObject("dragon","CloudBalancing",[this,_type,_x,_y,_counter]);
 				break;
 			// El hombre con el martillo
 			case ENEMY_TYPE_HAMMER:
-                _enemy=NewObject("hammer","Hammer",[this,_type,_x,_y]);
+                _enemy=NewObject("hammer","Hammer",[this,_type,_x,_y,_counter]);
 				break;
 			// La araña
 			case ENEMY_TYPE_SPIDER:
-                _enemy=NewObject("spider","HorizontalPlatform",[this,_type,_x,_y]);
+                _enemy=NewObject("spider","HorizontalPlatform",[this,_type,_x,_y,_counter]);
 				break;
 			// calavera pequeña
 			case ENEMY_TYPE_SMALL_SKULL:
-                _enemy=NewObject("smallSkull","HorizontalPlatform",[this,_type,_x,_y]);
+                _enemy=NewObject("smallSkull","HorizontalPlatform",[this,_type,_x,_y,_counter]);
 				break;
 			case ENEMY_TYPE_LARGE_SKULL:
-                _enemy=NewObject("largeSkull","HorizontalPlatformBig",[this,_type,_x,_y]);
+                _enemy=NewObject("largeSkull","HorizontalPlatformBig",[this,_type,_x,_y,_counter]);
 				break;
 			case ENEMY_TYPE_THIEF:
-                _enemy=NewObject("thief","HorizontalPlatformBig",[this,_type,_x,_y]);
+                _enemy=NewObject("thief","HorizontalPlatformBig",[this,_type,_x,_y,_counter]);
 				break;
             case ENEMY_TYPE_TURTLE:
-	   			_enemy=NewObject("turtle","HorizontalPlatform",[this,_type,_x,_y]);
+	   			_enemy=NewObject("turtle","HorizontalPlatform",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_CRAB:
-	   			_enemy=NewObject("crab","HorizontalPlatform",[this,_type,_x,_y]);
+	   			_enemy=NewObject("crab","HorizontalPlatform",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_CLOUD:
-                _enemy=NewObject("cloud","CloudBalancing",[this,_type,_x,_y]);
+                _enemy=NewObject("cloud","CloudBalancing",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_SLEEPING_BAT:
-                _enemy=NewObject("sleepingBat","SleepingBat",[this,_type,_x,_y]);
+                _enemy=NewObject("sleepingBat","SleepingBat",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_PARACHUTE_BOMB:
-                _enemy=NewObject("parachuteBomb","ParachuteBomb",[this,_type,_x,_y]);
+                _enemy=NewObject("parachuteBomb","ParachuteBomb",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_RHINOCEROS:
-                _enemy=NewObject("rhinoceros","BouncesLeftToRight",[this,_type,_x,_y]);
+                _enemy=NewObject("rhinoceros","BouncesLeftToRight",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_DRAGON_BLUE:
-                _enemy=NewObject("dragonBlue","CloudBalancing",[this,_type,_x,_y]);
+                _enemy=NewObject("dragonBlue","CloudBalancing",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_BEAR:
-                _enemy=NewObject("bear","HorizontalPlatformBig",[this,_type,_x,_y]);
+                _enemy=NewObject("bear","HorizontalPlatformBig",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_VULTURE_CIRCLE:
-                _enemy=NewObject("vultureCircle","Circle",[this,_type,_x,_y]);
+                _enemy=NewObject("vultureCircle","Circle",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_EAGLE_LEFT:
-                _enemy=NewObject("eagleLeft","BouncesLeftToRight",[this,_type,_x,_y]);
+                _enemy=NewObject("eagleLeft","BouncesLeftToRight",[this,_type,_x,_y,_counter]);
                 break;
             case ENEMY_TYPE_RAVEN_LEFT:
-                _enemy=NewObject("ravenLeft","BouncesLeftToRight",[this,_type,_x,_y]);
+                _enemy=NewObject("ravenLeft","BouncesLeftToRight",[this,_type,_x,_y,_counter]);
+                break;
+            case ENEMY_TYPE_WINDMILL:
+                //GetEngine().LogPrint("vamos a crear el molino");
+                _enemy=NewObject("windmill","Windmill",[this,_type,_x,_y,_counter]);
                 break;
             default:
                 GetEngine().LogPrint("Tipo de enemigo no definido: "+_type);
@@ -570,7 +673,10 @@ class Game implements GL_Stage{
         return _enemy;
     }
     function delete_enemies(){
-       	for(x=0; x<sizeof(enemies);x++) delete enemies[x];
+       	for(x=0; x<sizeof(enemies);x++) {
+            
+            delete enemies[x];
+        }
 		enemies=[];
     }
     function delete_enemy(_enemy){
@@ -595,4 +701,47 @@ class Game implements GL_Stage{
         fires-=[_fire];
         delete _fire;
     }
+
+
+
+
+
+
+
+    function update_enemies_for_change_stage(screen){
+        //for(x=0; x<sizeof(enemies_for_screen);x++) delete enemies_for_screen[x];
+        for(x=0; x<sizeof(enemies);x++){
+            //if(enemies[x].screen==currentStage) enemies_for_screen+=[enemies[x]];
+            if(enemies[x].screen==currentStage) {
+                enemies[x].SetStop(false);
+                enemies[x].SetVisible(true);
+                enemies[x].SetCollision(true);
+            }
+           else {
+                enemies[x].SetStop(true);
+                enemies[x].SetVisible(false);
+                enemies[x].SetCollision(false);
+           }
+        }
+        //return enemies_for_screen;
+    }
+
+    function update_objects_for_change_stage(screen){
+        //for(x=0; x<sizeof(ob objects_for_screen);x++) delete ob objects_for_screen[x];
+        for(x=0; x<sizeof(objects);x++){
+            //if(objects[x].screen==currentStage) objects_for_screen+=[objects[x]];
+            if(objects[x].screen==currentStage) {
+                objects[x].SetStop(false);
+                objects[x].SetVisible(true);
+                objects[x].SetCollision(true);
+            }
+           else {
+                objects[x].SetStop(true);
+                objects[x].SetVisible(false);
+                objects[x].SetCollision(false);
+           }
+        }
+        //return enemies_for_screen;
+    }
+
 }

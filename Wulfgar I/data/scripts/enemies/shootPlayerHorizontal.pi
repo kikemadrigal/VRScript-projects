@@ -1,13 +1,15 @@
 namespace es_tipolisto_WulfgarI;
 
 class ShootPlayerHorizontal implements Enemy{
-    properties:
-        fires=[];
+    //properties:
+        //fires=[];
       
+      
+    //_enemy=NewObject("shootPlayerHorizontal","ShootPlayerHorizontal",[this,_type,_x,_y,_counter]);
 
     virtual _operator_new(_name,_creator, _params){
         game=_params[0];
-        Addanimationwithsheet("monstruo1",game.GetApp().path+"images/objects-enemies.png",0,3,0,14*32,32,32,-1,-1,-1,.2);
+        Addanimationwithsheet("monstruo1","images/objects-enemies.png",0,3,0,14*32,32,32,-1,-1,-1,.2);
         Setanimation("monstruo1");
         // Este enemigo tendrá un buffer de 5 fuegos
         for(i=0;i<2;i++){
@@ -15,7 +17,7 @@ class ShootPlayerHorizontal implements Enemy{
             // Los sacamos de la pantalla
             _fire.SetPos(-100,-100);
             _fire.incrementoX=0;
-            fires+=[_fire];
+            //fires+=[_fire];
         }
     }
     /*virtual _operator_delete(){
@@ -37,11 +39,11 @@ class ShootPlayerHorizontal implements Enemy{
                 SetHFlip(False);
             }
             // obtenemos un fire con una velocidad 0 y lo convertimos en un fuego horizontal
-            for(i=0;i<sizeof(fires);i++){
-                _fire=fires[i];
-                if(_fire.incrementoX==0){
+            for(i=0;i<sizeof(game.fires);i++){
+                _fire=game.fires[i];
+                if(_fire.incrementoX==0 && _fire.incrementoY==0){
                     //GetApp().GetEngine().LogPrint("vamos a disparar un fuego");
-                    game.GetApp().stageGlobal.play_sound_fire();
+                    //game.GetApp().stageGlobal.play_sound_fire();
                     if(GetHFlip()){
                         _fire.SetPos(GetX()-10,GetY()+10);
                         _fire.incrementoX=-5;
@@ -60,6 +62,7 @@ class ShootPlayerHorizontal implements Enemy{
     }
     
 	virtual _operator_delete(){
-		
+		//for(x=0; x<sizeof(fires);x++) delete fires[x];
+        //fires=[];
 	}
 }

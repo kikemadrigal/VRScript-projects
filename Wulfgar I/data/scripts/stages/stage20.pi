@@ -1,21 +1,28 @@
 namespace es_tipolisto_WulfgarI;
-
 /**
- * El super dragón, pantalla fiinal
- * lanza llamas en todas direcciones
+ * Pantalla 8, castillo interior rojizo
+ * Fondo: 
+ * Tiles: plataformas marrón claro
+ * Enemigos 6: 
+ *    Erizos
+ *    Cangrejos
+ * Objetos 14:
+ *   Llaves, 
+ *   candado, 
+ *   monedas,
+
  */
 
 class Stage20{
     properties:
         game=null;
         bg=null;
-        boss=null;
 
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100);
+            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100, game.currentStage);
         }
         //ponemos que tenemos que coger 3 llaves
         _game.player1.keys_to_collect=3;
@@ -23,30 +30,19 @@ class Stage20{
  
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage20.png");
+        bg.AddTexFrame(game.resources.get_bg_image(game.currentStage));
         bg.SetPriority(-1);
 
-        _tmx = new TMX_Loader();
+        _tmx = new TMX_tiles();
         _tmx.Load(_game.mapper, "resources/tilesmap20.tmx", _game);
         delete _tmx;
-
-        //creamos al boss 3: parámtero game y player1
-        boss=_game.NewObject("boss4","Boss4",[game]);
+        
         //pintamos el marcador
         _game.print_score();
-        //Pintamos la vida que le queda al boss
-        _game.draw_boss_live(boss.boss_live);  
-       
-    }
+
+    }   
     function _operator_delete(){
-        delete boss;
-        game.draw_boss_live("");
         bg.Destroy();
-        game.delete_objects();
-        game.delete_enemies();
-        game.delete_fires();
         delete game.layer;
     }
-
-
 }

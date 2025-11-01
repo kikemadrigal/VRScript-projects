@@ -13,7 +13,7 @@ class Boss2 implements GL_sprite{
 		incrementoY=0;
 		game=null;
         player1=null;
-        boss_live=300;
+        boss_live=100;
         boss_dead=false;
         timer_create_enemies=null;
         timer_play_laugh_boss=null;
@@ -38,19 +38,19 @@ class Boss2 implements GL_sprite{
             //Fijate que los pájaros son del 1 al 4 (mira los defines del main.pi)
             _type_random=rand(1,4);
             //Lo ponemos fuera de la pantalla
-            _enemy=game.create_enemy(_type_random,-100,-100);
+            _enemy=game.create_enemy(_type_random,-100,-100, game.currentStage);
             _enemy.speedX=0;
         }
         // Creamos un buffer de 3 buitres para ir disparando
-        for(i=0;i<3;i++){
+        for(i=0;i<13;i++){
             //Lo ponemos fuera de la pantalla
-            _enemy=game.create_enemy(ENEMY_TYPE_VULTURE,-100,-100);
+            _enemy=game.create_enemy(ENEMY_TYPE_VULTURE,-100,-100, game.currentStage);
             _enemy.speedX=0;
         }
 
         //cada 10 segundos tira 4 águilas qpor la derecha
         timer_create_enemies=game.NewObject("timer", "GL_Timer");
-        timer_create_enemies.SetFrequency(10000);
+        timer_create_enemies.SetFrequency(5000);
         timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
     }
 
@@ -80,8 +80,8 @@ class Boss2 implements GL_sprite{
                     incrementoY=1;
                 }
 
-                //Sacamos del array de enemigos un buitre cada 20 animaciones
-                if(GetAnimationLoops()>20){
+                //Sacamos del array de enemigos un buitre cada 10 animaciones
+                if(GetAnimationLoops()>10){
                     for(i=0;i<sizeof(game.enemies);i++){
                         _enemy=game.enemies[i];
                         if(_enemy.GetItemType()==ENEMY_TYPE_VULTURE){

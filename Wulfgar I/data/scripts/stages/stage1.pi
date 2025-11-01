@@ -1,74 +1,63 @@
 namespace es_tipolisto_WulfgarI;
 
 /**
-* Pantalla 1: 7 segundo, la pantalla del dragón rojo
-* Fondo: La pantalla de los montes con un rio
-* Tiles: Ladrillos marrones y verdes.
-* Enemigos 13: 
-    Dragón rojo que escupe fuego
-    arañas que te persiguen,
-    escorpiones
-* Objetos 9: 
-    Llaves, 
-    candado, 
-    monedas
-* Fuegos: 12
+* Pantalla 1:el mapa
  */
 class Stage1{
     properties:
         game=null;
         bg=null;
-        //timer_delete_messages=null;
-
+        mosaico=null;
+        contador=0;
+       // timer_create_load_resources=null;
     function _operator_new(_game){
         game=_game;
         if (DEBUG_MODE) {
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100);
+            //_game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100,game.currentStage);
         }
 
-        _game.player1.SetPosition(20,_game.GROUND_Y);
-        _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper,game.GetApp().path+"resources/tilesmap1.tmx", _game);
-        delete _tmx;
-        //Colocamos el fondo
-        bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe(game.GetApp().path+"images/stage1.png");
-        bg.SetPriority(-1);
-        bg.SetSize(800,450);
-
-        //creamos 10 buitres
-        for (i=0; i < 10; i++){ 
-            _x_random=rand(1000,LEVEL_WIDTH);
-            _y=10;
-            _enemy=game.create_enemy(ENEMY_TYPE_VULTURE,_x_random,_y);
-        }
+        _game.player1.SetVisible(false);
         
-       //Pintamos el marcador
-        game.print_score();        
-        //Mostramos la ayuda
-        /*game.GetEngine().AlertDialog("Ayuda", "Pulsa espacio para golpear con la vara"+
-                                    "\nCursor arriba para saltar"+
-                                    "\nCursor derecha-izquierda para moverte"+
-                                    "\nMision: coge las 3 llaves para abrir el candado", 0, game, null, null, null);*/
-        /*game.print_text_game("Pulsa espacio para golpear con la vara"+
-                            "\nCursor arriba para saltar"+
-                            "\nCursor derecha-izquierda para moverte"+
-                            "\nMision: coge las 3 llaves para abrir el candado");     
-        timer_delete_messages=_game.NewObject("timer", "GL_Timer");
-        timer_delete_messages.SetFrequency(8000);
-        timer_delete_messages.SetUserCallBack(this,"OnTimerDeleteMessagesCallBack");*/
+        _tmx = new TMX_tiles();
+        _tmx.Load(_game.mapper,"resources/tilesmap1.tmx", _game);
+        delete _tmx;
+
+        bg=_game.NewObject("bg","gl_sprite");
+        _texture=game.resources.get_bg_image(game.currentStage);
+        bg.AddTexFrame(_texture);
+        bg.SetPriority(-1);
+
+        
+
+
+
+        //game.background_moving=true;
+
+        //game.print_text_game("Loading backgrounds level 1");
+        //game.resources.load_bgs(1);
+        //game.print_text_game("Loading actors level 1");
+        //game.resources.load_actors(1);
+        //game.print_text_game("");
+        //timer_create_load_resources=game.NewObject("timer", "GL_Timer");
+        //timer_create_load_resources.SetFrequency(1000);
+        //timer_create_load_resources.SetUserCallBack(this,"OnTimerLoadResourcesCallBack");
+        //timer_create_load_resources.Start();
+            
     }
+
     function _operator_delete(){
-        bg.Destroy();
-        game.delete_objects();
-        game.delete_enemies();
-        game.delete_fires();
-        //delete timer_delete_messages;
+        game.player1.SetVisible(true);
         delete game.layer;
+        bg.Destroy();
     }   
-    /*function OnTimerDeleteMessagesCallBack(_timer){
+
+    /*function OnTimerLoadResourcesCallBack(){
+        game.print_text_game("Loading backgrounds level 1");
+        game.resources.load_bgs(1);
+        game.print_text_game("Loading actors level 1");
+        game.resources.load_actors(1);
         game.print_text_game("");
-        timer_delete_messages.Stop();
-    } */
+        timer_create_load_resources.Stop();
+    }*/
 }

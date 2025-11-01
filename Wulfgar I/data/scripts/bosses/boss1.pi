@@ -10,11 +10,11 @@ class Boss1 implements GL_sprite{
 		incrementoY=0;
 		game=null;
         player1=null;
-        boss_live=200;
+        boss_live=50;
         boss_dead=false;
 
         timer_play_laugh_boss=null;
-    
+        count_press=0;
 
 	virtual _operator_new(_name,_creator, _params){
         game=_params[0];
@@ -25,7 +25,8 @@ class Boss1 implements GL_sprite{
         Addanimationwithsheet("escorpion-die","images/objects-enemies.png",0,2,0,13*32,32,32,-1,-1,-1,0.2);
 		Setanimation("escorpion-walk");
         SetCollision(True);
-        Setcollisionrect(0,30,128,98);
+        //Setcollisionrect(0,30,128,98);
+        Setcollisionrect(4,50,124,78);
         SetPos(500,450-(32*6));
         SetSize(32*4,32*4, true);
 
@@ -40,15 +41,21 @@ class Boss1 implements GL_sprite{
 
 	virtual Move(){   
         if(boss_dead){
-            if(GetAnimationLoops()>0) {
+            if(GetAnimationLoops()>0 && count_press==0) {
+                game.GetEngine().LogPrint("boss dead change stage");
+                count_press++;
                 SetAnimationSpeedFactor(0);
                 SetColor(RGB(255,0,0));
-                SetCollision(false);
+
                 game.changeStage();
+                boss_dead=false;
+                return;
+                
             }
         }else{
-            if(boss_live<=0){
+            if(boss_live==0){
                 SetAnimation("escorpion-die");
+                SetCollision(false);
                 boss_dead=true;
             }else{
                 if(DistanceTo(player1)<100){

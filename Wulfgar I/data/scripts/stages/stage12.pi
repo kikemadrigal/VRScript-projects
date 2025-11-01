@@ -1,50 +1,60 @@
 namespace es_tipolisto_WulfgarI;
-
 /**
- *la pantalla oscura
+ * Pantalla 10: Boss 2: el aguila 
+ *    Se mueve en todas direcciones
  */
 class Stage12{
     properties:
         game=null;
         bg=null;
-        shadow=null;
+        boss=null;
+        
     function _operator_new(_game){
         game=_game;
-        if (DEBUG_MODE) {
+        if (DEBUG_MODE){
             _game.SetDebug(true);
-            _game.create_object(OBJECT_TYPE_META,220,_game.GetApp().GetResY()-100);
-        }
-        //ponemos que tenemos que coger 3 llaves
-        _game.player1.keys_to_collect=3;
-        _game.player1.SetPosition(20,_game.GROUND_Y);;
- 
+            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100, game.currentStage);
+        } 
+        
+        
+
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
-        bg.Addframe("images/stage12.png");
+        bg.AddTexFrame(game.resources.get_bg_image(game.currentStage));
         bg.SetPriority(-1);
 
-        shadow=_game.NewObject("shadow","gl_sprite");
-        shadow.Addframe("images/stage12-shadow.png");
-        shadow.SetPriority(100);
-        game.shadow_mode=true;
-
-        shadow.SetPos(_game.GetCameraX(),_game.GetCameraY());
-
-        _tmx = new TMX_Loader();
-        _tmx.Load(_game.mapper, "resources/tilesmap12.tmx", _game);
-        delete _tmx;
-        
-       
+        _tmx = new TMX_tiles();
+        _ok=_tmx.Load(game.mapper, "resources/tilesmap12.tmx", game);
+        delete _tmx;        
+        if (_ok == false)
+		{
+			_game.GetApp().GetEngine().LogPrint("no cargado el tileset");
+		}
+        //game.getEngine().logprint("cargado el pantalla 12");
+        //Colocamos al player
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+        //posicionamos la cámara
+        game.SetCameraX(0);
+        //posicionamos el boss
+        boss=_game.NewObject("boss2","Boss2",[game]);
+        //game.getEngine().logprint("cargado boss pantalla 12");
         //pintamos el marcador
         _game.print_score();
+        //Pintamos la vida que le queda al boss
+        _game.draw_boss_live(boss.boss_live);
     }
+    
     function _operator_delete(){
+        game.draw_boss_live("");
+        delete game.layer;
+        boss.Destroy();
         bg.Destroy();
-        shadow.Destroy();
-        game.shadow_mode=false;
         game.delete_objects();
         game.delete_enemies();
         game.delete_fires();
-        delete game.layer;
+    }
+    function changeStage(){
+        //game.GetApp().Sleep(2000);
+        game.changeStage();
     }
 }

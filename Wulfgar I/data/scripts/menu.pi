@@ -11,7 +11,10 @@ class menu implements GL_Stage
 	{
 		//El pad está en el main
 		_background=newobject("titulo","gl_sprite");
-		_background.Addframe(GetApp().path+"images/menu.png");
+		//_background.Addframe(GetApp().path+"images/menu.png");
+		_background.AddAnimationWithSheet ("menu","images/menu.png" , 0, 0, 0, 0, 800, 450);
+		_background.AddAnimationWithSheet ("map1","images/stage1.png" , 0, 0, 0, 0, 800, 450);
+		_background.SetAnimation("menu");
 		//GetEngine().LogPrint("la ruta es: "+GetApp().GetBundleDriveName());
 		_bacKground.Setpos(0,0);
 		_background.SetSize(GetApp().GetResX(),450);
@@ -36,10 +39,9 @@ class menu implements GL_Stage
 		mosaico.IncUV(0.001f,0);
 	}
 
-	virtual _operator_delete()
-	{
-		//background.Destroy();
-		//mosaico.Destroy();
+	function _operator_delete(){
+		delete background;
+		delete mosaico;
 	}
 
 }

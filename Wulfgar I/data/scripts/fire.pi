@@ -14,6 +14,9 @@ class Fire implements GL_sprite{
 		_enemy=_params[2];
 		enemy=_enemy;
 		SetPos(_enemy.GetX(), _enemy.GetY());
+		 _enemy.SetStop(false);
+        _enemy.SetVisible(true);
+        _enemy.SetCollision(true);
 		if(type==FIRE_TYPE_NORMAL){
 			Addanimationwithsheet("fire1",GetApp().path+"images/objects-enemies.png",0,2,5*32,5*32,32,32,-1,-1,-1,.2);
 			Setanimation("fire1");

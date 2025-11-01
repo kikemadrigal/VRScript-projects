@@ -8,7 +8,7 @@ class Boss3 implements GL_sprite{
 		incrementoY=0;
 		game=null;
         //player1=null;
-        boss_live=300;
+        boss_live=100;
         boss_dead=false;
         timer_create_enemies=null;
         // timer que hace play para escuchar una risa del jefe cada 10 segundos

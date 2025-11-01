@@ -10,7 +10,7 @@ class Enemy implements GL_sprite{
 		start_position_y=0;
 		touches=0;
 		touches_for_died=1;
-		//pendulum=null;
+		screen=0;
 
 
 	/**
@@ -23,14 +23,17 @@ class Enemy implements GL_sprite{
     virtual _operator_new(_name,_creator, _params){
 		game=_params[0];
 		type=_params[1];
+		screen=_params[4]; //pertenece a esta pantalla
 		_x=_params[2];
 		_y=_params[3];
+
 		SetPos(_x,_y);
 		SetStartPosition(_x, _y);
 		//_add_dead_animation=true;
 		//if(_add_dead_animation)Addanimationwithsheet("enemy-dead","images/objects-enemies.png",0,4,0,3*32,32,32,-1,-1,-1,.2);
-		Addanimationwithsheet("enemy-dead",game.GetApp().path+"images/objects-enemies.png",0,4,0,3*32,32,32,-1,-1,-1,.2);
+		Addanimationwithsheet("enemy-dead","images/objects-enemies.png",0,4,0,3*32,32,32,-1,-1,-1,.2);
 		SetCollision(True);
+		//SetStop(true);
 		//GetApp().GetEngine().LogPrint("creado el enemigo tipo "+type);
 	}	
 	virtual _operator_delete(){		
@@ -40,7 +43,7 @@ class Enemy implements GL_sprite{
 	}
 
 	function enemy_set_dead(){
-		//GetApp().GetEngine().LogPrint("puesta animacion enemy-dead y desactivada colisión");
+		//Si matamos a una bomba hacemos el sonido de explosión
 		Setanimation("enemy-dead");
 		SetCollision(False);
 	}

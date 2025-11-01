@@ -2,22 +2,21 @@ namespace es_tipolisto_WulfgarI;
 /**
  * El dragón de fuego fina (pantalla 16)
  */
-class Boss4 implements GL_sprite{
+class Boss1 implements GL_sprite{
 	properties:
 		incrementoX=0;
 		incrementoY=0;
 		game=null;
         //player1=null;
-        boss_live=300;
+        boss_live=100;
         boss_dead=false;
-        fires=[];
+        //fires=[];
         timer_play_laugh_boss=null;
         timer_create_enemies=null;
 
 	virtual _operator_new(_name,_creator, _params){
         game=_params[0];
-        //player1=_params[1];
-        //game.boss_live=100;
+        //GetApp().GetEngine().LogPrint("Empezando a cargar el boss 1 en la pantalla ");
    		//Colocamos al boss
         Addanimationwithsheet("boss4","images/objects-enemies.png",0,2,0,16*32,64,64,-1,-1,-1,.2);    
 		Setanimation("boss4");
@@ -26,12 +25,11 @@ class Boss4 implements GL_sprite{
         SetPos(400,200);
         SetSize(32*3,32*3, true);
         // Creamos un buffer de 20 fuegos de tipo normal
-        for(i=0;i<20;i++){
+        for(i=0;i<10;i++){
             _fire=game.create_fire(FIRE_TYPE_NORMAL,this);
             _fire.SetPos(-100,-100);
             _fire.incrementoX=0;
             _fire.incrementoY=0;
-            fires+=[_fire];
         }
 
         //cada 10 segundos tira 4 fuegos en circulo
@@ -43,6 +41,8 @@ class Boss4 implements GL_sprite{
         timer_play_laugh_boss=NewObject("timer", "GL_Timer");
         timer_play_laugh_boss.SetFrequency(15000);
         timer_play_laugh_boss.SetUserCallBack(this,"OnTimerLaughBossCallBack");
+
+        //game.getEngine().logprint("cargado el boss 4");
     }
     virtual _operator_delete(){
         delete timer_create_enemies;
@@ -66,7 +66,7 @@ class Boss4 implements GL_sprite{
                 //Si el número de repeticiones del sprite es mayor que 12 creamos un fuego y lo mandamos al player
                 // modificamos el angulo de su sprite para q
                 if(GetAnimationLoops()>12){
-                    for(i=0;i<sizeof(fires);i++){
+                    for(i=0;i<sizeof(game.fires);i++){
                         _fire=game.fires[i];
                         if(_fire.incrementoX==0 && _fire.incrementoY==0){
                             _angle=0;

@@ -1,3 +1,5 @@
+Pon en inglés las letras del menu y del winner
+
 A la pantalla 16 ponle arñas que te persigan
 
 Bloques destruibles que escondan armas, vidas y puntos
@@ -6,20 +8,23 @@ Crea Barra de energia del player y bosses
 
 Crea el entityManager y la carpeta managers y mete ahí la ccreación de enemigos
 
-Intenta cargar los sprites y tilemaps al principio
-
 Intenta mejorar el borde del tile en el salto del player
 
 Haz que el player ataque y se mueva agachado
 
 mejorar coger los paquetes
 
-haz el sqlite y la web de los records
-
-ponle sonido de explosión a las bombas cuando las mates
-
 La araña(el boss 3 pantalla 12) manda casi todas las telarañas hacia abajo
 
 que malo escorpión pantalla 5 clave el aguijón en el suelo y salga fuegos en el suelo
+
+reforma la 10 para que los bloques salgan más a la derecha y el mapa (LA 7)se vea bien
+
+pn en la 12 que salgan con mas frecuencia los buitres del jefe
+
+disminuye los cuadros de colision de los bosses 2, 3 y 4
+
+
+
 
 
