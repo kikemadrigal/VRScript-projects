@@ -1,0 +1,54 @@
+class language{
+    properties:
+        name="eng";
+        spanish=[];
+        english=[];
+    virtual _operator_new(_app){
+        _name=_app.GetEngine().GetLocaleLanguage();
+        name=_name;
+        spanish=[
+            ["menu","Un extraño virus ha infectado a los animales..."+
+					"\nUn dragon ha secuestrado a tu amada..."+
+					"\n\nControles:"+
+					"\nCursor derecha/izquierda para moverte"+
+					"\nCursor arriba para saltar"+
+					"\nEspacio para atacar"+
+					"\nPulsa la teclar 'r' para ver los records"+
+					"\n\nMision:"+
+					"\nCoge 3 llaves para abrir el candado y pasar de nivel"],
+            ["winner","Final de la batalla!!!\nProgramador: Kike Madrigal && \nMSXSpain amigos\nGracias por jugar a mi juego."],
+            ["wait_loading_maps_and_actors","Espere mientras se cargar actores y mapas"],
+            ["game_over","Juego terminado"],
+            ["new_record","Nuevo record, introduce tu nombre"],
+            ["score","Puntos"],
+            ["keys","Llaves"],
+            ["energy","Energia"]
+
+        ];
+        english=[
+            ["menu","A strange virus has infected the animals..."+
+                    "\nA dragon has kidnapped your beloved..."+
+                    "\n\nControls:"+
+                    "\nRight/left cursor to move"+
+                    "\nUp cursor to jump"+
+                    "\nSpace to attack"+
+                    "\nPress 'r' to see the records"+
+                    "\n\nMission:"+
+                    "\nPick up 3 keys to open the padlock and pass the level"],
+            ["winner","\n\nEnd of the battle!! \nDeveloper: Kike Madrigal & \nMSXSpain friends\nThanks for playing my game."],
+            ["wait_loading_maps_and_actors","Please wait while actors and maps load."],
+            ["game_over","Game over"],
+            ["new_record","New record, enter your name"],
+            ["score","Score"],
+            ["keys","Keys"],
+            ["energy","Energy"]
+        ];
+    }
+
+
+    function get_value(key){
+        if(name=="es") return spanish[key];
+        else return english[key];
+    }
+
+}

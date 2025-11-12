@@ -1,0 +1,87 @@
+namespace es_tipolisto_gulfgar;
+
+class main implements GL_Program {
+    properties:
+        background=null;
+        typer=null;
+        manos=null;
+        fuego=null;
+        
+    virtual start(){
+        //GetEngine().LogPrint("menu cargado");
+        Setbackcolor(RGB(0,0,0));
+        Setresolution(800,640);
+        Setviewscale(-3);
+        Setvsync(true);
+        Setframerate(30);        
+
+        _background=newobject("titulo","gl_sprite");
+		_background.Addframe("images/fondo.png");
+		
+		_bacKground.Setpos(0,0);
+		_background.SetPriority(0);
+		background=_background;
+
+        _manos=newobject("manos","gl_sprite");
+        _manos.Addanimationwithsheet("normal","images/manos.png",0,2,0,0,160,160,-1,-1,-1,0.1);
+        _manos.Setanimation("normal");
+        _manos.SetPos(320,400);
+        manos=_manos;
+
+        _fuego=newobject("fuego","gl_sprite");
+        _fuego.Addanimationwithsheet("fire","images/fuego.png",0,7,0,0,32,32,-1,-1,-1,.02);
+		_fuego.Setanimation("fire");
+        //_fuego.SetSize(100,100,true);
+        _fuego.SetPos(520,250);
+        fuego=_fuego;
+
+        typer=NewObject("typer", "TypingText");
+
+        _change("en_casa");
+
+    }
+
+    
+    state "en_casa":
+    {
+        if(typer.respuesta_gemini){
+            manos.SetStop(true);
+        }else{
+            manos.SetStop(false);
+        }
+
+       if(typer.respuesta_gemini && typer.currentIndex==0){
+           background.RemoveFrames();
+           background.Addframe("images/fondo2.png");
+       }else if(!typer.respuesta_gemini && typer.currentIndex==0){
+           background.RemoveFrames();
+           background.Addframe("images/fondo.png");
+       }else if(typer.cambiar_pantalla){
+            manos.SetStop(true);
+            manos.SetVisible(false);
+            typer.SetStop(true);
+            typer.SetVisible(false);
+            fuego.SetStop(true);
+            fuego.SetVisible(false);
+            GetEngine().LogPrint("cambiando a casa alberto");
+            background.RemoveFrames();
+            background.Setflags(background.FLAG_WRAP);
+            background.Addframe("images/fondo3.png");
+            _change("casa_alberto");
+       }
+    }
+
+
+    state "casa_alberto":
+    {
+        GetEngine().LogPrint("dentro de casa alberto");
+       background.IncUV(0.005f,0);
+
+
+    }
+
+
+    
+    
+}
+  

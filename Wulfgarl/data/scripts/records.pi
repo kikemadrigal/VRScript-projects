@@ -1,0 +1,44 @@
+namespace es_tipolisto_WulfgarI;
+class Records implements GL_Stage {
+	properties:
+		db=null;
+		text=null;
+
+	virtual _operator_new(_name,_creator){
+		_text=NewObject("text","GL_Text");
+        _text.SetFont("fonts/Vintage Black.ttf", 16);
+		_text.SetPos(300,10);
+        _text.Settext("Records");
+		text=_text;
+		
+		_ret=GetApp().db.GetMax10();
+		if(sizeof(_ret)>0){
+			text.SetText("Record    Name   Date\n");
+			for(i=0;i<sizeof(_ret);i++){
+				id=_ret[i][0];
+				name=_ret[i][1];
+				record=_ret[i][2];
+				//El _ret[i][3] es si es tuyo o no
+				date=_ret[i][4];
+				text.Settext(text.GetText()+Record+" "+name+","+date+"\n");	
+			}
+		}else{
+			text.SetText("Sin records");
+		}
+
+		_my_name=GetApp().db.GetUser();
+		if(_my_name==null) _my_name="Not name";
+		text.Settext(text.GetText()+"\nTu nombre es: "+_my_name);
+
+		_my_record=GetApp().db.get_max_player();
+		if(_my_record==null) _my_record=0;
+		text.Settext(text.GetText()+"\nTu mayor puntuacion es: "+_my_record);
+
+		text.Settext(text.GetText()+"\n\nPulsa la 'n' para asignar o actualizar tu nombre.");
+        text.Settext(text.GetText()+"\nPulsa la 's' para subir tu record a https://wulfgar.tipolisto.es");
+        text.Settext(text.GetText()+"\nPulsa la 'd' para reiniciar lla base de datos de los records");
+        text.Settext(text.GetText()+"\nPulsa espacio para salir");
+	}	
+}
+
+

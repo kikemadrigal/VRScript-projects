@@ -1,0 +1,251 @@
+namespace es_tipolisto_WulfgarI;
+
+class StageGlobal implements GL_Stage{
+    properties:
+		pad=null;
+		//map=null;
+
+		text_score=null;
+		text_boss_live=null;
+		text_game=null;
+		//energy_bar=null;
+   		sprite_efecto_apagado=null;
+		
+		musics=[];
+		music=null;
+		audios=[];
+
+	virtual _operator_new(_name,_creator){	
+		SetGlobal(True);
+
+		/*map=NewObject("map","gl_sprite"); 
+		map.AddAnimationWithSheet ("map1","images/map1.png" , 0, 0, 0, 0, 800, 450);
+        map.AddAnimationWithSheet ("map2","images/map2.png" , 0, 0, 0, 0, 800, 450);
+        map.AddAnimationWithSheet ("map3","images/map3.png" , 0, 0, 0, 0, 800, 450);
+        map.AddAnimationWithSheet ("map4","images/map4.png" , 0, 0, 0, 0, 800, 450);
+		map.SetAnimation("map1");
+        map.SetPriority(-1);
+        map.SetSize(800,450);
+		map.SetVisible(false);*/
+
+		//Pad
+		_pad=NewObject("pad", "GL_Pad");
+	    _pad.SetPreset("CURSORS");
+		//_pad.SetPreset("Joystick1",1);
+		//Se utilizará para agarrar un paquete
+		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_LCONTROL);
+		// el 3 se utiliza para salir de la pantalla y entrar en la siguiente con left control + z
+		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_Z);
+		//Al pulsar la tecla R vamos al menú de records
+		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_R);
+		//Al pulsar "s" enviamos el record a internet
+		_pad.SetButton(PAD_BUTTON_5,0,PAD_MODE_KEYBOARD,KEY_S);
+		//Al pulsar "d" resetamos los records"
+		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_D);
+		//Al pulsar la tecla n se le asigna un nombre de usuario
+		_pad.SetButton(PAD_BUTTON_7,0,PAD_MODE_KEYBOARD,KEY_N);
+		pad=_pad;
+
+		text_score=getNewText();
+		text_score.SetPos(300,10);
+
+		/*energy_bar=NewObject("energyBar","gl_sprite");
+		energy_bar.AddEmptyFrame(20,20);
+		energy_bar.SetColor(RGB(255,0,0));
+		energy_bar.SetSize(10,20, true);
+		energy_bar.SetPos(520,15);*/
+
+	
+		
+        text_boss_live=getNewText("",16);
+		text_boss_live.SetPos(700,40);
+        text_boss_live.SetColor(RGB(255,0,0));
+
+		text_game=getNewText("",30);
+		text_game.SetAlign(DT_CENTER | DT_VCENTER);
+		text_game.SetColor(RGB(255,0,0));
+		//text_game.SetPriority(2000);
+
+		LoadMusic("sounds/music_menu.ogg");
+		LoadMusic("sounds/music_ingame.ogg");
+		LoadMusic("sounds/music_boss_fighting.ogg");
+		LoadMusic("sounds/music_winner.ogg");
+		
+		sound_list_names=[
+			"hit",
+			"caught",
+			"click",
+			"jump",
+			"touch_ground",
+			"atack", //5
+			"keys", //6
+			"fire",
+			"change_level",
+			"game_over",
+			"laugh_boss", //10
+			"hit_boss",
+			"hammer",
+			"explosion",
+			"player_hit"
+		];
+		for(i=0; i<sizeof(sound_list_names); i++){
+			LoadAudio("sounds/"+sound_list_names[i]+".ogg");
+		}
+		
+	}	
+
+	function getNewText(text="", size=20){
+		_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", size);
+		//_text.SetAlign(DT_CENTER);
+		_text.SetText(text);
+		_text.SetColor(RGB(234,255,0));	
+		return _text;
+	}
+
+    /*function fadeInEffect(){
+         //
+         //EFECTO DEL FADEIn
+         //Recuerda que Runstage borra todo lo que haya en la pantalla
+         //tendremos que crear de nuevo el sprite que ocupa toda la pantalla
+         //y el efecto de fadein que lo hace visible
+         //
+		sprite_efecto_apagado=NewObject("cuadrado_negro","GL_Sprite");
+        sprite_efecto_apagado.AddEmptyFrame(LEVEL_WIDTH,VIEWPORT_WIDTH);
+        sprite_efecto_apagado.SetColor(RGB(0,0,0));
+        sprite_efecto_apagado.SetAlpha(255);
+        _efecto_apagado=sprite_efecto_apagado.CreateFX("FADEOUT");
+        // _efecto_apagado.SetOnFinish(this, "cuando_acabe_efecto_encendido");
+        _efecto_apagado.Start(2000);
+    }*/
+
+	function play_sound_click(){
+		audios[AUDIO_CLICK].Play();
+	}
+	function play_sound_caught(){
+		audios[AUDIO_CAUGHT].Play();
+	}
+	function play_sound_hit(){
+		audios[AUDIO_HIT].Play();
+	}
+	function play_sound_jump(){
+		audios[AUDIO_JUMP].Play();
+	}
+	function play_sound_touch_ground(){
+		audios[AUDIO_TOUCH_GROUND].Play();
+	}
+	function play_sound_atack(){
+		audios[AUDIO_ATACK].Play();
+	}
+	function play_sound_keys(){
+		audios[AUDIO_KEYS].Play();
+	}
+	function play_sound_fire(){
+		audios[AUDIO_FIRE].Play();
+	}
+	function play_sound_change_level(){
+		//audios[AUDIO_CHANGE_LEVEL].SetVolume(50);
+		audios[AUDIO_CHANGE_LEVEL].Play();
+	}
+	function play_sound_game_over(){
+		audios[AUDIO_GAME_OVER].Play();
+	}
+	function play_sound_laugh_boss(){
+		audios[AUDIO_LAUGH_BOSS].Play();
+	}
+	//Sonido golpe al jefe
+	function play_sound_hit_boss(){
+		audios[AUDIO_HIT_BOSS].Play();
+	}
+	//Sonido martillo golpeando el suelo
+	function play_sound_hammer(){
+		audios[AUDIO_HAMMER].Play();
+	}
+	function play_sound_explosion(){
+		audios[AUDIO_EXPLOSION].Play();
+	}
+	function play_sound_player_hit(){
+		audios[AUDIO_PLAYER_HIT].Play();
+	}
+
+
+
+
+
+
+
+
+
+
+	function GetMusicMenu(){
+		//GetEngine().LogPrint("GetMusicMenu");
+		return musics[MUSIC_MENU];
+	}
+
+	function play_music_menu(){
+		musics[MUSIC_MENU].Play();
+		musics[MUSIC_MENU].Setvolume(0);
+		musics[MUSIC_MENU].FadeTo(255,0.2);
+	}
+
+	function stop_music_menu(){
+		//parámetros volumen y velocidad del efecto
+		//musics[MUSIC_MENU].FadeTo(0,-2);
+		musics[MUSIC_MENU].Stop();
+	}
+	function GetMusicIngame(){
+		return musics[MUSIC_INGAME];
+	}
+	function play_music_ingame(){
+		musics[MUSIC_INGAME].Play();
+		musics[MUSIC_INGAME].Setvolume(0);
+		musics[MUSIC_INGAME].FadeTo(255,0.2);
+	}
+	function stop_music_ingame(){
+		//parámetros volumen y velocidad del efecto
+		musics[MUSIC_INGAME].FadeTo(0,10);
+		//musics[MUSIC_INGAME].FadeOff();
+		//musics[MUSIC_INGAME].Stop();
+	}
+	function play_music_boss_fighting(){
+		musics[MUSIC_BOSS_FIGHTING].Play();
+		musics[MUSIC_BOSS_FIGHTING].Setvolume(0);
+		musics[MUSIC_BOSS_FIGHTING].FadeTo(255,0.2);
+	}
+	function get_music_boss_fighting(){
+		return musics[MUSIC_BOSS_FIGHTING];
+	}
+	function play_music_winner(){
+		musics[MUSIC_WINNER].Play();
+		musics[MUSIC_WINNER].Setvolume(0);
+		musics[MUSIC_WINNER].FadeTo(100,0.2);
+	}
+	function get_music_winner(){
+		return musics[MUSIC_WINNER];
+	}
+	function stop_music_winner(){
+		//parámetros volumen y velocidad del efecto
+		//musics[MUSIC_winner].FadeTo(0,-2);
+		musics[MUSIC_WINNER].Stop();
+	}
+
+
+
+
+
+
+	function LoadMusic(path){
+		_music=NewObject("music", "GL_Music");
+		_music.Load(path);
+		_music.SetVolume(50);
+		_music.SetLoop(True);
+		musics+=[_music];
+	}
+	
+	function LoadAudio(path){
+		_audio=NewObject("sound", "GL_Sound");
+		_audio.Load(path);
+		_audio.SetVolume(255);
+		audios+=[_audio];
+	}
+}
