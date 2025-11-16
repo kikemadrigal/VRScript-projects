@@ -43,7 +43,7 @@ class Stage16{
         game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,384, 224, game.currentStage);
         game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,1342, 162, game.currentStage);
         game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,1986, 98, game.currentStage);
-        game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,2128, 32, game.currentStage);
+        game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_HORIZONTAL,2320, 128, game.currentStage);
 
         
        

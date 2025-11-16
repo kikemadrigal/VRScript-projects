@@ -31,7 +31,6 @@ class CloudBalancing implements Enemy{
             _fire.SetPos(-100,-100);
             _fire.incrementoY=0;
             _fire.incrementoX=0;
-            //fires+=[_fire];
         }
     }
     virtual Move(){
@@ -39,9 +38,8 @@ class CloudBalancing implements Enemy{
 			Destroy();
 			return;
 		} 
-        // Como para las instancias que se salen de la cámara
+        // Como paran las instancias que se salen de la cámara o clipper
         // si se aleja mucho lo acercamos al player
-        //evitamos que se desactive si se sale de la pantalla
         //if(GetX()<game.player1.GetX()-350)SetX(game.player1.GetX()-350);
         if(GetX()>game.player1.GetX()+450){
             SetPos(GetX()-100,GetY());
@@ -62,13 +60,8 @@ class CloudBalancing implements Enemy{
             // obtenemos un fire con una velocidad 0 y le cambiamos el ámgulo
             for(i=0;i<sizeof(game.fires);i++){
                 _fire=game.fires[i];
-                /*if(_fire.incrementoY==0){
-                    _fire.SetPos(GetX(),GetY()+32);
-                    _fire.incrementoY=2;
-                    break;
-                }*/
                if(_fire.incrementoY==0 && _fire.incrementoX==0){
-                    _fire.SetPos(GetX()-10,GetY()+10);
+                    _fire.SetPos(GetX()+15,GetY()+15);
                     if(game.player1.GetY()<GetY()){
                         _fire.incrementoY=-5;
                         _fire.SetVFlip(false);

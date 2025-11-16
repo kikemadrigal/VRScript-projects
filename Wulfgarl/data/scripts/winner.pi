@@ -14,7 +14,7 @@ class Winner implements GL_Stage{
         bg.SetPriority(0);
        
        	_text=NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", 22);
+		_text.SetFont("fonts/medieval.ttf", 22);
 		//_text.SetAlign(DT_CENTER);
 		
 		_text.SetColor(RGB(234,255,0));	

@@ -1,0 +1,104 @@
+class TypingText implements GL_Text
+{
+    properties:
+        // El texto completo que queremos mostrar
+        fullText = ""; 
+        frases=[];
+        name1="";
+        name2="";
+        name3="";
+        nombres=["Hugo", "Mateo", "Martín", "Lucas", "Leo", "Daniel", "Alejandro", "Pablo", "Álvaro", "Manuel",
+                "Adrián", "David", "Javier", "Sergio", "Marcos", "Mario", "Iker", "Diego", "Nicolás", "Jorge",
+                "Miguel", "Darío", "Gonzalo", "Carlos", "Antonio", "Izán", "Josep", "Aitor", "Héctor", "Rubén",
+                "Guillermo", "Enzo", "Gael", "Eric", "Bruno", "Juan", "Pedro", "Raúl", "Samuel", "Óscar",
+                "Roberto", "Ricardo", "Víctor", "Andrés", "César", "Iván", "Jesús", "Félix", "Germán", "Lorenzo"];
+        contador_frases=0;
+        // Índice del próximo carácter a mostrar
+        currentIndex = 0;
+        
+        // Frecuencia de escritura: se añade un carácter cada 5 frames
+        typingSpeed = 5; 
+        
+        // Contador de frames para controlar la velocidad
+        frameCounter = 0;
+        respuesta_gemini=false;
+        cambiar_pantalla=false;
+
+    virtual _operator_new(_name, _creator)
+    {
+        // Configuración inicial del objeto GL_Text:
+        SetFont("fonts/Vintage Black.ttf",18); // Establece el nombre de la fuente 
+        //SetFontSize(18); // Establece el tamaño de la fuente
+        SetPos(140, 360); // Establece la posición de inicio
+        SetColor(RGB(0, 0, 0)); // Establece el color blanco 
+        SetText(""); // Inicialmente el texto está vacío 
+
+        updateNames();
+        frases+=["quiero un regalito para "+name1+""];
+        frases+=["para "+name1+" un osito de peluche."];
+        frases+=["ahora, un regalito para "+name2+"."];
+        frases+=["para "+name2+" un coche de carreras."];
+        frases+=["ahora, un regalito para "+name3+"."];
+        ultima_frase=String_FromUTF8("para "+name3+" un tren eléctrico.");
+        frases+=[ultima_frase];
+        fullText=frases[contador_frases];
+
+
+        //GetEngine().LogPrint("El tamaño de todas las frases es: "+sizeof(frases));
+    }
+
+    virtual Move()
+    {
+        // Move() se invoca fotograma a fotograma para la lógica 
+
+        // Solo se ejecuta mientras no se haya escrito todo el texto
+        if (currentIndex < strlen(fullText)) // Comprobamos si el índice es menor a la longitud del texto
+        {
+            frameCounter++;
+
+            // Verificamos si ha pasado suficiente tiempo (frames) para escribir un nuevo carácter
+            if (frameCounter >= typingSpeed)
+            {
+                currentIndex++;
+                frameCounter = 0;
+
+                // Extraemos la porción del texto desde el inicio (0) hasta el índice actual (currentIndex)
+                // Utilizamos String_SubStr
+                _text = String_SubStr(fullText, 0, currentIndex);
+                
+                SetText(_text); // Actualizamos el texto visible en pantalla
+            }
+        }else{
+            currentIndex=0;
+            contador_frases++;
+            //GetEngine().LogPrint("frase cambiada a: "+contador_frases);
+            if(contador_frases%2!=0) respuesta_gemini=true;
+            else respuesta_gemini=false;
+
+            if(contador_frases>=sizeof(frases)){
+                contador_frases=0;
+                cambiar_pantalla=true;
+            }
+            fullText=frases[contador_frases];
+           
+
+        }
+        
+        // Note: Si necesitara un factor de tiempo más preciso, podría usarse GetFTime() en lugar de un contador de frames fijo [20].
+    }
+
+
+    function updateNames(){
+        name1=GetNameRandom();
+        name2=GetNameRandom();
+        name3=GetNameRandom();
+    }
+
+       
+    function GetNameRandom()
+    {
+        index = Rand(0, sizeof(nombres) - 1);
+        return String_FromUTF8(nombres[index]);
+    }
+
+}

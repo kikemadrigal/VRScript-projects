@@ -34,7 +34,8 @@ class menu implements GL_Stage
 
 		_text=NewObject("text","gl_text");
 		_text.SetPos(260,110);
-		_text.SetFont("fonts/Vintage Black.ttf",16);
+		//_text.SetFont("fonts/Vintage Black.ttf",16);
+		_text.SetFont("fonts/medieval.ttf",16);
 		_text.SetText(GetApp().lang.get_value("menu"));
 		text=_text;
 	}

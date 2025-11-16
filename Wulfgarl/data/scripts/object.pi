@@ -75,21 +75,12 @@ class Object implements GL_sprite{
 				type=OBJECT_TYPE_SAND; 
 				break;
 			case OBJECT_TYPE_IMPRISONED_LADY:
+				GetEngine().LogPrint("creada la prisionera: "+_type);
 				Addanimationwithsheet("imprisonedLady","images/objects-enemies.png",0,1,12*32,0,64,64,-1,-1,-1,.08);
 				Setanimation("imprisonedLady");
-				SetPriority(-1);
+				SetPriority(1);
 				type=OBJECT_TYPE_IMPRISONED_LADY; 
 				break;
-			/*case OBJECT_TYPE_IN_LOVE_LADY:
-				Addanimationwithsheet("imprisonedLady","images/objects-enemies.png",0,2,12*32,64,64,64,-1,-1,-1,.08);
-				Setanimation("imprisonedLady");
-				type=OBJECT_TYPE_IN_LOVE_LADY; 
-				break;
-			case OBJECT_TYPE_LADY:
-				Addanimationwithsheet("lady","images/objects-enemies.png",0,0,12*32,64,64,64,-1,-1,-1,.08);
-				Setanimation("lady");
-				type=OBJECT_TYPE_LADY; 
-				break;*/
 			default:
 				GetEngine().LogPrint("Tipo de bloque no definido: "+_type);
 				break;
@@ -118,7 +109,7 @@ class Object implements GL_sprite{
 		}else if(type==OBJECT_TYPE_SAND){
 			_tile_down=TILE_TYPE_EMPTY;			
 
-			_tile_down=game.get_tile_down_object(GetX(), GetY());
+			_tile_down=game.get_tile_32_px(TILE_POSITION_DOWN,GetX(), GetY());
 	
 
 			if(_tile_down>TILE_TYPE_GROUND || _tile_down==TILE_TYPE_EMPTY){

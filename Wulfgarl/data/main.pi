@@ -1,4 +1,4 @@
-//namespace es_tipolisto_WulfgarI;
+ //namespace es_tipolisto_WulfgarI;
  
  class main implements GL_Program partial myConstants{
     properties:
@@ -6,15 +6,14 @@
     	menu=null;
         game=null;
         winner=null;
+        records=null;
         camera_not_move=false;
         is_vertical_stage=false;
-
         fade_menu=null;
     
-   
-
         db=null;
         lang=null;
+        pause=false;
  
     function Init()
 	{
@@ -30,19 +29,28 @@
 		_menu = _wnd.CreateMenu();
 		_section = _menu.AddSection ("File");
 		_section.AddItem ("Exit", this, "OnFileExit");
-       
-		
+    
 		::Init();
-        
 	}
     function OnAddLink() {
         GetEngine().RunProgramWithParams("openurl.bat", []);
     }
 	
-	function OnFileExit()
-	{
-		End(0);
+	function OnFileExit(){
+        stageGlobal.play_sound_click();
+        Gl.Stop();
+        pause=true;
+        //AlertDialog (title, text, mode = 0, ctx = null, f1 ="OnAlertDialogOK", f2 = "OnAlertDialogCancel", f3 = "")
+        GetEngine().AlertDialog("Warning",lang.get_value("quit_the_game"),View.AD_OKCANCEL,this,OnExitSuccess, OnExitCancel);
+       
 	}
+    function OnExitSuccess(){
+        End(0);
+    }
+    function OnExitCancel(){
+        pause=false;
+        Gl.Start();
+    }
 
     virtual start(){
         AddScriptPackage("scripts");
@@ -57,7 +65,7 @@
         Setframerate(30);
         //la base de datos
 		db=new Db(this);
-        //Las frases internacionalizadas
+        //Las frases internacionalizadas o localización
         lang=new language(this);
 
         //El stageGlobal es usado para los marcadores y elementos generales
@@ -65,19 +73,12 @@
         fade_menu = NewStage("fade", "fade");
         changeMenuScreen();
     }
-    function SetShowMap(value){
-        show_map=value;
-        stageGlobal.map.SetVisible(value);
-        
-    }
+
     function set_vertical_stage(value){
-        //CenterCamera(game.player1);
         is_vertical_stage=value;
-        //CenterCamera(game.player1);
     }
     function SetCameraNotMove(value){
         camera_not_move=value;
-
     }
 
     function CenterCamera(_player1){
@@ -111,7 +112,7 @@
     }
 
     function change_records_screen(){
-        RunStage("records","Records");
+        records=RunStage("records","Records");
         _change ("records");
         fade_menu.Off();
     }
@@ -154,6 +155,7 @@
 
 
 
+
     state "records":
     {
         //Si se pulsa espacio volvemos al menú
@@ -188,32 +190,33 @@
 
 
 
-
     state "game":
     {
+        if(pause) return;
         if(DEBUG_MODE) game.print_score();
         _player1=game.player1;
         _player1.incrementoX=0;
 
+
+        /**
+         * Gestor de pulsaciones de teclas
+         */
         //Si se pulsa el cursor derecho
         if (stageGlobal.pad.IsButton(PAD_BUTTON_RIGHT)){
-            tile_right=game.get_tile_right(_player1.GetX(),_player1.GetY());
+            tile_right=game.get_tile_64_px(TILE_POSITION_RIGHT,_player1.GetX(),_player1.GetY());
             if(tile_right>TILE_TYPE_GROUND || tile_right==TILE_TYPE_EMPTY  ) _player1.incrementoX=_player1.speedX;	
             _player1.SetHFlip(False);	
             if(!camera_not_move)CenterCamera(_player1);
         }else if (stageGlobal.pad.IsButton(PAD_BUTTON_LEFT)){
-            tile_left=game.get_tile_left(_player1.GetX(),_player1.GetY());
+            tile_left=game.get_tile_64_px(TILE_POSITION_LEFT,_player1.GetX(),_player1.GetY());
             //Solo se moverá es si el tile es mayor que el último de los tíles sólidos
             if(tile_left>TILE_TYPE_GROUND || tile_left==TILE_TYPE_EMPTY  ) _player1.incrementoX=-_player1.speedX;	
             _player1.SetHFlip(True);
             if(!camera_not_move)CenterCamera(_player1);
         }
 
-        /**
-         * Agarrar un paquete de paja
-         * Si se pulsa el botón 2 y el cursor izquierdo o derecho
-         * cuando pasa una anaimación se desactiva solo a menos que estemos pulsando las teclas
-         */
+    
+        // Agarrar un paquete de paja
         if(stageGlobal.pad.IsButton(PAD_BUTTON_2)){
             _player1.pick=true;
             _player1.SetAnimation("pick");
@@ -223,7 +226,7 @@
         if(stageGlobal.pad.IsButton(PAD_BUTTON_UP) && _player1.aceleracion==0){
             stageGlobal.play_sound_jump();
             //Si en el tile de abajo es un muelle
-            if(game.get_tile_down(_player1.GetX(),_player1.GetY())==TILE_TYPE_BOUNCY) _player1.incrementoY=-10;
+            if(game.get_tile_64_px(TILE_POSITION_DOWN,_player1.GetX(),_player1.GetY())==TILE_TYPE_BOUNCY) _player1.incrementoY=-10;
             else _player1.incrementoY=-5;
             _player1.aceleracion=0;
         }
@@ -240,21 +243,17 @@
         //Fíjate que el isButtonDown solo devuelve verdadero una vez
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
             
-                stageGlobal.play_sound_atack();
-                _player1.attack=true;  
-                _player1.SetAnimation("attack");
-                //Fijate que el newObject del GL_Program es distinto al del GL_Stage
-                //La vara se elimina sola al medio segundo
-                vara=NewObject("vara","Vara",null,[_player1, game]);
-            
-
-            
-
+            stageGlobal.play_sound_atack();
+            _player1.attack=true;  
+            _player1.SetAnimation("attack");
+            //Fijate que el newObject del GL_Program es distinto al del GL_Stage
+            //La vara se elimina sola al medio segundo
+            vara=NewObject("vara","Vara",null,[_player1, game]);
             /*
                 TODO: ¿Como se borran los tiles?
             */
             // Si hay un bloque destructible a la derecha, lo borramos del tileset
-            /*if(game.get_tile_right(_player1.GetX(),_player1.GetY())<=TILE_TYPE_SAND && game.get_tile_right(_player1.GetX(),_player1.GetY())>TILE_TYPE_GROUND){
+            /*if(game.get_tile_64_px(TILE_POSITION_CENTER,_player1.GetX(),_player1.GetY())<=TILE_TYPE_SAND && game.get_tile_64_px(TILE_POSITION_CENTER,_player1.GetX(),_player1.GetY())>TILE_TYPE_GROUND){
                 //game.set_tile(_player1.GetX(),_player1.GetY(),TILE_TYPE_EMPTY);
             }*/
         }
@@ -263,12 +262,14 @@
             _y=clamp(_player1.GetY(),0, LEVEL_HEIGHT-_player1.GetHF());
         else
             _y=clamp(_player1.GetY(),0, 3000-_player1.GetHF());
-        //_y=clamp(_player1.GetY(),1, LEVEL_HEIGHT+_player1.GetHF());
         _player1.SetPos(_x,_y);
-        //_player1.SetX(_x);
         _player1.incpos(_player1.incrementoX,_player1.incrementoY);
 
 
+
+        /**
+         * Gestor de animaciones
+         */
         //Si el player está atacando
         if(_player1.attack){
             if(_player1.GetAnimationLoops()>0) _player1.attack=false;  
@@ -281,7 +282,7 @@
                 if (_player1.incrementoY<0 && _player1.GetY()>0){ 
                     _player1.Setanimation("jump");
                     //Chequeamos que no haya un tile sólido encima y que no sea la parte superior de la pantalla
-                    _tile_up=game.get_tile_up(_player1.GetX(),_player1.GetY());
+                    _tile_up=game.get_tile_64_px(TILE_POSITION_UP,_player1.GetX(),_player1.GetY());
                     if(_tile_up<TILE_TYPE_GROUND && _tile_up!=TILE_TYPE_EMPTY || _player1.GetY()<=0){
                         _player1.incrementoY=0;
                         _player1.aceleracion=0;
@@ -289,13 +290,16 @@
                 }
                 //Si está bajando
                 else _player1.Setanimation("fall"); 
-            }else if(_player1.incrementoX) _player1.Setanimation("walk");   
+            }
+            //Si se pulsa izquierda o derecha
+            else if(_player1.incrementoX) _player1.Setanimation("walk");   
+            //Si se pulsa el botón de agarrar
             else if(_player1.crouching) _player1.SetAnimation("crouching");	 
+            // Si está caminando (la pantalla de correr se activa sola al movernos)
             else if(_player1.walking) _player1.SetAnimation("walk");	  
-            else _player1.SetAnimation("idle");
-                
-             
+            else if(_player1.GetCurAnimation() !="idle") _player1.SetAnimation("idle");
         }
+
 
         //Rollo gravedad hasta el suelo		
         if(_player1.GetY()>=game.GROUND_Y){
@@ -308,6 +312,7 @@
             if(_player1.aceleracion<0.3)_player1.aceleracion+=GetFTime()*0.025f;
         }
     }
+
     state "winner":
     {
         if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){
@@ -333,7 +338,5 @@
         //stageGlobal.text_game.SetPos(100, 10);
         delete _http;
     }
-
-
 }
    

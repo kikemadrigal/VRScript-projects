@@ -3,7 +3,7 @@ namespace es_tipolisto_WulfgarI;
 class Player implements GL_sprite{
 	properties:
 		score=0;
-		lives=50;
+		lives=100;
 		speedX=4;
 		incrementoX=0;
 		incrementoY=0;
@@ -38,7 +38,7 @@ class Player implements GL_sprite{
 	}
 	virtual Move(){
 		if(aceleracion>0){
-			_tile_down=game.get_tile_down(GetX(), GetY());
+			_tile_down=game.get_tile_64_px(TILE_POSITION_DOWN,GetX(), GetY());
 			//GetApp().GetEngine().LogPrint("aceleracion: "+aceleracion);
 			if(_tile_down<TILE_TYPE_GROUND){
 				if(incrementoY>=0){	
@@ -155,8 +155,8 @@ class Player implements GL_sprite{
 			}else if(_sp2.GetItemType()==OBJECT_TYPE_SAND){
 				//GetApp().GetEngine().LogPrint("colison con la paja");
 				//Obtenemos los tiles que tiene a su alrededor para no moverlo si tiene sólidos junto a él
-				tile_right=game.get_tile_right_object(_sp2.GetX(),_sp2.GetY());
-				tile_left=game.get_tile_left_object(_sp2.GetX(),_sp2.GetY());
+				tile_right=game.get_tile_32_px(TILE_POSITION_RIGHT,_sp2.GetX(),_sp2.GetY());
+				tile_left=game.get_tile_32_px(TILE_POSITION_LEFT,_sp2.GetX(),_sp2.GetY());
 				// Si está saltando el player sobre la paja paramos el salto
 				if(aceleracion>0){
 					incrementoY=0;
@@ -196,19 +196,6 @@ class Player implements GL_sprite{
 				}					
 			}	
 		}
-		
-		/*
-		//Otra forma sería con setype y getType en el main
-		if(_sp2.GetType()==GetApp().TYPE_SUELO){
-			//GetApp().GetEngine().LogPrint("with suelo");
-			if(GetY()<_sp2.GetY() && incrementoY>=0){	
-				//lo situamos encima de la plataforma
-				SetY(_sp2.GetY()-GetHF()+1);
-				incrementoY=0;
-				aceleracion=0;
-			}
-		}
-		*/
 	}
 
 	function SetPosition(_x,_y){
@@ -218,7 +205,8 @@ class Player implements GL_sprite{
 
 	function player_die(){
 		lives--;
-		if(lives<0) {
+		game.print_score();
+		if(lives<=0) {
 			if(DEBUG_MODE){
 				lives=10;		
 			}else{
@@ -230,15 +218,13 @@ class Player implements GL_sprite{
 				game.print_text_game("");
 				game.draw_boss_live("");
 				if (GetApp().db.CheckRecord(score)){
-					GetEngine().AlertDialog("New record", "Introduce tu nombre en records", 0, null, null);
+					GetEngine().AlertDialog(game.GetApp().lang.get_value("message"), game.GetApp().lang.get_value("new_record"), 0, null, null);
 					_name_for_new_record=game.GetApp().db.GetUser();
 					game.GetApp().db.InsertRecord(_name_for_new_record, score);
 					game.GetApp().changeMenuScreen();
 				}else{
 					game.GetApp().changeMenuScreen();
 				}
-			
-			
 			}
 		}else{
 			// Hacemos un sonido de golpe
@@ -249,20 +235,18 @@ class Player implements GL_sprite{
 			//Efecto de parpadeo
 			_fx=CreateFX("BLINK");
 			_fx.Start(100,15);
-			//GetApp().stageGlobal.drawScore();
-			game.print_score();
 		}
 	}
 
 	
-	function OnAlertDialogOk(_name_for_new_record){
+	/*function OnAlertDialogOk(_name_for_new_record){
 		//GetApp().GetEngine().LogPrint("El nombre introducido es "+_name_for_new_record);
 		game.GetApp().db.InsertRecord(_name_for_new_record, score);
 		game.GetApp().changeMenuScreen();
 	}
 	function OnAlertDialogcancel(){
 		game.GetApp().changeMenuScreen();
-	}
+	}*/
 	
 
 

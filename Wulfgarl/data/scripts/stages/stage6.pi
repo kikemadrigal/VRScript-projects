@@ -34,7 +34,8 @@ class Stage6{
         //Colocamos al player
         _game.player1.SetPosition(20,_game.GROUND_Y);
         //posicionamos la cámara
-        game.SetCameraX(0);
+        game.SetCameraPos(0,0);
+        //game.SetCameraX(0);
         //posicionamos el boss
         boss=_game.NewObject("boss1","Boss1",[game, _game.player1]);
         //pintamos el marcador

@@ -1,7 +1,7 @@
 class{
     defines:
         DEBUG_MODE=false;
-        APP_BUILD_VERSION = "1.0";
+        APP_BUILD_VERSION = "1.5";
         //* Dimensiones del nivel
         LEVEL_WIDTH=3000;
         LEVEL_HEIGHT=450;
@@ -14,7 +14,12 @@ class{
         //GROUND_Y=20*32;
         //450 de alto /32 = 14, pero el player ocupa 2 tiles (64x64px), por lo tanto nuestro player estara en 10
         //GROUND_Y=10*32;
-
+        // Player tiles
+        TILE_POSITION_CENTER=0;
+        TILE_POSITION_UP=1;
+        TILE_POSITION_RIGHT=2;
+        TILE_POSITION_DOWN=3;
+        TILE_POSITION_LEFT=4;
         // Tiles
         //Los tiles sólidos (plataforma, muro) son hasta el 250
         TILE_TYPE_GROUND=224;   // sólido, pared, suelo, plataforma, a prtir de ahí hacia abajo son todos sólidos
@@ -29,8 +34,8 @@ class{
         OBJECT_TYPE_COLLECTIBLE_HEALTH=2;   //recogibles
         OBJECT_TYPE_COLLECTIBLE_KEY=3;      //recogibles
         OBJECT_TYPE_IMPRISONED_LADY=4;      //dama encarcelada
-        //OBJECT_TYPE_IN_LOVE_LADY=5;         //dama enamorada / rescatada
-        //OBJECT_TYPE_LADY=6;                 //dama esperando
+      
+               //dama esperando
         OBJECT_TYPE_COLLECTIBLE_COIN50=10;  //recogibles
         OBJECT_TYPE_COLLECTIBLE_COIN100=11;
         OBJECT_TYPE_DESTRUCTIBLE=20;        // destructible

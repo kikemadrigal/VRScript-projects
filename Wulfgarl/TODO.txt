@@ -1,7 +1,3 @@
-Pon en inglés las letras del menu y del winner
-
-A la pantalla 16 ponle arñas que te persigan
-
 Bloques destruibles que escondan armas, vidas y puntos
 
 Crea Barra de energia del player y bosses
@@ -27,6 +23,10 @@ disminuye los cuadros de colision de los bosses 2, 3 y 4
 Pon el stage 11 con mas espacio para saltar y baja a los enemigos que tiran fuego que está muy dificil
 
 quita la linea fea del boss 1
+
+Ponle movimiento al playaer kieto
+
+No aparece la dama encarcelada en el boss final
 
 
 

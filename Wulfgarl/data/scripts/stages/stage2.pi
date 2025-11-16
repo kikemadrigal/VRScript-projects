@@ -24,14 +24,13 @@ class Stage2{
 
         _tmx = new TMX_tiles();
         _tmx.Load(_game.mapper,"resources/tilesmap2.tmx", _game);
-        delete _tmx;
+        delete _tmx; 
 
         //Colocamos el fondo
         bg=_game.NewObject("bg","gl_sprite");
         _texture=game.resources.get_bg_image(game.currentStage);
         bg.AddTexFrame(_texture);
         bg.SetPriority(-1);
-        //bg.SetSize(800,450);
 
         //creamos 10 buitres
         for (i=0; i < 10; i++){ 

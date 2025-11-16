@@ -2,7 +2,7 @@ namespace es_tipolisto_WulfgarI;
 /**
  * El dragón de fuego fina (pantalla 16)
  */
-class Boss1 implements GL_sprite{
+class Boss4 implements GL_sprite{
 	properties:
 		incrementoX=0;
 		incrementoY=0;
@@ -63,7 +63,7 @@ class Boss1 implements GL_sprite{
                 boss_dead=true;
               
             }else{
-                //Si el número de repeticiones del sprite es mayor que 12 creamos un fuego y lo mandamos al player
+                // Si el número de repeticiones del sprite es mayor que 12 creamos un fuego y lo mandamos al player
                 // modificamos el angulo de su sprite para q
                 if(GetAnimationLoops()>12){
                     for(i=0;i<sizeof(game.fires);i++){
@@ -102,7 +102,7 @@ class Boss1 implements GL_sprite{
                     
               
 
-                //movimiento del dragón que persigue al player
+                // movimiento del dragón que persigue al player
                 if(GetX()>=game.player1.GetX()){
                     incrementoX=-1;
                     SetHFlip(true);
@@ -125,7 +125,7 @@ class Boss1 implements GL_sprite{
     function OnTimerEnemiesCallBack(_setUserCallBack){
         for(i=0;i<4;i++){
             _fire=game.fires[i];
-            if(_fire.incrementoX==0){
+            if(_fire.incrementoX==0 && _fire.incrementoY==0){
                 if(i==0){ 
                     // este va izquierda arriba
                     //_fire=game.create_fire(FIRE_TYPE_NORMAL,this); 

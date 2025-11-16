@@ -44,6 +44,8 @@ class StageGlobal implements GL_Stage{
 		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_D);
 		//Al pulsar la tecla n se le asigna un nombre de usuario
 		_pad.SetButton(PAD_BUTTON_7,0,PAD_MODE_KEYBOARD,KEY_N);
+		//Al pulsar Control+Q salimos
+		_pad.SetButton(PAD_BUTTON_8,0,PAD_MODE_KEYBOARD,KEY_Q);
 		pad=_pad;
 
 		text_score=getNewText();
@@ -96,7 +98,8 @@ class StageGlobal implements GL_Stage{
 
 	function getNewText(text="", size=20){
 		_text=NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", size);
+		//_text.SetFont("fonts/Vintage Black.ttf", size);
+		_text.SetFont("fonts/medieval.ttf", size);
 		//_text.SetAlign(DT_CENTER);
 		_text.SetText(text);
 		_text.SetColor(RGB(234,255,0));	

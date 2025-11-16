@@ -7,15 +7,9 @@ class Stage1{
     properties:
         game=null;
         bg=null;
-        mosaico=null;
-        contador=0;
-       // timer_create_load_resources=null;
+
     function _operator_new(_game){
-        game=_game;
-        if (DEBUG_MODE) {
-            _game.SetDebug(true);
-            //_game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100,game.currentStage);
-        }
+        game=_game;        
 
         _game.player1.SetVisible(false);
         
@@ -26,24 +20,7 @@ class Stage1{
         bg=_game.NewObject("bg","gl_sprite");
         _texture=game.resources.get_bg_image(game.currentStage);
         bg.AddTexFrame(_texture);
-        bg.SetPriority(-1);
-
-        
-
-
-
-        //game.background_moving=true;
-
-        //game.print_text_game("Loading backgrounds level 1");
-        //game.resources.load_bgs(1);
-        //game.print_text_game("Loading actors level 1");
-        //game.resources.load_actors(1);
-        //game.print_text_game("");
-        //timer_create_load_resources=game.NewObject("timer", "GL_Timer");
-        //timer_create_load_resources.SetFrequency(1000);
-        //timer_create_load_resources.SetUserCallBack(this,"OnTimerLoadResourcesCallBack");
-        //timer_create_load_resources.Start();
-            
+        bg.SetPriority(-1);            
     }
 
     function _operator_delete(){
@@ -51,13 +28,4 @@ class Stage1{
         delete game.layer;
         bg.Destroy();
     }   
-
-    /*function OnTimerLoadResourcesCallBack(){
-        game.print_text_game("Loading backgrounds level 1");
-        game.resources.load_bgs(1);
-        game.print_text_game("Loading actors level 1");
-        game.resources.load_actors(1);
-        game.print_text_game("");
-        timer_create_load_resources.Stop();
-    }*/
 }
