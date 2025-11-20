@@ -4,7 +4,6 @@ class main implements GL_Program {
         //Setresolution(800,640);
         //Setviewscale(-3);
         //LoadVGS("test-mapper.vgs");
-        stageGlobal=newStage("stageGlobal","StageGlobal");
     	RunStage("menu","menu");
     }
 }
