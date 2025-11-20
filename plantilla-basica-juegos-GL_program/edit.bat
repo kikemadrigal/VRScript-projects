@@ -1,0 +1,1 @@
+edit "/test/data/scripts/main.pi"

@@ -1,0 +1,208 @@
+ /**
+ * @name Arkanoid 2.0 
+ * 
+ * @author KikeMadrigal
+ * @version 1.0
+ */
+class Main implements GL_Program{
+	constants:
+		BRICK_WIDTH=40;
+		BRICK_HEIGHT=20;
+		//FAT_BORDER_WIDTH=20;
+		//FAT_BORDER_HEIGHT=60;
+		//THIN_BORDER_WIDTH=20;
+		//THIN_BORDER_HEIGHT=60;
+		BOARD_WIDTH=580;
+	properties:
+		pad=null;
+   		menu=null;
+		game=null;
+		gameOver=True;
+		gamePaused=False;
+		text_game=null;
+		resources=null;
+		db=null;	
+		bricks=[];
+		
+		player=null;
+		player2=null;
+		ball=null;
+	
+		text_hud=null;
+		music_menu=null;
+		manual=null;
+		record_user=0;
+	virtual Start()
+	{
+		AddScriptPackage("scripts");
+		// Configuraciones básicas de color de fondo, tamaño pantalla..
+		SetBackColor(RGB(0,0,0));
+		// 25x20 cuadraditos de 32px
+		SetResolution(800,640);
+		// -1 Ajusta l apantalla en horizontal
+		// -2 Ajusta la pantalla en vertical
+		// -3 Ajuste puede que no proporcional a pantalla completa
+		//SetViewScale(-1,True);
+		SetVSync(True);
+		SetFrameRate(50);
+
+		//Configuraciones del pad
+		//_pad=NewObject("pad","GL_Pad");
+		_pad=NewPad("pad");
+		_pad.SetPreset("CURSORS");
+		//_pad.SetPreset("JOYSTICK1",1);
+		//PAD_BUTTON_1 hasta PAD_BUTTON_16
+		_pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_SPACE);
+		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_N);
+		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_D);
+		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_M);
+		_pad.SetButton(PAD_BUTTON_5,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
+		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_Z);
+		_pad.SetButton(PAD_BUTTON_7,0,PAD_MODE_KEYBOARD,KEY_M);
+		_pad.SetButton(PAD_BUTTON_8,0,PAD_MODE_KEYBOARD,KEY_A);
+		
+		pad=_pad;
+		//Activamos los recuadritos de los sprites para ver si se hacen bien las colisiones
+		//GetActiveStage().SetDebug(True);
+		resources=new resources(this);
+		db=new Db(this);
+		//Cremos los players
+		_player=NewObject("player", "Player", null, [this, BOARD_WIDTH/2, GetResY()-100, False]);
+		_player.SetVisible(False);
+		_player.SetPriority(3);
+		player=_player;
+
+		_player2=NewObject("player2", "Player", null, [this, BOARD_WIDTH/2+100, GetResY()-100, True]);
+		_player2.SetVisible(False);
+		player2=_player2;
+		//Creamos la bola
+		_ball=NewObject("ball","Ball",null,[this, BOARD_WIDTH/2, GetResY()/2+200,0]);
+		_ball.SetVisible(False);
+		_ball.SetPriority(4);
+		ball=_ball;
+		//El marcador con las vidas y la puntución
+		_text_hud_title=DrawText("Highscore:  \n\n\nScore: \n\n\nLives:  ",24, RGB(255,0,0));
+		_text_hud_title.SetPos(BOARD_WIDTH+10,40);
+		_text_hud=DrawText(" ",24);
+		_text_hud.SetPos(BOARD_WIDTH,40);
+		_text_hud.SetVisible(False);
+		text_hud=_text_hud;
+		//El texto que aparece para pulse espacio o game over
+		_text_game=DrawText("",18);
+		_text_game.SetPos(BOARD_WIDTH/2, GetResY()-200);
+		text_game=_text_game;
+		//Música y efectos
+		_music_menu=resources.GetMusicMenu();
+		_music_menu.Play();
+		music_menu=_music_menu;
+		//Creamos el menú
+		_menu=new Menu(this);
+		menu=_menu;
+		//Obtenemos el record del usuario
+		_res=db.GetUserRecord();
+		if(sizeof(_res)>0) record_user=_res[0][0];
+		
+	}
+	
+	virtual Move(){
+		update_HUD();
+		if (gameOver){
+			if(pad.IsButtonDown(PAD_BUTTON_1)){
+				gameOver=False;
+				music_menu.Stop();
+				delete menu;
+				game=new Game(this);
+			
+			}else if(pad.IsButtonDown(PAD_BUTTON_2)){
+				Log("enviando score");
+				_http=GetEngine().CreateHTTPManager();
+				//Recogemos la puntación máxima
+				_textModal="Escribe tu nombre";
+				_name="";
+				do{
+					_name=GetEngine().InputDialogModal(_textModal,"",View.AD_OK,"");
+					_textModal="El nombre no puede estar vacío ni ser menor de 4 caracteres";
+				}while(_name=="" || strlen(_name)<=3);
+				//mostramos un formaulario para que introduzca su nombre
+				_res=db.GetUserRecord();
+				_score=_res[0][0];
+				//Hacemos la petición al servidor
+				_ret=_http.GetString("https://arkanoid.tipolisto.es/api/savescore.php?score="+_score+"&name="+_name);
+				//Log(_ret);
+				text_game.SetText("Server response: "+_ret);
+				text_game.SetPos(BOARD_WIDTH/2, GetResY()-200);
+				delete _http;
+			}
+			else if(pad.IsButtonDown(PAD_BUTTON_3)){
+				_res=GetEngine().InputDialogModal("Escribe Si para resetar la base de datos","",View.AD_OK,"");
+				if(_res=="Si"){
+					db.DeleteRecords();
+					db.DeleteUserRecord();
+					db.InsertFakeRecords();
+					delete menu;
+					_menu=new Menu(this);
+					menu=_menu;
+				}
+			}else if(pad.IsButtonDown(PAD_BUTTON_4)){
+				delete menu;
+				_manual=new Manual(this);
+				manual=_manual;
+			}else if(pad.IsButtonDown(PAD_BUTTON_5)){
+				delete manual;
+				_menu=new Menu(this);
+				menu=_menu;
+			}else if(pad.IsButtonDown(PAD_BUTTON_8)){
+				enviar_socket("Hola desde cliente");
+			}
+			
+		}	
+		if(gamePaused){
+			text_game.Settext("press space");
+			ball.SetPos(player.GetX()+player.GetWidth()/2,player.GetY()-ball.GetHeight());
+			if(pad.IsButtonDown(PAD_BUTTON_1)){
+				gamePaused=False;
+				text_game.Settext("");
+			}
+		}
+	}
+	//Ayuda para dibujar textos como game over o start durante el juego
+	function DrawText(text, size, color=RGB(255,255,255)){
+		_text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", size);
+		//_text.SetAlign(DT_CENTER);
+		_text.SetText(text);
+		_text.SetColor(color);	
+		return _text;
+	}
+		
+	function Log(_message){
+		GetEngine().LogPrint(_message);
+	}
+
+	function CreateBrick(_x,_y,_brick){
+		if (_brick!=" "){
+			_brick=NewObject("brick","Brick",null, [this, _x*BRICK_WIDTH,_y*BRICK_HEIGHT, _brick]);
+			bricks+=[_brick];
+		}		
+	}
+
+	function update_HUD(){
+		//text_HUD.SetText("\n     "+String(record_user)+"\n\n\n     "+String(player.score)+"\n\n\n     "+String(player.lives));
+		text_HUD.SetText(" "+string(ball.speed));
+		
+	}
+	
+	function enviar_socket(_msg){
+		_socket=NetSocket_New (this, 1);
+		if (_socket==null){
+			GetEngine().LogPrint("Error creando socket");
+			return;
+		}
+		GetEngine().LogPrint("Enviando mensaje: "+_msg);
+		NetSocket_Connect (_socket, "localhost", 1234);
+		//NetSocket_Send (_socket, _msg, 0, 1024);
+		NetSocket_Delete (_socket);
+	}
+
+
+}

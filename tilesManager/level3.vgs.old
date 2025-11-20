@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<Object type='GL' name='main' params=''>
+<Property name='ScriptInterface' value='' />
+<Property name='resx' value='800' />
+<Property name='resy' value='640' />
+<Property name='mainstage' value='' />
+<Property name='bgcolor' value='0' />
+<Property name='globalkeys' value='' />
+<Property name='scriptFolder' value='' />
+<Property name='behaviourslibraryversion' value='0' />
+<Property name='behaviourslibrarypath' value='' />
+<Property name='behaviourslibraryscript' value='' encode='hex' />
+<Property name='behaviourClassNamespace' value='com_dev_main' />
+<Property name='developer' value='' />
+<Property name='viewscaleadjust' value='-3.0' />
+<Property name='2dfilter' value='false' />
+<Property name='2dcastcoords' value='false' />
+<Property name='vsync' value='true' />
+<Property name='offx' value='0' />
+<Property name='offy' value='0' />
+</Object>
+<Object type='GL_Stage' name='stage1' params='[]' creator='main'>
+<Property name='ScriptInterface' value='' />
+<Property name='camerax' value='0.0' />
+<Property name='cameray' value='0.0' />
+<Property name='camerazoom' value='0.5999999' />
+<Property name='viewportx' value='269.0' />
+<Property name='viewporty' value='111.0' />
+<Property name='cameraclipx' value='-50.0' />
+<Property name='cameraclipy' value='-50.0' />
+<Property name='cameraclipw' value='900.0' />
+<Property name='cameracliph' value='740.0' />
+<Property name='global' value='false' />
+<Property name='debug' value='false' />
+<Property name='visible' value='true' />
+<Property name='physicsScale' value='1.0' />
+<Property name='physicsGravityX' value='0.0' />
+<Property name='physicsGravityY' value='0.0981' />
+<Property name='scissorEnabled' value='false' />
+<Property name='scissorX' value='0' />
+<Property name='scissorY' value='0' />
+<Property name='scissorW' value='1000000' />
+<Property name='scissorH' value='1000000' />
+<Property name='viewscale' value='1.0' />
+<Property name='priority' value='0' />
+</Object>
+<Object type='GL_Mapper' name='mapper1' params='[]' creator='stage1'>
+<Property name='ScriptInterface' value='' />
+<Property name='x' value='0.0' />
+<Property name='y' value='0.0' />
+<Property name='priority' value='0.0' />
+<Property name='tilew' value='32' />
+<Property name='tileh' value='32' />
+<Property name='width' value='25' />
+<Property name='height' value='20' />
+<Tileset name='images/tiles.png' texw='480' texh='192' tw='32' th='32' />
+<Layer width='25' height='20' data='789CFBFF9F0108FE8F92A3E428394A8E92A3E428394C490606153412591C938D4B8416AEC22F8EDFCDB40E2BFCAEC2AF9E7AEEF12629AC681D839869893C9216668E041200705048E5' />
+</Object>

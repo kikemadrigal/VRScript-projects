@@ -1,0 +1,32 @@
+namespace es_tipolisto_gulfgar;
+
+class menu implements GL_Stage{
+	properties:
+		background=null;
+		mosaico=null;
+		pad=null;
+	virtual _operator_new(_name,_creator)
+	{
+		_background=newobject("titulo","gl_sprite");
+		_background.Addframe("images/menu.png");
+		//GetEngine().LogPrint("menu cargado");
+		_bacKground.Setpos(0,0);
+		_background.SetSize(GetApp().GetResX(),450);
+		_background.SetPriority(1);
+		background=_background;
+		GetEngine().LogPrint("Menu cargado ");
+
+		_pad=NewObject("pad", "GL_Pad");
+	    _pad.SetPreset("CURSORS");
+		pad=_pad;
+	}
+
+	virtual Move(){
+		if(pad.IsButtonDown(PAD_BUTTON_1)){ 	
+            //GetEngine().LogPrint("Main dice: click en menu");
+            game=GetApp().RunStage("game","Game");
+        }
+	}
+}
+
+

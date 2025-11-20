@@ -1,0 +1,24 @@
+namespace es_tipolisto_gulfgar;
+
+class menu implements GL_Stage{
+	properties:
+		pad=null;
+	virtual _operator_new(_name,_creator)
+	{
+		_background=newobject("titulo","gl_sprite");
+		_background.Addframe("images/menu.png",GetApp().GetResX(), GetApp().GetResY());
+
+		_pad=NewObject("pad", "GL_Pad");
+	    _pad.SetPreset("CURSORS");
+		pad=_pad;
+		
+	}
+
+	virtual Move(){
+		if(pad.IsButtonDown(PAD_BUTTON_1)){ 	
+            GetApp().RunStage("stage1","Stage1");
+        }
+	}
+}
+
+

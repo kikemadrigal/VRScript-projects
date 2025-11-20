@@ -1,0 +1,174 @@
+namespace es_tipolisto_arkanoid;
+
+class Stage implements GL_Stage{
+    defines:
+        //Cuanto mas prioridad se dibijará por encima
+        PRIORITY_BACKGROUND=0;
+        PRIORITY_PLAYER=1;
+        PRIORITY_BRICK=2;
+        PRIORITY_BALL=3;
+        PRIORITY_HUD=4;
+
+        TYPE_PLAYER=1;
+        TYPE_BALL=2;
+        TYPE_BRICK=4;
+
+        LIMIT_X1=11;
+        LIMIT_X2=187;
+        LIMIT_Y1=8;
+        LIMIT_Y2=190;
+        //Vidas
+        MAX_SHIPS=3; 
+        //Desaciva que maten al player
+        DEBUG=True;
+    properties:
+        score=0;
+        hiScore=0;
+        numShips=MAX_SHIPS;
+        //Para detectar cuando destruimos todos los ladrillos
+        numBricks=0;
+        player=null;
+        ball=null;
+        hud=null;
+
+        sndGameOver=null;
+        timer=0;
+        currentStage=5;
+        indestructibleBricks=[];
+    virtual _operator_new(_name,_creator)
+    {
+        _bg=NewObject("bg","GL_Sprite");
+        _bg.AddFrame("res/bg1.png");
+
+        _bg.SetPriority(PRIORITY_BACKGROUND);
+
+        player=NewObject("player","Player");
+        ball=NewObject("ball","Ball");
+        hud=NewObject("hud","HUD");
+
+        sndGameOver=NewObject("snd","GL_Sound");
+        sndGameOver.Load("sounds/gameover.ogg");
+    }
+    /**
+     * Función que se llama al iniciar el juego siempre en los GL_Stages
+     */
+    virtual Start(){
+        LoadStage();
+    }
+    function LoadStage(){
+        player.SetVisible(False);
+        ball.SetVisible(False);
+        //Te has pasado el juego mostramos la pantalla de ganador
+        if(currentStage>9){
+            sndGameOver.Play();
+            player.Stop();
+            ball.Stop();
+            currentStage=1;
+            timer=GetTime();
+            _change("winnerscreen");
+        }else{
+             hud.SetRound(currentStage);
+            _change("load");
+        }
+        
+    }
+    state "load"{
+        LoadTXT(currentStage);
+        player.SetVisible(True);
+        ball.SetVisible(True);
+        player.Init();
+        _change("playing");
+    }
+    state "playing"{
+        
+    }
+    state "gameover"{
+        if(GetTime()-timer>2000){
+            //Volvemos al menu
+            GetApp().RunStage("menu","Menu");
+        }
+    }
+    state "winnerscreen"{
+        if(GetTime()-timer>2000){
+            //Vamos a la pantalla de ganador
+            GetApp().RunStage("winner","Winner");
+        }
+    }
+
+    /**
+     * Función que lee de un archivo de texto la disposición de los ladrillos
+     * @param _id id del nivel
+     */
+    function LoadTXT(_id){
+        _file=GetEngine().FileOpen("stages/stage_"+string(_id)+".txt", FILE_MODE_READ);
+        if(_file){
+            j=0;
+            while(!_file.IsEOF()){
+                _line=_file.ReadText();
+                for(i=0;i<strlen(_line);i++){
+                    _id=_line[i]-'0';
+                    if(_id>=1){
+                        _brick=NewObject("brick","Brick_"+string(_id));
+                        //El 5 y el 3 son los pixeles que le ponemos de margen
+                        _brick.SetPos(LIMIT_X1+5+i*_brick.GetWf(),LIMIT_Y1+3+j*_brick.GetHF());
+                        if (_brick.CanBeDestroy()) numBricks++;
+                        else{
+                            indestructibleBricks+=[_brick];
+                        }
+                    }
+                }
+                j++;
+            }
+            GetEngine().FileClose(_file);
+        }
+    }
+
+
+    function OnDestroyBrick(_brick){
+        //Sumamos el score
+        score+=_brick.GetScore();
+        if(score>hiScore){
+            hud.SetHiScore(score);
+            //Guardamos el nuevo record
+            hiScore=score;
+        }
+        //Actualizamos el HUD
+        hud.SetScore(score);
+        numBricks--;
+        if(numBricks==0){
+            //NEXT STAGE?
+      
+            //borramos los indestuctibles
+            for(i=0;i<sizeof(indestructibleBricks);i++){
+                indestructibleBricks[i].SetVisible(False);
+                indestructibleBricks[i].SetCollision(False);
+            }
+            //Cambiamos de pantalla
+            currentStage++;
+            LoadStage();
+        }
+    }
+
+    /**
+     * Función que se llama cuando la pelota toca el límite inferior
+     * es llamada desde el objeto Ball, línea 42
+     */
+    function OnDestroyShip(){
+        //Restamos el score
+        numShips--;
+        hud.SetShips(numShips);
+        if(numShips==0){
+            //Fin del juego
+           sndGameOver.Play();
+           player.Stop();
+           ball.Stop();
+           hud.GameOver();
+           timer=GetTime();
+           _change("gameover");
+        }else{
+            player.OnDestroyShip();
+        }
+    }
+
+
+}

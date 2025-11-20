@@ -1,0 +1,76 @@
+namespace es_tipolisto_arkanoid;
+
+class HUD implements GL_Sprite{
+    //Propiedades
+    properties:
+        score=null;
+        hiScore=null;
+        round=0;
+        shipIconList=[];
+        gameOverImage=null;
+    virtual _operator_new(_name,_creator){
+        _text=NewObject("score","GL_Text");
+        _text.SetFont("fonts/Vintage Black.ttf", 12);
+        //Indicamos el tamaño en pixelex de la fuente en horizontal y vertial
+        /*_text.SetFontSize(8,7);
+        //Indicamos cuantos caracteres hay en la textura
+        //Ennuestro caso 10 caracteres, tendremos solo 1 fila y el primero de esos caracteres corresponder-a con el código ASCII del 0
+        _text.SetFontBitmapProperties(10,1,"0");
+        //Le indicamos el archivo donde extraemos los gráficos de los caracteres
+        _text.SetFontName("numbers.png");*/
+        _text.SetPos(200,58);
+        _text.SetText("000000");
+        score=_text;
+
+        _text=NewObject("score","GL_Text");
+        _text.SetFont("fonts/Vintage Black.ttf", 12);
+        _text.SetPos(200,26);
+        _text.SetText("000000");
+        hiScore=_text;
+
+        _text=NewObject("round","GL_Text");
+        _text.SetFont("fonts/Vintage Black.ttf", 12);
+        _text.SetPos(200,180);
+        _text.SetText("0");
+        round=_text;
+
+        gameOverImage=NewObject("gameOver","GL_Sprite");
+        gameOverImage.AddFrame("res/gameover.png");
+        gameOverImage.SetPos(GetApp().GetResX()/2-100,GetApp().GetResY()/2-25);
+        gameOverImage.SetVisible(False);
+
+
+        for(i=0;i<MAX_SHIPS;i++){
+            _icon=NewObject("shipIcon"+i,"GL_Text");
+            _icon.AddFrame("res/icon_ship.png",15,5);
+            _icon.SetPos(200+i*(_icon.GetWF()+1),100);
+            shipIconList+=[_icon];
+        }
+
+
+        SetPriority(PRIORITY_HUD);
+    }
+
+
+    function SetScore(_score){
+        score.SetText(String_Format("%06d",_score));
+    }
+    function SetHiScore(_hiScore){
+        hiScore.SetText(String_Format("%06d",_hiScore));
+    }
+    function SetShips(_v){
+        for(i=0;i<_v;i++){
+            shipIconList[i].SetVisible(True);
+        }
+        for(;i<MAX_SHIPS;i++){
+            shipIconList[i].SetVisible(False);
+        }
+    }
+    function SetRound(_v){
+        round.SetText(String_Format("%02d",_v));
+    }
+
+    function GameOver(){
+        gameOverImage.SetVisible(True);
+    }
+}

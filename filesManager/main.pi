@@ -1,0 +1,308 @@
+class FileIO_GL implements GL_Program
+{
+    // Nombre del archivo de texto a manipular
+    constants:
+        FILE_NAME = "mi_archivo.txt";
+        FILE_NAME_DATA = "mi_archivo.data";
+        FILE_NAME_XML = "mi_archivo.xml";
+        // Definimos una longitud de 8 bytes para nuestro buffer de datos de ejemplo
+        BUFFER_SIZE = 8;
+    properties:
+        pad=null;
+        text=null;
+    
+    // Función principal que se ejecuta al iniciar el programa
+    virtual Start()
+    {
+        SetResolution(320, 200); 
+        Setbackcolor(RGB(0,0,0));
+        Setviewscale(-3);
+        Setvsync(true);
+        Setframerate(30);
+
+        _pad=newPad("pad");
+	    _pad.SetPreset("CURSORS");
+		_pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_1);
+		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_2);
+		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_3);
+		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_4);
+		_pad.SetButton(PAD_BUTTON_5,0,PAD_MODE_KEYBOARD,KEY_5);
+		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_6);
+		_pad.SetButton(PAD_BUTTON_7,0,PAD_MODE_KEYBOARD,KEY_7);
+		_pad.SetButton(PAD_BUTTON_8,0,PAD_MODE_KEYBOARD,KEY_8);
+		_pad.SetButton(PAD_BUTTON_10,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
+		pad=_pad; 	
+
+        _text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 10);
+		_text.SetAlign(DT_CENTER);
+		_text.SetColor(RGB(234,255,0));	
+        text=_text;
+        print_menu();
+        
+
+       //End(0);
+    }
+    virtual Move(){
+        
+        if(pad.IsButton(PAD_BUTTON_10)){
+            print_menu();
+        // 1. Escribir en archivo de texto
+        }else if(pad.IsButtonDown(PAD_BUTTON_1)){
+            _text=GetEngine().InputDialogModal("Introuzca el texto para poner en el archivo", "", 0, " ");
+            WriteTextFile(FILE_NAME, _text);
+        // 2 . Leer archivo de texto
+        }else if(pad.IsButtonDown(PAD_BUTTON_2)){
+            _contenido_leido = ReadTextFile(FILE_NAME);
+            text.SetText(_contenido_leido);
+            text.SetText(text.GetText()+"\nEscape para continuar...");
+        // 3. Escribir en archivo binario
+        }else if(pad.IsButtonDown(PAD_BUTTON_3)){
+            //_cadena_original = "vidas "+3+" puntuacion "+1500+" nivel "+7;
+            _cadena_original=GetEngine().InputDialogModal("Introuzca el texto para poner en el archivo", "", 0, " ");
+            _data_to_write =String_ToBuffer(_cadena_original); // Crea buffer ASCIIZ
+            // El formato de un buffer se puede definir como una secuencia de valores entre llaves.
+            //_data_to_write = {257:short, 123456:int, 99:short};
+            GetEngine().LogPrint("Tamaño del buffer a escribir: " + strlen(_data_to_write) + " bytes.");
+            // Escribimos el buffer en un archivo binario
+            WriteBinaryFile(_data_to_write);
+            // Liberamos los recursos del buffer 
+            Buffer_Delete(_data_to_write);
+            text.SetText(text.GetText()+"\nEscape para continuar...");
+        // 4. Leer archivo binario
+        }else if(pad.IsButtonDown(PAD_BUTTON_4)){
+            _read_buffer = ReadBinaryFile();
+            text.SetText(text.GetText()+"\nEscape para continuar...");
+        // 5. Escribir en XML
+        }else if(pad.IsButtonDown(PAD_BUTTON_5)){
+            //WriteXMLFile();
+        // 6. Leer de XML
+        }else if(pad.IsButtonDown(PAD_BUTTON_6)){
+            readXMLFile();
+            text.SetText(text.GetText()+"\nEscape para continuar...");
+        }
+        // 7. Escribir en JSON
+        else if(pad.IsButtonDown(PAD_BUTTON_7)){
+            //WriteJSONFile();
+        }
+        // Leer de JSON
+        else if(pad.IsButtonDown(PAD_BUTTON_8)){
+            //readJSONFile();
+        }
+    
+
+        //text.SetText(text.GetText()+"\nPresiona una tecla para continuar...");
+    }
+    function print_menu(){
+        text.SetText("Opciones:\n"+
+            "\n1. Escribir texto."+
+            "\n2. Leer texto."+
+            "\n3. Escribir como bytes."+
+            "\n4. Leer como bytes."+
+            "\n5. Escribir en XML."+
+            "\n6. Leer de XML."+
+            "\n7. Escribir en JSONL."+
+            "\n8. Leer de JSON."+
+            "\nESCAPE para volver al menu.");
+    }
+    // Función para escribir contenido de texto en un archivo
+    function WriteTextFile(path, content)
+    {
+        /*
+        FILE_MODE_READMEM
+        FILE_MODE_WRITEMEM
+        FILE_MODE_READ
+        FILE_MODE_WRITE
+        FILE_MODE_APPEND
+        FILE_MODE_READTEXT
+        FILE_MODE_WRITETEXT
+        FILE_MODE_APPENDTEXT
+        */
+        _file = GetEngine().FileOpen(path, FILE_MODE_WRITETEXT); // Se usa File_Open del API Nativo a través de GetEngine() [9, 10]
+        if (_file)
+        {
+            _file.WriteText(content); // [11, 12]
+        }
+        else
+        {
+            GetEngine().LogError("Error al abrir o crear el archivo para escribir: " + path); // [15]
+        }
+    }
+
+    // Función para leer todo el contenido de texto de un archivo
+    function ReadTextFile(path) : string
+    {
+        _content = GetEngine().FileContent(path); // Devuelve el contenido del archivo 
+        if (_content == "")
+        {
+            GetEngine().LogWarning("El archivo está vacío o no existe.");
+        }
+        return _content;
+    }
+
+
+
+
+
+    /**
+     * BINARIO
+
+    Función para trabajar con un buffer binario 
+    Recursos: 
+           Buffer=http://msxvr.es/doc/wiki/mdwiki.html#!d88cec679f4796399dcdb7966c3022a03d9b3c3c.md
+           File=http://msxvr.es/doc/wiki/mdwiki.html#!6b90fbe3c7ecf32f74f8a3e5ef7eda37bad3b420.md
+    */
+    function WriteBinaryFile(buffer)
+    {
+        if(!GetEngine().FileExists(FILE_NAME_DATA)) GetEngine().LogPrint("No existe el archivo binario "+FILE_NAME_DATA+", vamos a crearlo.");
+        
+        // Usamos FILE_MODE_WRITE para operaciones binarias de escritura
+        _file = GetEngine().FileOpen(FILE_NAME_DATA, FILE_MODE_WRITE); 
+        if (_file)
+        {
+            // Escribir el contenido del buffer completo. length = -1 significa todo el buffer
+            _bytes_written = _file.Write(buffer, 0, -1);
+            
+            GetEngine().LogPrint("Escritura binaria exitosa: " + _bytes_written + " bytes.");
+            text.SetText("\nEscritura binaria exitosa: " + _bytes_written + " bytes.");
+            _string_content=Buffer_GetString(buffer,0,_bytes_written);
+            text.SetText(text.GetText()+"\nContenido (ASCII) con getString: "+_string_content);
+            GetEngine().FileClose(_file); // Cerrar el controlador de archivo 
+        }
+        else
+        {
+            GetEngine().LogError("Error al abrir o crear el archivo para escritura binaria: " + FILE_NAME_DATA);
+        }
+    }
+
+    // Función para leer todo el contenido binario de un archivo en un buffer
+    function ReadBinaryFile() : pointer
+    {
+        // Obtenemos el tamaño del archivo en bytes 
+        _file_size = GetEngine().FileSize(FILE_NAME_DATA); 
+
+        if (_file_size == 0)
+        {
+            GetEngine().LogWarning("El archivo está vacío o no existe.");
+            text.SetText("\nEl archivo está vacío o no existe.");
+            // Devolvemos al bucle del move un buffer vacío
+            return Buffer_New(0); 
+        }
+        
+        // Creamos un nuevo buffer del tamaño exacto del archivo para almacenar los datos leídos 
+        _output_buffer = Buffer_New(_file_size); 
+        // Abrimos el archivo en modo binario de lectura 
+        _file = GetEngine().FileOpen(FILE_NAME_DATA, FILE_MODE_READ); 
+        
+        if (_file)
+        {
+            // Leer el contenido del archivo directamente en el buffer
+            _bytes_read = _file.Read(_output_buffer, 0, _file_size);
+            GetEngine().FileClose(_file); 
+
+            GetEngine().LogPrint("Lectura binaria exitosa: " + _bytes_read + " bytes.");
+            _string_content=Buffer_GetString(_output_buffer,0,_file_size);
+            text.SetText("\nLectura binaria exitosa: " + _bytes_read + " bytes.\nContenido (ASCII) con getString: "+_string_content);
+            return _output_buffer;
+        }
+        else
+        {
+            GetEngine().LogError("Error al abrir el archivo para lectura binaria: " + FILE_NAME_DATA);
+            text.SetText("\nError al abrir el archivo para lectura binaria: " + FILE_NAME_DATA);
+            Buffer_Delete(_output_buffer); // Eliminar el buffer creado [14]
+            return Buffer_New(0);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * XML
+     */
+
+    function readXMLFile(){
+        _xml_file=GetEngine().FileOpen(FILE_NAME_XML, FILE_MODE_READ); 
+        if (!_xml_file)
+        {
+             GetEngine().LogPrint("El archivo xml no aexiste.");
+        }
+
+        _fileSize = GetEngine().FileSize(FILE_NAME_XML);
+		_buffer = Buffer_New(_fileSize);
+		_xml_file.read(_buffer, 0, _fileSize);
+        _string_content=Buffer_GetString(_buffer,0,_fileSize);
+        GetEngine().FileClose(_xml_file);
+		Buffer_Delete(_buffer);
+
+		xmlDoc = XML_Open (_string_content);
+
+		if (!xmlDoc)
+		{
+			return 0;
+		}
+		//Obtenemos al objeto que rep`resenta el elemento raiz
+		_xmlRootElement = XML_GetRootElement(xmlDoc);
+        GetEngine().LogPrint("Elemento raiz: " + _xmlRootElement+" name : "+XML_GetElementName(_xmlRootElement));
+        
+        _xmlElement = XML_FirstElement(_xmlRootElement);
+        GetEngine().LogPrint("Primer elemento: " + _xmlElement+" name : "+XML_GetElementName(_xmlElement));
+        _contador_elementos = 0;
+        text.SetText("Elemento raiz: " + XML_GetElementName(_xmlRootElement)+"\n");
+        text.SetFont("fonts/Vintage Black.ttf", 6);
+		while (_xmlElement)
+		{
+			_xmlElement = XML_NextElement(_xmlElement);
+            //  getEngine().LogPrint("Siguiente elemento: " + _xmlElement+" name : "+XML_GetElementName(_xmlElement));
+            //_key = XML_GetElementName (_xmlElement);
+			//_text = XML_GetElementValue (_xmlElement);
+            if(_xmlElement!=0)
+            {
+                GetEngine().LogPrint("\nElemento: "+XML_GetElementName(_xmlElement));
+                name=XML_GetElementName(_xmlElement);
+                text.SetText(text.GetText()+"\n------------------------------\nElemento: "+name);
+                
+
+                ReadAttributes(_xmlElement);
+            }
+           
+			_contador_elementos++;
+		}
+		GetEngine().LogPrint("Los pasos son : " + _contador_elementos); 
+
+		//_num_steps = GetNumSteps (xmlElement);
+				
+    }
+
+    function ReadAttributes (_e)
+	{
+		_a = XML_FirstAttribute (_e);
+		while (_a)
+		{
+			_name = XML_GetAttributeName (_a);
+			_value = XML_GetAttributeValue (_a);
+			_a = XML_NextAttribute (_a);
+            GetEngine().LogPrint(text.GetText()+"   Atributo: " + _name + " Valor: " + _value);
+            text.SetText(text.GetText()+"\n   Atributo: " + _name + " Valor: " + _value);
+		}
+	}
+
+    function check_XML_file_exists(){
+        _xml_file=GetEngine().FileOpen(FILE_NAME_XML, FILE_MODE_WRITE); 
+        if (!_xml_file)
+        {
+            _xml_file.WriteText("");
+        }
+        GetEngine().FileClose(_xml_file);
+    }
+
+
+}

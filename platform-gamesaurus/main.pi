@@ -1,0 +1,11 @@
+class main implements GL_Program {
+    virtual start(){
+        Setbackcolor(RGB(0,0,0));
+        //Setresolution(800,640);
+        //Setviewscale(-3);
+        //LoadVGS("test-mapper.vgs");
+        stageGlobal=newStage("stageGlobal","StageGlobal");
+    	RunStage("menu","menu");
+    }
+}
+  

@@ -1,0 +1,20 @@
+﻿class App {
+	properties:
+		app=null;
+	
+		//cc=null;
+	function _operator_new(_app){
+		app=_app;
+		
+		/*cc=app.StartCreationContext();
+		Init();
+		app.EndCreationContext();
+		*/
+	}
+	
+	/*function Init(){
+		
+	}*/
+	function _operator_delete(){}
+
+}

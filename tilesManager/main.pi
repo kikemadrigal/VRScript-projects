@@ -1,0 +1,23 @@
+class main implements GL_Program {
+    defines:
+        DEBUG_MODE=1;
+        TILE_POSITION_CENTER=0;
+        TILE_POSITION_UP=1;
+        TILE_POSITION_RIGHT=2;
+        TILE_POSITION_DOWN=3;
+        TILE_POSITION_LEFT=4;
+    properties:
+        stageGlobal=null;
+
+    virtual start(){
+        SetBackcolor(RGB(0,0,0));
+        SetResolution(800,640);
+        Setviewscale(-2);
+
+        stageGlobal=newStage("stageGlobal","StageGlobal");
+        
+        
+    	RunStage("stage1","Stage1");
+    }
+}
+  

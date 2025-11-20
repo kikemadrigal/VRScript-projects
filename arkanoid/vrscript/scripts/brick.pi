@@ -1,0 +1,26 @@
+﻿namespace es_tipolisto_arkanoid;
+
+class Brick implements GL_sprite{
+	properties:
+		app=null;
+
+	virtual _operator_new(_name,_creator,_params){
+		app=_params[0];
+		_x=_params[1];
+		_y=_params[2];
+		_brick=_params[3];
+		/*
+		a=amarillo
+		g=gris
+		m=morado
+		r=rojo
+		v=verde
+		z=azul
+		*/
+		//El frame de los ladrillos es una imagen de 30x10 pixeles
+		_file="res/"+_brick+"40X20.png";
+		addframe(_file);
+		SetPos(_x,_y);	
+		SetCollision(True);		
+	}
+}

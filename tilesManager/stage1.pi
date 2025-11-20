@@ -1,0 +1,39 @@
+class Stage1 implements GL_Stage{
+    properties:
+        text=null;
+        player=null;
+        mapper=null;
+        
+
+
+    virtual _operator_new(_name,_creator){
+        _background=newobject("fondo","gl_sprite");
+		_background.Addframe("images/stage1.png");
+        _background.SetPriority(-1);
+        
+
+        _ok=GetApp().stageGlobal.tilesManager.Load("level1.vgs");
+        if(_ok==0){
+            GetEngine().AlertDialog("Warning","hubo un problema",View.AD_OK,this,null, null);
+            return;
+        }
+        
+       
+        _mapper=GetApp().stageGlobal.mapper;
+        _num_layers=_mapper.GetNumLayers();
+        GetEngine().LogPrint("Numero de layers: "+_num_layers);
+        _num_tilesets=_mapper.GetNumTilesets();
+        GetEngine().LogPrint("Numero de tilesets: "+_num_tilesets);
+
+        GetApp().stageGlobal.player.SetPos(100,GetApp().GetGl().GetResY()-64-64-64);
+        GetApp().stageGlobal.draw_text();
+    }
+
+
+
+
+
+
+
+
+}

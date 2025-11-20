@@ -1,0 +1,19 @@
+namespace es_tipolisto_gulfgar;
+
+class Game implements GL_Stage{
+    properties:
+        player1=null;
+    virtual _operator_new(_name,_creators){
+        player1=NewObject("player","Player",[this]);
+        player1.SetPos(20,300);
+    
+        bg=NewObject("bg","gl_sprite");
+        bg.Addframe("images/stage1.png");
+        bg.SetPriority(-1);
+
+        //GetEngine().LogPrint("Game cargado");
+       // _texto=GetApp().stageGlobal.text.GetText();
+        //GetApp().stageGlobal.text.SetText(_texto+"\nGame cargado");
+    }
+
+}

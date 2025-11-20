@@ -1,0 +1,92 @@
+namespace es_tipolisto_gulfgar;
+
+class main implements GL_Program {
+    defines:
+        PRODUCTION_MODE="prod"; //"prod" , "dev" y "midle"
+    properties:
+        stageGlobal=null;
+        game=null;
+        path="";
+        text=null;
+
+
+ 
+    /*virtual Init()
+	{
+		_wnd = CreateWindow();
+		//_wnd.AddStyle(_wnd.STYLE_SHOW_FULLSCREEN);
+		_wnd.AddStyle(_wnd.STYLE_CLOSE_BOX);
+		_wnd.SetTitle("El tio de la vara ");
+
+		_menu = _wnd.CreateMenu();
+		_section = _menu.AddSection ("File");
+        _section.AddItem("vara.tipolisto.es", this, "OnAddLink");
+        _section.AddItem("", null, "");
+		_section.AddItem ("Exit", this, "OnFileExit");
+        _wnd.AddHotKey ([KEY_LCONTROL, KEY_Q], this, "OnFileExit");
+
+
+
+	}*/
+	
+	function OnFileExit()
+	{
+		End(0);
+	}
+        
+    virtual start(){
+
+		//_text.SetColor(RGB(234,255,0));	
+       // AddScriptPackage(GetBundleDriveName()+"/scripts/*.*");
+        Setbackcolor(RGB(0,0,0));
+        Setresolution(800,450);
+        //Lo agrandamos solo en horizontal de 800 a 1280 que suele ser la resuloción habotual
+        Setviewscale(-1);
+        Setvsync(true);
+        Setframerate(30);
+        //AddScriptPackage("scripts");
+        //El stageGlobal es usado para los marcadores y elementos generales
+        stageGlobal=newStage("stageGlobal","StageGlobal");
+                
+        //GetEngine().LogPrint("Main cargado");
+
+        //game=RunStage("game","Game");
+    	menu=newStage("menu", "menu");
+		menu.SetMain();
+		menu.SetActive();
+        //_change ("menu");
+
+        //if(stageGlobal.pad==null)stageGlobal.text.SetText("El pad es nulo");
+        //else stageGlobal.text.SetText("El pad no es nulo");
+ 
+ 
+    }
+
+    /*
+    state "menu":
+    {
+         GetEngine().LogPrint("Menu");
+        if(stageGlobal.pad.IsButtonDown(PAD_BUTTON_1)){ 	
+            GetEngine().LogPrint("Main dice: click en menu");
+            game=RunStage("game","Game");
+            _change ("game");
+        }
+    }
+    state "game":
+    {
+        _player1=game.player1;
+        _player1.incrementoX=0;
+
+        //Si se pulsa el cursor derecho
+        if (stageGlobal.pad.IsButton(PAD_BUTTON_RIGHT)){
+            _player1.incrementoX=2;	
+            _player1.SetHFlip(False);	
+        }else if (stageGlobal.pad.IsButton(PAD_BUTTON_LEFT)){
+            _player1.incrementoX=-2;	
+            _player1.SetHFlip(True);
+        }    
+    }
+    */
+    
+}
+  

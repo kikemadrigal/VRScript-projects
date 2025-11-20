@@ -1,0 +1,89 @@
+class StageGlobal implements GL_Stage{
+	properties:
+        mapper=null;
+        tilesmanager=null;
+        player=null;
+        text=null;
+        currentStage=1;
+
+
+	virtual _operator_new(_name,_creator){	
+		SetGlobal(True);
+
+        mapper=NewObject("mapper","gl_mapper");
+        tilesManager = new TilesManager(this, mapper);
+
+        _player=NewObject("player","Player",[this]);
+        _player.SetPos(100,GetApp().GetGl().GetResY()-64-64-64);
+        player=_player;
+
+        _text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 20);
+		_text.SetAlign(DT_CENTER);
+		_text.SetText(text);
+        text=_text;
+    }
+
+    function draw_text(){
+        _message="\nPantalla: "+GetApp().GetGL().GetResX()+", "+GetApp().GetGL().GetResY();
+        _message+="\nPlayer x: "+string_format("%.2f",player.GetX())+", y: "+string_format("%.2f",player.GetY())+", hflip: "+player.GetHFLip()+", aeceleration: "+string_format("%.2f",player.aceleracion);
+        _message+="\nTile: left: "+get_tile(player,TILE_POSITION_LEFT)+", right: "+get_tile(player,TILE_POSITION_RIGHT)+", down: "+get_tile(player,TILE_POSITION_DOWN);
+        _message+="\nFPS: "+GETFPS(1);
+        text.SetText(_message);  
+    }
+
+    virtual Move(){
+        if(DEBUG_MODE){
+             draw_text();
+        }
+    }
+
+
+
+    function get_tile(_spr, tile_postition){
+        
+        //GetCellFromPos
+        //    Dada una posición (x, y), devolverá la celda que haya en esa posición. El valor
+        //    retornado será una lista de dos componentes: [celdaX, celdaY]. En caso de que la
+        //    posición esté fuera del rango del mapeado, se retornará lista vacía.
+         
+        //le sumamos 32 para que se muestre el centro de la celda
+       _tile=null;
+       _x=_spr.GetX();
+       _y=_spr.GetY();
+       _w=_spr.GetWF();
+       _h=_spr.GetHF();
+        switch(tile_postition){
+            case TILE_POSITION_CENTER:
+                _tile=mapper.GetCellFromPos(_x+(_w/2),_y+(_h/2));
+                break;
+            case TILE_POSITION_UP:
+                _tile=mapper.GetCellFromPos(_x+(_w/2),_y);
+                break;
+            case TILE_POSITION_RIGHT:
+                _tile=mapper.GetCellFromPos(_x+_w,_y+(_h/2));
+                break;
+            case TILE_POSITION_DOWN:
+                _tile=mapper.GetCellFromPos(_x+(_w/2),_y+_h);
+                break;
+            case TILE_POSITION_LEFT:
+                _tile=mapper.GetCellFromPos(_x,_y+(_h/2)+10);
+                break;
+        }
+        
+        //Get
+        //    Obtiene una lista con [tileset [0], tileindex [1], flags [2]].
+        _data_tile=mapper.GetLayer(1).Get(_tile[0] ,_tile[1]);    
+        if(sizeof(_data_tile)==0) GetEngine().LogPrint("Psosicion fuera de rango");
+        return _data_tile[1];
+    }
+
+    function change_stage(){
+        currentStage++;
+        _layer=mapper.GetLayer(1);
+        delete _layer;
+        if(currentStage>3) currentStage=1;
+		GetApp().RunStage("stage","Stage"+currentStage);
+	}
+
+}

@@ -1,0 +1,22 @@
+namespace es_tipolisto_gulfgar;
+
+class StageGlobal implements GL_Stage{
+    properties:
+		pad=null;
+		text=null;
+	virtual _operator_new(_name,_creator){	
+		SetGlobal(True);
+		GetEngine().LogPrint("stageGlobal cargado");
+		
+		_pad=NewObject("pad", "GL_Pad");
+	    _pad.SetPreset("CURSORS");
+		pad=_pad;
+
+		_text=NewObject("text","GL_Text");
+		_text.SetFont(GetApp().path+"fonts/Vintage Black.ttf", 18);
+        _text.SetPos(10,10);
+        _text.SetPriority(100);
+        _text.SetColor(RGB(234,255,0));
+        text=_text;
+	}	
+}

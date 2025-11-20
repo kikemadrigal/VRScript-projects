@@ -1,0 +1,209 @@
+﻿namespace es_tipolisto_arkanoid;
+
+class Game implements App{
+/**
+ * Los tablerso del juego es una matriz de vricks de 10x10
+ * cada uno de los elementos de la matriz es un string que representa el tipo de ladrillo
+ */
+	properties:
+		level=0;
+	virtual _operator_new(_app){
+		_forma=app.NewObject("forma","GL_Sprite");
+		_forma.SetPos(40,40);
+		_forma.SetPriority(0);
+		//Le decimos que queremos poder repetirlo ya ue por defecto se pinta el frame completo y se estira no se duplica
+		_forma.SetFlags(_forma.FLAG_WRAP);
+		_forma.AddFrame("res/forma1.png",500,500);
+		//Le decimos que se repite 10 en horizontal x 10 en vertical
+		_forma.SetUV(0,0,30,30);
+		//Bordes
+		_bg=app.NewObject("bg","GL_Sprite");
+		_bg.AddFrame("res/bordes.png");
+		_bg.SetPriority(1);
+
+
+		
+
+		//Player 1
+		app.player.lives=3;
+		app.player.score=0;
+		app.player.SetPos(app.BOARD_WIDTH/2,app.GetResY()-100);
+		app.player.SetVisible(True);
+
+
+		//Player 2
+		/*if (app.player2){
+			app.player2.lives=3;
+			app.player2.score=0;
+			app.player2.SetPos(app.BOARD_WIDTH/2+100,app.GetResY()-100);
+			app.player2.SetVisible(True);
+		}*/
+		
+
+
+		//Bola
+		app.ball.speed=8;
+		app.ball.SetVisible(True);
+
+
+		app.text_hud.SetVisible(True);
+		ChangeLevel();
+		app.resources.PlaySoundGameStart();
+	}
+	
+	function level_1(){
+		//app.SetBackColor(RGB(0,0,255));
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			["g","g","g","g","g","g","g","g","g","g","g"],
+			["r","r","r","r","r","r","r","r","r","r","r"],
+			["a","a","a","a","a","a","a","a","a","a","a"],
+			["z","z","z","z","z","z","z","z","z","z","z"],
+			["m","m","m","m","m","m","m","m","m","m","m"],
+			["v","v","v","v","v","v","v","v","v","v","v"],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		DrawMap(map);
+	}
+	function level_2(){
+		//app.SetBackColor(RGB(180,0,0));
+		map=[
+			["b"," "," "," "," "," "," "," "," "," "," "],
+			["b","a"," "," "," "," "," "," "," "," "," "],
+			["b","a","z"," "," "," "," "," "," "," "," "],
+			["b","a","z","v"," "," "," "," "," "," "," "],
+			["b","a","z","v","m"," "," "," "," "," "," "],
+			["b","a","z","v","m","o"," "," "," "," "," "],
+			["b","a","z","v","m","o","b"," "," "," "," "],
+			["b","a","z","v","m","o","b","a"," "," "," "],
+			["b","a","z","v","m","o","b","a","z"," "," "],
+			["b","a","z","v","m","o","b","a","z","v"," "],
+			["g","g","g","g","g","o","g","g","g","g","m"]
+		];
+		DrawMap(map);
+	}
+	function level_3(){
+		//app.SetBackColor(RGB(0,0,255));
+		map=[
+			["v","v","v","v","v","v","v","v","v","v","v"],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			["b","b","b","a","a","a","a","a","a","a","a"],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			["r","r","r","r","r","r","r","r","r","r","r"],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			["a","a","a","a","a","a","a","a","b","b","b"],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			["m","m","m","m","m","m","m","m","m","m","m"],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			["z","z","z","a","a","a","a","a","a","a","a"]
+		];
+		DrawMap(map);
+	}
+	function level_4(){
+		//app.SetBackColor(RGB(180,0,0));
+		map=[
+			[" ","z","a","b","g"," ","o","m","v","z"," "],
+			[" ","a","b","g","m"," ","m","m","a","o"," "],
+			[" ","b","g","a","a"," ","a","a","a","a"," "],
+			[" ","g","z","o","o"," ","m","m","m","o"," "],
+			[" ","r","r","r","r"," ","r","r","r","r"," "],
+			[" ","z","z","o","o"," ","a","z","z","z"," "],
+			[" ","a","a","a","a"," ","a","a","b","b"," "],
+			[" ","z","a","b","b"," ","a","z","o","o"," "],
+			[" ","m","m","m","m"," ","m","m","m","m"," "],
+			[" ","o","a","b","b"," ","a","z","z","a"," "],
+			[" ","z","z","a","a"," ","a","a","a","a"," "]
+		];
+		DrawMap(map);
+	}
+	function level_5(){
+		//app.SetBackColor(RGB(0,0,180));
+		map=[
+			[" ","a"," "," "," "," "," "," "," ","a"," "],
+			[" ","a"," "," "," "," "," "," "," ","a"," "],
+			[" "," ","a"," "," "," "," "," ","a"," "," "],
+			[" "," ","b","b","b","b","b","b","b"," "," "],
+			[" ","b","b","b","b","b","b","b","b","b"," "],
+			[" ","b","b","r","b","b","b","r","b","b"," "],
+			[" ","b","b","r","b","b","b","r","b","b"," "],
+			[" ","b","b","b","b","b","b","b","b","b"," "],
+			[" ","b","b","b","b","b","b","b","b","b"," "],
+			[" "," ","b"," "," "," "," "," ","b"," "," "],
+			[" "," ","b","b","b"," ","b","b","b"," "," "]
+		];
+		DrawMap(map);
+	}
+
+
+	function DrawMap(map){
+		//DrawBoundies();
+		for (_y=0;_y<sizeof(map);_y++){
+			fila=map[_y];
+			for (_x=0;_x<sizeof(map[_y]);_x++){
+				_brick=map[_y][_x];
+				app.CreateBrick(_x+1,_y+2,_brick);
+			}
+		}
+		//Pintamos un rectángulo de color negro para el parcador
+		/*_spr = app.NewSprite("Rectangulo");
+		_spr.AddEmptyFrame(100, 100);
+		_spr.SetColor(RGB(0,0,0));
+		_spr.SetPos(app.BOARD_WIDTH+10, 0);*/
+	}
+	function DrawBoundies(){
+		//dibujamos los lñimites de la derercha y la izquierda
+		for(i=0;i<12;i++){
+			if(i%2==0){
+				_boundy=app.NewObject("boundy","Boundy",null,[this,0,i*app.FAT_BORDER_HEIGHT, "borde-gordo20x60"]);
+				_boundy=app.NewObject("boundy","Boundy",null,[this,app.BOARD_WIDTH-app.FAT_BORDER_WIDTH,i*app.FAT_BORDER_HEIGHT, "borde-gordo20x60"]);
+			}else{
+				_boundy=app.NewObject("boundy","Boundy",null,[this,0,i*app.THIN_BORDER_HEIGHT, "borde-fino20x60"]);
+				_boundy=app.NewObject("boundy","Boundy",null,[this,app.BOARD_WIDTH-app.THIN_BORDER_WIDTH,i*app.THIN_BORDER_HEIGHT, "borde-fino20x60"]);
+			}
+			//app.bricks+=[_boundy];
+		}
+		//Pintamos la esquina superior izquierda
+		_boundy=app.NewObject("boundy","Boundy",null,[this,0,0, "esquina-izquierda"]);
+		_boundy=app.NewObject("boundy","Boundy",null,[this,app.BOARD_WIDTH-60,0, "esquina-derecha"]);
+		//Dibujamos los bordes de arriba
+		_boundy=app.NewObject("boundy","Boundy",null,[this,40,0, "arriba-fino"]);
+		_boundy=app.NewObject("boundy","Boundy",null,[this,140,0, "arriba-gordo"]);
+		_boundy=app.NewObject("boundy","Boundy",null,[this,240,0, "arriba-fino"]);	
+		_boundy=app.NewObject("boundy","Boundy",null,[this,330,0, "arriba-gordo"]);
+		_boundy=app.NewObject("boundy","Boundy",null,[this,370,0, "arriba-fino"]);	
+		
+	}
+	
+	function ChangeLevel(){
+		level++;
+		for(i=0; i<sizeof(app.bricks);i++)delete app.bricks[i];
+		app.bricks=[];
+		switch (level){
+			case 1:
+				level_1();
+				break;
+			case 2:
+				level_2();
+				break;
+			case 3:
+				level_3();
+				break;
+			case 4:
+				level_4();
+				break;
+			case 5:
+				level_5();
+				break;
+			default:
+				level=1;
+				level_1();
+				break;
+		}
+		app.resources.PlaySoundGameStart();
+		app.gamePaused=true;
+	}
+	
+}

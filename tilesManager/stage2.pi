@@ -1,0 +1,20 @@
+class Stage2 implements GL_Stage{
+    properties:
+        text=null;
+        player=null;
+        mapper=null;
+        
+
+    virtual _operator_new(_name,_creator){
+        _background=newobject("fondo","gl_sprite");
+		_background.Addframe("images/stage2.png");
+        _background.SetPriority(-1);
+        
+        GetApp().stageGlobal.tilesManager.Load("level2.vgs");
+        GetApp().stageGlobal.player.SetPos(100,GetApp().GetGl().GetResY()-64-64-64);
+        GetApp().stageGlobal.draw_text();
+    }
+
+
+}
+        

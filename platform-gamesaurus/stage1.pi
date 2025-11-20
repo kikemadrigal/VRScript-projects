@@ -1,0 +1,17 @@
+class Stage1 implements GL_Stage{
+    properties:
+        text=null;
+        player=null;
+        mapper=null;
+        layer=null;
+
+    virtual _operator_new(_name,_creators){
+
+
+    }
+
+
+
+
+
+}

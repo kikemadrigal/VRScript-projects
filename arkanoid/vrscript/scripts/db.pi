@@ -1,0 +1,111 @@
+﻿namespace es_tipolisto_arkanoid;
+
+class Db implements App{
+    properties:
+        connection=null;
+ 
+    virtual _operator_new(_app){	
+		_file="./database.sql";		
+		_connection = app.GetEngine().OpenDB(_file);
+		if (_connection){
+			connection=_connection;
+			//app.Log("conectado a la base de datos");
+        }else{
+			app.Log("hubo un error al conextar con la base de datos");
+		}
+    }
+	function ExistTableRecords(){
+		_result=connection.Query(".TABLES");
+		//app.Log("existe tabla records "+sizeof(_result));
+		if(sizeof(_result)==0) return False;
+		else return True;
+	}
+
+    function GetAll(){
+        _result = connection.Query("SELECT name, score, date FROM records ORDER BY score DESC LIMIT 10");
+        return _result;
+    }
+
+    function GetMax10(){
+        _result = connection.Query("select name, score, date from records order by score DESC limit 10");
+        return _result;
+    }
+
+	function GetUserRecord(){
+		_result = connection.Query("SELECT score, date FROM user_record WHERE id=1");
+        return _result;
+	}
+
+	function CheckRecord(_record){
+		_result=GetMax10();
+		for(i=0;i<sizeof(_result);i++){
+			//app.Log("Comprobando el record "+_result[i][1]);
+			if (_result[i][1]<_record) {
+				app.Log("el record "+_result[i][1]+" es menor que "+_record);
+				return true;
+			}
+		}
+		return False;
+	}
+
+    function CreateTableRecords(){
+        sql="CREATE TABLE IF NOT EXISTS records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name varchar(255),
+            score int,
+            date varchar(255))";
+        connection.Query(sql);
+    }
+
+    function CreateTableUserRecord(){
+        sql="CREATE TABLE IF NOT EXISTS user_record (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            score int,
+            date varchar(255)
+        );";
+        connection.Query(sql);
+		sql="insert into user_record (score, date) values (0, datetime('now','localtime'));";
+		connection.Query(sql);
+    }
+    function InsertFakeRecords(){
+        sql="insert into records (name, score, date) values 
+        ('Neo', 320, datetime('now','localtime')),
+        ('Trinity', 300, datetime('now','localtime')),
+        ('Morpheus', 250, datetime('now','localtime')),
+        ('Cifra', 200, datetime('now','localtime')),
+        ('Smith agent', 144, datetime('now','localtime')),
+        ('Oraculo', 100, datetime('now','localtime')),
+        ('Merovingio', 50, datetime('now','localtime')),
+        ('Persephone', 40, datetime('now','localtime')),
+        ('Arquitect', 30, datetime('now','localtime')),
+        ('Anakin Skywalker', 20, datetime('now','localtime')),
+        ('Luke Skywalker', 23, datetime('now','localtime')),
+        ('Han solo', 20, datetime('now','localtime')),
+        ('Leia Organa', 18, datetime('now','localtime')),
+        ('Yoda', 4, datetime('now','localtime'));";
+        connection.Query(sql);
+    }
+	function InsertRecord(name, score){
+		sql="insert into records (name, score, date) values ('"+name+"', "+score+", datetime('now','localtime'));";
+        connection.Query(sql);
+	}
+	function InsertUserRecord(score){
+		sql="insert into user_record (score, date) values ("+score+", datetime('now','localtime'));";
+        connection.Query(sql);
+	}
+	function UpdateUserRecord(_record){
+		sql="UPDATE user_record set score="+_record+" WHERE id=1";
+		connection.Query(sql);
+	}
+	function DeleteRecords(){
+		sql="DELETE FROM records";
+        connection.Query(sql);
+	}
+	function DeleteUserRecord(){
+		sql="UPDATE user_record set score=0 WHERE id=1";
+        connection.Query(sql);
+	}
+    virtual _operator_delete(){
+        app.GetEngine().CloseDB(connection);
+    }
+}

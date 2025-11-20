@@ -1,0 +1,44 @@
+namespace es_tipolisto_gulfgar;
+
+class Player implements GL_sprite{
+	properties:
+		game=null;
+		incrementoX=0;
+		pad=null;
+
+	virtual _operator_new(_name,_creator, _params){
+		game=_params[0];
+		Addanimationwithsheet("idle","images/player.png",0,0,0,0,64,64);
+		Addanimationwithsheet("walk","images/player.png",0,5,0,64,64,64,-1,-1,-1,0.1);
+		Addanimationwithsheet("attack","images/player.png",0,4,0,128,64,64,-1,-1,-1,0.3);
+		Addanimationwithsheet("jump","images/player.png",0,0,0,3*64,64,64);
+		Addanimationwithsheet("fall","images/player.png",0,0,0,4*64,64,64);
+		Addanimationwithsheet("dead","images/player.png",0,0,0,5*64,64,64);
+		Addanimationwithsheet("pick","images/player.png",0,5,0,6*64,64,64);
+		Addanimationwithsheet("crouching","images/player.png",0,0,0,7*64,64,64);
+		SetAnimation("walk");	
+		SetPriority(1);
+		SetColliderMode(True);
+		SetcollisionRect(20,20,24,44);
+				//Pad
+		_pad=NewObject("pad", "GL_Pad");
+	    _pad.SetPreset("CURSORS");
+		pad=_pad;
+		//GetEngine().LogPrint("player cargado");
+	}
+
+	virtual Move(){
+        incrementoX=0;
+
+        //Si se pulsa el cursor derecho
+        if (pad.IsButton(PAD_BUTTON_RIGHT)){
+            incrementoX=2;	
+            SetHFlip(False);	
+        }else if (pad.IsButton(PAD_BUTTON_LEFT)){
+            incrementoX=-2;	
+            SetHFlip(True);
+        }  
+		IncPos(incrementoX,0);
+	}
+
+}

@@ -1,0 +1,8 @@
+namespace es_tipolisto_arkanoid;
+
+
+class Brick_2 implements Brick{
+    virtual LoadGraphics(){
+        SetColor(RGB(0,255,0));
+    }
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0'?>
+<Info filename='A:/test-mapper-gs/game.vgs' />
+<Panel name='STAGES' classtype='VGS_Dialog_Objects' params='gl_stage' x='510' y='219' w='260' h='260' visible='false' state='' />
+<Actived stage='stage2' obj='mapper1' />
+<Isolated obj='mapper1' params='1016,285,264,128;380,93,136,116;0;0;1;0;1;0;0;0;0;0;0;' />
+<Grid x='0' y='0' w='1' h='1'/>
+<IPanel name='ISOLATED MODE' classtype='VGS_Dialog_Isolated' params='1030,50,220,52' x='1030' y='50' w='220' h='52' />

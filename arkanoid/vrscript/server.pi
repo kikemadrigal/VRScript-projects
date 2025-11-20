@@ -1,0 +1,38 @@
+class Server implements DOS_Program
+{
+    properties:
+        socket=null;
+        host="localhost";
+        port=1234;
+    virtual Start(){
+        GetEngine().LogPrint("Loading server...");
+         _console = GetConsole();
+        // Se crea el socket
+        socket=NetSocket_New (this, 1);
+        // Se enlaza el socket al host y puerto
+        NetSocket_Connect (socket, host, port);
+        // Empieza la escucha
+        NetSocket_Listen (socket, host, port, -1);
+        // Se establece el modo de escucha
+        if(socket==null){
+            //GetEngine().LogPrint("Error creating socket");
+            _console.PrintLn("Error creating socket");
+        }else{
+            //GetEngine().LogPrint("Socket created successfully "+string(socket));
+            _console.PrintLn("Socket created successfully "+string(socket));
+            while (true) {
+                // Se recibe el mensaje del cliente
+                msg=NetSocket_Recv(socket, 1024,0);
+                if (msg != null) {
+                    // Se imprime el mensaje recibido
+                    _console.PrintLn("Mensaje recibido: "+string(msg));
+                    // Se envía una respuesta al cliente
+                    NetSocket_Send (socket, "hjola desde servidor", 0, -1);
+                }
+            }
+        }
+        End(0); 
+    }
+
+
+}

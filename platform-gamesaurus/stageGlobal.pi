@@ -1,0 +1,82 @@
+class StageGlobal implements GL_Stage{
+	properties:
+        mapper=null;
+        tilesmanager=null;
+        player=null;
+        text=null;
+        currentStage=1;
+
+
+	virtual _operator_new(_name,_creator){	
+		SetGlobal(True);
+
+        _text=NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 20);
+		_text.SetAlign(DT_CENTER);
+		_text.SetText(text);
+        text=_text;
+
+
+        //En gamesaurus ve a Proyect-->Properties... y en ViewScaleAdjust selecciona fullscreen        
+        GetApp().LoadVGS("test-mapper.vgs");
+
+        //Player
+        player=GetApp().GetActiveStage().FindObject("player");
+        player.SetColor(RGB(255,0,0));
+
+        //--------------------Mapper----------------------------------
+        _mapper=GetApp().GetActiveStage().FindObject("mapper1");
+        mapper=_mapper;
+        _mapper.SetPriority(1);
+        //_mapper.SetAlpha(50);
+        if(_mapper==null){
+            GetEngine().LogPrint("No se encontro el mapper");
+        }else{
+            GetEngine().LogPrint("Mapper cargado");
+        }
+        //-------------------------------------------------------------
+
+        //-------------------Layyer----------------------------------
+        //Mapper->Layers, 1 layer es un conjunto de tilesets
+        _layers=_mapper.GetNumLayers();
+        GetEngine().LogPrint("El numero de capas es :"+_layers);
+        _layer=_mapper.GetLayer(0);
+        layer=_layer;
+        if(_layer==null){
+            GetEngine().LogPrint("No se encontro la layer 1");
+        }else{
+            GetEngine().LogPrint("Layer 1 cargada");
+        }
+        //-------------------------------------------------------------
+
+        //-------------------Tileset----------------------------------
+        //Mapper->Layer1->Tilesets, 1 tileset es un conjunto de tiles o cuadraditos
+        _tilesets = _mapper.GetNumTilesets();
+        if(_tilesets==null){
+            GetEngine().LogPrint("No se encontro ningun tileset");
+        }else{
+            GetEngine().LogPrint("Numero de tilesets: "+_tilesets);
+        }
+        _tileset = _mapper.GetTileset(0);
+        _numTilesWith=_tileset.GetNumTilesW();
+        _numTilesHight=_tileset.GetNumTilesH();
+        _name_tileset=_tileset.GetName();
+        GetEngine().LogPrint("Tileset "+_name_tileset+" cargado con "+_numTilesWith+" tiles en ancho y "+_numTilesHight+" tiles en alto");
+        //-------------------------------------------------------------
+
+        
+        //-------------------Texture----------------------------------
+        // 1 textura es una zona de la momeoria donde se guarda una imagen
+        _texture=_tileset.GetTexture();
+        
+         if(_texture==null){
+            GetEngine().LogPrint("No se encontro la textura del tileset");
+        }else{
+            GetEngine().LogPrint("Textura del tileset cargada");
+        }
+        _name_texture=Texture_GetName(_texture);
+        GetEngine().LogPrint("Textura del tileset: "+_name_texture);
+        //-------------------------------------------------------------
+        
+    }
+}

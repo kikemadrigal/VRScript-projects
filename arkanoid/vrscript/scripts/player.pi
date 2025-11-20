@@ -1,0 +1,40 @@
+﻿namespace es_tipolisto_arkanoid;
+
+class Player implements GL_sprite{
+	properties:
+		app=null;
+		score=0;
+		lives=3;
+		_player2=false;
+	virtual _operator_new(_name,_creator,_params){
+		app=_params[0];
+		_x=_params[1];
+		_y=_params[2];
+		_player2=_params[3];
+		if(_player2) addframe("res/player280x20.png");
+		else addframe("res/player80x20.png");
+		SetPos(_x,_y);	
+		lives=3;
+		score=0;
+		SetCollision(True);	
+		//SetCollisionRect(0,0,80,20);	
+	}
+	virtual Move(){
+		_incrementoX=0;
+		if (_player2){
+			//Si se pulsa la z lo movemos a la izquierda
+			if(app.pad.IsButton(PAD_BUTTON_6))_incrementoX=-8;
+			//Si se pulsa la M lo movemos a la derecha
+			else if(app.pad.IsButton(PAD_BUTTON_7))_incrementoX=8;
+		} 
+		else{
+			if (app.pad.IsButton(PAD_BUTTON_RIGHT))_incrementoX=8;		
+			else if (app.pad.IsButton(PAD_BUTTON_LEFT))	_incrementoX=-8;			
+		}
+
+
+		incpos(_incrementoX,0);
+		_x=clamp(GetX(),app.FAT_BORDER_WIDTH, app.BOARD_WIDTH-GetWidth()-app.FAT_BORDER_WIDTH);
+		setX(_x);
+	}
+}

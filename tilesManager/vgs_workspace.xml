@@ -1,0 +1,5 @@
+<?xml version='1.0'?>
+<Info filename='A:/test-mapper-gs/test-mapper.vgs' />
+<Panel name='STAGES' classtype='VGS_Dialog_Objects' params='gl_stage' x='510' y='219' w='260' h='260' visible='true' state='' />
+<Actived stage='stage1' obj='player' />
+<Grid x='0' y='0' w='1' h='1'/>

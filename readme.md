@@ -6,6 +6,34 @@
 
 <img src="docs/caballerovara.png" width="400">
 
+## TilesManager
+
+El objetivo es crear un juego en GL_Program con VRScript utilizando un gestor de tiles creado con código VRScript.
+
+El mapa puede provenir de un archivo vgs (creado con el programa gamesaurus de MSXVR) o un archivo TMX (creado con el programa Tiled) 
+
+<img src="docs/tilesManager.png" width="400">
+
+## filesManager
+
+Es un GL_Program de VRScript que permite crear archivos de texto, binarios y manejar archivos XML y JSON.
+
+<img src="docs/filesManager.png" width="400">
+
+## Postal navidad 2025
+
+Es un GL_Program de VRScript para participar en el concurso de postales de la web MSXVR.
+
+En el pequeño programa se utilzan estados, animaciones y sonidos.
+
+<img src="docs/postal-navidad-2025.png" width="400">
+
+## Arkanoid
+
+Son 3 aplicaciones: arkonid VRScript personal, arkanoid gamesaurus personal, arkanoid Alberto.
+
+<img src="docs/arkanoid.png" width="400">
+
 ## Helicopter
 
 Testeo de movimiento de cámara en un fondo de 4000 px.
@@ -25,6 +53,15 @@ En el avanzado se hereda de la clase app que tiene los arrays de los enemigos, e
 <img src="docs/lili2.PNG" width="400">
 
 <img src="docs/lili3.PNG" width="400">
+
+
+## platform-gamesaurus
+
+Es un juego gamsaurus de plataformas con 3 pantallas, en el que se investiga como importarlo a un GL_program de VRScript.
+
+Una vez importado, obtenemos el objeto mapper y sus layers con el conjunto de tiles por layer.
+
+<img src="docs/platform-gamesaurus.png" width="400">
 
 
 # Entorno de desarrollo
@@ -50,29 +87,21 @@ En el avanzado se hereda de la clase app que tiene los arrays de los enemigos, e
 
     Dentro del archivo smb.conf baja hasta abajo y agrega la siguiente linea:
 
+    ```	
     [global]
-
     netbios name= MSXVR
-
     server string= The MSXVR file center
-
     workgroup = WORKGROUP
 
     [MSXVR]
-
     path =/mnt/usb_1
-
     comment = No comment
-
     browsable = yes
-
     writeable = yes
-
     create mask = 0777
-
     directory mask = 0777
-
     public = no
+   ```	
 
 
     <img src="docs/samba5.PNG" width="400">

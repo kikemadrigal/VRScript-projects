@@ -1,0 +1,29 @@
+ /**
+ * @name Arkanoid 2.0 
+ * 
+ * @author KikeMadrigal
+ * @version 1.0
+ */
+class Main implements GL_Program{
+		
+	virtual Start()
+	{
+		AddScriptPackage("scripts");
+		// Configuraciones básicas de color de fondo, tamaño pantalla..
+		SetBackColor(RGB(0,0,0));
+		// 25x20 cuadraditos de 32px
+		SetResolution(256,192);
+		// -1 Ajusta l apantalla en horizontal
+		// -2 Ajusta la pantalla en vertical
+		// -3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-3);
+		SetVSync(True);
+		SetFrameRate(60);
+        RunStage("menu","Menu");	}
+	
+	virtual Move(){	}
+
+
+
+
+}

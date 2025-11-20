@@ -1,0 +1,57 @@
+namespace es_tipolisto_arkanoid;
+
+class Menu implements App{
+	properties:
+		text=null;
+		text2=null;
+		bg=null;
+	virtual _operator_new(_app){
+		app.SetBackColor(RGB(0,0,0));
+		
+		_bg=app.NewObject("image","GL_Sprite");
+		_bg.addframe("res/portada.png");
+		_bg.SetPos(400,20);
+		bg=_bg;
+	
+		_text=app.DrawText("Arkanoid 2",24);
+		_text.SetPos(app.GetResX()/2-_text.GetTextWidth()/2-100,40);
+		text=_text;
+		
+		_text2=app.DrawText("",16);
+		//app.GetResX()/2-_text.GetTextWidth()/2
+		_text2.SetPos(40,100);
+		text2=_text2;
+		
+		if(app.db==null){
+			app.Log("db es null");
+		}
+		else{
+			_ret=app.db.GetAll();
+			if(sizeof(_ret)>0){
+				text2.SetText("Record        Name        Date\n");
+				for(i=0;i<sizeof(_ret);i++){
+					name=_ret[i][0];
+					record=_ret[i][1];
+					date=_ret[i][2];
+					text2.Settext(text2.GetText()+String_Format("%06d",Record)+" "+name+","+date+"\n");	
+				}
+			}else{
+				text2.SetText("Sin records");
+			}
+			_res=app.db.GetUserRecord();
+			text2.Settext(text2.GetText()+"\nTu record es "+_res[0][0]);
+			text2.Settext(text2.GetText()+"\n\nPress 'space' to continue.");
+			//text2.Settext(text2.GetText()+"\nPress the 'n' to send your high score to the internet.");
+			text2.Settext(text2.GetText()+"\nPulsa 'n' para enviar tu puntuación a internet.");
+			text2.Settext(text2.GetText()+"\nPulsa 'd' y escribe 'Si' para resetear la base de datos.");
+			text2.Settext(text2.GetText()+"\nPulsa 'm' para ver el manual de instrucciones.");
+			text2.Settext(text2.GetText()+"\n\nhttp://arkanoid.tipolisto.es");
+		}
+	}
+	
+	virtual _operator_delete(){
+	 	delete text;
+		delete text2;
+		delete bg;
+	}
+}

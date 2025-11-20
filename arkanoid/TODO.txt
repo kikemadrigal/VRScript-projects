@@ -1,2 +1,0 @@
-﻿-ponle lo del código de las naves epsaciales para no poner la ruta absoluta y que se pueda ejecutar en cualkier vr
--

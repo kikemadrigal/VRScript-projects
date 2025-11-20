@@ -1,0 +1,317 @@
+class TilesManager{
+    class MyMapper{
+        properties:
+            tilew=0;
+            tileh=0;
+            count_tiles_width=0;
+            count_tiles_height=0;
+            tileset_name="";
+            tileset_texw=0;
+            tileset_texh=0;
+            tileset_tw=0;
+            tileset_th=0;
+    }
+    properties:
+        mapper=null;
+        context=null;
+        tileset=null;
+        myMapper=null;
+    
+    function _operator_new(_context, _mapper){
+        context=_context;
+        mapper=_mapper;
+        //mapper.SetPriority(0);
+    }
+
+    function load(file){
+        //context.GetEngine().LogPrint("Cargando archivo vgs: "+file);
+        _ok=readXMLFile(file);
+        if(!_ok){
+            return 0;
+        }
+    }
+    function readXMLFile(_file){
+        _xml_file=context.GetEngine().FileOpen(_file, FILE_MODE_READ); 
+        if (!_xml_file)
+        {
+             context.GetEngine().LogPrint("El archivo xml no aexiste.");
+             return 0;
+        }
+        //Rollo manejo de archivos con el Engine del sistema.http://msxvr.es/doc/wiki/mdwiki.html#!6b90fbe3c7ecf32f74f8a3e5ef7eda37bad3b420.md
+        _fileSize = context.GetEngine().FileSize(_file);
+		_buffer = Buffer_New(_fileSize);
+		_xml_file.read(_buffer, 0, _fileSize);
+        _string_content=Buffer_GetString(_buffer,0,_fileSize);
+        context.GetEngine().FileClose(_xml_file);
+		Buffer_Delete(_buffer);
+
+        //Rollo lectura de XML: http://msxvr.es/doc/wiki/mdwiki.html#!d88cec679f4796399dcdb7966c3022a03d9b3c3c.md
+		xmlDoc = XML_Open (_string_content);      
+        //1. Vemos todos los elementos de la raiz
+		_xmlRootElement = XML_GetRootElement(xmlDoc);
+        while (_xmlRootElement)
+		{
+			_xmlRootElement = XML_NextElement(_xmlRootElement);
+            if(_xmlRootElement!=0)
+            {
+                name=XML_GetElementName(_xmlRootElement);
+                //2. Buscamos el atributo GL_mapper, si lo enncuentra, leemos los atributos de GL_Mapper y buscamos el atributo data
+                //3. Si lo encuentra, creamos un layer y esrtablecemos los datos del mapa
+                found_gl_mapper(_xmlRootElement);
+            }
+		}
+
+        context.getEngine().LogPrint("mapper cargado "+mymapper.tilew+" "+mymapper.tileh+" "+mymapper.count_tiles_width+" "+mymapper.count_tiles_height);
+        context.getEngine().LogPrint("tileset "+mymapper.tileset_name+" "+mymapper.tileset_texw+" "+mymapper.tileset_texh+" "+mymapper.tileset_tw+" "+mymapper.tileset_th);
+
+        return 1;
+    }
+
+    function found_gl_mapper (_e){
+		_a = XML_FirstAttribute (_e);
+		while (_a)
+		{
+			_name = XML_GetAttributeName (_a);
+			_value = XML_GetAttributeValue (_a);
+			
+            //context.GetEngine().LogPrint("   name: " + _name + " value: " + _value);
+            if(_value=="GL_Mapper" ){
+                //context.GetEngine().LogPrint("Encontrado mapper, vamos a ver los hijos" );
+                myMapper=new MyMapper();
+                ver_hijos_gl_mapper(_e);
+            }
+            _a = XML_NextAttribute (_a);
+            
+		}
+	}
+
+
+    function ver_hijos_gl_mapper(_xmlRootElement){
+        _xmlElement = XML_FirstElement(_xmlRootElement);
+        //context.GetEngine().LogPrint("      Hijo, firs element: " + _xmlElement+" name : "+XML_GetElementName(_xmlElement));
+		while (_xmlElement)
+		{
+            if(_xmlElement!=0)
+            {
+                _name=XML_GetElementName(_xmlElement);
+                //context.GetEngine().LogPrint("Hijo de gl_mapper name : "+XML_GetElementName(_xmlElement));
+                if(_name=="Tileset"){
+                    ver_atributos_tileset(_xmlElement);
+                }else if(_name=="Layer"){
+                    ver_atributos_layer(_xmlElement);
+                }else if(_name=="Property"){
+                     _first_atribute = XML_FirstAttribute (_xmlElement);
+                     _first_atribute_name = XML_GetAttributeName (_first_atribute);
+                     _first_atribute_value = XML_GetAttributeValue (_first_atribute);
+                     //context.getEngine().LogPrint("                         atributo name: " + _first_atribute_name + " value: " + _first_atribute_value);
+                     _second_atribute = XML_NextAttribute(_first_atribute);
+                    _second_atribute_name = XML_GetAttributeName (_second_atribute);
+                    _second_atribute_value = XML_GetAttributeValue (_second_atribute);
+                     if(_first_atribute_value=="tilew"){
+                         myMapper.tilew=int(_second_atribute_value);
+                     }else if(_first_atribute_value=="tileh"){
+                         myMapper.tileh=int(_second_atribute_value);
+                     }else if(_first_atribute_value=="width"){
+                         myMapper.count_tiles_width=int(_second_atribute_value);
+                     }else if(_first_atribute_value=="height"){
+                         myMapper.count_tiles_height=int(_second_atribute_value);
+                     }
+                }
+            }
+            _xmlElement = XML_NextElement(_xmlElement);
+		}
+    }
+
+    function ver_atributos_tileset(_e){
+        _a = XML_FirstAttribute (_e);
+        while (_a){
+            _name = XML_GetAttributeName (_a);
+            _value = XML_GetAttributeValue (_a);
+             //context.GetEngine().LogPrint("      atributo tileset name: " + _name + " value: " + _value);
+            
+            if(_name=="name"){
+                myMapper.tileset_name=_value;                
+            }else if(_name=="texw"){
+                myMapper.tileset_texw=int(String_Trim(_value));
+            }else if(_name=="texh"){
+                myMapper.tileset_texh=int(String_Trim(_value));
+            }else if(_name=="tw"){
+                myMapper.tileset_tw=int(String_Trim(_value));;
+            }else if(_name=="th"){
+                myMapper.tileset_th=int(String_Trim(_value));;
+            }
+            _a = XML_NextAttribute(_a);
+        } 
+    }
+
+    function ver_atributos_layer(_e){
+        _a = XML_FirstAttribute(_e);
+        while (_a){
+            _name = XML_GetAttributeName (_a);
+            _value = XML_GetAttributeValue (_a);
+            //context.GetEngine().LogPrint("      atributo de layer name: " + _name + " value: " + _value);
+            if(_name=="data"){
+                //  Crea y añade un TILESET. El parámetro (path) es la ruta a la textura con los
+                // gráficos, (tw) es el tamaño horizontal de cada TILE o porción gráfica, (th)
+                // es el tamaño vertical de cada TILE, (sw) y (sh) indican qué separación
+                // existe entre tiles dentro de la textura en horizontal y vertical. (texw) y
+                // (texh) hacen referencia al tamaño a considerar en vertical y horizontal de la
+                // textura; en el caso de ser 0, se usará el tamaño original de la misma.
+                
+                //tileset = mapper.AddTileSet("images/tiles.png", 32, 32, 0, 0, 480, 192);
+                mapper.SetPriority(0);
+                //mapper.SetTileW(32);
+                //mapper.SetTileH(32);
+                mapper.SetTileW(myMapper.tilew);
+                mapper.SetTileH(myMapper.tileh);
+                //tileset = mapper.AddTileSet("images/tiles.png", 32, 32, 0, 0, 0, 0);
+                if(tileset==null)tileset = mapper.AddTileSet(myMapper.tileset_name, myMapper.tileset_tw, myMapper.tileset_th, 0, 0,myMapper.tileset_texw, myMapper.tileset_texh);
+                _layer = mapper.AddLayer(mymapper.count_tiles_width, myMapper.count_tiles_height);
+                _layer.SetData(_value);
+            }
+            _a = XML_NextAttribute (_a);
+        } 
+    }
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    function DescomprimirDatosVGS(_datosHex) : string
+    {
+        _resultado_string = "";
+        // 1. Crear un buffer temporal para contener los datos comprimidos.
+        //_buffer_comprimido = Buffer_New(); // [3, 4]
+        
+        // 2. Decodificar la cadena hexadecimal en el buffer binario.
+        // Esta función rellena el buffer con los datos binarios [5, 6].
+        context.GetEngine().LogPrint("      _dateoshex: "+_datosHex);
+        //Buffer_FromHEXString(_buffer_comprimido, _datosHex); 
+        //Buffer_FromBase64String(_buffer_comprimido, String_Trim(_datosHex));
+        _buffer_comprimido =String_ToBuffer (_datosHex, true);
+        context.GetEngine().LogPrint("      Datos comprimidos: "+Buffer_Len(_buffer_comprimido) );
+        _resultado_comrimidos_string = Buffer_GetString(_buffer_comprimido, 0); // [1, 2]
+        context.GetEngine().LogPrint("      len: "+strlen(_resultado_comrimidos_string)+", cadena comprimida: "+_resultado_comrimidos_string  );
+        
+
+
+
+        // 3. Descomprimir el buffer utilizando el método ZIP.
+        // Buffer_UnCompress devuelve un puntero al nuevo buffer descomprimido [7, 8].
+        _buffer_descomprimido = Buffer_UnCompress(_buffer_comprimido, ( 25 * 20 * 4), COMPRESS_METHOD_ZIP); 
+        //_buffer_descomprimido = Buffer_UnCompress(_buffer_comprimido, (800*640)*4, COMPRESS_METHOD_ZIP); 
+        context.GetEngine().LogPrint("   tamaño Datos descomprimidos: "+Buffer_Len(_buffer_descomprimido) );
+
+        for (y=0; y<20; y++)
+            {
+                for (x=0; x<25; x++)
+                {   
+                    _ix = Buffer_GetUInt(_buffer_descomprimido, (y*25+x)*4) - 1;
+                    context.GetEngine().LogPrint("        Tile index: "+_ix+" at position x: "+x+" y: "+y);
+                }
+            }
+        
+        // 4. Convertir el contenido del buffer binario a una cadena de caracteres ASCII.
+         //Buffer_GetString lee los datos desde el inicio (off = 0) [1, 2].
+        //_resultado_string = Buffer_GetString(_buffer_descomprimido, 0); // [1, 2]
+
+        // 5. Liberar los buffers temporales.
+        //Buffer_Delete(_buffer_comprimido); // [9, 10]
+        //Buffer_Delete(_buffer_descomprimido); // [9, 10]
+        
+        // 6. Devolver la cadena de texto con los datos del mapa.
+        //return _resultado_string; 
+        return ""; 
+    }
+
+
+    function decodificar_base64(_data){
+        //_data="";
+        _data="AQAAAAIAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+        //_data="789CEDD8310A00201003C1E8FFFF7C82829DB50A9362EAD49BACB5697FD0AA902449922";
+        _decoded_data="";
+        context.GetEngine().LogPrint("        Decodificando base64, data: "+_data); 
+        _w = 25;
+        _h = 20;
+
+        //1684
+        //AddLayer Agrega una capa con (w) celdas en horizontal y (h) celdas en vertical. La
+        // función devuelve un objeto Layer.
+        _mapLayer = mapper.AddLayer(_w, _h);
+
+        
+        //Crea y añade un TILESET. El parámetro (path) es la ruta a la textura con los
+        //gráficos, (tw) es el tamaño horizontal de cada TILE o porción gráfica, (th)
+        //es el tamaño vertical de cada TILE, (sw) y (sh) indican qué separación
+        //existe entre tiles dentro de la textura en horizontal y vertical. (texw) y
+        //(texh) hacen referencia al tamaño a considerar en vertical y horizontal de la
+        //textura; en el caso de ser 0, se usará el tamaño original de la misma.
+        
+        //_tileset=mapper.AddTileSet ("images/tiles.png", 32, 32) ;
+        //imagen, tile_ancho, tile_alto, separacion_x, separacion_y, textura_ancho, textura_alto
+        //AddTileSet (path, tw, th, sw = 0, sh = 0, texw = 0, texh = 0) :
+        _tileset = mapper.AddTileSet("images/tiles.png", 32, 32, 0, 0, 800, 640);
+        //_tileset = mapper.AddTileSet("images/tiles.png", 32, 32);
+			
+        
+        _buffer = Buffer_New();
+        Buffer_FromBase64String(_buffer, String_Trim(_data));
+        //_otro=String_FromBase64 (_data);
+        //context.GetEngine().LogPrint("        cadena: "+_otro);
+        //_decode_data=Buffer_GetString(_buffer,0,Buffer_Len(_buffer));
+        //_decode_binary=CadenaABinario(_decode_data);
+        //_decode_hex=Buffer_ToHEXString (_buffer);
+        //_decode_hex=String_ToHEX (_decode_data);
+        //GetEngine().LogPrint("        data decodificada: "+String_ToUTF8(_decode_data));
+        //context.GetEngine().LogPrint("        data decodificada: "+_decode_data);
+        //_decode_data=String_FromBase64(_data);
+        //context.GetEngine().LogPrint("        data decodificada: "+CadenaABinario(_decode_data));
+        context.GetEngine().LogPrint("        el tamaño del buffer es: "+Buffer_Len(_buffer));
+        _mapLayer.Set(1, 0, _tileset, 1, 0);
+        if (Buffer_Len(_buffer) == (_w*_h)*4)
+        {
+            for (y=0; y<_h; y++)
+            {
+                for (x=0; x<_w; x++)
+                {   
+                    _ix = Buffer_GetUInt(_buffer, (y*_w+x)*4) - 1;
+                    _flags = 0;
+                    if (_ix & 0x80000000) _flags |= 0x80;
+                    if (_ix & 0x40000000) _flags |= 0x40;
+                    _ix &= 0xFFFF;
+                    //Set (i, j, ts, index, flags = 0)
+                    //Set: Asigna en la celda (i, j) el objeto tileset (ts)
+                    // usando el índice al tile (index) y con datos de usuario (flags).
+                    _mapLayer.Set(x, y, _tileset, _ix, _flags);
+                    context.GetEngine().LogPrint("        Tile index: "+_ix+" at position x: "+x+" y: "+y);
+                }
+            }
+        }else{
+            context.GetEngine().LogPrint("        El tamaño del buffer no coincide con el esperado."+(_w*_h)*4);
+        }
+
+        //Decodificar el string en base64
+        //_decoded_data=String_FromBase64(_data);
+        //Convertir el buffer a string
+        //_decoded_data_str=Buffer_GetString(_decoded_data,0,Buffer_GetSize(_decoded_data));
+        //GetEngine().LogPrint("          data decodificada: "+_decoded_data);
+        //return _decoded_data;
+    }*/
+
+
+}

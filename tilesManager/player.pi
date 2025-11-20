@@ -1,0 +1,90 @@
+namespace es_tipolisto_WulfgarI;
+
+class Player implements GL_sprite{
+	properties:
+		pad=null;
+		stageGlobal=null;
+		incrementoX=0;
+		incrementoY=0;
+		aceleracion=0;
+		TILE_EMPTY=0;
+		TILE_SUELO_MAXIMO=59;
+		TILE_META=75;
+		
+
+	virtual _operator_new(_name,_creator, _params){
+		stageGlobal=_params[0];
+		Addanimationwithsheet("idle","images/player.png",0,0,0,0,64,64);
+		Addanimationwithsheet("walk","images/player.png",0,3,0,0,64,64,-1,-1,-1,0.1);
+		SetSize(64,64);
+		//SetPriority(2);
+		SetAnimation("idle");	
+
+		_pad=newObject("Pad", "GL_Pad");
+		_pad.SetPreset("CURSORS");
+		pad=_pad;
+	}
+	virtual Move(){
+		incrementoX=0;
+		//Pulsaciones de teclas y cursores
+		if(pad.IsButton(PAD_BUTTON_RIGHT)){
+			_tile_right=stageGlobal.get_tile(this, TILE_POSITION_RIGHT);
+			if(_tile_right==TILE_META){
+				stageGlobal.change_stage();
+				return;
+			}
+			if(_tile_right>TILE_SUELO_MAXIMO || _tile_right==TILE_EMPTY)incrementoX=2;
+			SetHFLip(false);
+		}else if (pad.IsButton(PAD_BUTTON_LEFT)){
+			_tile_left=stageGlobal.get_tile(this, TILE_POSITION_LEFT);
+			if(_tile_left==TILE_META){
+				stageGlobal.change_stage();
+				return;
+			}
+			if(_tile_left>TILE_SUELO_MAXIMO || _tile_left==TILE_EMPTY)incrementoX=-2;
+			SetHFLip(true);
+		}
+
+		if(pad.IsButton(PAD_BUTTON_UP) && aceleracion==0){
+			incrementoY=-4;
+			aceleracion=0;
+		}
+		//Animaciones
+		if(incrementoX!=0){
+			SetAnimation("walk");
+		}else{
+			SetAnimation("idle");
+		}
+		//Gravedad y suelo
+		//64 son 2 tiles de alto
+		_limit_y=GetApp().GetGl().GetResY()-GetHeight()-64;
+		if(GetY()>_limit_y){
+			SetY(_limit_y);
+            aceleracion=0;
+		}else{
+			incrementoY+=aceleracion*GetFTime();
+			if(aceleracion<0.1)aceleracion+=GetFTime()*0.025f;
+
+		}
+		//Colisión plataformas
+		if(aceleracion!=0){
+			if(incrementoY>0){
+				_tile_down=stageGlobal.get_tile(this, TILE_POSITION_DOWN);
+				if(_tile_down==TILE_META){
+					stageGlobal.change_stage();
+					return;
+				}
+				if(_tile_down!=0 && _tile_down<TILE_SUELO_MAXIMO){
+					aceleracion=0;
+					incrementoY=0;
+				}
+			}
+		}
+		//Limites de la pantalla
+		_x=clamp(GetX(),32, GetApp().GetGl().GetResX()-64-32);
+		_y=clamp(GetY(),32, GetApp().GetGl().GetResY()-64-32);
+		SetPos(_x,_y);
+		incpos(incrementoX,incrementoY);
+	}
+
+}
