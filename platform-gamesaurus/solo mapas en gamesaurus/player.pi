@@ -1,0 +1,16 @@
+namespace es_tipolisto_platform;
+
+class Player implements GL_Sprite{
+	virtual Start(_name,_creator)
+	{
+
+
+		Addanimationwithsheet("walk","images/player.png",0,3,0,0,64,64,-1,-1,-1,0.1);
+		SetAnimation("walk");	
+		SetPriority(1);
+		SetColliderMode(True);
+		Start();
+        Setvisible(true);
+	}
+
+}

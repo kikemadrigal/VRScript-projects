@@ -1,0 +1,125 @@
+namespace es_tipolisto_kirk;
+
+/**Gamesaurus, proyect:
+ * properties
+ * 
+ */
+class main implements GL_Program {
+    properties:
+        pad=null;
+        player=null;
+        text=null;
+        mapper=null;
+        stage=null;
+        current_stage=1;
+    defines:
+        TILE_POSITION_RIGHT=0;
+        TILE_POSITION_LEFT=1;
+        TILE_POSITION_DOWN=2;
+        TILE_POSITION_UP=3;
+
+    function start(){
+       
+		SetBackgroundMode(false);
+		SetBackColor(RGB(0,0,0));
+		SetBgColor(RGB(0,0,0));
+		SetResolution(800, 640);
+        SetViewScale(-2);
+		SetVSync(true);
+		Set2DFilter(false);
+		SetFrameRate(60);
+        run_menu();
+        //run_stage();
+        ::Start();
+    }
+
+    
+	function run_menu()
+	{
+        _menu=RunStage("menu","Menu");
+		_menu.SetMain();
+		_menu.SetActive();
+        _change("menu");
+	}
+
+
+
+   function run_stage(){
+        Gl.Hide();
+        gl.Stop();
+        if (GetActiveStage()) delete GetActiveStage();
+		
+        LoadVGS("stage"+current_stage+".vgs");
+        GetEngine().LogPrint("stage"+current_stage+".vgs loaded");
+        _stage = GetActiveStage();
+
+        if(_stage==null){
+             GetEngine().LogPrint("stage1 not created");
+        }else{
+            GetEngine().LogPrint("stage1 created, name: "+_stage.GetName());
+            stage=_stage;
+            _stage.SetCameraX(0);
+          
+       	  	_pad=_stage.NewObject("pad", "GL_Pad");
+            _pad.SetPreset("CURSORS");
+            pad=_pad;
+      
+            if(_pad==null) GetEngine().logPrint("pad null");
+            else GetEngine().logPrint("pad not null");
+
+            _player = _stage.NewObject("player","Player");
+            _player.SetPos(32,200);
+            player=_player;
+            if(_player==null){
+                GetEngine().LogPrint("player not created");
+            }else{
+                GetEngine().LogPrint("player created ");
+            }
+            
+            text=_stage.NewObject("text", "gl_text");
+            text.SetFont("fonts/Vintage Black.ttf", 22);
+            text.SetColor(RGB(255,0,0));
+            text.SetAlign(DT_CENTER);
+
+            if(current_stage==1){
+                _enemy=_stage.NewObject("enemy","Enemy");
+                _enemy.SetPos(GetGl().GetResX()-_enemy.GetWF(),rand(100,600));
+            }
+        }
+        gl.Play();
+        gl.Show();
+    }
+
+    state "menu":
+    {
+        
+    }
+        
+
+    state "game":
+    {
+        //show_message();
+        _x_camera=player.GetX()-GetResX()/2;
+        //2880 son 90 tiles de 32px
+        _x_camera=Clamp(_x_camera,0, 2880-GetResX());
+        stage.SetCameraX(_x_camera);
+        if(player.GetX()+player.GetWF()>2880-5) {
+            change_stage();
+        }
+    }
+
+    function show_message(){
+            _message="x: "+player.GetX()+",  y: "+string_format("%.2f",player.GetY());
+            _message+="\nPantalla ancho: "+GetGl().GetResX()+" alto: "+getGl().GetResY();
+            text.SetText(_message);
+    }
+
+
+    function change_stage(){
+        current_stage++;
+        if(current_stage>2) current_stage=1;
+        run_stage();
+    }
+        
+}
+  

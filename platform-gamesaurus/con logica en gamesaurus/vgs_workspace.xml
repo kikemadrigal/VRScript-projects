@@ -1,0 +1,4 @@
+<?xml version='1.0'?>
+<Info filename='A:/platform-gamesaurus/game.vgs' />
+<Panel name='STAGES' classtype='VGS_Dialog_Objects' params='gl_stage' x='0' y='59' w='260' h='260' visible='true' state='' />
+<Grid x='0' y='0' w='1' h='1'/>

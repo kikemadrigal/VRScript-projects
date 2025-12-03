@@ -2,7 +2,12 @@
 ?>
 <h3 class="text-center">Descargas</h3>
 
- <a href="https://games.tipolisto.es/files/WulfgarI.zip">Wulfgar I</a>
+<ul>
+    <li><a href="https://games.tipolisto.es/files/WulfgarI.zip">Wulfgar I</a></li>
+    <li><a href="https://games.tipolisto.es/files/Ilustrations.zip">Ilustrations</a></li>
+</ul>   
+
+
     
 <?php
 include_once("document-end.php");

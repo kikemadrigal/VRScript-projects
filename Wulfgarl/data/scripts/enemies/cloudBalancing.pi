@@ -56,7 +56,7 @@ class CloudBalancing implements Enemy{
         }
 
         //Creamos el fuego cuando las animaciones sean mayor que 12
-        if(GetAnimationLoops()>3){
+        if(GetAnimationLoops()>12){
             // obtenemos un fire con una velocidad 0 y le cambiamos el ámgulo
             for(i=0;i<sizeof(game.fires);i++){
                 _fire=game.fires[i];

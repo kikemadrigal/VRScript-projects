@@ -1,0 +1,53 @@
+namespace es_tipolisto_gemini;
+
+class HappyChristmas implements GL_Sprite
+{
+    properties:
+        // Por defecto las texturas usan un wrap de tipo CLAMP o sea, las coordenadas de textura siempre quedan entre 0 y 1.
+        u = 0;
+        angle = 0;
+        count_timer=0;
+
+    virtual _operator_new(_name, _creator)
+    {
+        Addframe("images/feliznavidad.png");
+        SetVisible(false);
+        SetPos(0,0);
+        SetStop(true);
+    }
+
+    function start_efects(){
+        //getEngine().LogPrint("Iniciando efectos "+count_timer);
+        // Probando efectos
+        if(count_timer>=6 && count_timer<100){
+            _fx_tint=CreateFX("TINT");
+            _fx_tint.Start(2000, RGB(255,0,0));
+        }else if(count_timer>=100 && count_timer<200){
+            _fx_out = CreateFX("fadeout"); 
+            _fx_out.Start(1000); 
+        }  else if(count_timer>=200 && count_timer<300){
+            _fx_in=CreateFX("fadein"); 
+            _fx_in.Start(1000); 
+        }else if(count_timer>=300 && count_timer<400){
+            _fx_blink=CreateFX("BLINK");
+            _fx_blink.Start(100,15);
+        }else if(count_timer>=400){
+            count_timer=0;
+        }
+    }
+
+    virtual Move()
+    {
+        count_timer++;
+        if(count_timer%6==0){
+            start_efects();
+        }
+        // Incremento la posición Y usando la función seno, creo un movimiento oscilante.
+        // 0.5f controla la amplitud del movimiento.
+        IncPos(0, sin(angle) * 0.5f); 
+
+        // Incremento el ángulo. GetFTime() asegura que la velocidad es consistente 
+        // independientemente del framerate. 
+        angle += 0.1f * GetFTime(); 
+    }
+}

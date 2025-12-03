@@ -42,7 +42,6 @@
         pause=true;
         //AlertDialog (title, text, mode = 0, ctx = null, f1 ="OnAlertDialogOK", f2 = "OnAlertDialogCancel", f3 = "")
         GetEngine().AlertDialog("Warning",lang.get_value("quit_the_game"),View.AD_OKCANCEL,this,OnExitSuccess, OnExitCancel);
-       
 	}
     function OnExitSuccess(){
         End(0);
@@ -62,7 +61,7 @@
         //Lo agrandamos solo en horizontal de 800 a 1280 que suele ser la resuloción habotual
         Setviewscale(-1);
         Setvsync(true);
-        Setframerate(30);
+        Setframerate(40);
         //la base de datos
 		db=new Db(this);
         //Las frases internacionalizadas o localización

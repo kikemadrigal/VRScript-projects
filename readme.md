@@ -74,18 +74,21 @@ Una vez importado, obtenemos el objeto mapper y sus layers con el conjunto de ti
 
    Abre el terminal
 
-    <img src="docs/samba2.PNG" width="400">
+   <img src="docs/samba2.PNG" width="400">
 
+   Actualiza la fuente de los paquetes con sudo apt-get update
 
-    Instala samba con "sudo apt install samba"
+   <img src="docs/samba10.PNG" width="400">
+
+   Instala samba con "sudo apt install samba"
 
     <img src="docs/samba3.PNG" width="400">
 
-    Dirígete al directorio /etc/samba y abre el archivo smb.conf con nano:
+   Dirígete al directorio /etc/samba y abre el archivo smb.conf con nano:
 
     <img src="docs/samba4.PNG" width="400">
 
-    Dentro del archivo smb.conf baja hasta abajo y agrega la siguiente linea:
+   Dentro del archivo smb.conf baja hasta abajo y agrega la siguiente linea:
 
     ```	
     [global]

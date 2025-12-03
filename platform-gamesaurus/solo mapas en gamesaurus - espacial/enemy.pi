@@ -1,0 +1,76 @@
+namespace es_tipolisto_kirk;
+
+class Enemy implements GL_sprite{
+    properties:
+        stage=null;
+    virtual _operator_new(_name,_creator, _params){
+		Addanimationwithsheet("enemy","images/enemy.png",0,1,0,0,64,64,-1,-1,-1,.2);
+		SetCollision(True);
+        stage=GetApp().GetActiveStage();
+        //player=creator.FindObject("player");
+    }
+
+
+    virtual Move(){
+        //EMovemos al enemigo de derecha a izquierda
+        if(GetX()<stage.GetCameraX()+64){
+            SetPos(stage.GetCameraX()+700,300);
+        }
+        incPos(-2,0);
+    }
+
+
+    
+    /*function GetFlagsTile(tile_position, _sprite){
+        //_tile=null;
+        _cell=null;
+        _x=_sprite.GetX();
+        _y=_sprite.GetY();
+        _width=_sprite.GetWF();
+        _height=_sprite.GetHF();
+
+        switch(tile_position){
+            case TILE_POSITION_RIGHT:
+            {
+                //_tile=mapper.GetCellFromPos(_x+_width,_y+32);
+                _cell=mapper.GetInfoFromPos(_x+_width,_y+32);
+            }
+            break;
+            case TILE_POSITION_LEFT:
+            {
+                //_tile=mapper.GetCellFromPos(_x,+_y+32);
+                _cell=mapper.GetInfoFromPos(_x,+_y+32);
+            }
+            break;
+            case TILE_POSITION_DOWN:
+            {
+                //_tile=mapper.GetCellFromPos(_x+32,_y+_height);
+                _cell=mapper.GetInfoFromPos(_x+32,_y+_height);
+            }
+            break;
+            case TILE_POSITION_UP:
+            {
+                //_tile=mapper.GetCellFromPos(_x+32,_y);
+                _cell=mapper.GetInfoFromPos(_x+32,_y);
+            }
+            break;
+        }
+        //Get:	Obtiene una lista con [tileset, tileindex, flags].
+        //_cell=mapper.GetLayer(0).Get(_tile[0],_tile[1]);
+        return _cell[2];
+    }*/
+
+
+    /*function show_message(){
+            _mensage="";
+            _message="x: "+player.GetX()+",  y: "+string_format("%.2f",player.GetY());
+            _message+="\nPantalla ancho: "+GetGl().GetResX()+" alto: "+getGl().GetResY();
+            //if(player!=null)_message+="\nTile Flags Right: "+GetFlagsTile(TILE_POSITION_RIGHT,player);
+            //_message+=", LeftT: "+GetFlagsTile(TILE_POSITION_LEFT, player);
+            //_message+=", down: "+GetFlagsTile(TILE_POSITION_DOWN, player);
+            //_message+=", up: "+GetFlagsTile(TILE_POSITION_UP, player);
+            text.SetText(_message);
+            //if(player.GetX()>GetGl().GetResX()/2)text.SetX(player.GetX()-GetGl().GetResX()/2);
+    }*/
+
+}

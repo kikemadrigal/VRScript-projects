@@ -1,0 +1,202 @@
+
+
+namespace es_tipolisto_platform;
+
+/**Gamesaurus, proyect:
+ * properties
+ * 
+ */
+class main implements GL_Program {
+    properties:
+        pad=null;
+        player=null;
+        text=null;
+        mapper=null;
+        stage=null;
+    	aceleracion=0;
+        incrementoY=0;
+        current_stage=1;
+    constants:
+        TILE_POSITION_RIGHT=0;
+        TILE_POSITION_LEFT=1;
+        TILE_POSITION_DOWN=2;
+
+    function start(){
+        _wnd = GetDOS().GetWindow();
+		SetBackgroundMode(false);
+		SetBackColor(RGB(0,0,0));
+		SetBgColor(RGB(0,0,0));
+		SetResolution(800, 640);
+        SetViewScale(-2);
+		SetVSync(true);
+		Set2DFilter(false);
+		SetFrameRate(60);
+
+        run_stage();
+
+
+        ::Start();
+    }
+    function run_stage(){
+        if (GetActiveStage()) delete GetActiveStage();
+		
+		
+        LoadVGS("stage"+current_stage+".vgs");
+        GetEngine().LogPrint("stage"+current_stage+".vgs loaded");
+        _stage = GetActiveStage();
+        _stage.SetMain();
+		_stage.SetActive();
+       
+        if(_stage==null){
+             GetEngine().LogPrint("stage1 not created");
+        }else{
+            GetEngine().LogPrint("stage1 created, name: "+_stage.GetName());
+            stage=_stage;
+            _stage.SetCameraX(0);
+            _pad=_stage.NewObject("pad", "GL_Pad");
+            _pad.SetPreset("CURSORS");
+            pad=_pad;
+
+            //_player=_stage.NewObject("player", "Player");
+            //_stage.AddObject(_player);
+            _player=_stage.NewObject("player", "GL_Sprite");   
+            _player.Addanimationwithsheet("walk","images/player.png",0,3,0,0,64,64,-1,-1,-1,0.1);
+            _player.Addanimationwithsheet("idle","images/player.png",0,0,0,0,64,64);
+	        _player.SetAnimation("idle");	
+            _player.SetPos(100,GetGl().GetResY()-128);
+            _player.SetColliderMode(True);
+            player=_player;
+            if(_player==null){
+                GetEngine().LogPrint("player not created");
+            }else{
+                GetEngine().LogPrint("player created " + _player.GetX());
+            }
+            
+            text=_stage.NewObject("text", "gl_text");
+            text.SetFont("fonts/medieval.ttf", 40);
+            text.SetColor(RGB(0,0,0));
+            text.SetAlign(DT_CENTER);
+
+            //_mapper=GetGL().FindObject("mapper1");
+            mapper=_stage.FindObject("mapper1");
+            if(mapper==null){
+                GetEngine().LogPrint("mapper no creada");     
+            }else{
+                GetEngine().LogPrint("mapper creada");
+            }
+        }
+    }
+        
+
+    virtual Move(){
+        show_message();
+        incrementoX=0;
+	
+        if(pad.IsButton(PAD_BUTTON_RIGHT)){
+            player.SetHFlip(false);
+            player.SetAnimation("walk");
+            _tile_right=getTile(TILE_POSITION_RIGHT);
+		    if(_tile_right>8 || _tile_right==0) incrementoX=2;
+            if(_tile_right==7) change_stage();
+        }else if(pad.IsButton(PAD_BUTTON_LEFT)){
+            player.SetHFlip(true);
+            player.SetAnimation("walk");
+            _tile_left=getTile(TILE_POSITION_LEFT);
+		    if(_tile_left>8 || _tile_left==0) incrementoX=-2;
+            if(_tile_left==7) change_stage();
+        }else if(player.GetCurAnimation()!="idle"){
+            player.SetAnimation("idle");
+        }
+
+        if(pad.IsButton(PAD_BUTTON_UP)  && aceleracion==0){
+            incrementoY=-5;
+            aceleracion=0;
+        }
+
+        //Suelo
+        if(player.GetY()>640-32-32-64){
+            player.SetY(640-32-32-64);
+            incrementoY=0;
+            aceleracion=0;
+        }else{
+            incrementoY+=aceleracion*GetFtime();
+            aceleracion+=GetFTime()*0.025f;
+        }
+
+
+        //Plataforma
+        if(aceleracion!=0) {
+            //Si esta subiendo
+            if(incrementoY<0){
+            
+            //Si esta bajando
+            }else{	
+                tile_down=GetTile(TILE_POSITION_DOWN);
+                if(tile_down<8 && tile_down!=0){
+                	incrementoY=0;
+                	aceleracion=0;
+                }
+            }
+        }
+
+        player.incPos(incrementoX,incrementoY);
+
+        //Cámara 
+        _x_camera=player.GetX()-GetGl().GetResX()/2;
+        _x_camera=clamp(_x_camera,32,1200);
+        stage.SetCameraX(_x_camera);
+    }
+
+
+
+    function show_message(){
+            //_message="aceleracion: "+string_format("%.2f",_player.aceleracion)+", x: "+_player.GetX()+",  y: "+string_format("%.2f",_player.GetY());
+            _message="x: "+player.GetX()+",  y: "+string_format("%.2f",player.GetY());
+            _message+="\nPantalla ancho: "+GetGl().GetResX()+" alto: "+getGl().GetResY();
+            _message+="\nTile Right: "+GetTile(TILE_POSITION_RIGHT,);
+            _message+=", LeftT: "+GetTile(TILE_POSITION_LEFT);
+            _message+=", down: "+GetTile(TILE_POSITION_DOWN);
+            text.SetText(_message);
+            if(player.GetX()>GetGl().GetResX()/2)text.SetX(player.GetX()-GetGl().GetResX()/2);
+    }
+
+
+
+
+    function GetTile(tile_position){
+        _tile=null;
+        _x=player.GetX();
+        _y=player.GetY();
+        _width=player.GetWF();
+        _height=player.GetHF();
+
+        switch(tile_position){
+            case TILE_POSITION_RIGHT:
+            {
+                _tile=mapper.GetCellFromPos(_x+_width,_y+32);
+            }
+            break;
+            case TILE_POSITION_LEFT:
+            {
+                _tile=mapper.GetCellFromPos(_x,+_y+32);
+            }
+            break;
+            case TILE_POSITION_DOWN:
+            {
+                _tile=mapper.GetCellFromPos(_x+32,_y+_height);
+            }
+            break;
+        }
+        _cell=mapper.GetLayer(0).Get(_tile[0],_tile[1]);
+        return _cell[1];
+    }
+
+
+
+    function change_stage(){
+        current_stage++;
+        run_stage();
+    }
+        
+}
+  

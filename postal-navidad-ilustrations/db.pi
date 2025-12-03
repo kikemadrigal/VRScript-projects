@@ -1,0 +1,103 @@
+namespace es_tipolisto_ilustrations;
+class Db {
+    properties:
+        connection=null;
+        app=null;
+        
+    function _operator_new(_app){
+        app=_app;
+        _file="ilustrations.sql";
+        _initialize_database=false;
+        if(!_app.GetEngine().FileExists(_file)){
+            _app.GetEngine().LogPrint("No existe el archivo "+_file+", vamos a crearlo.");
+            //_app.GetEngine().FileOpen(_file, FILE_MODE_WRITE);
+            _app.GetEngine().FileOpen(_file, FILE_MODE_WRITE);
+            _initialize_database=true;
+        }
+		//_app.GetEngine().LogPrint("Creando el objeto base de datos");
+        _connection = _app.GetEngine().OpenDB(_file);
+		if (_connection){
+			connection=_connection;
+			//_app.GetEngine().LogPrint("Conectado a la base de datos");
+        }else{
+            _app.GetEngine().LogPrint("No se ha podido conectar a la base de datos");
+        }
+        if(_initialize_database){
+            CreateTableUserIlustrations();
+            InsertFakeIlustrations();
+        }
+    }
+    function _operator_delete(){
+        app.GetEngine().CloseDB(connection);
+    }
+    
+    function CreateTableilustrations(){
+        sql="CREATE TABLE IF NOT EXISTS ilustrations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name Text,
+            num_votes INTEGER,
+            date varchar(255)
+        );";
+        connection.Query(sql);
+    }
+
+    function CreateTableUserIlustrations(){
+        sql="CREATE TABLE IF NOT EXISTS user_ilustrations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ip Text,
+            id_game INTEGER,
+            date varchar(255)
+        );";
+        connection.Query(sql);
+    }
+
+    function InsertFakeIlustrations(){
+        sql="insert into ilustrations (name, num_votes, date) values 
+        ('Viaje al centro de la tierra',2, datetime('now','localtime')),
+        ('Metal gear',0, datetime('now','localtime')),
+        ('La colmena',0, datetime('now','localtime')),
+        ('The Maze of galious',0, datetime('now','localtime')),
+        ('Dark soul II',0, datetime('now','localtime')),
+        ('Vampire killer',0, datetime('now','localtime'));";
+        connection.Query(sql);
+    }
+
+    funvtion InsertFakeUserIlustrations(){
+        sql="insert into user_ilustrations (ip, id_game, date) values 
+        ('127.0.101.76',1, datetime('now','localtime')),
+        ('124.0.11.9',3, datetime('now','localtime')),
+        ('126.0.101.11',1, datetime('now','localtime'));";
+        connection.Query(sql);
+    }
+   
+    function GetMax10(){
+        sql="SELECT * FROM ilustrations ORDER BY num_votes DESC LIMIT 10;";
+        _result=connection.Query(sql);
+        return _result;
+    }
+
+	/*function InsertVote(name, num_votes){
+        sql="insert into records (name, num_votes,  date) values ('"+name+"', "+num_votes+",datetime('now','localtime'));";
+        connection.Query(sql);
+	}*/
+
+    function UpdateVote(_name){
+        //Obtenemos el juego con ese nombre
+        //SELECT * FROM votes WHERE name='Metal gear';
+        sql="SELECT * FROM votes WHERE name='"+_name+"';";
+        _result=connection.Query(sql);
+        //Actualizamos el nuevo voto
+        _new_vote=_result[0][2]+1;
+        sql="UPDATE votes set num_votes="+_new_vote+" WHERE name='"+_name+"'";
+        connection.Query(sql);
+	}
+
+    function delete_vote(){
+        sql="DELETE FROM votes";
+        connection.Query(sql);
+    }
+
+    function reset_votes(){
+		//drop_table_votes();
+	}
+}

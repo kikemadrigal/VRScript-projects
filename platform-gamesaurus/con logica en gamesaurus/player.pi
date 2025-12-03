@@ -1,0 +1,185 @@
+class Player implements GL_Sprite{
+
+properties:
+	pad=null;
+	incrementoX=0;
+	incrementoY=0;
+	aceleracion=0;
+	stageGlobal=null;
+	app=null;
+	currentStage=1;
+	text=null;
+	mapper=null;
+	
+	
+constants:
+	TILE_POSITION_RIGHT=0;
+	TILE_POSITION_LEFT=1;
+	TILE_POSITION_DOWN=2;
+	
+		
+	
+virtual Start(_name,_creator)
+{
+
+
+	Addanimationwithsheet("walk","images/player.png",0,3,0,0,64,64,-1,-1,-1,0.1);
+	SetAnimation("walk");	
+	SetPriority(1);
+	SetColliderMode(True);
+	
+
+	//_pad= self.gl.FindObject("pad");
+
+	//pad=_pad;
+
+	
+	
+	
+	
+	//text= self.gl.FindObject("text1");
+	/*switch(currentStage){
+		case 1: mapper=self.gl.FindObject("mapper1");
+		case 2: mapper=self.gl.FindObject("mapper2");	
+		case 3: mapper=self.gl.FindObject("mapper3");	
+		case 4: mapper=self.gl.FindObject("mapper4");
+	}*/
+	
+	
+	
+	
+}
+/*
+
+virtual Move(){	
+	incrementoX=0;
+	
+	if(pad.IsButton(PAD_BUTTON_RIGHT)){
+		self.SetAnimation("walk");
+		//_tile_right=getTile(TILE_POSITION_RIGHT);
+		//if(_tile_right>8 || _tile_right==0) incrementoX=2;
+		self.SetHFlip(false);
+		incrementoX=2;
+	}else if(pad.IsButton(PAD_BUTTON_LEFT)){
+		self.SetAnimation("walk");
+		//_tile_left=getTile(TILE_POSITION_LEFT);
+		//if(_tile_left>8 || _tile_left==0) incrementoX=-2;
+		self.SetHFlip(true);
+		incrementoX-=2;
+	}else{
+		self.SetAnimation("still");
+	}
+	
+	
+	if(pad.IsButton(PAD_BUTTON_UP)  && aceleracion==0){
+			incrementoY=-5;
+			aceleracion=0;
+	}
+	
+	
+	//Suelo
+	if(self.GetY()>640-32-32-64){
+		self.SetY(640-32-32-64);
+		incrementoY=0;
+		aceleracion=0;
+	}else{
+		incrementoY+=aceleracion*GetFtime();
+		aceleracion+=GetFTime()*0.025f;
+	}
+			
+	//Plataforma
+	if(aceleracion!=0) {
+	//Si est� subiendo
+		if(incrementoY<0){
+		
+		//Si est� bajando
+		}else{	
+			//tile_down=stageGlobal.GetTile(2, this);
+			//if(tile_down<8 && tile_down!=0){
+			//	incrementoY=0;
+			//	aceleracion=0;
+			//}
+		}
+	}
+
+	
+	_x=clamp(self.GetX(), 32, self.gl.GetResY());
+	self.SetX(_x);
+	self.IncPos(incrementoX,incrementoY);
+	
+}
+*/
+
+
+
+function show_message(){
+		
+		//_message="aceleracion: "+string_format("%.2f",_player.aceleracion)+", x: "+_player.GetX()+",  y: "+string_format("%.2f",_player.GetY());
+		//_message+="\nPantalla ancho: "+self.gl.GetResX()+" alto: "+self.gl.GetResY();
+		//_message+="\nTile Right: "+GetTile(TILE_POSITION_RIGHT, _player,);
+		//_message+=", LeftT: "+GetTile(TILE_POSITION_LEFT,_player);
+		//_message+=", down: "+GetTile(TILE_POSITION_DOWN, _player);
+		//text.SetText(_message);
+}
+
+
+
+
+
+
+/*
+function GetTile(tile_position){
+	_tile=null;
+	_x=self.GetX();
+	_y=self.GetY();
+	_width=self.GetWF();
+	_height=self.GetHF();
+	_mapper=self.gl.FindObject("mapper1");
+	switch(tile_position){
+		case TILE_POSITION_RIGHT:
+		{
+			_tile=_mapper.GetCellFromPos(_x+_width,_y+32);
+		}
+		break;
+		case TILE_POSITION_LEFT:
+		{
+			_tile=_mapper.GetCellFromPos(_x,+_y+32);
+		}
+		break;
+		case TILE_POSITION_DOWN:
+		{
+			_tile=_mapper.GetCellFromPos(_x+32,_y+_height);
+		}
+		break;
+	}
+    _cell=_mapper.GetLayer(0).Get(_tile[0],_tile[1]);
+	return _cell[1];
+}*/
+
+
+
+/*
+function OnCollision(_collider,_sprite){
+	DebugLog(_sprite.GetName());
+	switch(_sprite.GetName()){
+		case "meta":
+		{
+			stageGlobal.change_stage();
+		}
+		break;
+	}
+}*/
+	
+	
+	
+	
+/*
+function change_stage(){
+	_stage=self.gl.FindObject("stage2");
+	_stage.SetActive();
+}*/
+
+	
+	
+
+}

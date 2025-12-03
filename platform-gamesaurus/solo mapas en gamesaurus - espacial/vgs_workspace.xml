@@ -1,0 +1,5 @@
+<?xml version='1.0'?>
+<Info filename='A:/solo mapas en gamesaurus - espacial/stage1.vgs' />
+<Panel name='STAGES' classtype='VGS_Dialog_Objects' params='gl_stage' x='0' y='59' w='260' h='260' visible='true' state='' />
+<Actived stage='stage1' obj='mapper1' />
+<Grid x='0' y='0' w='1' h='1'/>

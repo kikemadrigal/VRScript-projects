@@ -1,0 +1,183 @@
+namespace es_tipolisto_ilustrations;
+//Web: https://www.vidaextra.com/cultura/alfonso-azpiri-17-portadas-de-videojuegos-atemporales-con-la-firma-de-un-icono-de-la-ilustracion
+//https://www.generation-msx.nl/
+class main implements GL_Program {
+    properties:
+        background=null;
+        music=null;
+        happy_christmas=null;
+        // Ayuda para ir cambiando de estados
+        timer=0;
+        text=null;
+        postals=["Viaje al centro de la tierra", 
+                 "Metal gear",
+                 "La colmena", 
+                 "The Maze of galious",
+                 "Dark soul II",
+                 "Vampire killer",
+                 "Black beard",
+                 "Penguin adventure",
+                 "Wells & Fargo",
+                 "Sir wood",
+                 "Nemesis 2",
+                 "La corona encantada",
+                 "Knightmare",
+                 "Nonamed",
+                 "Aleste 2",
+                 "Mad mix game",
+                 "F1 spirit",
+                 "Abu simbel profanation",
+                 "Xak",
+                 "Ram",
+                 "Salamander",
+                 "Mega corp",
+                 "Metal Gear 2",
+                 "Tuareg",
+                 "The goonies",
+                 "Rocky",
+                 "Phantis",
+                 "Camelot warriors",
+                 "Lorna" ];
+        postal_counter=0;
+        pad=null;
+        name_for_vote="";
+        db=null;
+
+
+    virtual start(){
+        //GetEngine().LogPrint("menu cargado");
+        Setbackcolor(RGB(0,0,0));
+        Setresolution(800,640);
+        Setviewscale(-3);
+        Setvsync(true);
+        Setframerate(30);   
+        //db=new Db(this);
+        marco=newobject("marco","gl_sprite");
+        marco.Addframe("images/marco.png");
+        _path="images/"+postals[postal_counter]+".PNG";
+        _exist = GetEngine().FileExists(_path); 
+        if (!_exist)
+        {
+            GetEngine().LogWarning("El archivo "+_path+" está vacío o no existe.");
+            End(1);
+        }else{
+            //GetEngine().LogPrint("El archivo "+_path+" existe.");
+        
+            _background=newobject("background","gl_sprite");
+            _background.SetPriority(-1);
+            background=_background;
+
+            _text=newobject("text","GL_Text");
+            _text.SetFont("fonts/Vintage Black.ttf",30); 
+            _text.SetAlign(DT_CENTER | DT_VCENTER);
+            _text.SetColor(RGB(255, 0, 255)); 
+            _text.SetText(String_FromUTF8("Vamos a dar un paseo por las \n"+
+                    "mejores ilustraciones de nuestros 8 bits"+
+                    "\n Pulsa la tecla V para votar por\n la imagen que se vea en ese momento."+
+                    "\nPuedes ver la tabla de resultados en https://ilustraciones.tipolisto.es/"+
+                    "\nPulsa ESC para salir del programa."));
+            text=_text;
+
+            _music = NewMusic("ost");
+            _music.SetLoop(true);
+            _music.Load("music/navidad.ogg");
+            _music.SetVolume(70);
+            _music.Play();   
+            music=_music;    
+
+            _pad=NewObject("pad", "GL_Pad");
+	        _pad.SetPreset("CURSORS");
+            _pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_V);
+            _pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_D);
+            _pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
+            pad=_pad;
+
+            happy_christmas=newobject("happy_christmas","HappyChristmas");
+
+            _change("init");
+         }
+    }
+
+
+    function OnFinsihFXOut(){
+        _fx_in=background.CreateFX("fadein"); 
+        _fx_in.Start(1000);
+        _path="images/"+postals[postal_counter]+".PNG";
+        background.RemoveFrames();
+        background.AddFrame(_path);
+        if(postal_counter==0) text.SetAlign(DT_CENTER | DT_BOTTOM);
+        text.SetText("Pulsa V para votar por: "+postals[postal_counter]);
+    }
+    state "init":
+    {
+        timer++;
+        if(timer>500){
+            happy_christmas.SetVisible(false);
+            happy_christmas.SetStop(true);
+            _fx_out=background.CreateFX("fadeout"); 
+            _fx_out.Start(1000);
+            _fx_out.SetOnFinish(this, "OnFinsihFXOut");
+             _change("Show");
+        }
+    }
+    state "Show":
+    {
+        timer++;
+        if(timer%200==0){
+            _fx_out=background.CreateFX("fadeout"); 
+            _fx_out.Start(1000);
+            _fx_out.SetOnFinish(this, "OnFinsihFXOut");
+            postal_counter++;
+            if(postal_counter>=sizeof(postals)){
+                postal_counter=0;
+            }
+        }
+        if(pad.IsButtonDown(PAD_BUTTON_1)){
+            name_for_vote=postals[postal_counter];
+            GetEngine().AlertDialog("Warning",String_FromUTF8("¿Estás seguro de votar por "+postals[postal_counter]+"?"),View.AD_OKCANCEL,this,OnVoteSuccess, null);
+        }else if(pad.IsButtonDown(PAD_BUTTON_2)){
+            GetEngine().AlertDialog("Warning",String_FromUTF8("¿Estás seguro de deseas borrar tu voto?"),View.AD_OKCANCEL,this,OnDeleteVoteSuccess, null);
+        }else if(pad.IsButtonDown(PAD_BUTTON_3)){
+           onKeyEscapePressetd();
+        }
+    }
+
+    function OnVoteSuccess(){
+        send_vote();
+    }
+    function OnDeleteVoteSuccess(){
+        delete_votes();
+    }
+
+
+    function onKeyEscapePressetd(){
+        GetEngine().AlertDialog("Warning",String_FromUTF8("¿Estás seguro de que desea salir?"),View.AD_OKCANCEL,this,OnExitSuccess, null);
+    }
+
+    
+    function OnExitSuccess(){
+        music.Stop();
+        gl.Stop();
+        End(0);
+    }
+     function send_vote(){
+        _http=GetEngine().CreateHTTPManager();
+        _name = String_ToURL(name_for_vote);
+        _ret=_http.GetString("https://games.tipolisto.es/api/ilustrations-update-vote.php?name="+_name);
+        text.SetText("Server response: "+_ret);
+        GetEngine().Sleep(2000);
+        text.SetText("");
+        delete _http;
+    }
+
+    function delete_votes(){
+        _http=GetEngine().CreateHTTPManager();
+        _ret=_http.GetString("https://games.tipolisto.es/api/ilustrations-delete-vote.php");
+        text.SetText("Server response: "+_ret);
+        GetEngine().Sleep(2000);
+        text.SetText("");
+        delete _http;
+    }
+         
+}
+  

@@ -188,7 +188,7 @@ class StageGlobal implements GL_Stage{
 	function play_music_menu(){
 		musics[MUSIC_MENU].Play();
 		musics[MUSIC_MENU].Setvolume(0);
-		musics[MUSIC_MENU].FadeTo(255,0.2);
+		musics[MUSIC_MENU].FadeTo(50,0.2);
 	}
 
 	function stop_music_menu(){

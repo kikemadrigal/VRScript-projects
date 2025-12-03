@@ -1,0 +1,219 @@
+namespace es_tipolisto_gemini;
+
+class main implements GL_Program {
+    properties:
+        // iremos cambiando el fondo según los estados
+        background=null;
+        // Objjeto TypingText que hereda de GL_Text y que va mostrando letras y frases
+        typer=null;
+        // Sprite que solo aparece en el estado "en_casa"
+        manos=null;
+        // Sprite que solo aparece en el estado "en_casa"
+        fuego=null;      
+        // Objeto que solo aparece en el estado "casas"
+        dron=null;
+        // Objeto que solo aparece en el estado "casas"
+        snow=null;
+        // Objeto que solo aparece en el estado "casas"
+        bag=null;
+        // Objeto que solo aparece en el estado "casa-bebes"
+        happy_christmas=null;
+        // Ayuda para ir cambiando de estados
+        timer=500;
+        music_rap=null;
+        music_navidad=null;
+
+
+
+    virtual start(){
+        //GetEngine().LogPrint("menu cargado");
+        Setbackcolor(RGB(0,0,0));
+        Setresolution(800,640);
+        Setviewscale(-3);
+        Setvsync(true);
+        Setframerate(30);        
+
+        //El fopndo que sale con la chimenea
+        _background=newobject("background","gl_sprite");
+		_background.Addframe("images/fondo.png");
+		_bacKground.Setpos(0,0);
+		_background.SetPriority(0);
+		background=_background;
+
+        //la manos que se mueven
+        _manos=newobject("manos","gl_sprite");
+        _manos.Addanimationwithsheet("normal","images/manos.png",0,2,0,0,160,160,-1,-1,-1,0.1);
+        _manos.Setanimation("normal");
+        _manos.SetPos(320,400);
+        manos=_manos;
+
+        //El fuego del fondo
+        _fuego=newobject("fuego","gl_sprite");
+        _fuego.Addanimationwithsheet("fire","images/fuego.png",0,7,0,0,32,32,-1,-1,-1,.02);
+		_fuego.Setanimation("fire");
+        _fuego.SetPos(520,250);
+        fuego=_fuego;
+
+        //El texto que va escribiendo
+        typer=NewObject("typer", "TypingText");
+
+        //dron
+        _dron=newobject("dron","gl_sprite");
+		_dron.Addanimationwithsheet("dron","images/dron.png",0,3,0,0,6*32,6*32,-1,-1,-1,.02);
+        _dron.Setanimation("dron");
+		_dron.Setpos(0,100);
+        _dron.SetVisible(false);
+        dron=_dron;
+
+        //Copos de nieve
+        snow = NewObject("snow", "snow");
+        snow.SetVisible(false);
+
+        //la bolsa que tira el papa noel en el trineo de drones
+        bag=NewObject("bag","gl_sprite");
+        bag.Addframe("images/bolsa.png");
+        bag.SetVisible(false);
+
+        //texto de feliz navidadl
+        happy_christmas=NewObject("happy_christmas","HappyChristmas");
+
+        music_rap = NewMusic("ost");
+        music_rap.SetLoop(true);
+        music_rap.Load("music/rap.ogg");
+        music_rap.Play();        
+        music_navidad = NewMusic("ost");
+        music_navidad.SetLoop(true);
+        music_navidad.Load("music/navidad.ogg");      
+        _change("en_casa");
+    }
+
+    function OnFinshFXInHouse(){
+        background.CreateFX("fadein").Start(500); 
+        background.RemoveFrames();
+        background.Setflags(background.FLAG_WRAP);
+        background.Addframe("images/fondo3.png");
+        dron.SetVisible(true);
+        snow.SetVisible(true);
+        bag.SetVisible(true);
+        _change("casas");
+    }
+    function OnFinshFXHouses(){
+        background.CreateFX("fadein").Start(500); 
+        background.RemoveFrames();
+        background.Addframe("images/fondo4.png");
+        _change("casa-bebes");
+    }
+    function OnFinshFXBabyHouse(){
+        background.CreateFX("fadein").Start(500); 
+        background.RemoveFrames();
+        background.Addframe("images/fondo6.png");
+        happy_christmas.SetVisible(true);
+        _change("reset");
+    }
+    function OnFinshFXReset(){
+        background.CreateFX("fadein").Start(500);
+        background.RemoveFrames();
+        background.Addframe("images/fondo.png");
+        typer.SetVisible(true);
+        manos.SetVisible(true);
+        fuego.SetVisible(true);
+       _change("en_casa");
+    }
+    
+    state "en_casa":
+    {
+        if(typer.respuesta_gemini){
+            manos.SetStop(true);
+        }else{
+            manos.SetStop(false);
+        }
+
+       if(typer.respuesta_gemini && typer.currentIndex==0){
+           background.RemoveFrames();
+           background.Addframe("images/fondo2.png");
+       }else if(!typer.respuesta_gemini && typer.currentIndex==0){
+           background.RemoveFrames();
+           background.Addframe("images/fondo.png");
+       }else if(typer.cambiar_pantalla){
+            typer.cambiar_pantalla=false;
+            typer.currentIndex=0;
+            typer.contador_frases=0;
+            typer.updateNames();
+            manos.SetVisible(false);
+            manos.SetStop(true);
+            typer.SetStop(true);
+            typer.SetVisible(false);
+            fuego.SetStop(true);
+            fuego.SetVisible(false);
+            bag.SetPos(dron.GetX()+100,dron.GetY()+dron.GetHF());
+            _fx_out=background.CreateFX("fadeout"); 
+            _fx_out.Start(10);
+            _fx_out.SetOnFinish(this, "OnFinshFXInHouse");
+       }
+    }
+
+
+    state "casas":
+    {
+       if(timer>0){
+            timer--;
+            if(dron.getX()<800) dron.SetX(dron.GetX()+0.5f);
+            background.IncUV(0.0015f,0);
+            if(dron.GetAnimationLoops()>0){
+                bag.SetPos(dron.GetX()+100,dron.GetY()+dron.GetHF());
+                dron.ResetAnimation();
+            }else{
+                bag.IncPos(0,2);
+            }
+       }else{
+            timer=500;
+            dron.SetX(0);
+            dron.ResetAnimation();
+            dron.SetVisible(false);
+            bag.SetVisible(false);
+            snow.SetVisible(false);
+            _fx_out=background.CreateFX("fadeout"); 
+            _fx_out.Start(500);
+            _fx_out.SetOnFinish(this, "OnFinshFXHouses");
+       }
+    }
+
+    state "casa-bebes":
+    {
+       
+        if(timer>0){
+            timer--;
+       }else{
+            timer=1000;
+            happy_christmas.SetStop(false);
+            music_navidad.FadeOff();
+            music_rap.FadeOff();
+            music_navidad.Play();
+            music_navidad.FadeOn();
+            _fx_out=background.CreateFX("fadeout"); 
+            _fx_out.Start(500);
+            _fx_out.SetOnFinish(this, "OnFinshFXBabyHouse");
+       }
+    }
+
+    state "reset":
+    {
+        if(timer>0){
+            timer--;
+            if(timer==100)music_navidad.FadeOff();
+       }else{
+            music_rap.Play();
+            music_rap.FadeOn();
+            timer=500;
+            happy_christmas.SetVisible(false);
+            happy_christmas.SetStop(true);
+            manos.SetStop(false);
+            typer.SetStop(false);
+            fuego.SetStop(false);
+            _fx_out=background.CreateFX("fadeout"); 
+            _fx_out.Start(500);
+            _fx_out.SetOnFinish(this, "OnFinshFXReset");
+       }
+    }    
+}
+  

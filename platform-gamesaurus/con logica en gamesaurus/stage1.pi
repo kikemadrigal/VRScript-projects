@@ -1,0 +1,35 @@
+class Stage1 implements GL_Stage{
+    properties:
+        text=null;
+        player=null;
+        mapper=null;
+        layer=null;
+
+    virtual _operator_new(_name,_creators){
+
+		_player=gl.FindObject("player");
+		_player.SetVisible(true);
+        //_player.SetColor(RGB(255,0,0));
+        _player.SetPos(0,0);
+		//player=_player;
+        player=CloneObject("player",_player);
+        delete _player;
+
+        _mapper=gl.FindObject("mapper1");
+        mapper=CloneObject("mapper",_mapper);
+    }
+
+
+    virtual Move(){
+        _x_camera=player.GetX()-GetApp().GetResX()/2;
+        _x_camera=Clamp(_x_camera,0, 1500);
+        SetCameraX(_x_camera);
+    }
+
+
+ 
+
+
+
+
+}

@@ -17,7 +17,9 @@ class language{
 					"\nEspacio para atacar o continuar"+
 					"\nPulsa la teclar 'r' para ver los records"+
 					"\n\nMision:"+
-					"\nCoge 3 llaves para abrir el candado y pasar de nivel"],
+					"\nCoge 3 llaves para abrir el candado y pasar de nivel"+
+                    "\n\nCreditos: "+
+                    "\nProgramador: Kike Madrigal \nMúsica: Clemente Tiñena\nTesters: mesíasMSX, Juan Morales"],
             ["winner","Final de la batalla!!!\nProgramador: Kike Madrigal && \nMSXSpain amigos\nMúsica: Clemente Tiñena\nTesters: mesíasMSX, Juan Morales\nGracias por jugar a mi juego."],
             ["records_table","Record    Nombre   fecha\n"],
             ["no_records","Sin records"],
@@ -46,8 +48,10 @@ class language{
                     "\nSpace to attack or continue"+
                     "\nPress 'r' to see the records"+
                     "\n\nMission:"+
-                    "\nPick up 3 keys to open the padlock and pass the level"],
-            ["winner","\n\nEnd of the battle!! \nDeveloper: Kike Madrigal && \nMSXSpain friends\nMusic: Clemente Tiñena\nTester: mesiasMSX, Juan Morales\nThanks for playing my game."],
+                    "\nPick up 3 keys to open the padlock and pass the level"+
+                    "\n\nCredits: "+
+                    "\nDeveloper: Kike Madrigal \nMusic: Clemente Tiñena\nTester: mesiasMSX, Juan Morales."],
+            ["winner","\n\nEnd of the battle!! \nDeveloper: Kike Madrigal \nMusic: Clemente Tiñena\nTester: mesiasMSX."],
             ["records_table","Record    Name   Date\n"],
             ["no_records","No records"],
             ["your_name_is","\nYour name is: "],

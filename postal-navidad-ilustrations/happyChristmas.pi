@@ -1,0 +1,30 @@
+namespace es_tipolisto_ilustrations;
+class HappyChristmas implements GL_Sprite
+{
+    properties:
+        // Por defecto las texturas usan un wrap de tipo CLAMP o sea, las coordenadas de textura siempre quedan entre 0 y 1.
+        u = 0;
+        angle = 0;
+        count_timer=0;
+
+    virtual _operator_new(_name, _creator)
+    {
+        Addframe("images/feliznavidad.png");
+        SetPos(200,0);
+    }
+
+   
+
+    virtual Move()
+    {
+      
+       
+        // Incremento la posición Y usando la función seno, creo un movimiento oscilante.
+        // 0.5f controla la amplitud del movimiento.
+        IncPos(0, sin(angle) * 0.5f); 
+
+        // Incremento el ángulo. GetFTime() asegura que la velocidad es consistente 
+        // independientemente del framerate. 
+        angle += 0.1f * GetFTime(); 
+    }
+}
