@@ -1,0 +1,33 @@
+class Star implements GL_Sprite
+{
+    properties:
+        speed = 0.0f; // Velocidad individual para el efecto de profundidad [6]
+
+    virtual _operator_new(_name, _creator)
+    {
+        // Creamos un fotograma vacío de 1x1 o 2x2 píxeles para que sea un punto [7, 8]
+        _size = rand(1, 2); 
+        AddEmptyFrame(_size, _size);
+        
+        // Color blanco y posición inicial aleatoria dentro de la resolución [9, 10]
+        SetColor(RGB(255, 255, 255)); 
+        SetPos(rand(0, GetApp().GetResX()), rand(0, GetApp().GetResY()));
+        
+        // Asignamos una velocidad aleatoria [12]
+        speed = frand(0.2, 1.5); 
+    }
+
+    virtual Move()
+    {
+        // Desplazamiento vertical descendente [13, 14]
+        // GetFTime asegura un movimiento suave independientemente de los FPS [15, 16]
+        IncPos(0, speed * GetFTime());
+
+        // Si la estrella sale por la parte inferior, la reposicionamos arriba [17]
+        if (GetY() >  GetApp().GetResY()) 
+        {
+            SetY(0);
+            SetX(rand(0, GetApp().GetResX()));
+        }
+    }
+}

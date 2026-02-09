@@ -1,0 +1,96 @@
+<?xml version='1.0'?>
+<Object type='GL' name='test' params=''>
+<Property name='ScriptInterface' value='' />
+<Property name='resx' value='800' />
+<Property name='resy' value='450' />
+<Property name='mainstage' value='stage1' />
+<Property name='bgcolor' value='0' />
+<Property name='globalkeys' value='' />
+<Property name='scriptFolder' value='' />
+<Property name='behaviourslibraryversion' value='0' />
+<Property name='behaviourslibrarypath' value='' />
+<Property name='behaviourslibraryscript' value='' encode='hex' />
+<Property name='behaviourClassNamespace' value='com_dev_test' />
+<Property name='developer' value='' />
+<Property name='viewscaleadjust' value='1.0' />
+<Property name='2dfilter' value='false' />
+<Property name='2dcastcoords' value='false' />
+<Property name='vsync' value='true' />
+<Property name='offx' value='0' />
+<Property name='offy' value='0' />
+</Object>
+<Object type='GL_Stage' name='stage1' params='[]' creator='test'>
+<Property name='ScriptInterface' value='' />
+<Property name='camerax' value='0.0' />
+<Property name='cameray' value='0.0' />
+<Property name='camerazoom' value='0.9' />
+<Property name='viewportx' value='-1475.0' />
+<Property name='viewporty' value='131.0' />
+<Property name='cameraclipx' value='-32.0' />
+<Property name='cameraclipy' value='-32.0' />
+<Property name='cameraclipw' value='900.0' />
+<Property name='cameracliph' value='550.0' />
+<Property name='global' value='false' />
+<Property name='debug' value='false' />
+<Property name='visible' value='true' />
+<Property name='physicsScale' value='1.0' />
+<Property name='physicsGravityX' value='0.0' />
+<Property name='physicsGravityY' value='0.0981' />
+<Property name='scissorEnabled' value='false' />
+<Property name='scissorX' value='0' />
+<Property name='scissorY' value='0' />
+<Property name='scissorW' value='1000014' />
+<Property name='scissorH' value='1000014' />
+<Property name='viewscale' value='1.0' />
+<Property name='priority' value='0' />
+</Object>
+<Object type='GL_Sprite' name='bg1' params='' creator='stage1'>
+<Property name='ScriptInterface' value='' />
+<Property name='type' value='0' />
+<Property name='visible' value='true' />
+<Property name='stop' value='false' />
+<Property name='collision' value='false' />
+<Property name='x' value='0.0' />
+<Property name='y' value='0.0' />
+<Property name='width' value='2880.0' />
+<Property name='height' value='450.0' />
+<Property name='drawflags' value='0' />
+<Property name='flags' value='0' />
+<Property name='angle' value='0.0' />
+<Property name='priority' value='0.0' />
+<Property name='scalex' value='1.0' />
+<Property name='scaley' value='1.0' />
+<Property name='curanimation' value='bg1-anim' />
+<Property name='color' value='-1' />
+<Property name='clipping' value='true' />
+<Property name='hflip' value='0' />
+<Property name='vflip' value='0' />
+<Property name='cx' value='0.0' />
+<Property name='cy' value='0.0' />
+<Property name='cw' value='2880.0' />
+<Property name='ch' value='450.0' />
+<Property name='physics' value='false' />
+<Property name='physicsBody' value='static' />
+<Property name='physicsFixedRotation' value='false' />
+<Property name='physicsMass' value='100.0' />
+<Property name='physicsDensity' value='1.0' />
+<Property name='physicsRestitution' value='0.5' />
+<Property name='physicsFriction' value='0.5' />
+<Property name='physicsGravityScale' value='1.0' />
+<Property name='physicsAngularDamping' value='0.0' />
+<Property name='physicsLinearDamping' value='0.0' />
+<Frame tex='A:/captain_kirk/images/stage2.png' x='0.0' y='0.0' w='2880.0' h='450.0' u='0.0' v='0.0' uw='1.0' vh='1.0' addru='3' addrv='3' filter='1' />
+<Animation name='bg1-anim' start='0' end='0' loop='-1' speed='0.25' sheetStart='0' sheetEnd='0' />
+</Object>
+<Object type='GL_Mapper' name='mapper1' params='[]' creator='stage1'>
+<Property name='ScriptInterface' value='' />
+<Property name='x' value='0.0' />
+<Property name='y' value='0.0' />
+<Property name='priority' value='0.0' />
+<Property name='tilew' value='32' />
+<Property name='tileh' value='32' />
+<Property name='width' value='90' />
+<Property name='height' value='14' />
+<Tileset name='A:/captain_kirk/images/tiles.png' texw='800' texh='640' tw='32' th='32' />
+<Layer width='90' height='14' data='789CED995B0E82301045AF7CB0076517CA2E805DA8DBD055E872ABBD6DC59014EA2365C4E9C7C9E42490D2B999980A5C5000B892DFAF8DB91733D32EBB9FD5A30A2B6ED2760E347CBA65DD7983882968649C89327470CDBE6C5857DE60D4A46663CF371F581FBD41C414349A0D4904B6ECCB8EACC96993F6E63037DC4C7006189B249A8DDCDD773D6A329F7C3F37C24C4831124EEC7F38573694F2A9D958129FBBF919BB8191F075CAB9B3D16A369493D46C28351B4ACD8631A5803D28DF67FC97CF9891B073D92CB3B1BF33B7ACC854939A0DBB96762F0A9CF87567325F9D371BE13EDCAEDA1B2498E96CBCF27F8A33BF938D1BA98894C9' />
+</Object>

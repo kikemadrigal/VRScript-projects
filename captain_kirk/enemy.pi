@@ -1,0 +1,100 @@
+namespace es_tipolisto_kirk;
+
+class Enemy implements GL_sprite {
+  properties : 
+    speedX = 0;
+    speedY = 0;
+    start_x=0;
+	  start_y=0;
+    stage = null;
+    player = null;
+    type= null;
+    only_one= false;
+  virtual _operator_new(_name, _creator, _params) {
+    type= _params[0];
+    _x = _params[1];
+    _y = _params[2];
+
+    //Animación de muerte
+    Addanimationwithsheet("enemy-dead",PATH_IMAGES+"enemies.png",0,7,4*64,8*64,64,64,-1,-1,-1,.2);
+    start_x=_x;
+		start_y=_y;
+    SetPos(_x, _y);
+    SetCollision(True);
+    SetColliderMode(True);
+    SetPriority(PRIORITY_ENEMY);
+    
+    stage = GetApp().GetActiveStage();
+    player = creator.FindObject("player");
+  }
+
+  virtual Move() { }
+
+  virtual OnSpriteCollision(_sp1, _sp2) {
+    /**
+     * Colisón Enemigos con el rayo del player 🩸
+     */
+    if (Class_Id(_sp2) == "Ray" && _sp2.type == RAY_PLAYER) {
+      //GetEngine().LogPrint("Enemy collided with player ray, type: " + type);
+      if(type==10 || type==11)return;
+      
+      _sp2.Destroy();
+      SetAnimation("enemy-dead");
+    }
+
+    /**
+     * Colision de los enemigos con el disparo del player
+     */
+    if (Class_Id(_sp2) == "Shot") {
+      //GetEngine().LogPrint("Enemy collided with player bullet, type: " + type);
+      if(type==10)return;
+      if(type==11){
+        //Si es un enemigo rojo, al morir suelta una capsula de energía
+       
+        //GetEngine().LogPrint("Vamos a crear una capsula de energía en: " + GetX() + ", " + GetY());
+        _capsule=stage.NewObject("capsule_energy","CapsuleEnergy",[GetX(),GetY()]);
+        _sp2.Destroy();
+        Destroy();
+      }else{
+        _sp2.Destroy();
+        SetAnimation("enemy-dead");
+      }
+    }
+  }
+
+  
+  function SetRouteZigZag(_x,_y){
+    _ruta=NewObject("ruta","GL_Route");
+    _ruta.AddNode(_x, _y);
+    _ruta.AddNode(_x - 200, _y - 100);
+    _ruta.AddNode(_x - 400, _y + 100);
+    _ruta.AddNode(_x - 600, _y - 100);
+    _ruta.AddNode(_x - 800, _y + 100);
+    _ct=CreateController();
+    _ct.SetSpeed(3.0f, 3.0f);
+    SetRoute(_ruta, GL_Route.MODE_LOOP);
+  }
+
+  function SetRouteRightToLeft() {
+    _x = stage.GetCameraX() + Gl.GetResX() + 100;
+    _ruta = NewObject("ruta", "GL_Route");
+    _ruta.AddNode(_x, 400);
+    _ruta.AddNode(_x - 200, 300);
+    _ruta.AddNode(_x - 500, 200);
+    _ruta.AddNode(_x, 400);
+    //_ct=CreateController();
+    //_ct.SetSpeed(3.0f, 3.0f);
+    SetRoute(_ruta, GL_Route.MODE_LOOP);
+  }
+
+  function create_square_movement(_x, _y) {
+    _ruta = NewObject("ruta", "GL_Route");
+    _ruta.AddNode(_x, _y);
+    _ruta.AddNode(_x + 600, _y);
+    _ruta.AddNode(_x + 600, _y - 100);
+    _ruta.AddNode(_x, _y - 100);
+    _ct = CreateController();
+    _ct.SetSpeed(2.0f, 2.0f);
+    _ct.SetRoute(_ruta, GL_Route.MODE_ENDFIX);
+  }
+}

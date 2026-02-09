@@ -1,0 +1,54 @@
+namespace es_tipolisto_kirk;
+class Menu implements GL_Stage{
+	properties:
+		pad=null;
+		player=null;
+		angle=0.0;
+	virtual _operator_new(_name,_creator){
+		_background=newobject("titulo","gl_sprite");
+		_background.Addframe(PATH_IMAGES+"menu.png");
+
+		_player=newobject("player","gl_sprite");
+		_player.SetPos(GetApp().GetResX()/2-100,GetApp().GetResY()/2-20);
+		_player.Addanimationwithsheet("player_horizontal",PATH_IMAGES+"player.png",0,0,0,64,64,64);
+		//aumentamos el tamaño del sprite
+		_player.SetScale(2);
+		player=_player;
+
+		_pad=NewObject("pad", "GL_Pad");
+	    _pad.SetPreset("CURSORS");
+		pad=_pad;
+
+		//Creamos el campo de estrellas
+		for (i = 0; i < 100; i++) {
+            NewObject("star_" + string(i), "Star");
+        }
+		
+	}
+
+	virtual Move(){
+		//Movemos la nave para hacer un movimiento ondulante
+		//player.SetY(300+sin(GetEngine().GetFTime()/500)*100);
+		// Incremento la posición Y usando la función seno, creo un movimiento oscilante.
+        // 0.5f controla la amplitud del movimiento.
+        player.IncPos(0, sin(angle) * 0.2f); 
+
+        // Incremento el ángulo. GetFTime() asegura que la velocidad es consistente 
+        // independientemente del framerate. 
+        angle += 0.1f * GetFTime(); 
+		if(angle>10) player.SetPivotX(64);
+		else player.SetPivotX(0);
+		
+		//if(angle>100) angle=0;
+		//Hacemos que el player gire solo del lado derecho
+
+
+	
+		//GetEngine().LogPrint("angle: "+angle);
+
+		if(pad.IsButtonDown(PAD_BUTTON_1)){ 	
+            //GetApp().pause=false;
+			GetApp().run_game();
+        }
+	}
+}

@@ -1,0 +1,306 @@
+namespace es_tipolisto_kirk;
+
+/**
+ * Kaptain_kirk
+ * https://www.google.com/imgres?q=tiles%20nave%20espacial&imgurl=https%3A%2F%2Fthumbs.dreamstime.com%2Fb%2Fcuerpo-azul-de-la-nave-espacial-textura-incons%25C3%25BAtil-32276412.jpg&imgrefurl=https%3A%2F%2Fes.dreamstime.com%2Ffotograf%25C3%25ADa-de-archivo-cuerpo-azul-de-la-nave-espacial-textura-incons%25C3%25BAtil-image32276412&docid=O_lGfUpMsb-HdM&tbnid=unLFKQNmnxDiLM&vet=12ahUKEwiOqfj3uKKRAxWehv0HHcOtIm8QM3oECCgQAA..i&w=800&h=800&hcb=2&ved=2ahUKEwiOqfj3uKKRAxWehv0HHcOtIm8QM3oECCgQAA
+ */
+class main implements GL_Program {
+    properties:
+        pad=null;
+        player=null;
+        text_hud=null;
+        text_game=null;
+        mapper=null;
+        stage=null;
+        current_stage=1;
+        counter_time=0;
+        timer_create_enemies=null;
+        final_stage=false;
+        time_for_final_stage=0;
+
+
+
+
+    defines:
+        TILE_POSITION_RIGHT=0;
+        TILE_POSITION_LEFT=1;
+        TILE_POSITION_DOWN=2;
+        TILE_POSITION_UP=3;
+
+        ENEMY_TYPE_RAY_1=1;
+        ENEMY_TYPE_RAY_2=2;
+        ENEMY_TYPE_RAY_3=3;
+        ENEMY_TYPE_RAY_4=4;
+        ENEMY_TYPE_RAY_5=5;
+    
+        ENEMY_TYPE_BALL=10;
+        ENEMY_TYPE_RED=11;
+
+        RAY_PLAYER=0;
+        RAY_ENEMY=1;
+        RAY_VERTICAL=2;
+
+        PRIORITY_BACKGROUND=0;
+        PRIORITY_TILES=1;
+        PRIORITY_BULLETS=2;
+        PRIORITY_RAY=3;
+        PRIORITY_PLAYER=4;
+        PRIORITY_ENEMY=5;
+        PRIORITY_HUD=6;
+        
+        PATH_IMAGES= "images/";
+        PATH_STAGES= "stages/";
+        PATH_FONTS=  "fonts/";
+
+
+    function start(){
+		SetBackgroundMode(false);
+		SetBackColor(RGB(0,0,0));
+		SetBgColor(RGB(0,0,0));
+		SetResolution(800, 640);
+        SetViewScale(-2);
+		SetVSync(true);
+		Set2DFilter(false);
+		SetFrameRate(60, false);
+        SetFrameRateMHZ(1400);
+        //En todas las clases debes de poner GetApp().GetBundleDriveName() +"nombreClase"
+        //Ejemplo:  _player = _stage.NewObject("player", GetBundleDriveName() +"Player");	
+        //esto es necesario para ver los recursos del VGS
+		gl.SetOnGetResourcePath(this, "OnGetResourcePath");	
+        
+
+        run_menu();
+        //run_game();
+        ::Start();
+    }
+
+    function OnGetResourcePath(_path){
+		_ps = Path_Split(_path);
+		if (_ps[0] == "X:") return GetBundleDriveName() + "/" + _ps[1] + _ps[2] + _ps[3];
+		return GetBundleDriveName() + _path;
+	}
+
+    
+	function run_menu()
+	{
+        _menu=RunStage("menu","Menu");
+		_menu.SetMain();
+		_menu.SetActive();
+        _change("menu");
+	}
+    function run_game(){
+        run_stage();
+        _change("game");
+    }
+
+
+
+   function run_stage(){
+        Gl.Hide();
+        gl.Stop();
+        if (GetActiveStage()) delete GetActiveStage();
+		counter_time=0;
+        LoadVGS(PATH_STAGES+"stage"+current_stage+".vgs");
+        //GetEngine().LogPrint("stage"+current_stage+".vgs loaded");
+        _stage = GetActiveStage();
+        _stage.SetDebug(true);
+        stage=_stage;
+        if(_stage==null){
+             GetEngine().LogPrint("stage1 not created");
+        }else{
+            stage=_stage;
+            _stage.SetCameraX(0);
+          
+       	  	_pad=_stage.NewObject("pad", "GL_Pad");
+            _pad.SetPreset("CURSORS");
+            pad=_pad;
+
+            _player = _stage.NewObject("player", GetBundleDriveName() +"Player");		
+            player=_player;
+            if(_player==null) GetEngine().LogPrint("player not created");
+            
+            
+            text_hud=_stage.NewObject("text", "gl_text");
+            text_hud.SetFont(PATH_FONTS+"Vintage Black.ttf", 22);
+            text_hud.SetColor(RGB(255,0,0));
+            text_hud.SetAlign(DT_CENTER);
+
+            text_game=NewObject("text_game", "gl_text");
+            text_game.SetFont(PATH_FONTS+"Vintage Black.ttf", 22);
+            text_game.SetColor(RGB(255,255,0));
+            text_game.SetY(200);
+            text_game.SetPriority(PRIORITY_HUD);
+
+          
+            timer_create_enemies=NewObject("timer", "GL_Timer");
+            timer_create_enemies.SetFrequency(1000);
+            timer_create_enemies.SetUserCallBack(this,"OnTimerEnemiesCallBack");
+
+
+
+            if(current_stage==1){
+                //Creamos un rayo vertical
+                _ray_vertical=stage.NewObject("ray_vertical", "Ray", [RAY_VERTICAL]);
+                _ray_vertical.SetPos(1280,100);
+				for (i=0;i<2;i++){
+					_enemy_ball=null;
+					if(i%2==0){
+						_enemy_ball=stage.NewObject("enemyBall","EnemyBall",[ENEMY_TYPE_BALL,600+(i*100),100]);
+						_enemy_ball2=stage.NewObject("enemyBall","EnemyBall",[ENEMY_TYPE_BALL,1600+(i*100),100]);
+						_enemy_ball.speedY=2;
+						_enemy_ball2.speedY=2;
+					}
+					else {	
+						_enemy_ball=stage.NewObject("enemyBall","EnemyBall",[ENEMY_TYPE_BALL,600+(i*100),250]);
+						_enemy_ball2=stage.NewObject("enemyBall","EnemyBall",[ENEMY_TYPE_BALL,1600+(i*100),250]);
+						_enemy_ball.speedY=-2;
+						_enemy_ball2.speedY=-2;
+					}
+                	_enemy_ball.SetClipping(False);
+				}
+            }
+        }
+        gl.Play();
+        gl.Show();
+    }
+    function OnTimerEnemiesCallBack(_timer){
+        counter_time++;
+        //Primera pantalla
+        switch(current_stage){
+            case 1:
+                stage1_enemies();
+            break;
+            case 2:
+                stage2_enemies();
+            break;
+            case 3:
+                stage3_enemies();
+            break;
+   
+        }
+
+        if(counter_time>100){
+            counter_time=0;
+        }
+    }
+
+    state "menu":
+    {
+        
+    }
+        
+
+    state "game":
+    {
+        if(final_stage){
+            time_for_final_stage++;
+            if(time_for_final_stage>300){
+                final_stage=false;
+                time_for_final_stage=0;
+                text_game.SetText("");
+                
+                change_stage();
+            }
+           return;
+        }
+
+        show_message();
+
+        if(player.GetX()+player.GetWF()>2000-GetResX()/2){
+            final_stage=true;
+            text_game.SetText("Final Stage!");
+            text_game.SetX(stage.GetCameraX()+GetResX()/2);
+            player.SetCollision(false);
+        }else{
+            stage.SetCameraX(stage.GetCameraX()+1);
+        }
+
+
+    }
+
+    function show_message(){
+            //_message="x: "+player.GetX()+",  y: "+string_format("%.2f",player.GetY());
+            _message="Lives: "+player.lives;
+            //_message+="\nstage x: "+stage.GetCameraX();
+            _message+="\nstage: "+current_stage;
+            _message+="\ntime: "+counter_time;
+            _message+="\nplayerX: "+player.GetX();
+            _message+="\nplayerX: "+player.power;
+            _message+="\nstage x: "+stage.GetCameraX();
+            text_hud.SetText(_message);
+            //if(player.GetX()>GetGl().GetResX()/2)text.SetX(player.GetX()-GetGl().GetResX()/2);
+            text_hud.SetX(stage.GetCameraX());
+    }
+
+
+    function change_stage(){
+        current_stage++;
+        if(current_stage>3) current_stage=1;
+        player.SetCollision(true);
+        run_stage();
+    }
+
+
+    function stage1_enemies(){
+        //creamos enemigos rojos(que dan capsulas cada modulo de 50
+        if(counter_time%10==0){
+            _enemy_red=stage.NewObject("enemy_red","EnemyRed",[11,stage.GetCameraX(),rand(100,250)]);
+            _enemy_red.SetClipping(False);
+        }
+        if(counter_time==2 || counter_time==32){
+            for(i=0;i<2;i++){
+                _enemy=stage.NewObject("enemy","EnemyRay",[1,stage.GetCameraX()-i*64,200]);
+                _enemy.SetClipping(False);
+            }
+        }else if(counter_time==10 || counter_time==40){
+            for(i=0;i<2;i++){
+                _enemy=stage.NewObject("enemy","EnemyRay",[1,stage.GetCameraX()-i*64,100]);
+                _enemy.SetClipping(False);
+            }
+        }else if(counter_time==15 || counter_time==50){
+            for(i=0;i<2;i++){
+                _enemy=stage.NewObject("enemy","EnemyRay",[1,stage.GetCameraX()-i*64,250]);
+                _enemy.SetClipping(False);
+            }
+        }else if(counter_time==25){
+            for(i=0;i<2;i++){
+                _enemy=stage.NewObject("enemy","EnemyRay",[1,stage.GetCameraX()-i*64,100]);
+                _enemy.SetClipping(False);
+            }
+            for(i=0;i<2;i++){
+                _enemy=stage.NewObject("enemy","EnemyRay",[1,stage.GetCameraX()-i*64,250]);
+                _enemy.SetClipping(False);
+            }
+        }
+    }
+
+
+
+    function stage2_enemies(){
+        if(counter_time==2 || counter_time==50){
+            stage.NewObject("enemy","EnemyRay",[3,stage.GetCameraX(),100]);
+            stage.NewObject("enemy","EnemyRay",[2,stage.GetCameraX(),300]);
+        }
+        else if(counter_time==10 || counter_time==40){
+            stage.NewObject("enemy","EnemyRay",[4,stage.GetCameraX(),100]);
+            stage.NewObject("enemy","EnemyRay",[4,stage.GetCameraX(),350]);
+        }else if(counter_time==20 || counter_time==30){
+            stage.NewObject("enemy","EnemyRay",[4,stage.GetCameraX()-100,GetResY()/2]);
+        }
+    }
+
+
+    function stage3_enemies(){
+        if(counter_time==5 || counter_time==30 || counter_time==55){
+            stage.NewObject("enemy","EnemyRay",[5,stage.GetCameraX()+GetResX(),150]);
+        }else if(counter_time==15 || counter_time==45){
+            stage.NewObject("enemy","EnemyRay",[4,stage.GetCameraX(),250]);
+            stage.NewObject("enemy","EnemyRay",[4,stage.GetCameraX(),400]);
+        }else if(counter_time==12 || counter_time==25 || counter_time==40 || counter_time==60){
+            stage.NewObject("enemy","EnemyRay",[3,stage.GetCameraX(),100]);
+            stage.NewObject("enemy","EnemyRay",[2,stage.GetCameraX(),300]);
+        }
+    }
+        
+}
+  

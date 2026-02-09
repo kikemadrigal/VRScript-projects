@@ -1,0 +1,34 @@
+/**
+ * Los enemigos de tipo bola se mueven en vertical y r
+ * ebotan cuando llegan a una cierta distancia de su posición inicial
+ * no se pueden matar
+ */
+
+
+class EnemyBall implements Enemy {
+
+    virtual _operator_new(_name, _creator, _params) {
+        switch (type){
+            case 10:
+                Addanimationwithsheet("enemy_ball", "images/enemies.png", 0, 5, 0, 7*64, 64, 64, -1, -1, -1, .2);
+                SetAnimation("enemy_ball");
+                speedX=0;
+                speedY=2;
+            break;
+        }
+        SetCollision(True);
+    }
+    virtual Move() {		
+		if (GetX() < stage.GetCameraX()) {
+	      Destroy();
+	      GetEngine().LogPrint("enemyball destroyed off screen");
+	      return;
+		}
+        //Si la posición en y es menor que la original -300 o mayor que la original +300 se invierte
+        if (GetY() < start_y - 100 || GetY() > start_y + 100) {
+            speedY = -speedY;
+        }
+		//GetEngine().LogPrint("Y "+GetY()+", speed: "+speedY);
+        IncPos(0, speedY);
+    }
+}

@@ -1,0 +1,27 @@
+/**
+ * Los enemigos rojos dan capsulas de energía cuando los matas
+ * salen por la izquierda y desaparecen rápido por la derecha
+ */
+class EnemyRed implements Enemy {
+
+    virtual _operator_new(_name, _creator, _params) {
+        switch (type){
+            case 11:
+                Addanimationwithsheet("enemy_red", "images/enemies.png", 0, 0, 0, 6*64, 64, 64, -1, -1, -1, .2);
+                SetAnimation("enemy_red");
+                SetColor(RGB(255, 0, 0));
+            break;
+        }
+        SetCollision(True);
+        speedX=2;
+        speedY=0;
+    }
+    virtual Move() {		
+		if (GetX() > stage.GetCameraX() + GetApp().GetResX() || GetX() < stage.GetCameraX() - 64) {
+	      Destroy();
+	      GetEngine().LogPrint("enemyReddestroyed off screen");
+	      return;
+		}
+        IncPos(speedX,speedY);
+    }
+}

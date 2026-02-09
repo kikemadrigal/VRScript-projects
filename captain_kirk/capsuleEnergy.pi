@@ -1,0 +1,34 @@
+namespace es_tipolisto_kirk;
+
+
+class CapsuleEnergy implements GL_sprite {
+
+    
+    virtual _operator_new(_name, _creator, _params) {
+        _x = _params[0];
+        _y = _params[1];
+         GetEngine().LogPrint("CapsuleEnergy created at: " + _x + ", " + _y);
+        //Addanimationwithsheet("capsule_energy", "images/capsules.png", 0, 0, 0, 64, 64, 64, -1, -1, -1, .2);
+        //SetAnimation("capsule_energy");
+        AddEmptyFrame(32, 16);
+        SetColor(RGB(255, 0, 0));
+
+
+        //SetPriority(10);
+
+
+        SetCollision(True);
+        SetPos(_x, _y);
+        //speedX=0;
+        //speedY=0;
+       
+    }
+    virtual Move() {		
+        /*if (GetX() > stage.GetCameraX() + GetApp().GetResX() || GetX() < stage.GetCameraX() - 64) {
+          Destroy();
+          GetEngine().LogPrint("capsuleEnergy destroyed off screen");
+          return;
+        }*/
+        //IncPos(speedX,speedY);
+    }
+}

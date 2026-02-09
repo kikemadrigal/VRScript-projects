@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<icon name="app.png" />
+<description 
+bundle="es_tipolisto_kirk"
+name="Captain Kirk"
+developer="Kike Madrigal"
+date="01/04/2026" 
+/>
+<application 
+name="main.pi" 
+/>

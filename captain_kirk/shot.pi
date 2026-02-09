@@ -1,0 +1,44 @@
+namespace es_tipolisto_kirk;
+
+class Shot implements GL_sprite{
+	properties:
+		incrementoX=0;
+		incrementoY=0;
+		//stage=null;
+        NUM_MAX_SHOTS=5;
+        player=null;
+
+	virtual _operator_new(_name,_creator, _params){
+		AddEmptyFrame(7,2);
+        SetColor(RGB(255,255,0));			
+		SetCollision(True);
+        stage=GetApp().GetActiveStage();
+		//El createInstancepool va con las lineas del player 10,31 y 63
+        //CreateInstancesPool(NUM_MAX_SHOTS);
+		SetPos(-100,-100);
+		SetColliderMode(True);
+		SetPriority(PRIORITY_BULLETS);
+    }
+
+	virtual Move(){     
+		incPos(incrementoX, incrementoY);
+		
+		//if(GetX()>stage.GetCameraX()+700 || GetX()<stage.GetCameraX()-100){
+		if(isClipped()){
+            Destroy();
+		}
+	}
+
+
+	virtual OnSpriteCollision(_sp1, _sp2) {
+		if (Class_Id(_sp2) == "Ray" && _sp2.type == RAY_ENEMY) {
+			_sp2.Destroy();
+			Destroy();
+		}
+		if( Class_Id(_sp2) == "Enemy") {
+			_sp2.SetAnimation("enemy-dead");
+			Destroy();
+		}
+	}
+
+}

@@ -1,0 +1,161 @@
+namespace es_tipolisto_kirk;
+
+class Player implements GL_Sprite {
+  properties : aceleracion = 0;
+  incrementoY = 0;
+  pad = null;
+  stage = null;
+  mapper = null;
+  lives = 3;
+  //shots = [];
+
+  TILE_POSITION_RIGHT = 0;
+  TILE_POSITION_LEFT = 1;
+  TILE_POSITION_DOWN = 2;
+
+  power=1;
+
+  virtual _operator_new(_name, _creator, _params) {
+    //GetEngine().LogPrint("Image player path: "+GetApp().PATH_IMAGE_PLAYER);
+    Addanimationwithsheet("walk", PATH_IMAGES+"player.png", 0, 1, 0, 0, 64, 64, -1, -1, -1, 0.1);
+    SetAnimation("walk");
+    SetColliderMode(True);
+    SetPriority(PRIORITY_PLAYER);
+    SetPos(200,200);
+    SetCollisionRect(20, 10, 24, 40);
+    // mapper=GetApp().GetActiveStage().FindObject("mapper1");
+    mapper = creator.FindObject("mapper1");
+    if (mapper == null) {
+      GetEngine().LogPrint("mapper no creada en player");
+    } 
+    stage = GetApp().GetActiveStage();
+    // Dentro de shot creamos una instacepool de disparos
+  }
+
+  virtual Move() {
+    incrementoX = 0;
+    incrementoY = 0;
+    _angle_ray=0;
+    _allow_create_ray = false;
+    _allow_create_ray_vertical = false;
+
+     // Movimiento del player con el pad
+    if (GetApp().pad.IsButton(PAD_BUTTON_RIGHT)) {
+      if(GetApp().pad.IsButton(PAD_BUTTON_UP) || GetApp().pad.IsButton(PAD_BUTTON_DOWN)){
+      	_allow_create_ray_vertical = true;
+      }else{
+      	_allow_create_ray = true;
+      }
+
+      // SetHFlip(false);
+      SetAnimation("walk");
+      _cell = mapper.GetInfoFromPos(GetX() + GetWF(), GetY() + 32);
+      if (_cell[2] > 8 || _cell[2] == 0)
+        incrementoX = 2;
+      else
+        player_die();
+    } else if (GetApp().pad.IsButton(PAD_BUTTON_LEFT)) {
+      // SetHFlip(true);
+      SetAnimation("walk");
+      _cell = mapper.GetInfoFromPos(GetX(), +GetY() + 32);
+      if (_cell[2] > 8 || _cell[2] == 0)
+        incrementoX = -2;
+      else
+        player_die();
+    } 
+
+
+    if (GetApp().pad.IsButton(PAD_BUTTON_UP)) {
+       //_allow_create_ray = true;
+       	_angle_ray=-0.8;
+      _cell = mapper.GetInfoFromPos(GetX() + 32, GetY());
+        if (_cell[2] > 8 || _cell[2] == 0)
+        incrementoY = -2;
+    } if (GetApp().pad.IsButton(PAD_BUTTON_DOWN)) {
+       //_allow_create_ray = true;
+       _angle_ray=0.8;
+      _cell = mapper.GetInfoFromPos(GetX() + 32, GetY() + GetHF());
+      	if (_cell[2] > 8 || _cell[2] == 0)
+        incrementoY = 2;
+    }else if (GetCurAnimation() != "idle") {
+      SetAnimation("idle");
+    } 
+
+
+    // Al pulsar el espacio creamos un disparo
+    if (GetApp().pad.IsButtonDown(PAD_BUTTON_1)) {
+      for(i=0;i<power;i++){
+        _shot = stage.NewObject("shot"+i, GetApp().GetBundleDriveName() +"Shot");
+         //shots+=[_shot];
+        if (GetHFlip()) {
+          _shot.incrementoX = -4;
+          _shot.SetPos(GetX(), GetY() + GetHF() / 2-i*10);
+
+        } else {
+          _shot.incrementoX = 4;
+          _shot.SetPos(GetX() + GetWF(), GetY() + GetHF() / 2-i*10);
+        }
+      }      
+    }
+    if (GetX() <= stage.GetCameraX())
+      SetX(stage.GetCameraX());
+    incPos(incrementoX, incrementoY);
+
+    if (stage.GetCameraX() % 8 == 0 && _allow_create_ray) {
+      _ray = stage.NewObject("ray", "Ray", [RAY_PLAYER]);
+      _ray.SetPos(GetX() - 32, GetY() + 27);
+      _ray.SetAngle(_angle_ray);
+      // GetEngine().LogPrint("Ray created at x: "+stage.GetCameraX());
+    }
+
+
+    if (stage.GetCameraX() % 4 == 0 && _allow_create_ray_vertical) {
+      _ray = stage.NewObject("ray", GetApp().GetBundleDriveName() +"Ray", [RAY_PLAYER]);
+      _ray.SetPos(GetX() - 32, GetY() + 27);
+      _ray.SetAngle(_angle_ray);
+      // GetEngine().LogPrint("Ray created at x: "+stage.GetCameraX());
+    }
+  }
+
+  virtual _operator_delete() {
+    // delete pad;
+  }
+
+  virtual OnSpriteCollision(_sp1, _sp2) {
+    /**
+     * Colisón player con los enemigos 🩸
+     */
+    if (Class_Id(_sp2) == "EnemyRay" || Class_Id(_sp2) == "EnemyBall") {
+      _fx = _sp2.CreateFX("TINT");
+      _fx.Start(1000, RGB(255, 0, 0));
+      player_die();
+      if(Class_Id(_sp2) != "EnemyBall")_sp2.SetAnimation("enemy-dead");
+    }
+    else if (Class_Id(_sp2) == "Ray" && _sp2.type == RAY_ENEMY) {
+      _sp2.Destroy();
+      player_die();
+    }
+    else if (Class_Id(_sp2) == "Ray" && _sp2.type == RAY_VERTICAL) {
+      _sp2.Destroy();
+      player_die();
+    }
+
+
+    if (Class_Id(_sp2) == "CapsuleEnergy") {
+      if(power<5)power++;
+      _sp2.Destroy();
+       //GetEngine().LogPrint("Player collected energy capsule. Power: " + power);
+    }
+  }
+
+  function player_die() {
+    lives--;
+    GetApp().show_message();
+    // Efecto de color rojo durante 2 segundos
+    _fx = CreateFX("TINT");
+    _fx.Start(2000, RGB(255, 0, 0));
+    // Efecto de parpadeo
+    _fx = CreateFX("BLINK");
+    _fx.Start(100, 15);
+  }
+}

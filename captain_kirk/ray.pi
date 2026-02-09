@@ -1,0 +1,60 @@
+namespace es_tipolisto_kirk;
+
+class Ray implements GL_Sprite {
+  properties : 
+    type = null;
+    counter_for_time=0;
+    see=true;
+
+  virtual _operator_new(_name, _creator, _params) {
+    type= _params[0];
+    //stage = GetApp().GetActiveStage();
+    //Si el type es type_player el rayo será de color amarillo
+    if(type==RAY_PLAYER){
+      SetColor(RGB(255, 255, 0));
+      AddEmptyFrame(32, 10);
+    }else if(type==RAY_ENEMY){
+      SetColor(RGB(255, 0, 0));
+      AddEmptyFrame(32, 10);
+    }else if(type==RAY_VERTICAL){
+      SetColor(RGB(0, 100, 200));
+      AddEmptyFrame(60, 250);
+      SetClipping(False);
+    }
+
+    SetCollision(True);
+    SetPriority(PRIORITY_RAY);
+  }
+
+  virtual Move() {
+    if (isClipped()) {
+      // GetEngine().LogPrint("Ray destroy");
+      Destroy();
+    }
+    if(type==RAY_VERTICAL){
+      counter_for_time++;
+      if(counter_for_time%50==0 ){
+        counter_for_time=0;
+        //GetEngine().LogPrint("ray vertical toggle visibility");
+        if(!see){
+          see=true;
+          //SetVisible(True);
+          SetColor(ARGB(0,0,100,200));
+        } 
+        else {
+          see=false;
+          SetColor(ARGB(255,0,100,200));
+          //SetVisible(False);
+        }
+      }
+
+      //.SetClipping(False);
+       //incPos(-1, 0);
+
+    }
+
+
+  }
+
+
+}

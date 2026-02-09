@@ -1,0 +1,126 @@
+namespace es_tipolisto_kirk;
+
+/**
+ * Los enemmigos de tipo rayo van dejando un rastro de haz de luz
+ * todos aprecen por la izquierda de la pantalla y se mueven hacia la derecha, 
+ * pero cada tipo de enemigo tiene un patrón de movimiento diferente
+ */
+class EnemyRay implements Enemy {
+
+  virtual _operator_new(_name, _creator, _params){
+
+    switch (type){
+      //El tipo 1  se mueve en horizontal y cuando llega al centro de la pantalla
+      //si el player esta por encima se mueve hacia arriba y si esta por debajo hacia abajo
+      case 1:
+        Addanimationwithsheet("enemy1", PATH_IMAGES+"enemies.png", 0, 0, 0, 0, 64, 64, -1, -1, -1, .2);
+        SetAnimation("enemy1");
+      break;
+      case 2:
+        //Nave mediana azul que baja
+        Addanimationwithsheet("enemy2", PATH_IMAGES+"enemies.png", 0, 0, 64, 0, 64, 64, -1, -1, -1, .2);
+        SetAnimation("enemy2");
+      break;
+      case 3:
+        //Nave mediana roja que sube
+        Addanimationwithsheet("enemy3", PATH_IMAGES+"enemies.png", 0, 0, 128, 0, 64, 64, -1, -1, -1, .2);
+        SetAnimation("enemy3");
+      break;
+      case 4:
+        //Nave grande amarilla que hace un cuadrado
+        Addanimationwithsheet("enemy4", PATH_IMAGES+"enemies.png", 0, 0, 192, 0, 64, 64, -1, -1, -1, .2);
+        SetAnimation("enemy4");
+      break;
+      case 5:
+        //Nave grande morada que hace zigzag
+        Addanimationwithsheet("enemy5", PATH_IMAGES+"enemies.png", 0, 0, 256, 0, 64, 64, -1, -1, -1, .2);
+        SetAnimation("enemy5");
+        SetHFlip(True);
+      break;
+    }
+    speedX=2;
+    SetCollisionRect(20, 10, 24, 40);
+  }
+
+  virtual Move() {
+    _angle_ray=0;
+    if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+			Destroy();
+			return;
+		} 
+    if (GetX() > stage.GetCameraX() + GetApp().GetResX()) {
+      Destroy();
+      GetEngine().LogPrint("enemy destroyed off screen");
+      return;
+    }
+    //El tipo 1  se mueve en horizontal y cuando llega al centro de la pantalla
+    //si el player esta por encima se mueve hacia arriba y si esta por debajo hacia abajo
+    if (type == 1) {
+      if (GetX() > stage.GetCameraX() + GetApp().GetResX() / 2) {
+        if(GetY() < player.GetY() && !only_one){
+          only_one=true;
+          speedY = 1;
+        } else if (GetY() > player.GetY() && !only_one) {
+          only_one=true;
+          speedY = -1;
+        } 
+      }
+    } 
+
+    //El enemigo de tipo 2 se mueve hasta el centro y baja
+    if(type==2){
+      if(GetX()>stage.GetCameraX()+GetApp().GetResX()/2){
+        speedY=1;
+      }else{
+        speedY=0;
+      }
+    }
+
+    //El enemigo tipo 3 se mueve hasta el centro y sube
+    if(type==3){
+      if(GetX()>stage.GetCameraX()+GetApp().GetResX()/2){
+        speedY=-1;
+      }else{
+        speedY=0;
+      }
+    }
+
+    //El 4 sale por la izquierda y crea un cuadrado
+    if(type==4){
+      if(!only_one){
+        only_one=true;
+        create_square_movement(GetX(),GetY());
+      }
+    }
+
+    //Si el tipo es 5 el enemigo aparece por lqa derecha y se mueve en zigzag
+    if(type==5){
+      if(!only_one){
+        only_one=true;
+        SetRouteZigZag(GetX(),GetY());
+      }
+    }
+    
+
+    
+    if(speedY==0){
+      if (stage.GetCameraX() % 8 == 0) {
+        _ray = stage.NewObject("ray", "Ray", [RAY_ENEMY]);
+        _ray.SetPos(GetX() - 32, GetY() + 32);
+        // GetEngine().LogPrint("Ray created at x: "+stage.GetCameraX());
+      }
+    }else{
+        // GetEngine().LogPrint("no ray created at x: "+stage.GetCameraX());
+        if(stage.GetCameraX() % 4 == 0){
+          _ray = stage.NewObject("ray", "Ray", [RAY_ENEMY]);
+          _ray.SetPos(GetX() - 32, GetY() + 32);
+          if(speedY>0)_angle_ray=0.45;
+          else if(speedY<0) _angle_ray=-0.45;
+          _ray.SetAngle(_angle_ray);
+        }
+    }
+    incPos(speedX, speedY);
+  }
+
+  
+}
