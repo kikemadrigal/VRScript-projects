@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <Object type='GL' name='test' params=''>
 <Property name='ScriptInterface' value='' />
-<Property name='resx' value='800' />
+<Property name='resx' value='2000' />
 <Property name='resy' value='450' />
 <Property name='mainstage' value='stage1' />
 <Property name='bgcolor' value='0' />
@@ -25,12 +25,12 @@
 <Property name='camerax' value='0.0' />
 <Property name='cameray' value='0.0' />
 <Property name='camerazoom' value='0.7' />
-<Property name='viewportx' value='-565.0' />
-<Property name='viewporty' value='108.0' />
+<Property name='viewportx' value='240.0' />
+<Property name='viewporty' value='124.0' />
 <Property name='cameraclipx' value='-32.0' />
 <Property name='cameraclipy' value='-32.0' />
-<Property name='cameraclipw' value='900.0' />
-<Property name='cameracliph' value='550.0' />
+<Property name='cameraclipw' value='2064.0' />
+<Property name='cameracliph' value='514.0' />
 <Property name='global' value='false' />
 <Property name='debug' value='false' />
 <Property name='visible' value='true' />
@@ -40,8 +40,8 @@
 <Property name='scissorEnabled' value='false' />
 <Property name='scissorX' value='0' />
 <Property name='scissorY' value='0' />
-<Property name='scissorW' value='1001094' />
-<Property name='scissorH' value='1001094' />
+<Property name='scissorW' value='1001096' />
+<Property name='scissorH' value='1001096' />
 <Property name='viewscale' value='1.0' />
 <Property name='priority' value='0' />
 </Object>
@@ -53,7 +53,7 @@
 <Property name='collision' value='false' />
 <Property name='x' value='0.0' />
 <Property name='y' value='0.0' />
-<Property name='width' value='2880.0' />
+<Property name='width' value='7200.0' />
 <Property name='height' value='450.0' />
 <Property name='drawflags' value='0' />
 <Property name='flags' value='1' />
@@ -68,7 +68,7 @@
 <Property name='vflip' value='0' />
 <Property name='cx' value='0.0' />
 <Property name='cy' value='0.0' />
-<Property name='cw' value='2880.0' />
+<Property name='cw' value='7200.0' />
 <Property name='ch' value='450.0' />
 <Property name='physics' value='false' />
 <Property name='physicsBody' value='static' />
@@ -80,7 +80,7 @@
 <Property name='physicsGravityScale' value='1.0' />
 <Property name='physicsAngularDamping' value='0.0' />
 <Property name='physicsLinearDamping' value='0.0' />
-<Frame tex='images/stage1.png' x='0.0' y='0.0' w='2880.0' h='450.0' u='0.0' v='0.0' uw='1.0' vh='1.0' addru='3' addrv='3' filter='1' />
+<Frame tex='A:/captain_kirk/images/stage1.png' x='0.0' y='0.0' w='2880.0' h='450.0' u='0.0' v='0.0' uw='1.0' vh='1.0' addru='3' addrv='3' filter='1' />
 <Animation name='bg1_anim' start='0' end='0' loop='-1' speed='0.25' sheetStart='0' sheetEnd='0' />
 </Object>
 <Object type='GL_Mapper' name='mapper1' params='[]' creator='stage1'>
@@ -92,6 +92,6 @@
 <Property name='tileh' value='32' />
 <Property name='width' value='90' />
 <Property name='height' value='14' />
-<Tileset name='images/tiles_old.png' texw='800' texh='640' tw='25' th='20' />
+<Tileset name='A:/captain_kirk/images/tiles_old.png' texw='800' texh='640' tw='25' th='20' />
 <Layer width='90' height='14' data='789CEDD85D0AC2301004E0A97FF55F2F51107CF1FEB7D18BAC3A4114B78452946CE9ECC34709854CC2928735C3A36C3402D7EAE9AD2A9D444653BD21D51B524A29A594D29BAF08096584DE309BBA1539767D454825A5ECE2AB3810C284A6777E46E774416BBAA42BBAA61BBAA53BBAA7873FA4CD256CFBDF277CCFBE5242E0F8750F7DB3E5EEC1EF92CEF2DB5D2274D4B004CE1FDF7DE6A240E3564EC5CFD596F3523CC370D5CCBCBB7721134FE7' />
 </Object>

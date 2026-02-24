@@ -1,4 +1,13 @@
 
+# ¿Que es Wulfgarl?
+
+Es un juego para los aparatos <a href="https://msxvr.com/en/">MSXVR Virtualizer, MSXVR Pocket y MSXVR Quantum</a>
+
+<img src="data/images/poster-wulfgar.jpg" width="300px"/>
+
+<img src="data/images/Estuche-Wulfgarl.png" width="300px"/>
+
+
 # Development
 
 ## Ojbects
@@ -27,7 +36,7 @@
 
 <img src="docs/stage1.png" width="100%">
 
-<img src="data/images/stage1.png" width="100%">
+<img src="data/images/stage1.png" width="300px">
 
 ### Pantalla 2
 
@@ -61,7 +70,7 @@
 
 <img src="docs/stage5.png" width="500px">
 
-<img src="data/images/stage5.png" width="500px">
+<img src="data/images/stage5.png" height="300px">
 
 ## Level 2, El prado
 
@@ -81,7 +90,7 @@
 
 <img src="docs/stage6.png" width="100%">
 
-<img src="data/images/stage6.png" width="100%">
+<img src="data/images/stage6.png" width="300px">
 
 ### Pantalla 7
 

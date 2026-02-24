@@ -1,6 +1,5 @@
 <?xml version='1.0'?>
-<Info filename='A:/captain_kirk/stages/stage2.vgs' />
-<Panel name='STAGES' classtype='VGS_Dialog_Objects' params='gl_stage' x='510' y='219' w='260' h='260' visible='false' state='' />
-<Actived stage='stage1' obj='mapper1' />
+<Info filename='A:/captain_kirk/stages/stage1.vgs' />
+<Panel name='STAGES' classtype='VGS_Dialog_Objects' params='gl_stage' x='510' y='219' w='260' h='260' visible='true' state='' />
 <Grid x='0' y='0' w='1' h='1'/>
-<Viewport x='-1475.0' y='131.0' w='900.0' h='550.0'/>
+<Viewport x='249.0' y='172.0' w='864.0' h='514.0'/>

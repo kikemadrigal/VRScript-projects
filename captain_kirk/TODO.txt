@@ -1,3 +1,4 @@
 -Arregla el tilsheet y metele los paisajes
 -Pon la música y efectos
 -Crea las pantallas 4,5 y6
+-Si el payr tiene colision y llega a <=0 que muera

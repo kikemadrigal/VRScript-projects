@@ -20,9 +20,9 @@ class Player implements GL_Sprite {
     Addanimationwithsheet("walk", PATH_IMAGES+"player.png", 0, 1, 0, 0, 64, 64, -1, -1, -1, 0.1);
     SetAnimation("walk");
     SetColliderMode(True);
-    SetPriority(PRIORITY_PLAYER);
+    SetPriority(1);
     SetPos(200,200);
-    SetCollisionRect(20, 10, 24, 40);
+    //SetCollisionRect(20, 10, 24, 40);
     // mapper=GetApp().GetActiveStage().FindObject("mapper1");
     mapper = creator.FindObject("mapper1");
     if (mapper == null) {
@@ -95,7 +95,7 @@ class Player implements GL_Sprite {
           _shot.incrementoX = 4;
           _shot.SetPos(GetX() + GetWF(), GetY() + GetHF() / 2-i*10);
         }
-      }      
+      }   
     }
     if (GetX() <= stage.GetCameraX())
       SetX(stage.GetCameraX());
