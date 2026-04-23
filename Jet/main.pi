@@ -1,0 +1,27 @@
+namespace es_tipolisto_jet;
+
+class Main implements GL_Program
+{
+    properties:
+        stageGlobal = null;
+    defines:
+        TYPE_FLOOR = 0b0010; //El 2  
+        TYPE_TOWER = 0b0100; // El 4
+        TYPE_PLATFORM = 0b1000; //El 8
+        TYPE_WIND= 0b00010000; //El 16
+    virtual Start()
+    {
+        SetResolution(800, 450); // Resolución estándar retro 
+        SetViewScale(-1);        // Escala de vista para mantener proporciones pixel art
+        SetVSync(true);          // Evitar parpadeos 
+        SETANISPEEDFACTOR(2);
+        //GetEngine().LogPrint("Juego iniciado con resolucion: " + string(GetResX()) + "x" + string(GetResY()));
+        stageGlobal=newStage("stageGlobal","StageGlobal",[this]); // Crear el escenario global para objetos compartidos
+        if(stageGlobal==null) GetEngine().LogPrint("Error al crear el escenario global");
+        // Crear y activar el escenario principal
+        _game = NewStage("game", "Game");
+        _game.SetActive(); 
+    }
+
+
+ }

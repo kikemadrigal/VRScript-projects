@@ -1,0 +1,37 @@
+class Stage2{
+    properties:
+        bg=null;
+        sprites=[];
+
+    function _operator_new(_game){
+        //Ponemos el fondo 
+        bg=_game.NewObject("fondo","GL_Sprite");
+        bg.AddFrame("assets/stage2.png", 800,450);
+        bg.SetPriority(-1); // Fondo detrás de todo
+
+        //_game.player.SetAngle(2.45);
+        _game.player.SetPos(_game.GetApp().GetResX()/2,0);
+        
+        _floor=_game.NewObject("floor", "Floor"); // Crear el suelo 
+        _tower=_game.NewObject("tower", "Tower"); // Crear la torre como un objeto separado
+        _platform=_game.NewObject("platform", "Platform"); // Crear la plataforma como un objeto separado
+        _wind= _game.NewObject("wind", "Wind",[1, _game]); 
+       
+        _tower.SetPos(_game.GetApp().GetResX() / 2 - 16,340);//deberia de ser 244
+        _platform.SetPos(_game.GetApp().GetResX() / 2 - 64, 410); 
+        _wind.SetPos(_game.GetApp().GetResX()-80, 200);
+
+        _game.GetEngine().LogPrint("La posición en x de la torre es "+_tower.GetX()+", la posicion en Y es "+_tower.GetY());
+        _game.GetEngine().LogPrint("alto "+_game.GetApp().GetResY()+" alto torre "+_tower.GetHF());
+
+        sprites+=[_floor];
+        sprites+=[_tower];
+        sprites+=[_platform];
+        sprites+=[_wind];
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        for(x=0; x<sizeof(sprites);x++) delete sprites[x];
+        sprites=[];
+    }   
+}

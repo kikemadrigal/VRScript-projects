@@ -1,0 +1,52 @@
+namespace es_tipolisto_jet;
+
+class StageGlobal implements GL_Stage{
+    properties:
+		text_score = null;
+        textDebug = null;
+        pad=null;
+        game=null;
+
+	virtual _operator_new(_name,_creator, _params){
+        game=_params[0];	
+        SetGlobal(True);
+        
+        // Configuración de controles 
+        pad = NewObject("pad", "gl_pad");
+        pad.SetPreset("CURSORS"); 
+       
+        //texto del juego
+        text_score=NewObject("text","GL_Text"); 
+		text_score.SetFont("fonts/Vintage Black.ttf", 16);
+		text_score.SetAlign(DT_CENTER);
+		text_score.SetColor(RGB(234,255,0));	
+
+        textDebug=NewObject("textDebug","GL_Text");
+        textDebug.SetFont("fonts/Vintage Black.ttf", 12);
+        textDebug.SetPos(40,10); // Posicionar texto de depuración más abajo
+        textDebug.SetColor(RGB(255,255,255));	
+        textDebug.SetPriority(100);
+        //textDebug.SetAlign(DT_LEFT); // Alinear a la izquierda para mejor legibilidad
+    }
+
+    function draw_debug(player){
+        text_score.SetText("Mission: llega a la plataforma con una velocidad vertical inferior a 0.20");
+        text_score.SetText(text_score.getText() +"\nStage: "+game.current_stage);
+        text_score.SetText(text_score.getText() +"\nLives: "+player.lives);
+        text_score.SetText(text_score.getText() +"\nScale: "+GetPhysicsScale());
+        text_score.SetText(text_score.getText() + "\nGravity X: "+GetPhysicsGravityX());
+        text_score.SetText(text_score.getText() + "\nGravity Y: "+GetPhysicsGravityY());
+    }
+
+
+    function debugDrawText(_vel,_mass, _density,_friction,_vel_angular, _vel_linear)
+    {
+        textDebug.SetText("Player\nVel horizontal: " + string(_vel[0]) );
+        textDebug.SetText(textDebug.getText() + "\nVel vertical: " + string(_vel[1]) );
+        textDebug.SetText(textDebug.getText() + "\nMasa: " +_mass );
+        textDebug.SetText(textDebug.getText() + "\nDensidad: " + _density );
+        textDebug.SetText(textDebug.getText() + "\nFriccion: " +  _friction);
+        textDebug.SetText(textDebug.getText() + "\nRed vel angular: " +  string(_vel_angular));
+        textDebug.SetText(textDebug.getText() + "\nRed vel lineal: " + string( _vel_linear));
+    }
+}

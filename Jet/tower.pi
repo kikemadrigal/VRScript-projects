@@ -1,0 +1,19 @@
+namespace es_tipolisto_jet;
+
+class Tower implements GL_Sprite{
+
+    virtual _operator_new(_name, _creator){
+        AddFrame("assets/towerc.png",64,186);
+        //SetPos(0,0);
+        SetCollision(True); // Activar colisiones para detectar impactos con el jugador
+        SetType(TYPE_TOWER);
+        // -- Configuración física de la torre --
+        SetPhysics(true); 
+        SetPhysicsBody("static"); // La no se mueve
+        AddPhysicsShapeRect(0, 0, GetWF(), GetHF()); // Caja de colisión para la         
+        BuildPhysics(); // Activar físicas para la pared
+        // -- Fin configuración física --
+        
+
+    }
+}

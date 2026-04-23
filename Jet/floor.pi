@@ -1,0 +1,23 @@
+namespace es_tipolisto_jet;
+
+class Floor implements GL_Sprite
+{
+    virtual _operator_new(_name, _creator)
+    {
+        _app=GetApp();
+        AddEmptyFrame(_app.GetResX(), 20); // Suelo de ancho completo 
+        SetPos(0, _app.GetResY() - 20); // Posicionar al fondo de la pantalla
+        SetColor(RGB(50, 50, 50));
+        
+        // --Físicas del suelo--
+        SetPhysics(true); // 
+        SetPhysicsBody("static"); // No cae ni se mueve por golpes 
+        AddPhysicsShapeRect(+2, +2, GetWF()+2, GetHF()+2); // Forma de colisión 
+        BuildPhysics(); // Finalizar construcción física 
+        // -- Fin físicas --
+
+        SetCollision(True); // Activar colisiones para detectar impactos con el jugador
+        SetType(TYPE_FLOOR); // Asignar tipo de colisión
+    }
+
+}

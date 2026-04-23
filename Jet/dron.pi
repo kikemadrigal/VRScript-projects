@@ -1,0 +1,39 @@
+﻿namespace es_tipolisto_jet;
+
+class Dron implements GL_Sprite{
+	properties:
+        type=0;
+        game=null;
+        incrementoX=-2;
+        incrementoY=-2;
+	virtual _operator_new(_name,_creator, _params)
+	{
+		type=_params[0];
+        game=_params[1];
+		//name, path, frame_inicio, frame_fin, offect_X, offest_Y, ancho_hoja, alto_hoja, ancho_sprite,alto_sprite, velocidad, jump_frames  
+		Addanimationwithsheet("walk","assets/dron.png",0,3,0,0,96,32);
+		SetAnimation("walk");
+        SetHFlip(true);
+        SetAngle(0.5);
+        SetPos(game.GetApp().GetResX()/2,game.GetApp().GetResY()/2 );
+        SetClipping(false);
+        // --- Configuración Física del Cohete ---
+        SetPhysics(true); // Activa el motor de físicas 
+        SetPhysicsBody("dynamic"); // El cohete reacciona a gravedad y choques 
+        SetPhysicsRestitution(13.3f); // Rebote leve al aterrizar 
+        SetPhysicsFriction(0.2f); 
+        AddPhysicsShapeRect(0, 0, GetWF(), GetHF());  // Definir forma física (un rectángulo)
+        BuildPhysics(); // Obligatorio para activar los cambios 
+        // --- Fin Configuración Física ---
+
+	}
+
+	
+	virtual Move(){		
+        if(GetX()<0 || GetX()>game.GetApp().GetResX()-GetWF()) incrementoX=-incrementoX;
+		if(GetY()<0 || GetY()>game.GetApp().GetResY()-GetHF()) incrementoY=-incrementoY;
+        incpos(incrementoX,incrementoY);		
+	}	
+
+	
+}

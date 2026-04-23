@@ -1,0 +1,38 @@
+class Stage3{
+    properties:
+        bg=null;
+        sprites=[];
+
+    function _operator_new(_game){
+        //Ponemos el fondo 
+        bg=_game.NewObject("fondo","GL_Sprite");
+        bg.AddFrame("assets/stage3.png");
+        bg.SetPriority(-1); // Fondo detrás de todo
+        
+        _floor=_game.NewObject("floor", "Floor"); // Crear el suelo 
+        _tower=_game.NewObject("tower", "Tower"); // Crear la torre como un objeto separado
+        _platform=_game.NewObject("platform", "Platform"); // Crear la plataforma como un objeto separado
+        _dron1= _game.NewObject("dron1", "Dron",[1, _game]); 
+        _dron2= _game.NewObject("dron2", "Dron",[1, _game]); 
+        _dron3= _game.NewObject("dron3", "Dron",[1, _game]); 
+        
+        _tower.SetPos(_game.GetApp().GetResX() / 2 - 16, 340);
+        _platform.SetPos(_game.GetApp().GetResX() / 2 - 64, 410); 
+        _dron1.SetPos(100,10);
+        _dron2.SetPos(300,10);
+        _dron3.SetPos(600,10);
+
+        sprites+=[_floor];
+        sprites+=[_tower];
+        sprites+=[_platform];
+        sprites+=[_dron1];
+        sprites+=[_dron2];
+        sprites+=[_dron3];
+   
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        for(x=0; x<sizeof(sprites);x++) delete sprites[x];
+        sprites=[];
+    }   
+}

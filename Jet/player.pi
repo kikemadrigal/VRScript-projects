@@ -1,0 +1,143 @@
+namespace es_tipolisto_jet;
+
+class Player implements GL_Sprite
+{
+    properties:
+        game=null;
+        game_over=false;
+        lives=3;
+        //angle=0;
+    virtual _operator_new(_name, _creator, _params)
+    {
+        game=params[0]; // Recibimos la referencia al escenario para acceder a objetos globales
+        //flames=params[1]; 
+        Addanimationwithsheet("idle","assets/player.png",0,0,0,0,32,128);
+		Addanimationwithsheet("explosion","assets/explosionb.png",0,7,0,0,64,128,-1,-1,-1,0.08);
+        SetAnimation("idle");
+        SetPos(0, 0); 
+        
+
+        // --- Configuración Física del Cohete ---
+        SetPhysics(true); // Activa el motor de físicas 
+        SetPhysicsBody("dynamic"); // El cohete reacciona a gravedad y choques 
+        SetPhysicsFixedRotation(true); // Evita que gire al chocar de lado 
+        SetPhysicsRestitution(13.3f); // Rebote leve al aterrizar 
+        SetPhysicsFriction(0.2f); // Deslizamiento moderado (0.01 hielo, 0.20 suelo normal)
+        AddPhysicsShapeRect(8, -1, 16, GetHF());  // Definir forma física (un rectángulo)
+        BuildPhysics(); // Obligatorio para activar los cambios 
+        // --- Fin Configuración Física ---
+
+        SetColliderMode(True); // Activar colisiones para detectar impactos con el suelo y paredes
+        //SetCollisionRect(0,0,32,64);
+
+    }
+
+    virtual Move()
+    {
+        _pad=GetApp().stageGlobal.pad; // Accedemos al pad global para controlar el cohete
+        _vel = GetPhysicsVelocity(); 
+       
+        if(GetCurAnimation() =="explosion" && GetAnimationLoops()>0){
+			SetAnimation("idle"); // Volver a la animación de idle para reiniciar el ciclo
+           SetPos(0,0);
+           
+			return;
+		} 
+        if(GetCurAnimation() =="explosion")return;
+        if(game_over) {
+            //counter++;
+            //if(counter>100) game.change_level();
+            //Getengine().LogPrint("Esperando reinicio...");
+            if(_pad.IsButton(PAD_BUTTON_1))
+            {
+                game_over=false;
+                     
+                //SetPhysics(true);
+                //BuildPhysics();
+            }
+        }
+       
+        if (GetY() < 0)  SetY(0);
+        if (GetX() < 0) SetX(0);
+        if(GetX() > GetApp().GetResX() - 32) SetX(GetApp().GetResX() - GetWF());
+       
+        // Impulsar cohete
+        //if (_pad.IsButton(PAD_BUTTON_UP)) if (abs(_vel[1]) < 0.1f) ApplyLinearImpulse(0, -0.009f, GetX(), GetY()); 
+        if (_pad.IsButton(PAD_BUTTON_UP)) if (abs(_vel[1]) < 10.1f) ApplyLinearImpulse(0, -10.0f, GetX(), GetY());
+        if (_pad.IsButton(PAD_BUTTON_DOWN)) if (abs(_vel[1]) > -10.1f) ApplyLinearImpulse(0, 10.0f, GetX(), GetY());
+                    
+        // Control lateral (Motores de dirección)
+        //if (_pad.IsButton(PAD_BUTTON_LEFT))if(abs(GetPhysicsVelocity()[0]) > -0.5f) ApplyLinearImpulse(-0.001f, 0, GetX(), GetY());
+        if (_pad.IsButton(PAD_BUTTON_LEFT))if(abs(GetPhysicsVelocity()[0]) > -10.0f) {
+            ApplyLinearImpulse(-10.0f, 0, GetX(), GetY());
+            //ApplyTorque(100.0f);//aplica efecto de giro
+            //ApplyForceToCenter(GetX(), GetY());
+            //SetAngle(-0.1);
+            //angle-=0.01;
+            SetAngle(-0.1);
+        }
+        //if (_pad.IsButton(PAD_BUTTON_RIGHT)) if(abs(GetPhysicsVelocity()[0]) < 0.5f)  ApplyLinearImpulse(0.001f, 0, GetX(), GetY());
+        if (_pad.IsButton(PAD_BUTTON_RIGHT)) if(abs(GetPhysicsVelocity()[0]) < 10.0f) {
+            ApplyLinearImpulse(10.0f, 0, GetX(), GetY());
+            //ApplyTorque(-100.0f);//aplica efecto de giro
+            //ApplyForceToCenter(GetX(), GetY());
+            //angle+=0.01;
+            SetAngle(0.1);
+        }
+        if(_vel[0]!=0 || _vel[1]!=0)  game.GetApp().stageGlobal.debugDrawText(GetPhysicsVelocity(),
+                                                                            GetPhysicsMass(),
+                                                                            GetPhysicsdensity(),
+                                                                            GetPhysicsFriction(),
+                                                                            GetPhysicsAngularDamping(),
+                                                                            GetPhysicsLinearDamping()); 
+    }
+
+
+
+
+    virtual OnSpriteCollision (_sp1,_sp2)
+	{
+        //_vel=GetPhysicsVelocity();
+        if( _sp2.GetType()==TYPE_FLOOR)player_die();
+        else if(_sp2.GetType()==TYPE_TOWER) player_die();
+        else if(_sp2.GetType()==TYPE_PLATFORM) {
+             //Si la velocidad vertical es mayor de 0.5 la nace eplota al tocar el suelo o ola plataforma
+            //Getengine().LogPrint("La velocidad es "+_vel[1]);
+                _vel = GetPhysicsVelocity(); 
+                if(_vel[1]>0.30f){
+                    player_die();
+                    return;
+                } else{
+                    game.change_level();    
+                }
+            
+
+        } else if(_sp2.GetType()==TYPE_WIND) {
+            player_die();
+        }else GetEngine().LogPrint("No colision"+ Class_Id(_sp2));
+    }
+
+
+
+    function player_die()
+    {
+        game_over=true;
+        lives--;
+        if(lives<=0){
+            game.current_stage=0;
+            game.change_level();
+            SetPos(0,0);
+        }
+        BuildPhysics();
+        //SetCollision(false);
+        //Getengine().LogPrint("Player muere");
+        //GetApp().stageGlobal.text_score.SetText("¡Has chocado! Presiona espacio para reiniciar.");
+        SetAnimation("explosion");
+        //SetPhysics(false);
+    }
+
+
+
+
+    
+}

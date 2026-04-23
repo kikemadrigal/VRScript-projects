@@ -1,0 +1,54 @@
+namespace es_tipolisto_jet;
+
+class Game implements GL_Stage
+{
+    properties:
+        current_stage=0;
+        stage_active=null;
+        player=null;
+        flames=null;
+    virtual _operator_new(_name, _creator)
+    {
+        GetEngine().LogPrint("Comienza el juego ");
+        SetDebug(true); // Mostrar información de depuración en consola
+        SetPhysicsGravityY(0.0005f); //aceleración de gravedad en la componente Y. Esta unidad se indica en m/s2, por ejemplo 9,8=0.0981m/s cuadrado.
+        //SetPhysicsScale(500.0f);   // Relación píxeles/metro         
+        player=NewObject("player", "Player", [this]); // Crear al jugador
+        flames=NewObject("flames","PlayerFlames", [player]);  // Las llamas del cohete
+       
+   
+        GetApp().stageGlobal.text_score.SetText("¡Aterriza en la plataforma para ganar!"); // Establecer el texto global desde el escenario
+        change_level();
+    }
+
+    virtual draw(){
+        GetApp().stageGlobal.draw_debug(player); 
+    }
+   
+    function change_level(){
+        if(current_stage>3)current_stage=0;
+        if(stage_active!=null) delete stage_active;
+        current_stage++;
+        GetEngine().LogPrint("Vamos a cambiar al nivel"+current_stage);
+        switch(current_stage){
+            case 1:
+                stage_active=New Stage1(this);
+                break;
+            case 2:
+                stage_active=New Stage2(this);
+                break;
+            case 3:
+                stage_active=New Stage3(this);
+                break;
+            case 4:
+                stage_active=New Stage4(this);
+                break;
+            
+        }
+        //GetApp().stageGlobal.text_score.SetText("Presiona espacio para Comenzar.");
+     
+    }
+
+
+    
+}

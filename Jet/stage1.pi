@@ -1,0 +1,37 @@
+class Stage1 {
+    properties:
+        bg=null;
+        sprites=[];
+
+
+    function _operator_new(_game){
+        //Ponemos el fondo 
+        bg=_game.NewObject("fondo","GL_Sprite");
+        bg.AddFrame("assets/stage1.png", 800, 450);
+        bg.SetPriority(-1); // Fondo detrás de todo
+
+        _game.player.SetPos(0,0);
+        
+        _floor=_game.NewObject("floor", "Floor"); // Crear el suelo 
+        _tower=_game.NewObject("tower", "Tower"); // Crear la torre como un objeto separado
+        _platform=_game.NewObject("platform", "Platform"); // Crear la plataforma como un objeto separado
+        _helicopter= _game.NewObject("helicopter", "Helicopter",[1, _game]); 
+
+        _tower.SetPos(_game.GetApp().GetResX() / 2 - 16, _game.GetApp().GetResY() -20-_tower.GetHF());
+        _platform.SetPos(_game.GetApp().GetResX() / 2 - 64, _game.GetApp().GetResY() - 20-_platform.GetHF()); 
+        _helicopter.SetPos(100,_game.GetApp().GetResY()/2 -100);
+
+
+        sprites+=[_floor];
+        sprites+=[_tower];
+        sprites+=[_platform];
+        sprites+=[_helicopter];
+
+
+    }
+    function _operator_delete(){
+        delete bg;
+        for(x=0; x<sizeof(sprites);x++) delete sprites[x];
+        sprites=[];
+    }   
+}

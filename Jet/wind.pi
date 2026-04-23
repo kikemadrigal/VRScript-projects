@@ -1,0 +1,38 @@
+namespace es_tipolisto_jet;
+
+class Wind implements GL_Sprite{
+    properties:
+        type=0;
+        game=null;
+        incrementoX=1;
+        incrementoY=1;
+    virtual _operator_new(_name, _creator, _params)
+    {
+        type=_params[0];
+        game=_params[1];
+        Addanimationwithsheet("wind","assets/wind.png",0,3,0,0,80,86,-1,-1,-1,0.08);
+        SetAnimation("wind");
+        SetPos(0, 0); 
+
+        SetPriority(5); // Mostrar por debajo del jugador pero por encima del suelo
+        SetCollision(True);
+
+        // --- Configuración Física del Cohete ---
+        SetPhysics(true); // Activa el motor de físicas 
+        SetPhysicsBody("dynamic"); // El cohete reacciona a gravedad y choques 
+        //AddPhysicsShapeRect(0, 0, GetWF(), GetHF());  // Definir forma física (un rectángulo)
+        //x,y, radio
+         AddPhysicsShapeCircle(20, 20, 34); 
+        SetPhysicsRestitution(1.3f); // Rebote leve al aterrizar 
+        BuildPhysics(); // Obligatorio para activar los cambios 
+        // --- Fin Configuración Física ---
+    }
+
+    virtual move(){
+        if(type==1){
+            if(GetX()<0 || GetX()>game.GetApp().GetResX()-GetWF()) incrementoX=-incrementoX;
+            if(GetY()<0 || GetY()>game.GetApp().GetResY()-GetHF()) incrementoY=-incrementoY;
+            incpos(incrementoX,incrementoY);	
+        }
+    }
+}

@@ -1,0 +1,53 @@
+namespace es_tipolisto_jet;
+
+
+class PlayerFlames implements GL_Sprite{
+    properties:
+        player=null;
+        pad_game=null;
+    virtual _operator_new(_name, _creator, _params)
+    {
+        player=_params[0]; // Recibimos la referencia al jugador para posicionar las llamas debajo de él
+        // Aquí podrías inicializar cualq        
+        AddFrame("assets/firec.png",32,128, true); // Gráfico de las llamas con animación
+        //SetPos(player.GetX(),100); // Posicionar debajo del cohete
+        SetVisible(false);
+        SetPriority(10); // Mostrar por debajo del coheteuier propiedad específica de las llamas si es necesario
+        pad_game=GetApp().stageGlobal.pad; // Accedemos al pad global para controlar las llamas
+        //SetCollision(True); 
+    }
+
+    virtual move(){
+        // recuerda que el player es 32x128
+        SetPos(player.GetX()-8, player.GetY()+64); // Mantener las llamas debajo del cohete
+  
+        
+        if (pad_game.IsButton(PAD_BUTTON_1) || pad_game.IsButton(PAD_BUTTON_UP))
+        {           
+            SetVisible(true);
+           _vel = player.GetPhysicsVelocity(); 
+
+            if(_vel[1] < 0) SetSize(32, 64, true);
+            else if(_vel[1] <  -0.8) SetSize(32, 80, true);
+            else SetSize(32, 32, true); // Si no, volvemos al tamaño normal    
+        }
+        if(pad_game.IsButtonUp(PAD_BUTTON_1) || pad_game.IsButtonUp(PAD_BUTTON_UP))
+        {
+            SetVisible(false); // Ocultar las llamas al soltar el botón
+        }
+        if (pad_game.IsButton(PAD_BUTTON_RIGHT)){
+            SetAngle(0.1);
+            SetVisible(true);
+            SetX(player.GetX()-16);
+        }
+        if (pad_game.IsButton(PAD_BUTTON_LEFT)){
+            SetAngle(-0.1);
+            SetX(player.GetX()+8);
+            SetVisible(true);
+        }
+        if(pad_game.IsButtonUp(PAD_BUTTON_RIGHT) || pad_game.IsButtonUp(PAD_BUTTON_LEFT)){
+             SetVisible(false);
+        }
+
+    }
+}

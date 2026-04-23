@@ -1,0 +1,18 @@
+namespace es_tipolisto_jet;
+
+class Platform implements GL_Sprite{
+
+    virtual _operator_new(_name, _creator) {
+        AddFrame("assets/platform.png",32,32);
+        SetPos(0,0);
+        SetType(TYPE_PLATFORM); // Tipo personalizado para identificar colisiones
+        SetCollision(True);
+
+        // -- Inicio físicas --
+        SetPhysics(true);
+        SetPhysicsBody("static"); // La no se mueve
+        AddPhysicsShapeRect(0, 0, GetWF(), GetHF()); // Caja de colisión para la         
+        BuildPhysics(); // Activar físicas para la pared
+        // -- Final físicas --
+    }
+}
