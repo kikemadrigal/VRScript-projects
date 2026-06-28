@@ -49,9 +49,9 @@ class Main implements GL_Program{
 		// -2 Ajusta la pantalla en vertical
 		// -3 Ajuste puede que no proporcional a pantalla completa
 		SetViewScale(-3,True);
-		//SetVSync(True);
-		SetFrameRate(50);
- 		SETANISPEEDFACTOR(2);
+		SetVSync(True);
+		SetFrameRate(40);
+ 		//SETANISPEEDFACTOR(2);
 		//Configuraciones del pad
 		//_pad=NewObject("pad","GL_Pad");
 		_pad=NewPad("pad");
@@ -76,7 +76,6 @@ class Main implements GL_Program{
 		//GetActiveStage().SetDebug(True);
 		resources=new resources(this);
 		db=new Db(this);
-		
 		//El texto que aparece para pulse espacio o game over
 		_text_game=NewObject("text","GL_Text");
 		_text_game.SetFont("fonts/Vintage Black.ttf", 18);
