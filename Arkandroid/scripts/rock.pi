@@ -1,0 +1,27 @@
+namespace es_tipolisto_arkandroid;
+
+class Rock implements GL_sprite {
+  properties : 
+    type= null;
+    game=null;
+    incAngle=0;
+    touch_for_die=10;
+  virtual _operator_new(_name, _creator, _params) {
+    game= _params[0];
+    _x = _params[1];
+    _y = _params[2];
+
+    //Animación de muerte
+    _type=rand(0,6);
+    Addanimationwithsheet("asteroid","res/asteroides.png",_type,_type,0,0,76,76,-1,-1,-1,.2);
+    SetPos(_x, _y);
+    SetCollision(True);
+    incAngle=frand(-0.1, 0.90);
+  }
+
+  virtual Move() {  
+    incpos(0, 0.5);
+    IncAngle(incAngle);
+    if(GetY()<0 || GetY() > GetApp().BOARD_HEIGHT-GetHeight()) game.delete_rock(this);
+  }
+}

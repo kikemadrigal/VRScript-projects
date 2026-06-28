@@ -1,0 +1,44 @@
+namespace es_tipolisto_arkandroid;
+// 9. Io-Júpiter: Estrella
+class Level9{
+	properties:
+		game=null;
+        map=null;
+		/*
+			a=amarillo
+			g=gris
+			m=morado
+			r=rojo
+			v=verde
+			z=azul oscuro
+			o=azul claro
+
+			d=dinamita
+			f=Flash
+
+			ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
+			af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
+		*/
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," ","af"," "," "," "," "," "],
+			[" "," "," ","af"," ","a"," ","af"," "," "," "],
+			[" "," "," "," ","a","r","r"," "," "," "," "],
+			[" "," ","af","a","r","d","r","a","af"," "," "],
+			[" "," "," "," ","r","r","r"," "," "," "," "],
+			[" "," "," ","af"," ","a"," ","af"," "," "," "],
+			[" "," "," "," "," ","af"," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+	}
+	function _operator_delete(){
+		delete map;
+		game.delete_objects();
+	}   
+
+}

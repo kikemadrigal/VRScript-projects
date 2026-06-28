@@ -1,0 +1,215 @@
+﻿namespace es_tipolisto_arkandroid;
+
+class Ball implements GL_sprite{
+	properties:
+		game=null;
+		speed=0;
+        initial_speed=3;
+        multiball=false;
+        incposX=0;
+        incposY=0;
+	
+	virtual _operator_new(_name,_creator,_params){
+		game=_params[0];
+		_x=_params[1];
+		_y=_params[2];
+		speed=initial_speed;
+        
+		//Addframe("res/pelota.png");
+        Addanimationwithsheet("ball","res/ball.png",0,11,0,0,20,20,-1,-1,-1,0.1);
+        SetAnimation("ball");	
+		SetPos(_x,_y);	
+		Setcollidermode(true);
+	    incposY=speed;
+	}
+	virtual Move(){
+		if (GetX() <=0) {
+            incposX =speed;
+            //GetApp().log("Colision por la izquierda, velocidad:"+incposX+", "+speed);
+		}
+		else if(GetX()+GetWF() > GetApp().BOARD_WIDTH) {
+            incposX =-speed;
+            //GetApp().log("Colision por la derecha, velocidad:"+incposX+", "+speed);
+		}
+		else if (GetY() <= 0) incposY =speed;
+        else{
+            if(multiball && GetY() > GetApp().BOARD_HEIGHT) {
+                //Si multiball es verdadero y la pelota se sale por abajo, la destruimos
+                game.balls-=[this];
+                Destroy();
+                return;
+            }
+            else if(GetY() > GetApp().BOARD_HEIGHT) {
+                game.player_die();
+            }
+        }       
+        //incposX=speed*GetFTime()*0.025f;
+		//incposY=speed*GetFTime()*0.025f;
+		incpos(incposX,incposY);
+	}
+
+	function OnSpriteCollision(_ball, _spr){
+        _colY=False;
+        if(Class_Id(_spr)=="Capsule" || 
+            Class_Id(_spr)=="Ball" || 
+            Class_Id(_spr)=="Laser")return;
+        if(Class_Id(_spr)=="Enemy"){
+            game.delete_enemy(_spr);
+            return;
+        }
+        if(Class_Id(_spr)=="Rock"){
+            game.delete_rock(_spr);
+            return;
+        }
+        if(Class_Id(_spr)=="Boss1" || Class_Id(_spr)=="Boss2" || Class_Id(_spr)=="Boss3" || Class_Id(_spr)=="Boss4"){
+            //Si la pelota colisiona con el player, comprobamos donde ha colisionado para cambiar la dirección de la pelota
+            game.level_active.boss.boss_live--;
+            _fx= game.level_active.boss.CreateFX("TINT");
+			_fx.Start(1000, RGB(255,0,0));
+            if(game.level_active.boss.boss_live<=0){
+                game.level_active.boss.SetAnimation("boss1-die");
+                game.level_active.boss.SetCollision(false);
+                game.mode_boss=false;
+            }
+            game.draw_HUD();
+        }
+   
+       
+        //Si la colsión es el player o la pala
+        //Comprobamos si colisionamos por abajo
+        if(GetY()>=_spr.GetY())
+        {
+            //Si La pelota toca la paleta por abajo, la situamos abajo
+            SetY(_spr.GetY()+_spr.GetHF());
+            //La pelota rebota
+            _colY=True;
+			_message="colision por abajo";
+            //Vamos a mirar el lugar de rebote en horizontal
+            _zone=(GetXF()+GetWF()*0.5f) - _spr.GetXF();
+            //En funciÃ³n de donde ha tocado la pelota en la paleta
+            _zone=clamp(_zone / _spr.GetWF(),0,1);
+            //incPosX=_zone-0.2f;
+            incPosX=(_zone-0.5f)*speed;
+            incposY=speed;
+        }else if(GetY()<_spr.GetY())
+        {
+            //Si La pelota toca la paleta por arriba, la situamos arriba
+            SetY(_spr.GetY()-GetHF()-1);
+            //La pelota rebota
+            _colY=True;
+			_message="colision por arriba";
+            //Vamos a mirar el lugar de rebote en horizontal
+            _zone=(GetXF()+GetWF()*0.5f) - _spr.GetXF();
+            //En funciÃ³n de donde ha tocado la pelota en la paleta
+            _zone=clamp(_zone / _spr.GetWF(),0,1);
+            //incPosX=_zone-0.2f;
+            incPosX=(_zone-0.5f)*speed;
+            incposY=-speed;
+        }
+        //Comprobamos si colisionamos por la izquierda
+        else if(GetX()<_spr.GetX())
+        {
+            //Si la pelota toca la paleta en la izquierda, la situamos a la izquierda
+            SetX(_spr.GetX()-GetWF());
+            //La pelota rebota
+            incPosX =speed;
+            _message="colision por la izquierda";
+        }
+        else
+        {
+            //Si La pelota toca la paleta por la derecha, la situamos a la derecha
+            SetX(_spr.GetX()+_spr.GetWF());
+            //La pelota rebota
+            incPosX =-speed;
+			_message="colision por la derecha";
+        }
+
+
+		if(Class_Id(_spr)=="Brick"){
+             _spr.hits_died--;
+             if(game.level==3){
+                game.CreateCapsule(_spr.GetX(),_spr.GetY(), false);
+             }else{
+                game.CreateCapsule(_spr.GetX(),_spr.GetY());
+             }
+           
+            //di el tipo es dinamita
+            if(_spr.type=="f" ){
+                _flash=GetApp().NewObject("flash","Flash",null, [game]);
+                game.delete_brick(_spr);
+            //Si es una bomba para recargar
+            }else  if(_spr.type=="j" ){
+                game.ball.speed=3;
+                game.delete_brick(_spr);
+            //Si es una bomba para recargar
+            }else if(_spr.type=="ab" || _spr.type=="gb" || _spr.type=="mb" || _spr.type=="rb" || _spr.type=="vb" || _spr.type=="zb" || _spr.type=="ob"){
+                game.player.counter_bombs++;
+                //Obtenemos la primera letra del string para saber el color de la bomba
+                _firstLetter = String_SubStr(_spr.type, 0, 1);
+                //GetApp().Log("Bomba de color "+_firstLetter);
+                //Borramos todos los bricks del mismo color
+                for(i=0;i<sizeof(game.bricks);i++){
+                    _brick=game.bricks[i];
+                    if(_brick.type==_firstLetter){
+                        game.delete_brick(_brick);
+                        game.player.score+=50;
+                    }
+                }
+                game.delete_brick(_spr);
+            }else if(_spr.type=="af" || _spr.type=="gf" || _spr.type=="mf" || _spr.type=="rf" || _spr.type=="vf" || _spr.type=="zf" || _spr.type=="of"){
+                game.createLaser(_spr.GetX()+20, _spr.GetY()+_spr.GetHeight()+10, "enemy");
+                game.delete_brick(_spr);
+                //_brick=game.CreateBrick(_spr.GetX()+20, _spr.GetY()+_spr.GetHeight()+50,"fallible");
+                //_brick.fallible=true;
+            }else if(_spr.type=="d" ){
+                //GetApp().log("Dinamita explotada");
+                //borramos todos los bricks alrededor
+                for(i=0;i<sizeof(game.bricks);i++){
+                    _brick=game.bricks[i];
+                   // GetApp().log(_brick.type);
+                    if(_brick.type=="z"|| _brick.type=="a"|| _brick.type=="m"){
+                        if(	_brick.GetX()>=_spr.GetX()-_spr.GetWF() && 
+                            _brick.GetX()<=_spr.GetX()+_spr.GetWF() &&
+                            _brick.GetY()>=_spr.GetY()-_spr.GetHF() &&
+                            _brick.GetY()<=_spr.GetY()+_spr.GetHF()){
+                                game.delete_brick(_brick);
+                                game.player.score+=50;
+                        }
+                    }
+                }
+                //borramos el enemigo
+                game.delete_brick(_spr);
+                game.player.score+=50;
+            }
+            else if(_spr.type!="d" && _spr.hits_died==0 && !_spr.indestructible && sizeof(game.bricks)>0){
+                //borramos el enemigo
+                game.delete_brick(_spr);
+                game.player.score+=50;
+            }else{
+                _fx=_spr.CreateFX("TINT");
+                _fx.Start(1000, RGB(255,255,255));
+                game.player.score+=10;
+            }
+           
+           
+            if(sizeof(game.bricks)<=0 && !game.mode_boss){
+                game.ChangeLevel();
+            }
+
+    
+             
+        }
+        //GetEngine().LogPrint("colision "+_message+" incX:"+incPosX+" incY:"+incposY);
+		game.draw_HUD();
+        //GetApp().log("Ball colisiona con "+Class_Id(_spr));
+   }
+	
+
+   function ball_return_normal(){
+     speed=initial_speed;
+     incposY=speed;
+     incPosX=0;
+   }
+	
+	
+}

@@ -1,0 +1,29 @@
+namespace es_tipolisto_arkandroid;
+//14. Titán-Saturno:  3 cuadradosLa cara
+class Level14{
+	properties:
+		game=null;
+        map=null;
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," ","o"," "," "," "," "," ","o"," "," "],
+			[" ","o","f","o"," "," "," ","o","f","o"," "],
+			[" "," ","o"," "," ","r"," "," ","o"," "," "],
+			[" "," "," "," "," ","r"," "," "," "," "," "],
+			[" "," "," "," ","r","d","r"," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," ","p","p","p","p","p"," "," "," "],
+			[" "," "," "," ","p","p","p"," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+
+	}
+	function _operator_delete(){
+		delete map;
+		game.delete_objects();
+	}   
+}

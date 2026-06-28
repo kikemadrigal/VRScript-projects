@@ -1,0 +1,44 @@
+namespace es_tipolisto_arkandroid;
+//Amaltea-Jupiter: Rombo",
+class Level11{
+	properties:
+		game=null;
+        map=null;
+		/*
+			a=amarillo
+			g=gris
+			m=morado
+			r=rojo
+			v=verde
+			z=azul oscuro
+			o=azul claro
+
+			d=dinamita
+			f=Flash
+
+			ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
+			af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
+		*/
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," ","ab"," "," "," "," "," "],
+			[" "," "," "," ","a","mb","a"," "," "," "," "],
+			[" "," "," ","a","m","rb","m","a"," "," "," "],
+			[" "," ","af","m","r","ob","r","m","af"," "," "],
+			[" "," "," ","a","m","r","m","a"," "," "," "],
+			[" "," "," "," ","a","m","a"," "," "," "," "],
+			[" "," "," "," "," ","a"," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+	}
+	function _operator_delete(){
+		delete map;
+		game.delete_objects();
+	}   
+
+}

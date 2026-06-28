@@ -1,0 +1,22 @@
+﻿namespace es_tipolisto_arkandroid;
+
+class Player implements GL_sprite{
+		
+	virtual _operator_new(_name,_creator,_params){
+		Addanimationwithsheet("normal","player.png",0,0,80*0,20*0,80,20);
+		SetAnimation("normal");		
+	}
+	virtual Move(){
+		_incrementoX=0;
+		if (creator.pad.IsButton(PAD_BUTTON_RIGHT))_incrementoX=4;		
+		else if (creator.pad.IsButton(PAD_BUTTON_LEFT))_incrementoX=-4;			
+		if(creator.pad.IsButtonDown(PAD_BUTTON_1)){
+			//Creamos un disparo
+			_x=GetX()+GetWidth()/2-10;
+			_y=GetY()-20;
+			creator.Shoot(_x,_y);
+			creator.draw_HUD();
+		} 
+		incpos(_incrementoX,0);
+	}
+}

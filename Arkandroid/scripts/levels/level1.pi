@@ -1,0 +1,28 @@
+namespace es_tipolisto_arkandroid;
+
+class Level1 {
+	properties:
+		game=null;
+        map=null;
+		timer_create_enemies=null;
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," ","f"," "," "," "," "," "],
+			[" ","z"," ","z"," ","a"," ","m"," ","m"," "],
+			[" ","z","z","z","a"," ","a","m"," ","m"," "],
+			[" ","z","d","z","a"," "," "," ","m"," "," "],
+			[" ","z"," ","z"," ","d","a"," ","d"," "," "],
+			[" ","z"," ","z"," "," ","a"," ","m"," "," "],
+			[" ","z"," ","z","a"," ","a","m"," ","m"," "],
+			[" ","z"," ","z"," ","f"," ","m"," ","m"," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+	}
+	function _operator_delete(){
+		delete map;
+	}   
+}

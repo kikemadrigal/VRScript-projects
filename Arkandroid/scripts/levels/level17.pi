@@ -1,0 +1,49 @@
+namespace es_tipolisto_arkandroid;
+//17. Dione-Saturno: Cruz de cristo
+/*
+	a=amarillo
+	g=gris
+	m=morado
+	r=rojo
+	v=verde
+	z=azul oscuro
+	o=azul claro
+
+	x=Oro
+	p=plata
+	b=bronce
+	t=titanio indesctructible
+
+	d=dinamita
+	f=Flash
+
+	ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
+	af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
+*/
+class Level17{
+	properties:
+		game=null;
+        map=null;
+
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," ","d","d"," "," "," "," "," "],
+			[" "," ","rf","r","f","f","r","rf"," "," "," "],
+			[" "," ","r","r","f","f","r","r"," "," "," "],
+			[" "," "," "," ","mb","mb"," "," "," "," "," "],
+			[" "," "," "," ","m","m"," "," "," "," "," "],
+			[" "," "," "," ","m","m"," "," "," "," "," "],
+			[" "," "," "," ","m","m"," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+	}
+	function _operator_delete(){
+		delete map;
+		game.delete_objects();
+	}   
+}

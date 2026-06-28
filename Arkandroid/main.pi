@@ -1,0 +1,212 @@
+﻿  /**
+ * @name Arkandroid  
+ * 
+ * @author MSX spain 2026
+ * @version 1.0
+ */
+
+class Main implements GL_Program{
+	constants:
+		BRICK_WIDTH=40;
+		BRICK_HEIGHT=20;
+		GAME_WIDTH=800;
+		GAME_HEIGHT=450;
+		//13*40=520
+		BOARD_WIDTH=520;
+		BOARD_HEIGHT=450;
+
+		PRIORITY_BG=0;
+		PRIORITY_HUD=1;
+		PRIORITY_PLAYER=2;
+		PRIORITY_BALL=3;
+		PRIORITY_BRICK=4;
+		PRIORITY_ENEMY=5;
+
+	properties:
+		pad=null;
+   		menu=null;
+		winner=null;
+		game=null;
+		gameOver=True;
+		gamePaused=False;
+	
+		resources=null;
+		db=null;
+	
+		text_game=null;
+		music_menu=null;
+		manual=null;
+		record_user=0;
+	virtual Start()
+	{
+		AddScriptPackage("scripts");
+		AddScriptPackage("scripts/levels");
+		// Configuraciones bÃ¡sicas de color de fondo, tamaÃ±o pantalla..
+		SetBackColor(RGB(0,0,168));
+		// 25x20 cuadraditos de 32px
+		SetResolution(800,450);
+		// -1 Ajusta l apantalla en horizontal
+		// -2 Ajusta la pantalla en vertical
+		// -3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-3,True);
+		//SetVSync(True);
+		SetFrameRate(50);
+ 		SETANISPEEDFACTOR(2);
+		//Configuraciones del pad
+		//_pad=NewObject("pad","GL_Pad");
+		_pad=NewPad("pad");
+		_pad.SetPreset("CURSORS");
+		//_pad.SetPreset("JOYSTICK1",1);
+		//PAD_BUTTON_1 hasta PAD_BUTTON_16
+		//1.disparo
+		_pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_SPACE);
+		//2 .bomba
+		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_LCONTROL);
+		//3. cambiar de nivel
+		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_D);
+		//4. manual
+		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_M);
+		//5. Salir
+		_pad.SetButton(PAD_BUTTON_5,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
+		//6. Pausa
+		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_P);
+
+		pad=_pad;
+		//Activamos los recuadritos de los sprites para ver si se hacen bien las colisiones
+		//GetActiveStage().SetDebug(True);
+		resources=new resources(this);
+		db=new Db(this);
+		
+		//El texto que aparece para pulse espacio o game over
+		_text_game=NewObject("text","GL_Text");
+		_text_game.SetFont("fonts/Vintage Black.ttf", 18);
+		_text_game.SetPos(BOARD_WIDTH/2, GetResY()-200);
+		text_game=_text_game;
+
+		//MÃºsica y efectos
+		_music_menu=resources.GetMusicMenu();
+		_music_menu.Play();
+		music_menu=_music_menu;
+		//Creamos el menu
+		menu=new Menu(this);
+	
+		//Obtenemos el record del usuario
+		_res=db.GetUserRecord();
+		if(sizeof(_res)>0) record_user=_res[0][0];
+		_change ("menu");
+	}
+
+	state "menu":{
+		Log("Estamos en el estado de menu");
+		if(pad.IsButtonDown(PAD_BUTTON_1)){
+			Log("Pulsamos en play y passamos al estado de game");
+			gameOver=False;
+			music_menu.Stop();
+			if(winner!=null) delete winner;
+			if(menu!=null) delete menu;
+			if(game!=null) delete game;
+			game=new Game(this);
+			gamePaused=true;
+			//game.level=0;
+			_change ("game");
+		}
+	}
+
+	state "winner"{
+		Log("Estamos en el estado de winner");
+		if(pad.IsButtonDown(PAD_BUTTON_1)){
+			//delete winner;
+			menu=new Menu(this);
+			_change ("menu");
+		}
+	}
+
+	state "game_over"{
+		//delete game;
+		Log("Game Over, borrado game");
+		if(winner!=null) delete winner;
+		if(game!=null) Log("Game Over es distinto de null");
+		else Log("Game Over es null");
+		winner=new Winner(this);
+		_change ("winner");
+	}
+	
+	state "game"{
+		/*if (gameOver){
+			if(pad.IsButtonDown(PAD_BUTTON_2)){
+				Log("enviando score");
+				_http=GetEngine().CreateHTTPManager();
+				//Recogemos la puntaciÃ³n mÃ¡xima
+				_textModal="Escribe tu nombre";
+				_name="";
+				do{
+					_name=GetEngine().InputDialogModal(_textModal,"",View.AD_OK,"");
+					_textModal="El nombre no puede estar vacÃ­o ni ser menor de 4 caracteres";
+				}while(_name=="" || strlen(_name)<=3);
+				//mostramos un formaulario para que introduzca su nombre
+				_res=db.GetUserRecord();
+				_score=_res[0][0];
+				//Hacemos la peticiÃ³n al servidor
+				_ret=_http.GetString("https://arkanoid.tipolisto.es/api/savescore.php?score="+_score+"&name="+_name);
+				//Log(_ret);
+				text_game.SetText("Server response: "+_ret);
+				text_game.SetPos(BOARD_WIDTH/2, GetResY()-200);
+				delete _http;
+			}
+			else if(pad.IsButtonDown(PAD_BUTTON_3)){
+				_res=GetEngine().InputDialogModal("Escribe Si para resetar la base de datos","",View.AD_OK,"");
+				if(_res=="Si"){
+					db.DeleteRecords();
+					db.DeleteUserRecord();
+					db.InsertFakeRecords();
+					delete menu;
+					_menu=new Menu(this);
+					menu=_menu;
+				}
+			}else if(pad.IsButtonDown(PAD_BUTTON_4)){
+				delete menu;
+				_manual=new Manual(this);
+				manual=_manual;
+			}else if(pad.IsButtonDown(PAD_BUTTON_5)){
+				delete manual;
+				_menu=new Menu(this);
+				menu=_menu;
+			}else if(pad.IsButtonDown(PAD_BUTTON_8)){
+				enviar_socket("Hola desde cliente");
+			}	
+		}	*/
+		if(gamePaused){
+			text_game.Settext("Press space");
+			game.ball.SetPos(game.player.GetX()+game.player.GetWidth()/2,game.player.GetY()-game.ball.GetHeight()-105);
+			if(pad.IsButtonDown(PAD_BUTTON_1)){
+				gamePaused=False;
+				text_game.Settext("");
+				game.timer_game.Start();
+				if(game.mode_boss) game.level_active.boss.Start();
+				game.timer_game.Start();
+			}
+		}
+	}
+
+		
+	function Log(_message){
+		GetEngine().LogPrint(_message);
+	}
+
+
+
+	
+	function enviar_socket(_msg){
+		_socket=NetSocket_New (this, 1);
+		if (_socket==null){
+			GetEngine().LogPrint("Error creando socket");
+			return;
+		}
+		GetEngine().LogPrint("Enviando mensaje: "+_msg);
+		NetSocket_Connect (_socket, "localhost", 1234);
+		//NetSocket_Send (_socket, _msg, 0, 1024);
+		NetSocket_Delete (_socket);
+	}
+
+
+ }

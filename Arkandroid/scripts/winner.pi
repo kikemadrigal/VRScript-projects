@@ -1,0 +1,25 @@
+namespace es_tipolisto_arkandroid;
+
+class winner implements App{
+	properties:
+		text=null;
+		bg=null;
+	
+	virtual _operator_new(_app){
+		_bg=app.NewObject("image","GL_Sprite");
+		_bg.addframe("res/winner.png");
+		_bg.SetSize(800,450);
+		bg=_bg;
+
+		_text=app.NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 24);
+		_text.SetText("Score:");
+		_text.SetPos(app.GetResX()/2-_text.GetTextWidth()/2-100,40);
+		text=_text;
+	}
+	
+	virtual _operator_delete(){
+	 	delete text;
+		delete bg;
+	}
+}

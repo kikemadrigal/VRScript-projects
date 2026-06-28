@@ -1,0 +1,30 @@
+﻿
+-Los enemigos se ralenzina al crearlos en la fase 3, crear un pool de instancias
+-mejora el movimiento de los nemigos que se bajan solos
+-Explosion de los enemigos 
+-los rebotes laterales acaban abajo.
+-cORRIGE GRAFICOS EN boss 1
+-explosion de los enemigos y los asteoides.
+-enemigos que hacen rutas antes de caer.
+-Enenimos fijos en la pantalla dando vueltas rodeados por bloques.
+-Es posible acumular escudos?
+-Se que el mode_boss a true cuando pasas el boss 1
+-Quita las imágenes que no uses.
+-Crea 4x4 pantallas, pantalla de pelota, paragua, rombo, estrella, pirámide.
+-Crea 4 boses.
+    1 nave espacial 1 roca que da vueltas y lanza meteriorios pequeñso.
+    2.Nave que te persigue y te dispara
+    3. Estrella que te laza estrellitas
+    4 bloque que te lanza bloques.
+
+-La bola se puede quedar en la esquina superior izquierda
+-Si está en modo boss que no cree capsulas de salir
+
+//_rock=game.CreateBrick(GetX()/game.app.BRICK_WIDTH, GetY()/game.app.BRICK_HEIGHT, "m");
+//_rock=game.CreateBrick(GetX(), GetY(), "m");
+//_rock.SetPos(GetX(), GetY());
+//_rock.incrementoY=2;
+//_rock.fallible=true;
+
+
+

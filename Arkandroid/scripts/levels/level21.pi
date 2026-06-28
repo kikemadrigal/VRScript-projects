@@ -1,0 +1,50 @@
+namespace es_tipolisto_arkandroid;
+//21. Titania-Urano: bloque de oro \npor abajo en forma\nde U invertida
+/*
+	a=amarillo
+	g=gris
+	m=morado
+	r=rojo
+	v=verde
+	z=azul oscuro
+	o=azul claro
+
+	x=Oro
+	p=plata
+	b=bronce
+	t=titanio indesctructible
+
+	d=dinamita
+	f=Flash
+
+	ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
+	af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
+*/
+class Level21{
+	properties:
+		game=null;
+        map=null;
+
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," ","mf"," "," "," "," "," ","mf"," "," "],
+			[" "," ","x"," "," "," "," "," ","x"," "," "],
+			[" "," ","x"," ","a","a","a"," ","x"," "," "],
+			[" "," ","x"," ","a","d","a"," ","x"," "," "],
+			[" "," ","x"," ","p","p","p"," ","x"," "," "],
+			[" "," ","af","x","x","x","x","x","af"," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+
+	}
+	function _operator_delete(){
+		delete map;
+		game.delete_objects();
+	}   
+}

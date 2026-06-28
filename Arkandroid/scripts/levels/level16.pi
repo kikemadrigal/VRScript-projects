@@ -1,0 +1,40 @@
+namespace es_tipolisto_arkandroid;
+//16. Mimas-Saturno: El caracol",
+class Level16{
+	properties:
+		game=null;
+        map=null;
+		timer_create_enemies=null;
+		/**
+		 * a=amarillo
+    g=gris
+    m=morado
+    r=rojo
+    v=verde
+    z=azul oscuro
+    o=azul claro
+		 */
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," ","af"," ","ob","o"," "," "," "," "],
+			[" "," "," ","a","o","zb","z","o"," "," "," "],
+			[" "," "," ","a","o","z","z","o"," "," "," "],
+			[" "," ","g"," ","o","o","o","o","gf"," "," "],
+			[" ","g"," ","g"," ","o","o","p"," "," "," "],
+			[" "," ","g","p","p","p","p"," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+
+	}
+	function _operator_delete(){
+		delete map;
+	
+		game.delete_objects();
+	}   
+}

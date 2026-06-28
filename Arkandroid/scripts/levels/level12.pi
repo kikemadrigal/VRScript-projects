@@ -1,0 +1,32 @@
+namespace es_tipolisto_arkandroid;
+//Calisto luna de Jupiter: 2. Jefe; el lanza meteoritos
+class Level12{
+	properties:
+		game=null;
+        map=null;
+		boss=null;
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			["r","a","a","a","a","a","a","a","a","a","r"],
+			["r"," "," "," "," "," "," "," "," "," ","r"],
+			["r"," "," "," "," "," "," "," "," "," ","r"],
+			["r"," "," "," "," "," "," "," "," "," ","r"],
+			["r"," "," "," "," "," "," "," "," "," ","r"],
+			["r"," "," "," "," "," "," "," "," "," ","r"],
+			["r"," "," "," "," "," "," "," "," "," ","r"],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+		boss=game.app.NewObject("boss2","Boss2",null,[game, game.player]);
+		game.mode_boss=true;
+	}
+	function _operator_delete(){
+		delete map;
+		delete boss;
+		game.delete_objects();
+	}   
+}

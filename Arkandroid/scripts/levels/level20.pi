@@ -1,0 +1,52 @@
+namespace es_tipolisto_arkandroid;
+// Umbrial-Urano: bloques verticales de oro y lata y normales
+/*
+	a=amarillo
+	g=gris
+	m=morado
+	r=rojo
+	v=verde
+	z=azul oscuro
+	o=azul claro
+
+	x=Oro
+	p=plata
+	b=bronce
+	t=titanio indesctructible
+
+	d=dinamita
+	f=Flash
+
+	ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
+	af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
+*/
+class Level20{
+	properties:
+		game=null;
+        map=null;
+	
+
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" ","p"," ","x"," ","b"," ","x"," ","p"," "],
+			[" ","f"," ","x"," ","b"," ","x"," ","f"," "],
+			[" ","p"," ","x"," ","f"," ","x"," ","p"," "],
+			[" ","p"," ","x"," ","b"," ","x"," ","p"," "],
+			[" ","p"," ","x"," ","b"," ","x"," ","p"," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+
+	}
+	function _operator_delete(){
+		delete map;
+	
+		game.delete_objects();
+	}   
+}

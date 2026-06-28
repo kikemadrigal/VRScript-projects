@@ -1,0 +1,50 @@
+namespace es_tipolisto_arkandroid;
+
+class MyStage implements GL_Stage
+{
+    properties:
+        bulletTemplate = null;
+        pad=null;
+        text_game=null;
+    virtual _operator_new(_name, _creator)
+    {
+        //Configuraciones del pad
+		_pad=NewObject("pad", "GL_Pad");
+		_pad.SetPreset("CURSORS");
+		_pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_SPACE);
+        pad=_pad;
+
+        //El texto que aparece para pulse espacio o game over
+		_text_game=NewObject("text","GL_Text");
+		_text_game.SetFont("Vintage Black.ttf", 18);
+		_text_game.SetPos(400, 20);
+		text_game=_text_game;
+
+        // 1. Creamos el objeto que servirá de molde
+        bulletTemplate = NewObject("bullet_template", "Bullet");
+
+        /* 2. Creamos un pool de 20 instancias para este objeto, 
+        esto crea 20 copias en memoria listas para activarse,
+        Si al instanciar no hubiesen copias disponibles, se usuaría la instanciación normal.
+        */
+        bulletTemplate.CreateInstancesPool(20);
+        _player=NewObject("player", "Player");
+        _player.SetPos(400,400);
+    }
+
+    function Shoot(_x,_y) {
+        // 3. Cuando el jugador dispara, pedimos una instancia rápida del pool 
+        // InstancedObject compartirá comportamiento y animaciones con el molde 
+        _newShot = InstancedObject("bullet_shot", bulletTemplate);
+
+        // 4. Configuramos las propiedades singulares del nuevo disparo
+        _newShot.SetPos(_x, _y); 
+        _newShot.SetVisible(true);
+        _newShot.SetStop(false);
+    }
+    function draw_HUD(){
+        //if(sizeof(bulletTemplate)>0)_message+="\nInstancias: "+sizeof(bulletTemplate);
+        _message="\nInstancias: 0";
+		text_game.SetText(_message);
+    }
+}

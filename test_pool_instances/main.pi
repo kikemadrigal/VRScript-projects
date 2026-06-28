@@ -1,0 +1,22 @@
+namespace es_tipolisto_arkandroid;
+
+class Main implements GL_Program{
+   		
+	virtual Start()
+	{
+		// Configuraciones bÃ¡sicas de color de fondo, tamaÃ±o pantalla..
+		SetBackColor(RGB(0,0,0));
+		// 25x20 cuadraditos de 32px
+		SetResolution(800,450);
+		// -1 Ajusta l apantalla en horizontal
+		// -2 Ajusta la pantalla en vertical
+		// -3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-3,True);
+		SetVSync(True);
+		SetFrameRate(50);
+		SetAniSpeedFactor(2);
+
+        _stage=NewStage("myStage","MyStage");
+		_stage.SetActive();
+	}
+ }

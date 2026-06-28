@@ -1,0 +1,44 @@
+namespace es_tipolisto_arkandroid;
+//Europa-Júpiter: pelota
+class Level8{
+	properties:
+		game=null;
+        map=null;
+		/*
+			a=amarillo
+			g=gris
+			m=morado
+			r=rojo
+			v=verde
+			z=azul oscuro
+			o=azul claro
+
+			d=dinamita
+			f=Flash
+
+			ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
+			af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
+		*/
+	function _operator_new(_game){
+		game=_game;
+		map=[
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," ","r","r"," "," "," "," "," "],
+			[" "," "," ","r","r","vf","r"," "," "," "," "],
+			[" "," ","r","r"," "," ","vf","r"," "," "," "],
+			[" "," ","r","r"," "," "," ","r"," "," "," "],
+			[" "," ","r","r"," "," "," ","r"," "," "," "],
+			[" "," ","r","d","r"," ","r","r"," "," "," "],
+			[" "," "," ","r","r","r","f"," "," "," "," "],
+			[" "," "," "," ","r","r"," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "],
+			[" "," "," "," "," "," "," "," "," "," "," "]
+		];
+		game.DrawMap(map);
+	}
+	function _operator_delete(){
+		delete map;
+		game.delete_objects();
+	}   
+
+}

@@ -1,0 +1,113 @@
+namespace es_tipolisto_arkandroid;
+
+class Enemy implements GL_sprite {
+  properties : 
+    speedX = 2;
+    speedY = 0;
+    type=0;
+    //type= null;
+    game=null;
+    count=0;
+    touch_for_die=5;
+  virtual _operator_new(_name, _creator, _params) {
+    game= _params[0];
+    _type=_params[1];
+    type=_type;
+    //Animación de muerte
+    
+    Addanimationwithsheet("enemy-dead","res/enemies.png",0,5,0,8*62,62,62,-1,-1,-1,.2);
+    Addanimationwithsheet("enemy-normal","res/enemies.png",_type,_type,0,0,62,62,-1,-1,-1,.2);
+    SetAnimation("enemy-normal");
+    SetSize(GetApp().BRICK_WIDTH, GetApp().BRICK_HEIGHT, true);
+    if(_type>=0 && _type<5){
+			_x=Rand(0, GetApp().BOARD_WIDTH-76);
+			_y=10;
+		}else if(_type==6){
+			_x=0;
+      _y=Rand(10, GetApp().BOARD_HEIGHT-200);
+		}
+    SetPos(_x, _y);
+    SetCollision(True);
+  }
+
+  virtual Move() { 
+    incpos(speedX, speedY);
+    if(type>=0 && type<5) behavior_normal();
+    else if(type==6) behavior_leftRight();
+  }
+
+
+  function behavior_normal(){
+    //Obtenemos la celda en la que se encuentra
+    _tile_x=floor(GetX()/40);
+    _tile_y=floor(GetY()/20);
+    //Obtenemos el tipo de celda en la que se encuentra el enemigo
+    _celda=game.level_active.map[_tile_y+2][_tile_x-1];
+
+    if( _celda==" " && _tile_y<13 ) speedY=2;
+    else speedY=0;
+
+    if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth()){
+      if(count==0 && sizeof(game.lasers)==0) game.createLaser(GetX()+20, GetY()+GetHeight()+10,"enemy");
+       count++;
+    }    
+    else count=0;
+    
+    //Va rbotando en los bordes
+    if(GetX() < 0 || GetX() > GetApp().BOARD_WIDTH-GetWidth()) speedX = -speedX; 
+  }
+
+  function behavior_leftRight(){
+    //Si se sale de la pantalla los borramos
+    if(GetX() < 0 || GetX() > GetApp().BOARD_WIDTH-GetWidth()){
+      game.delete_enemy(this);
+      return;
+    }
+
+    if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth()){
+      if(count==0 && sizeof(game.lasers)==0) game.createLaser(GetX()+20, GetY()+GetHeight()+10,"enemy");
+       count++;
+    }    
+    else count=0;
+    
+  }
+
+
+
+
+  
+  function SetRouteZigZag(_x,_y){
+    _ruta=GetApp().NewObject("ruta","GL_Route");
+    _ruta.AddNode(_x, _y);
+    _ruta.AddNode(_x - 200, _y - 100);
+    _ruta.AddNode(_x - 400, _y + 100);
+    _ruta.AddNode(_x - 600, _y - 100);
+    _ruta.AddNode(_x - 800, _y + 100);
+    _ct=GetApp().NewObject("controller", "GL_Controller");
+    _ct.SetSpeed(3.0f, 3.0f);
+    SetRoute(_ruta, GL_Route.MODE_LOOP);
+  }
+
+  function SetRouteRightToLeft() {
+    _x = GetApp().GetCameraX() + GetApp().GetResX() + 100;
+    _ruta = GetApp().NewObject("ruta", "GL_Route");
+    _ruta.AddNode(_x, 400);
+    _ruta.AddNode(_x - 200, 300);
+    _ruta.AddNode(_x - 500, 200);
+    _ruta.AddNode(_x, 400);
+    //_ct=CreateController();
+    //_ct.SetSpeed(3.0f, 3.0f);
+    SetRoute(_ruta, GL_Route.MODE_LOOP);
+  }
+
+  function create_square_movement(_x, _y) {
+    _ruta = GetApp().NewObject("ruta", "GL_Route");
+    _ruta.AddNode(_x, _y);
+    _ruta.AddNode(_x + 600, _y);
+    _ruta.AddNode(_x + 600, _y - 100);
+    _ruta.AddNode(_x, _y - 100);
+    _ct = GetApp().NewObject("controller", "GL_Controller");
+    _ct.SetSpeed(2.0f, 2.0f);
+    _ct.SetRoute(_ruta, GL_Route.MODE_ENDFIX);
+  }
+}

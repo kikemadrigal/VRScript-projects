@@ -1,0 +1,30 @@
+namespace es_tipolisto_arkandroid;
+
+class Bullet implements GL_Sprite
+{
+
+    virtual _operator_new(_name, _creator)
+    {
+        // El gráfico del disparo será un reectángulo
+        AddEmptyframe(5,10);
+		SetColor(RGB(255,255,0));
+                
+        // Configuraciones que heredarán las instancias
+        SetCollision(true);
+        // El molde suele estar oculto y parado
+        SetVisible(false);
+        SetStop(true);
+    }
+
+    virtual Move()
+    {
+        // Lógica de movimiento
+        IncPos(0, -2);
+        // Si sale de pantalla, lo destruimos (vuelve al pool)
+        if (IsClipped())
+        {
+            // El método Destroy gestiona el pool automáticamente
+            this.Destroy(); 
+        }
+    }
+}
