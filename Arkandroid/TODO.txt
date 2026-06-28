@@ -1,4 +1,5 @@
-﻿-Los enemigos y el juego se ralenzina al crearlos en la 7 pantalla, crear un pool de instancias
+﻿-Pon el getFtime en enemigos bola y bosses.
+-Los enemigos y el juego se ralenzina al crearlos en la 7 pantalla, crear un pool de instancias
 -Corrige lo de los records
 -Pon la musica y efectos.
 -Cambiar los fondos al reves hasta llegar al sol que es boss4
