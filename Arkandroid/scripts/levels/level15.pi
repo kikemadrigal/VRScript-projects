@@ -2,7 +2,6 @@ namespace es_tipolisto_arkandroid;
 //15. Encelado-Saturno: cucurucho
 class Level15{
 	properties:
-		game=null;
         map=null;
 		/*
 			a=amarillo
@@ -25,8 +24,7 @@ class Level15{
 			af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
 		*/
 
-	function _operator_new(_game){
-		game=_game;
+	function _operator_new(){
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," ","rb","ab","x","x"," "],
@@ -40,10 +38,8 @@ class Level15{
 			[" "," ","m"," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
 	}
 	function _operator_delete(){
 		delete map;
-		game.delete_objects();
 	}   
 }

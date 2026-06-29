@@ -18,9 +18,10 @@ El juego consta de 3 fases de 5 pantallas cada 1 y un jefe final.
 
 <img src="res/rocks.png"  width="400px"  />
 
-### Rocas que te dan 10 puntos
+### Rocas 
 
 ```
+    10 puntos
     a=amarillo
     g=gris
     m=morado
@@ -29,16 +30,16 @@ El juego consta de 3 fases de 5 pantallas cada 1 y un jefe final.
     z=azul oscuro
     o=azul claro
 
-    --las rocas qe tiemblan pueden caer y chocar contra tu nave, cuidado!!
-    --Cada roca tendrá una bomba del mismo color que cuando se golpea se eliminas las rocas de ese color.
+    --las rocas qe tiemblan pueden caer o disparar y chocar contra tu nave, cuidado!! 15 puntos
+    --Cada roca tendrá una bomba del mismo color que cuando se golpea se eliminas las rocas de ese color.20 puntos
 ```
 
 ### Rocas que cuesta destruir
 
 ```
-    x=Oro, 4 toques para destruirla
-    p=plata , 3 toques para destruirla
-    b=bronce, 2 toques para destruirla
+    x=Oro, 4 toques para destruirla, 40 puntos
+    p=plata , 3 toques para destruirla, 30 puntos
+    b=bronce, 2 toques para destruirla, 20 puntos
     t=titanio,  indesctructible
 
 ```
@@ -46,8 +47,8 @@ El juego consta de 3 fases de 5 pantallas cada 1 y un jefe final.
 ## Objetos entre rocas
 
 ```
-    d=dinamita: explota todo lo que tiene al rededor
-    f=Flash: da un fogonazo blanco que te deja ciego durante
+    d=dinamita: explota todo lo que tiene al rededor, 5 puntos
+    f=Flash: da un fogonazo blanco que te deja ciego durante, 5 puntos
     
 ```
 
@@ -75,7 +76,7 @@ Al romper una roca tienes una probabilidad del 20 % de que te proporcione una ca
     Boss 1: Lanza rocas
     Boss 2: Lanza meteoritos
     Boss 3: Lanza naves espaciales
-    Boss 4: Crea rocas y lanza meteoritos
+    Boss 4: Lanza de todo
 ```
 
 

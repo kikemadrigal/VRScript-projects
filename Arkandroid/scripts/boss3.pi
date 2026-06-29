@@ -9,7 +9,7 @@ class Boss3 implements GL_sprite{
 		incrementoY=0;
 		game=null;
   
-        boss_live=10;
+        boss_live=100;
         boss_dead=false;
 
      
@@ -50,11 +50,23 @@ class Boss3 implements GL_sprite{
                 //Vamos creando y lanzando meteroitos al player
                 if(GetX()<0 || GetX()>game.app.BOARD_WIDTH-GetWidth()){
                     incrementoX=-incrementoX;
+                }else{
+                    //Moviemiento del enemigo que persigue al player
+                    if(GetX()>game.player.GetX()+100 && GetX()>game.player.GetX()+100) incrementoX=-2;
+                    else if(GetX()<game.player.GetX()-100 && GetX()<game.player.GetX()-100) incrementoX=2;
                 }
+   
+                    
+                
+
                 if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth() ){
                    if(count_timer==0){
-                    _rock=game.create_enemy(Rand(0,3));
-                    _rock.SetPos(GetX(), GetY());
+                    if(sizeof(game.enemies)<5){
+                        _rock=game.create_enemy(Rand(0,3));
+                        _rock.SetPos(GetX(), GetY()+GetHeight()+10);
+                        game.createLaser(GetX()+20, GetY()+GetHeight()+10,"enemy");
+                    }
+                
                    }
                     count_timer++;
                 }else{

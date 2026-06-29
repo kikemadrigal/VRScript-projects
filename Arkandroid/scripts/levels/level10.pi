@@ -2,7 +2,6 @@ namespace es_tipolisto_arkandroid;
 //10. Ganimedes-Júpiter: pirámide
 class Level10{
 	properties:
-		game=null;
         map=null;
 		/*
 			a=amarillo
@@ -19,8 +18,7 @@ class Level10{
 			ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
 			af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
 		*/
-	function _operator_new(_game){
-		game=_game;
+	function _operator_new(){
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "],
@@ -34,11 +32,8 @@ class Level10{
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
-
 	}
 	function _operator_delete(){
 		delete map;
-		game.delete_objects();
 	}   
 }

@@ -2,11 +2,9 @@ namespace es_tipolisto_arkandroid;
 
 class Level3 {
 	properties:
-		game=null;
         map=null;
 
-	function _operator_new(_game){
-		game=_game;
+	function _operator_new(){;
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "],
@@ -21,8 +19,6 @@ class Level3 {
 			[" "," "," "," "," "," "," "," "," "," "," "]
 
 		];
-		game.DrawMap(map);
-
 	}
 	function _operator_delete(){
 		delete map;

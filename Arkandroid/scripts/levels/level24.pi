@@ -20,13 +20,10 @@ class Level24{
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
-		boss=game.app.NewObject("boss4","Boss4",null,[game, game.player]);
-		game.mode_boss=true;
+		boss=game.app.NewObject("boss4","Boss4",null,[game]);
 	}
 	function _operator_delete(){
 		delete map;
 		delete boss;
-		game.delete_objects();
 	}   
 }

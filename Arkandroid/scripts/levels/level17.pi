@@ -22,11 +22,9 @@ namespace es_tipolisto_arkandroid;
 */
 class Level17{
 	properties:
-		game=null;
         map=null;
 
-	function _operator_new(_game){
-		game=_game;
+	function _operator_new(){
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," ","d","d"," "," "," "," "," "],
@@ -40,10 +38,8 @@ class Level17{
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
 	}
 	function _operator_delete(){
 		delete map;
-		game.delete_objects();
 	}   
 }

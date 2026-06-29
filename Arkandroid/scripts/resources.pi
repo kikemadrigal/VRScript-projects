@@ -8,6 +8,7 @@ class Resources implements App{
 		AUDIO_PALA=1;
 		AUDIO_GAME_OVER=2;
 		AUDIO_GAME_START=3;
+		AUDIO_LASER=4;
 	properties:
 		musics=[];
 		music=null;
@@ -21,6 +22,7 @@ class Resources implements App{
 		LoadAudio("sounds/pala.ogg");
 		LoadAudio("sounds/gameover.ogg");
 		LoadAudio("sounds/game_start.ogg");
+		LoadAudio("sounds/laser.ogg");
 	}
 	
 	virtual operator_delete(){
@@ -46,6 +48,9 @@ class Resources implements App{
 	}
 	function PlaySoundGameStart(){
 		audios[AUDIO_GAME_START].Play();
+	}
+	function PlaySoundLaser(){
+		audios[AUDIO_LASER].Play();
 	}
 	function LoadMusic(path){
 		//_music=NewObject("music", "Gl_Music");

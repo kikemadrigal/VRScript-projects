@@ -2,11 +2,9 @@ namespace es_tipolisto_arkandroid;
 
 class Level5 {
 	properties:
-		game=null;
         map=null;
 
-	function _operator_new(_game){
-		game=_game;
+	function _operator_new(){
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			["gf","gf","a"," "," "," "," "," ","a","gf","gf"],
@@ -20,8 +18,6 @@ class Level5 {
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
-
 	}
 	function _operator_delete(){
 		delete map;

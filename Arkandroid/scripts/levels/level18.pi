@@ -21,13 +21,10 @@ class Level18{
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
-		boss=game.app.NewObject("boss3","Boss3",null,[game, game.player]);
-		game.mode_boss=true;
+		boss=game.app.NewObject("boss3","Boss3",null,[game]);
 	}
 	function _operator_delete(){
 		delete map;
 		delete boss;
-		game.delete_objects();
 	}   
 }

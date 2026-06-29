@@ -2,13 +2,9 @@ namespace es_tipolisto_arkandroid;
 
 class Level7{
 	properties:
-		game=null;
         map=null;
-		
-		//time=0;
-		//rocks=[];
-	function _operator_new(_game){
-		game=_game;
+	function _operator_new(){
+
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "],
@@ -22,13 +18,10 @@ class Level7{
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
-
 	}
 	function _operator_delete(){
-	
 		delete map;
-		game.delete_objects();
+		//game.delete_objects();
 	}   
 
 

@@ -11,14 +11,19 @@ class winner implements App{
 		_bg.SetSize(800,450);
 		bg=_bg;
 
+		_record_user=0;
+		_res=app.db.GetUserRecord();
+		if(sizeof(_res)>0) _record_user=_res[0][0];
+
 		_text=app.NewObject("text","GL_Text");
 		_text.SetFont("fonts/Vintage Black.ttf", 24);
-		_text.SetText("Score:");
-		_text.SetPos(app.GetResX()/2-_text.GetTextWidth()/2-100,40);
+		_text.SetText("Score: "+_record_user);
+		_text.SetPos(app.GetResX()/2-_text.GetTextWidth()/2-100,300);
 		text=_text;
 	}
 	
 	virtual _operator_delete(){
+		app.Log("borrando el winner");
 	 	delete text;
 		delete bg;
 	}

@@ -4,6 +4,7 @@ class Menu implements App{
 	properties:
 		text=null;
 		text2=null;
+
 		bg=null;
 		bg2=null;
 	virtual _operator_new(_app){
@@ -25,40 +26,50 @@ class Menu implements App{
 		text=_text;
 		
 		_text2=app.NewObject("text","GL_Text");
-		_text2.SetFont("fonts/Vintage Black.ttf", 16);
+		_text2.SetFont("fonts/Vintage Black.ttf", 14);
 		_text2.SetText("Record        Name        Date\n");
 		//app.GetResX()/2-_text.GetTextWidth()/2
-		_text2.SetPos(40,50);
+		_text2.SetPos(40,40);
 		text2=_text2;
+
 		
 		if(app.db==null){
 			app.Log("db es null");
 		}
 		else{
-			_ret=app.db.GetAll();
+			_ret=app.db.GetMax10();
 			if(sizeof(_ret)>0){
 				text2.SetText("Record        Name        Date\n");
 				for(i=0;i<sizeof(_ret);i++){
-					name=_ret[i][0];
-					record=_ret[i][1];
-					date=_ret[i][2];
+					name=_ret[i][1];
+					record=_ret[i][2];
+					date=_ret[i][4];
 					text2.Settext(text2.GetText()+String_Format("%06d",Record)+" "+name+","+date+"\n");	
 				}
 			}else{
 				text2.SetText("Sin records");
 			}
-			_res=app.db.GetUserRecord();
-			text2.Settext(text2.GetText()+"\nTu record es "+_res[0][0]);
+
+
+			_my_name=app.db.GetUser();
+			if(_my_name==null) _my_name="Not name";
+			text2.Settext(text2.GetText()+"\nTu nombre es "+_my_name);
+			_my_record=app.db.get_max_player();
+			if(_my_record==null) _my_record=0;
+			text2.Settext(text2.GetText()+"\nTu record es "+_my_record);
 			text2.Settext(text2.GetText()+"\n\nPress 'space' to continue.");
 			//text2.Settext(text2.GetText()+"\nPress the 'n' to send your high score to the internet.");
+			text2.Settext(text2.GetText()+"\nPulsa 'a' para asignar un nombre.");
 			text2.Settext(text2.GetText()+"\nPulsa 'n' para enviar tu puntuación a internet.");
 			text2.Settext(text2.GetText()+"\nPulsa 'd' y escribe 'Si' para resetear la base de datos.");
 			text2.Settext(text2.GetText()+"\nPulsa 'm' para ver el manual de instrucciones.");
-			text2.Settext(text2.GetText()+"\n\nhttp://arkanoid.tipolisto.es");
+			text2.Settext(text2.GetText()+"\n\nhttpss://games.tipolisto.es/");
 		}
+	
 	}
 	
 	virtual _operator_delete(){
+		app.Log("borrando el menu");
 	 	delete text;
 		delete text2;
 		delete bg;

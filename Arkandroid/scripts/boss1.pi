@@ -8,7 +8,7 @@ class Boss1 implements GL_sprite{
 		incrementoX=2;
 		incrementoY=0;
 		game=null;
-        boss_live=9;
+        boss_live=50;
         boss_dead=false;
      
         count_timer=0;
@@ -21,16 +21,18 @@ class Boss1 implements GL_sprite{
 		Setanimation("boss1-idle");
         SetCollision(True);
          //game.app.Log("ancho sprite:"+GetWidth()+", alto sprite:"+GetHeight());
-        //SetPos(game.app.BOARD_WIDTH/2,40);
-        SetPos(520/2,40);
+        SetPos(GetApp().BOARD_WIDTH/2,40);
+        //SetPos(520/2,40);
 
     }
     virtual _operator_delete(){
+        SetVisible(false);
+        SetCollision(false);
         game.delete_objects();
     }
 
 	virtual Move(){   
-        if(game.app.gamePaused) return;
+        if(GetApp().gamePaused) return;
         if(boss_dead){
             if(GetAnimationLoops()>0 && count_press==0) {
                 game.GetEngine().LogPrint("boss dead change stage");

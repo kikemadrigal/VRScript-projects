@@ -13,8 +13,10 @@ class Manual implements App{
 		bg=_bg;
 
 		_text=app.NewObject("text","GL_Text");
-		_text.SetFont("fonts/Vintage Black.ttf", 16);
-		_text.SetPos(app.GetResX()/2-_text.GetTextWidth()/2-100,600);
+		_text.SetFont("fonts/Vintage Black.ttf", 12);
+		_text.SetPos(10,60);
+		_string_text="Es un juego para (MSXVR), en el que dispones de una nave con un espejo y una bola de energía que tiene que romper las barreras enemigas y luchar contra los enemigos que vayan apareciendo.\nEl enemigo intenta llegar al nuestro Sol de la vía láctea para destruirla.\nDispones de 10 bombas que se activan pulsando la tecla \"Ctrl\" y que eliminan todos los objetos que ves en panatalla (menos las rocas fijas y los jefes finales).\nVe acumulando escudos protectores para que no te maten, los escudos se activan con la tecla Shift o mayúscula.\nEl juego consta de 4 fases de 5 pantallas cada 1 y un jefe final.";
+		_text.SetText(_string_text);
 		text=_text;
 	}
 	virtual _operator_delete(){

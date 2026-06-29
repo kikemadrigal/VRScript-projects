@@ -1,7 +1,7 @@
-﻿-Pon el getFtime en enemigos bola y bosses.
+﻿
 -Los enemigos y el juego se ralenzina al crearlos en la 7 pantalla, crear un pool de instancias
--Corrige lo de los records
--Pon la musica y efectos.
+-La bola sigue saliendo por arriba
+-Pon la musica y efectos que te quedan.
 -Cambiar los fondos al reves hasta llegar al sol que es boss4
 -mejora el movimiento de los nemigos que se bajan solos
 -Explosion de los enemigos 
@@ -13,6 +13,11 @@
 -Es posible acumular escudos?
 -Se que el mode_boss a true cuando pasas el boss 1
 -Si está en modo boss que no cree capsulas de salir
+-pon en la derecha una imagen de la via láctea que vaya subiendo hacia arriba con 24 puntos
+
+
+
+-Pon el getFtime en enemigos bola y bosses.
 
 
 

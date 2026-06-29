@@ -17,27 +17,27 @@ class Game implements App{
 			"\n1. Mercurio:\n-Los bloques de tipo \ndinamita destruyen lo \nque haya a su alrededor.\n-Los de tipo flash te dejan ciego \ndurante 1 destello",
 			"\n2. Venus:\n-Los bloques de tipo \nbomba eliminan las rocas\n del color de la bomba.",
 			"\n3. La luna, Capsulas:\n-Laser; permite disparar.\n-3ball; genera 3 bolas.\n-Largue; aumenta tu nave.\n-Next; siguiente nivel.\n-Bomb: bomba extra\n-Clock: disminuye velocidad bala.\n-Shield: escudo",
-			"\n4. Tierra:\n-Oro necesitan\n 3 toques para ser destruidas\n-Plata necesitan 2 toques,\n-Bronce necesitan 1 toque.",
-			"\n5. Fobos-Marte: Las rocas que tiemblan\ndisparan al ser golpeadas.",
+			"\n4. Tierra: \n-Oro necesitan \n 3 toques para ser destruidas \n-Plata necesitan 2 toques,\n-Bronce necesitan 1 toque.",
+			"\n5. Fobos-Marte: Las rocas que tiemblan \ndisparan al ser golpeadas.",
 			"\n6. Deimos-Marte: 1. jefe, creador de ladrillos",
 			"\n7. Marte: El paraguas",	
 			"\n8. Europa-Júpiter: pelota ",
 			"\n9. Io-Júpiter: Estrella",
 			"\n10. Ganimedes-Júpiter: pirámide",
 			"\n11. Amaltea-Jupiter: Rombo",
-			"\n12. Calisto-Jupiter: 2. Jefe; el\n lanza meteoritos.",
+			"\n12. Calisto-Jupiter: 2. Jefe; el n lanza meteoritos.",
 			"\n13. Jupiter: el pez",
 			"\n14. Titán-Saturno:  La cara",
 			"\n15. Encelado-Saturno: cucurucho",
 			"\n16. Mimas-Saturno: El caracol",
 			"\n17. Dione-Saturno: Cruz de cristo",
-			"\n18. Saturno:  3. jefe;  Creador de naves.",
-			"\n19. Setebos-Urano: bloques oro\ny plata en hilera laberinto",
-			"\n20. Umbrial-Urano: bloques verticales\nde oro y lata y normales",
+			"\n18. Saturno:  3. jefe;  Creador \nde naves.",
+			"\n19. Setebos-Urano: bloques oro\ ny plata en hilera laberinto",
+			"\n20. Umbrial-Urano: bloques verticales \nde oro y lata y normales",
 			"\n21. Titania-Urano: bloque de oro \npor abajo en forma\nde U invertida",
-			"\n22. Miranda-Urano: bloques de oro\ny plata en forma de rombo",
-			"\n23. Urano: bloques de oro y plata\nen forma de uve doble",
-			"\n24. Neptuno: 4. jefe y final;\nLanza de todo."
+			"\n22. Miranda-Urano: bloques de oro \ny plata en forma de rombo",
+			"\n23. Urano: bloques de oro y plata \nen forma de uve doble",
+			"\n24. Neptuno: 4. jefe y final; \nLanza de todo."
 		];
 		capsules=[];
 		rocks=[];
@@ -47,8 +47,9 @@ class Game implements App{
 		ornament_hud=null;
 		lasers=[];
 		timer_game=null;
-		time=50;
+		time=0;
 		mode_boss=false;
+		arrow=null;
 		//rock_template=null;
 	virtual _operator_new(_app){
 		//Adorno marcador
@@ -59,6 +60,13 @@ class Game implements App{
 		_ornament_hud.SetPriority(app.PRIORITY_BG);
 		ornament_hud=_ornament_hud;
 
+		_arrow=app.NewObject("arrow","GL_Sprite");
+		_arrow.AddFrame("res/arrow.png");
+		_arrow.SetPos(680,55);
+		_arrow.SetSize(30,30, true);
+		//_arrow.SetPriority(app.PRIORITY_BG);
+		arrow=_arrow;
+
 		_board_bg=app.NewObject("board_bg","GL_Sprite");
 		_board_bg.AddFrame("res/level1.png");
 		_board_bg.SetPriority(app.PRIORITY_BG);
@@ -66,7 +74,7 @@ class Game implements App{
 
 		//El marcador con las vidas y la puntuciÃ³n
 		_text_hud=app.NewObject("text","GL_Text");
-		_text_hud.SetFont("fonts/Vintage Black.ttf", 16);
+		_text_hud.SetFont("fonts/Vintage Black.ttf", 12);
 		_text_hud.SetColor(RGB(255,255,0));
 		_text_hud.SetPos(app.BOARD_WIDTH+20,20);
 		text_hud=_text_hud;
@@ -86,7 +94,6 @@ class Game implements App{
 		_ball.SetVisible(False);
 		_ball.SetPriority(APP.PRIORITY_BALL);
 		_ball.SetVisible(True);
-
 		ball=_ball;
 
 		//Ponemos el marcador
@@ -97,7 +104,7 @@ class Game implements App{
 
 		//El timer game nos sirve para llevar un contador de tiempo
 		timer_game=app.NewObject("timer", "GL_Timer");
-		timer_game.SetFrequency(3000);
+		timer_game.SetFrequency(1000);
 		timer_game.SetUserCallBack(this,"OnTimerGame");
 		timer_game.Stop();
 		//Ponemos la música
@@ -105,7 +112,17 @@ class Game implements App{
 	}
 	
 	
-
+	virtual _operator_delete(){
+		app.Log("Borrando game");
+		delete_objects();
+		delete text_hud;
+		delete board_bg;
+		delete ornament_hud;
+		delete player;
+		delete ball;
+		timer_game.Stop();
+		delete timer_game;
+	}
 
 	function DrawMap(map){
 		//// 1. Creamos el objeto que servirá de molde
@@ -129,31 +146,35 @@ class Game implements App{
 
 	function draw_HUD(){
 		_message="Screen: "+level;
-		_message="\nHighscore:  \n"+player.score+"\nScore: \n"+player.score+"\nLives:  \n"+player.lives;
+		_message="\nHighscore:  \n"+player.high_score+"\nScore: \n"+player.score+"\nLives:  \n"+player.lives;
 		_message+="\nBall speed: "+ball.speed;
 		_message+="\nBricks: "+sizeof(bricks);
 		if(player.timer_is_actuve) _message+="\nPower-up: "+player.type+": "+player.time_to_normal;
 		else _message+="\nPower-up: None";
 		_message+="\nBombs: "+player.counter_bombs+", pulsa Ctrl para usarla";
-		_message+="\nEscudos: "+player.shields;
-		_message+="\nFrequency: "+GetFPS();
+		_message+="\nEscudos: "+player.shields+", pulsa Shift para usarlos";
+		_message+="\nFrequency: "+GetFPS()+" Ftime: "+GetFTime()*0.025f;
+		//_message+="\nball incX: "+ball.incposX+" incY: "+ball.incposY;
 		//_message+="\ntime: "+time;
 		//_message+="\nplayer x: "+player.GetX()+", y: "+player.GetY();
 		//_message+="\nBall speed: "+ball.speed+" incX: "+ball.incposX+" incY: "+ball.incposY;
 		//_message+="\nNum lasers: "+sizeof(lasers);
 		//_message+="\nNum enemies: "+sizeof(enemies);
 		//_message+="\nRocks: "+sizeof(rocks);
-		_message+="\nMission: "+missions[level-1];
+		//_message+="\nCapsules: "+sizeof(capsules);
 		if(mode_boss) _message+="\nBoss life: "+level_active.boss.boss_live;
+		_message+="\nMission: "+missions[level-1];
+		
 		text_hud.SetText(_message);
 		//show_map();
 	}
 
 	function OnTimerGame(_timer){
-		time--;
+		time++;
+		if(time>1000) time=0;
 		draw_HUD();
 		//cada 10 segundos aumnentamos la velocidad de la bola
-		if(time%10==0 && ball.speed<6){
+		if(time%10==0 && ball.speed<5){
 			ball.speed+=0.5;
 		}
 
@@ -168,106 +189,46 @@ class Game implements App{
 	
 	
 	function ChangeLevel(){
+		//delete app.GetActiveStage();
 		//app.log("Cambiamos al level "+level);
 		if(level>0){
 			app.text_game.SetText("level completed");
-			app.GetEngine().sleep(2000);
+			//app.GetEngine().sleep(2000);
 			board_bg.RemoveFrames();
 			_level_for_board=level+1;
 			board_bg.AddFrame("res/level"+_level_for_board+".png");
 		}
-
+		if(mode_boss)moes_boss=false;
 		timer_game.Stop();
 		level++;
 		delete_objects();
 		if(level_active!=null) delete level_active;
-	
-		switch (level){
-			case 1:
-				//level_1();
-				level_active=new Level1(this);
-				break;
-			case 2:
-				//level_2();
-				level_active=new Level2(this);
-				break;
-			case 3:
-				level_active=new Level3(this);
-				break;
-			case 4:
-				level_active=new Level4(this);
-				break;
-			case 5:
-				level_active=new Level5(this);
-				break;
-			case 6:
-				level_active=new Level6(this);
-				break;
-			case 7:
-				level_active=new Level7(this);
-				break;
-			case 8:
-				level_active=new Level8(this);
-				break;
-			case 9:
-				level_active=new Level9(this);
-				break;
-			case 10:
-				level_active=new Level10(this);
-				break;
-			case 11:
-				level_active=new Level11(this);
-				break;
-			case 12:
-				level_active=new Level12(this);
-				break;
-			case 13:
-				level_active=new Level13(this);
-				break;
-			case 14:
-				level_active=new Level14(this);
-				break;
-			case 15:
-				level_active=new Level15(this);
-				break;
-			case 16:
-				level_active=new Level16(this);
-				break;
-			case 17:
-				level_active=new Level17(this);
-				break;
-			case 18:
-				level_active=new Level18(this);
-				break;
-			case 19:
-				level_active=new Level19(this);
-				break;
-			case 20:
-				level_active=new Level20(this);
-				break;
-			case 21:
-				level_active=new Level21(this);
-				break;
-			case 22:
-				level_active=new Level22(this);
-				break;
-			case 23:
-				app.Log("Vamos a pasar al level 23");
-				level_active=new Level23(this);
-				break;
-			case 24:
-				app.Log("Vamos a pasar al level 24");
-				level_active=new Level24(this);
-				break;
-			case 25:
-				app.Log("Vamos a pasar al stado game_over");
-				app._change ("game_over");
-				break;
-			/*default:
-				level=1;
-				level_active=new Level1(this);
-				break;*/
+		if(level==6 || level==12 || level==18 || level==24 || level==25) {
+			mode_boss=true;
+			switch (level){
+				case 6:
+					level_active=new Level6(this);
+					break;
+				case 12:
+					level_active=new Level12(this);
+					break;
+				case 18:
+					level_active=new Level18(this);
+					break;
+				case 24:
+					level_active=new Level24(this);
+					break;
+				case 25:
+					app.Log("Vamos a pasar al stado game_over");
+					app._change("game_over");
+					break;
+			}
+		}else {
+			level_active=_eval("new Level" + string(level) + "()");
 		}
+		//level_active=new eval(new_level)();
+		DrawMap(level_active.map);
+
 		app.resources.PlaySoundGameStart();
 		app.gamePaused=true;
 		player.player_return_normal();
@@ -275,6 +236,7 @@ class Game implements App{
 		app.gamePaused=true;
 		player.player_return_normal();
 		ball.ball_return_normal();
+		app.SetFrameRate(60);
 		draw_HUD();
 	}
 
@@ -292,10 +254,20 @@ class Game implements App{
 	function CreateCapsule(_x,_y, with_probability=true){
 		if(with_probability){
 			_number_for_capsule=Rand(0,100);
+			//app.log("Vamos a crear un capsula con probabilidad "+_number_for_capsule+" modo boss "+mode_boss);
 			if(_number_for_capsule<20){
 				_type=capsules_type[Rand(0,sizeof(capsules_type)-1)];
-				_capsule=app.NewObject("capsule","Capsule",null, [this, _x,_y, _type]);
-				capsules+=[_capsule];
+				//app.log("capsula creada tipo "+_type);
+				if(mode_boss){
+					if(_type!="next" && _type!="laser"){
+						//app.log("Creamos la capsula "+_type);
+						_capsule=app.NewObject("capsule","Capsule",null, [this, _x,_y, _type]);
+						capsules+=[_capsule];
+					}
+				}else{
+					_capsule=app.NewObject("capsule","Capsule",null, [this, _x,_y, _type]);
+					capsules+=[_capsule];
+				}
 			}
 		}else{
 			_type=capsules_type[Rand(0,sizeof(capsules_type)-1)];
@@ -369,7 +341,7 @@ class Game implements App{
 			app.resources.PlaySoundGameOver();
 			app.text_game.SetText("Game Over");
 			app.GetEngine().sleep(2000);
-			if(app.db.CheckRecord(player.score)){
+			/*if(app.db.CheckRecord(player.score)){
 				app.gl.Stop();
 				_textModal="Nuevo record!!!";
 				do{
@@ -380,14 +352,21 @@ class Game implements App{
 				app.db.InsertRecord(name,player.score);
 				app.db.UpdateUserRecord(player.score);
 				app.gl.Start();
-				
+			}*/
+
+			if (app.db.CheckRecord(player.score)){
+				app.gl.Stop();
+				app.GetEngine().AlertDialog("Alert", "new record", 0, null, null);
+				_name_for_new_record=app.db.GetUser();
+				app.db.InsertRecord(_name_for_new_record, player.score);
+				app.gl.Start();
 			}
+			
 			player.score=0;
 			player.lives=5;
 			app.menu=new Menu(app);  
 			app.gameOver=True;
 			ball.speed=0;
-			//ball.incPosX=0;
 			ball.SetVisible(False);
 			player.SetVisible(False);
 			level=0;
@@ -445,9 +424,9 @@ class Game implements App{
 		
 		//borramos todos los bricks que sean fallibles
 
-		for(i=0; i<sizeof(bricks);i++) {
-			if(bricks[i].fallible) delete_brick(bricks[i]);
-		}
+		//for(i=0; i<sizeof(bricks);i++) {
+		//	if(bricks[i].fallible) delete_brick(bricks[i]);
+		//}
 		
 		
 
@@ -472,90 +451,7 @@ class Game implements App{
 
 
 
-	virtual _operator_delete(){
-		app.Log("deleting game");
-		delete_objects();
-		delete text_hud;
-		delete board_bg;
-		delete ornament_hud;
-		delete player;
-		delete ball;
-		timer_game.Stop();
-		delete timer_game;
-	}
 
 
-	/*function show_map(){
-		_message="Board width: "+app.BOARD_WIDTH+"\nBoard height: "+app.BOARD_HEIGHT+"\n";
-		_message+="\nTiles for row: "+app.BOARD_WIDTH/40+"\nTiles for column: "+app.BOARD_HEIGHT/20;
-		_message+="\nnum lasers: "+sizeof(lasers);
-		_message+="\nNum enemies: "+sizeof(enemies);
-		if(sizeof(enemies)>0){
-			_tile_x=floor(enemies[0].GetX()/40);
-			_tile_y=floor(enemies[0].GetY()/20);
-			_message+="\nEnemy position: "+enemies[0].GetX()+", "+enemies[0].GetY();
-			_message+="\nEnemy tile: fila"+_tile_y+", columna"+_tile_x;
-			_message+="\nCell: "+level_active.map[_tile_y+2][_tile_x];
-		}
-			
-		for(i=0;i<sizeof(level_active.map);i++){
-			_message+="\n";
-			for(j=0;j<sizeof(level_active.map[i]);j++){
-				if(level_active.map[i][j]=="a") 	  _message+=" a ";
-				else if(level_active.map[i][j]=="g")  _message+=" g ";
-				else if(level_active.map[i][j]=="m")  _message+=" m ";
-				else if(level_active.map[i][j]=="r")  _message+=" r ";
-				else if(level_active.map[i][j]=="v")  _message+=" v ";
-				else if(level_active.map[i][j]=="z")  _message+=" z ";
-				else if(level_active.map[i][j]=="o")  _message+=" o ";
-				else if(level_active.map[i][j]=="x")  _message+=" x ";
-				else if(level_active.map[i][j]=="p")  _message+=" p ";
-				else if(level_active.map[i][j]=="b")  _message+=" b ";
-				else if(level_active.map[i][j]=="t")  _message+=" t ";
-				else if(level_active.map[i][j]==" ")  _message+="   ";
-			}
-		}
-		text_hud.SetText(_message);
-	}*/
 
-
-	/*
-	function level_1(){
-		//app.SetBackColor(RGB(0,0,255));
-		map=[
-			[" "," "," "," "," "," "," "," "," "," "," "],
-			[" "," "," "," "," "," "," "," "," "," "," "],
-			[" "," "," "," "," "," "," "," "," "," "," "],
-			["g","g","g","g","g","g","g","g","g","g","g"],
-			["r","r","r","r","r","r","r","r","r","r","r"],
-			["a","a","a","a","a","a","a","a","a","a","a"],
-			["z","z","z","z","p","p","z","z","z","z","z"],
-			["m","m","m","m","m","m","m","m","m","m","m"],
-			["x","x","x","x","x","x","x","x","x","x","x"],
-			[" "," "," "," "," "," "," "," "," "," "," "],
-			[" "," "," "," "," "," "," "," "," "," "," "]
-		];
-		DrawMap(map);
-	}
-	function level_2(){
-		//app.SetBackColor(RGB(180,0,0));
-		map=[
-			[" "," "," "," "," "," "," "," "," "," "," "],
-			[" "," "," "," "," "," "," "," "," "," "," "],
-			["b"," "," "," "," "," "," "," "," "," "," "],
-			["b","a"," "," "," "," "," "," "," "," "," "],
-			["b","a","z"," "," "," "," "," "," "," "," "],
-			["b","a","z","v"," "," "," "," "," "," "," "],
-			["b","a","z","v","m"," "," "," "," "," "," "],
-			["b","a","z","v","m","o"," "," "," "," "," "],
-			["b","a","z","v","m","o","b"," "," "," "," "],
-			["b","a","z","v","m","o","b","a"," "," "," "],
-			["g","g","g","g","g","o","g","g","g"," "," "],
-			["b","a","z","v","m","o","b","a","a","a","a"],
-			["g","g","g","g","g","o","g","g","g","a","a"]
-		];
-		DrawMap(map);
-	}
-
-	*/
 }

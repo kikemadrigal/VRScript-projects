@@ -26,6 +26,7 @@ class Main implements GL_Program{
 		pad=null;
    		menu=null;
 		winner=null;
+		manual=null;
 		game=null;
 		gameOver=True;
 		gamePaused=False;
@@ -35,7 +36,6 @@ class Main implements GL_Program{
 	
 		text_game=null;
 		music_menu=null;
-		manual=null;
 		record_user=0;
 	virtual Start()
 	{
@@ -49,33 +49,48 @@ class Main implements GL_Program{
 		// -2 Ajusta la pantalla en vertical
 		// -3 Ajuste puede que no proporcional a pantalla completa
 		SetViewScale(-3,True);
-		SetVSync(True);
-		SetFrameRate(40);
+		//el sistema intenta sincronizar el dibujado con el refresco del monitor
+		//SetVSync(True);
+		SetFrameRate(60);
+		// En juegos con mucha lógica o creación compleja de escenarios, 
+		// es recomendable activar este modo para evitar compartir ciclos de CPU
+		SetBackgroundMode(true);
  		//SETANISPEEDFACTOR(2);
 		//Configuraciones del pad
 		//_pad=NewObject("pad","GL_Pad");
 		_pad=NewPad("pad");
 		_pad.SetPreset("CURSORS");
 		//_pad.SetPreset("JOYSTICK1",1);
-		//PAD_BUTTON_1 hasta PAD_BUTTON_16
+		//PAD_BUTTON_1 hasta PAD_BUTTON_16 (ver el move del player)
 		//1.disparo
 		_pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_SPACE);
-		//2 .bomba
+		//2 .Lanzar bomba
 		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_LCONTROL);
-		//3. cambiar de nivel
-		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_D);
-		//4. manual
-		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_M);
-		//5. Salir
-		_pad.SetButton(PAD_BUTTON_5,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
-		//6. Pausa
-		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_P);
-
+		//3. Protegerse con escudo
+		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_LSHIFT);
+		//4. cambiar de nivel con la tecla TAB
+		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_TAB);
+		//5. Borrar los records
+		_pad.SetButton(PAD_BUTTON_5,0,PAD_MODE_KEYBOARD,KEY_D);
+		//6. Con la tecla N enviamos la putuación a internet
+		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_N);
+		//7. Con la tecla M vemos el manual
+		_pad.SetButton(PAD_BUTTON_7,0,PAD_MODE_KEYBOARD,KEY_M);
+		//8. Salir
+		_pad.SetButton(PAD_BUTTON_8,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
+		//9. Pausa
+		_pad.SetButton(PAD_BUTTON_9,0,PAD_MODE_KEYBOARD,KEY_P);
+		//10. al pulsar la tecla a se actualiza el nombre
+		_pad.SetButton(PAD_BUTTON_10,0,PAD_MODE_KEYBOARD,KEY_A);
+		
 		pad=_pad;
+
 		//Activamos los recuadritos de los sprites para ver si se hacen bien las colisiones
 		//GetActiveStage().SetDebug(True);
 		resources=new resources(this);
 		db=new Db(this);
+		db.CreateTableUser();
+		db.InsertFakeUser();
 		//El texto que aparece para pulse espacio o game over
 		_text_game=NewObject("text","GL_Text");
 		_text_game.SetFont("fonts/Vintage Black.ttf", 18);
@@ -88,10 +103,7 @@ class Main implements GL_Program{
 		music_menu=_music_menu;
 		//Creamos el menu
 		menu=new Menu(this);
-	
-		//Obtenemos el record del usuario
-		_res=db.GetUserRecord();
-		if(sizeof(_res)>0) record_user=_res[0][0];
+		
 		_change ("menu");
 	}
 
@@ -101,79 +113,78 @@ class Main implements GL_Program{
 			Log("Pulsamos en play y passamos al estado de game");
 			gameOver=False;
 			music_menu.Stop();
-			if(winner!=null) delete winner;
-			if(menu!=null) delete menu;
-			if(game!=null) delete game;
+			Gl.Stop();
 			game=new Game(this);
+			if(menu!=null) delete menu;
 			gamePaused=true;
-			//game.level=0;
+			Gl.Start();
 			_change ("game");
+		//Con la tecla D borramos (la 5) la base de datos
+		}else if(pad.IsButtonDown(PAD_BUTTON_5)){
+			Log("pulsada la tgecla d para borrar la vase de datos");
+			_res=GetEngine().InputDialogModal("Escribe Si para resetar la base de datos","",View.AD_OK,"");
+			if(_res=="Si"){
+				db.DeleteRecords();
+				db.DeleteUserRecord();
+				db.InsertFakeRecords();
+				delete menu;
+				_menu=new Menu(this);
+				menu=_menu;
+			}
+		//Con ls tecla N (la 6) enciamos la puntuación a internet
+		}else if(pad.IsButtonDown(PAD_BUTTON_6)){
+			Log("pulsada la tgecla N enciamos la puntuación a internet");
+			send_record();
+		//Con ls tecla M (la 6) vemos el manual
+		}else if(pad.IsButtonDown(PAD_BUTTON_7)){
+			Log("pulsada la tgecla m vemos el manual");
+			delete menu;
+			_manual=new Manual(this);
+			manual=_manual;
+		}else if(pad.IsButtonDown(PAD_BUTTON_8)){
+			Log("pulsada la tgecla escape volvemos al menú");
+			delete manual;
+			_menu=new Menu(this);
+			menu=_menu;
+		//Al pulsar la tecla a se adigna un nombre
+		}else if(pad.IsButtonDown(PAD_BUTTON_10)){
+            _textModal="Escribe tu nombre";
+            _name_user="";
+            do{
+                _name_user=GetEngine().InputDialogModal(_textModal,"",View.AD_OK,"");
+                _textModal="El nombre no puede estar vacío ni ser menor de 4 caracteres";
+            }while(_name_user=="" || strlen(_name_user)<=3);
+			db.UpdateUser(_name_user);
+			delete menu;
+			_menu=new Menu(this);
+			menu=_menu;
 		}
 	}
 
 	state "winner"{
 		Log("Estamos en el estado de winner");
 		if(pad.IsButtonDown(PAD_BUTTON_1)){
-			//delete winner;
+			Log("Pulsamos en play y passamos al estado de menu");
+			Gl.Stop();
 			menu=new Menu(this);
+			if(winner!=null) delete winner;
+			Gl.Start();
 			_change ("menu");
 		}
 	}
 
 	state "game_over"{
-		//delete game;
 		Log("Game Over, borrado game");
-		if(winner!=null) delete winner;
-		if(game!=null) Log("Game Over es distinto de null");
-		else Log("Game Over es null");
+		//Tenemos que para todos los objetos globales, pararlas y destruirlas
+		Gl.Stop();
 		winner=new Winner(this);
+		if(game!=null) delete game;	
+		Gl.Start();
+		gameOver=true;
 		_change ("winner");
 	}
 	
 	state "game"{
-		/*if (gameOver){
-			if(pad.IsButtonDown(PAD_BUTTON_2)){
-				Log("enviando score");
-				_http=GetEngine().CreateHTTPManager();
-				//Recogemos la puntaciÃ³n mÃ¡xima
-				_textModal="Escribe tu nombre";
-				_name="";
-				do{
-					_name=GetEngine().InputDialogModal(_textModal,"",View.AD_OK,"");
-					_textModal="El nombre no puede estar vacÃ­o ni ser menor de 4 caracteres";
-				}while(_name=="" || strlen(_name)<=3);
-				//mostramos un formaulario para que introduzca su nombre
-				_res=db.GetUserRecord();
-				_score=_res[0][0];
-				//Hacemos la peticiÃ³n al servidor
-				_ret=_http.GetString("https://arkanoid.tipolisto.es/api/savescore.php?score="+_score+"&name="+_name);
-				//Log(_ret);
-				text_game.SetText("Server response: "+_ret);
-				text_game.SetPos(BOARD_WIDTH/2, GetResY()-200);
-				delete _http;
-			}
-			else if(pad.IsButtonDown(PAD_BUTTON_3)){
-				_res=GetEngine().InputDialogModal("Escribe Si para resetar la base de datos","",View.AD_OK,"");
-				if(_res=="Si"){
-					db.DeleteRecords();
-					db.DeleteUserRecord();
-					db.InsertFakeRecords();
-					delete menu;
-					_menu=new Menu(this);
-					menu=_menu;
-				}
-			}else if(pad.IsButtonDown(PAD_BUTTON_4)){
-				delete menu;
-				_manual=new Manual(this);
-				manual=_manual;
-			}else if(pad.IsButtonDown(PAD_BUTTON_5)){
-				delete manual;
-				_menu=new Menu(this);
-				menu=_menu;
-			}else if(pad.IsButtonDown(PAD_BUTTON_8)){
-				enviar_socket("Hola desde cliente");
-			}	
-		}	*/
 		if(gamePaused){
 			text_game.Settext("Press space");
 			game.ball.SetPos(game.player.GetX()+game.player.GetWidth()/2,game.player.GetY()-game.ball.GetHeight()-105);
@@ -183,6 +194,7 @@ class Main implements GL_Program{
 				game.timer_game.Start();
 				if(game.mode_boss) game.level_active.boss.Start();
 				game.timer_game.Start();
+				
 			}
 		}
 	}
@@ -205,6 +217,25 @@ class Main implements GL_Program{
 		NetSocket_Connect (_socket, "localhost", 1234);
 		//NetSocket_Send (_socket, _msg, 0, 1024);
 		NetSocket_Delete (_socket);
+	}
+
+
+	function send_record(){
+		text_game.SetVisible(True);
+        _http=GetEngine().CreateHTTPManager();
+        _name=db.GetUser();
+        //mostramos un formaulario para que introduzca su nombre
+        _score=db.get_max_player();
+        //Hacemos la petición al servidor
+        _ret=_http.GetString("https://games.tipolisto.es/api/arkandroid-savescore.php?score="+_score+"&name="+_name+"&game=arkandroid");
+        Log("enviando score de "+_name+" con un score de "+_score);
+        text_game.SetText("Server response: "+_ret);
+        text_game.SetText("");
+        text_game.SetPos(100, 10);
+		Log("Respuesta del servidor: "+_ret);
+		GetEngine().Sleep(2000);
+		text_game.SetVisible(False);
+        delete _http;
 	}
 
 

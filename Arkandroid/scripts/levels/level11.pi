@@ -2,7 +2,6 @@ namespace es_tipolisto_arkandroid;
 //Amaltea-Jupiter: Rombo",
 class Level11{
 	properties:
-		game=null;
         map=null;
 		/*
 			a=amarillo
@@ -19,8 +18,7 @@ class Level11{
 			ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
 			af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
 		*/
-	function _operator_new(_game){
-		game=_game;
+	function _operator_new(){
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "],
@@ -34,11 +32,9 @@ class Level11{
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
 	}
 	function _operator_delete(){
 		delete map;
-		game.delete_objects();
 	}   
 
 }

@@ -4,18 +4,16 @@ class Ball implements GL_sprite{
 	properties:
 		game=null;
 		speed=0;
-        initial_speed=3;
+        initial_speed=2;
         multiball=false;
         incposX=0;
         incposY=0;
-	
+
 	virtual _operator_new(_name,_creator,_params){
 		game=_params[0];
 		_x=_params[1];
 		_y=_params[2];
 		speed=initial_speed;
-        
-		//Addframe("res/pelota.png");
         Addanimationwithsheet("ball","res/ball.png",0,11,0,0,20,20,-1,-1,-1,0.1);
         SetAnimation("ball");	
 		SetPos(_x,_y);	
@@ -23,15 +21,13 @@ class Ball implements GL_sprite{
 	    incposY=speed;
 	}
 	virtual Move(){
-		if (GetX() <=0) {
-            incposX =speed;
-            //GetApp().log("Colision por la izquierda, velocidad:"+incposX+", "+speed);
-		}
-		else if(GetX()+GetWF() > GetApp().BOARD_WIDTH) {
-            incposX =-speed;
-            //GetApp().log("Colision por la derecha, velocidad:"+incposX+", "+speed);
-		}
-		else if (GetY() <= 0) incposY =speed;
+        /*if( incposX != 0){
+            incposX=speed+GetFTime()*0.025f;
+		    incposY=speed+GetFTime()*0.025f;
+        }*/
+
+		if (GetX() <=0 || GetX()+GetWF() > GetApp().BOARD_WIDTH) incposX =-incposX; 
+		else if (GetY() <= 0) incposY =-incposY;
         else{
             if(multiball && GetY() > GetApp().BOARD_HEIGHT) {
                 //Si multiball es verdadero y la pelota se sale por abajo, la destruimos
@@ -43,12 +39,16 @@ class Ball implements GL_sprite{
                 game.player_die();
             }
         }       
-        //incposX=speed*GetFTime()*0.025f;
-		//incposY=speed*GetFTime()*0.025f;
 		incpos(incposX,incposY);
 	}
 
 	function OnSpriteCollision(_ball, _spr){
+        if(Class_Id(_spr)=="Player") {
+             GetApp().resources.PlaySoundHit();
+        }else{
+            GetApp().resources.PlaySoundPala();
+        }
+       
         _colY=False;
         if(Class_Id(_spr)=="Capsule" || 
             Class_Id(_spr)=="Ball" || 
@@ -77,10 +77,11 @@ class Ball implements GL_sprite{
        
         //Si la colsión es el player o la pala
         //Comprobamos si colisionamos por abajo
+        
         if(GetY()>=_spr.GetY())
         {
             //Si La pelota toca la paleta por abajo, la situamos abajo
-            SetY(_spr.GetY()+_spr.GetHF());
+            //SetY(_spr.GetY()+_spr.GetHF());
             //La pelota rebota
             _colY=True;
 			_message="colision por abajo";
@@ -94,7 +95,7 @@ class Ball implements GL_sprite{
         }else if(GetY()<_spr.GetY())
         {
             //Si La pelota toca la paleta por arriba, la situamos arriba
-            SetY(_spr.GetY()-GetHF()-1);
+            //SetY(_spr.GetY()-GetHF()-1);
             //La pelota rebota
             _colY=True;
 			_message="colision por arriba";
@@ -105,24 +106,17 @@ class Ball implements GL_sprite{
             //incPosX=_zone-0.2f;
             incPosX=(_zone-0.5f)*speed;
             incposY=-speed;
+
         }
         //Comprobamos si colisionamos por la izquierda
-        else if(GetX()<_spr.GetX())
-        {
-            //Si la pelota toca la paleta en la izquierda, la situamos a la izquierda
-            SetX(_spr.GetX()-GetWF());
-            //La pelota rebota
-            incPosX =speed;
-            _message="colision por la izquierda";
-        }
-        else
-        {
-            //Si La pelota toca la paleta por la derecha, la situamos a la derecha
-            SetX(_spr.GetX()+_spr.GetWF());
-            //La pelota rebota
-            incPosX =-speed;
-			_message="colision por la derecha";
-        }
+        /*if(_colY ){
+            if(Class_Id(_spr)!="Boss1" || Class_Id(_spr)!="Boss2" || Class_Id(_spr)!="Boss3" || Class_Id(_spr)!="Boss4"){
+                if(GetX()<_spr.GetX()) SetX(_spr.GetX()-incPosX-1);
+                else SetX(_spr.GetX()+_spr.GetWF()+incPosX+1);
+            }
+        }*/
+       
+       
 
 
 		if(Class_Id(_spr)=="Brick"){

@@ -9,7 +9,7 @@ class Boss1 implements GL_sprite{
 		incrementoY=0;
 		game=null;
   
-        boss_live=10;
+        boss_live=50;
         boss_dead=false;
 
      
@@ -51,6 +51,7 @@ class Boss1 implements GL_sprite{
                 if(GetX()<0 || GetX()>game.app.BOARD_WIDTH-GetWidth()){
                     incrementoX=-incrementoX;
                 }
+
                 if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth() ){
                    if(count_timer==0){
                     _rock=game.create_rock();

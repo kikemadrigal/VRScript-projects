@@ -2,11 +2,9 @@ namespace es_tipolisto_arkandroid;
 
 class Level1 {
 	properties:
-		game=null;
         map=null;
-		timer_create_enemies=null;
-	function _operator_new(_game){
-		game=_game;
+	virtual _operator_new(){
+	
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "],
@@ -20,7 +18,7 @@ class Level1 {
 			[" ","z"," ","z"," ","f"," ","m"," ","m"," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
+	
 	}
 	function _operator_delete(){
 		delete map;

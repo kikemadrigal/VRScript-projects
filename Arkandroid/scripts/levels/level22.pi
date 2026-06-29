@@ -2,12 +2,10 @@ namespace es_tipolisto_arkandroid;
 //22. Miranda-Urano: bloques de oro\ny plata en forma de romb
 class Level22{
 	properties:
-		game=null;
         map=null;
 
-	function _operator_new(_game){
-		game=_game;
-map=[
+	function _operator_new(){
+		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," ","f"," "," "," "," "," "],
@@ -20,11 +18,8 @@ map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
-
 	}
 	function _operator_delete(){
 		delete map;
-		game.delete_objects();
 	}   
 }

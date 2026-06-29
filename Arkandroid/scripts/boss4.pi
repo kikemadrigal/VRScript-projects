@@ -9,7 +9,7 @@ class Boss4 implements GL_sprite{
 		incrementoY=0;
 		game=null;
   
-        boss_live=2;
+        boss_live=10;
         boss_dead=false;
 
      
@@ -47,10 +47,17 @@ class Boss4 implements GL_sprite{
                 SetCollision(false);
                 boss_dead=true;
             }else{
-                //Vamos creando y lanzando meteroitos al player
                 if(GetX()<0 || GetX()>game.app.BOARD_WIDTH-GetWidth()){
                     incrementoX=-incrementoX;
+                }else{
+                    //Moviemiento del enemigo que persigue al player
+                    if(GetX()>game.player.GetX()+100 && GetX()>game.player.GetX()+100) incrementoX=-2;
+                    else if(GetX()<game.player.GetX()-100 && GetX()<game.player.GetX()-100) incrementoX=2;
                 }
+
+                
+                //Vamos creando y lanzando meteroitos al player
+
                 if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth() ){
                    if(count_timer==0){
                     _enemy_type=Rand(0,3);
@@ -59,12 +66,16 @@ class Boss4 implements GL_sprite{
                             game.create_rock();
                             break;
                         case 1:
-                            _enemy=game.create_enemy(Rand(0,3));
-                            _enemy.SetPos(GetX(), GetY());
-                            break;
+                            if(sizeof(game.enemies)<5){
+                                _enemy=game.create_enemy(Rand(0,3));
+                                _enemy.SetPos(GetX(), GetY());
+                            }
+                             break;
                         case 2:
-                            _enemy=game.create_enemy(6);
-                            _enemy.SetPos(GetX(), GetY());
+                            if(sizeof(game.enemies)<5){
+                                _enemy=game.create_enemy(6);
+                                _enemy.SetPos(GetX(), GetY());
+                            }
                             break;
                         case 3:
                             game.createLaser();

@@ -19,8 +19,7 @@ class Level8{
 			ab, gb, mb, zb, rb, vb, ob bombas que destruyen el mismo color
 			af, gf, mf, zf, rf, vf, of rocas que tiemblan disparan o caen
 		*/
-	function _operator_new(_game){
-		game=_game;
+	function _operator_new(){
 		map=[
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," ","r","r"," "," "," "," "," "],
@@ -34,11 +33,10 @@ class Level8{
 			[" "," "," "," "," "," "," "," "," "," "," "],
 			[" "," "," "," "," "," "," "," "," "," "," "]
 		];
-		game.DrawMap(map);
 	}
 	function _operator_delete(){
 		delete map;
-		game.delete_objects();
+		//game.delete_objects();
 	}   
 
 }
