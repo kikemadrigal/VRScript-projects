@@ -1,0 +1,715 @@
+﻿namespace es_tipolisto_arkandroid;
+
+class Game implements App{
+/**
+ * Los tablerso del juego es una matriz de rocas
+ * cada uno de los elementos de la matriz es un string que representa el tipo de ladrillo
+ * por otro lado creamos una matriz tridimensional que representa la fase con los 6 niveles
+ */
+	properties:
+		level=6;
+		first_level=true;
+		text_hud=null;
+		player=null;
+		ball=null;
+
+
+		rocks=[];
+		active_phase = dim([24, 11, 11], null);
+		indestructible_rocks=[];
+		balls=[];
+		capsules=[];
+		meteorites=[];
+		rock_falls=[];
+		enemies=[];
+		level_active=null;
+		board_bg=null;
+		board_ornament=null;
+		ornament_hud=null;
+		lasers=[];
+		timer_game=null;
+		time=0;
+		mode_boss=false;
+		arrow=null;
+		//rock_template=null;
+	virtual _operator_new(_app){
+		//Adorno marcador
+		_ornament_hud=app.NewObject("ornament_hud","GL_Sprite");
+		//_ornament_hud.AddFrame("res/ornament_hud.png",280,app.BOARD_HEIGHT);
+		_ornament_hud.AddFrame("res/ornament-hud.png");
+		_ornament_hud.SetPos(app.BOARD_WIDTH,0);
+		_ornament_hud.SetPriority(app.PRIORITY_BG);
+		ornament_hud=_ornament_hud;
+
+		_arrow=app.NewObject("arrow","GL_Sprite");
+		_arrow.AddFrame("res/arrow.png");
+		_arrow.SetPos(680,55);
+		_arrow.SetSize(30,30, true);
+		//_arrow.SetPriority(app.PRIORITY_BG);
+		arrow=_arrow;
+
+		_board_bg=app.NewObject("board_bg","GL_Sprite");
+		_board_bg.AddFrame("res/level1.png");
+		_board_bg.SetPriority(app.PRIORITY_BG);
+		board_bg=_board_bg;
+
+		_board_ornament=app.NewObject("board_ornament","GL_Sprite");
+		_board_ornament.AddFrame("res/ornament-level.png");
+		_board_ornament.SetPriority(100);
+		board_ornament=_board_ornament;
+
+		//El marcador con las vidas y la puntuciÃ³n
+		_text_hud=app.NewObject("text","GL_Text");
+		_text_hud.SetFont("fonts/Vintage Black.ttf", 12);
+		_text_hud.SetColor(RGB(255,255,0));
+		_text_hud.SetPos(app.BOARD_WIDTH+20,20);
+		text_hud=_text_hud;
+
+		//Player 1
+		_player=app.NewObject("player", "Player", null, [this, app.BOARD_WIDTH/2, app.GetResY()-100, False]);
+		_player.SetVisible(False);
+		_player.SetPriority(APP.PRIORITY_PLAYER);
+		_player.SetPos(app.BOARD_WIDTH/2,app.GetResY()-40);
+		_player.SetVisible(True);
+		player=_player;
+
+		//Creamos la bola
+		//_ball=app.NewObject("ball","Ball",null,[this, app.BOARD_WIDTH/2, app.GetResY()/2]);
+		_ball=app.NewObject("ball","Ball",null,[this]);
+		_ball.SetPriority(APP.PRIORITY_BALL);
+		_ball.SetVisible(True);
+		_ball.SetStop(false);
+		_ball.SetCollision(true);
+		ball=_ball;
+
+		//Ponemos el marcador
+		text_hud.SetVisible(True);
+
+	
+
+		//El timer game nos sirve para llevar un contador de tiempo
+		timer_game=app.NewObject("timer", "GL_Timer");
+		timer_game.SetFrequency(8000);
+		timer_game.SetUserCallBack(this,"OnTimerGame");
+		timer_game.Stop();
+		//Ponemos la música
+		app.resources.PlaySoundGameStart();
+		app.text_game.SetText("Loading capsules");
+		app.Sleep(1);
+		//Creamos 10 capsulas
+		for(_i=0;_i<5;_i++){
+			_capsule_type=capsules_type[Rand(0,sizeof(capsules_type)-1)];
+			_capsule=app.NewObject("capsule","Capsule",null, [this, _capsule_type]);
+			capsules+=[_capsule];
+		}
+		app.text_game.SetText("Loading lasers");
+		app.Sleep(1);
+		//creamos 10 lasers
+		for(_i=0;_i<5;_i++){
+			_laser=app.NewObject("laser","Laser",null, [this,"normal"]);
+			lasers+=[_laser];
+		}
+		//Creamos los rockfalls
+		app.text_game.SetText("Loading Rock falls");
+		app.Sleep(1);
+		for(_i=0;_i<3;_i++){
+			_rockfall=app.NewObject("rockfall","Rockfall",null, [this,"af"]);
+			rock_falls+=[_rockfall];
+		}
+		//creamos las 3 bolas
+		app.text_game.SetText("Loading extra balls");
+		app.Sleep(1);
+		for(_i=0;_i<6;_i++){
+			_ball=app.NewObject("ball"+_i,"Ball",null,[this]);
+			_ball.multiball=true;
+			_ball.incposY=-4;
+			balls+=[_ball];
+		}
+		app.text_game.SetText("Loading enemies");
+		app.Sleep(1);
+		//Cremoas 10 Enemigos
+		for(_i=0;_i<10;_i++){
+			_enemy=app.NewObject("enemy"+_i,"Enemy",null,[this,rand(0,4)]);
+			enemies+=[_enemy];
+		}
+		app.text_game.SetText("Loading meteorites");
+		app.Sleep(1);
+		//Creamos 10 meteoritos
+		for(_i=0;_i<10;_i++){
+			_meteor=app.NewObject("Meteor"+_i,"Meteor",null,[this]);
+			meteorites+=[_meteor];
+		}
+		//Pintamos el nivel
+		ChangeLevel();
+	}
+	
+	
+	virtual _operator_delete(){
+		app.Log("Borrando game");
+		delete_objects();
+		delete text_hud;
+		delete board_bg;
+		delete board_ornament;
+		delete ornament_hud;
+		delete arrow;
+		delete player;
+		delete ball;
+		delete arrow_positions;
+		timer_game.Stop();
+		delete timer_game;
+	}
+
+
+	function draw_HUD(){
+		_message="Screen: "+level;
+		_message="\nHighscore:  \n"+player.high_score+"\nScore: \n"+player.score+"\nLives:  \n"+player.lives;
+		_message+="\nBall speed: "+ball.speed;
+		_message+="\nrocks: "+sizeof(rocks);
+		_message+="\nIdestructible_rocks: "+sizeof(indestructible_rocks);
+		if(player.timer_is_actuve) _message+="\nPower-up: "+player.type+": "+player.time_to_normal;
+		else _message+="\nPower-up: None";
+		_message+="\nBombs: "+player.counter_bombs+", pulsa Ctrl para usarla";
+		_message+="\nEscudos: "+player.shields+", pulsa Shift para usarlos";
+		_message+="\nFrequency: "+GetFPS()+" Ftime: "+GetFTime();
+		//_message+="\nball incX: "+ball.incposX+" incY: "+ball.incposY;
+		//_message+="\ntime: "+time;
+		//_message+="\nplayer x: "+player.GetX()+", y: "+player.GetY();
+		//_message+="\nBall speed: "+ball.speed+" incX: "+ball.incposX+" incY: "+ball.incposY;
+		//_message+="\nNum lasers: "+sizeof(lasers);
+		//_message+="\nNum enemies: "+sizeof(enemies);
+		//_message+="\nRocks: "+sizeof(rocks);
+		//_message+="\nCapsules: "+sizeof(capsules);
+		//_message+="\nBalls: "+sizeof(balls);
+		_message+="\Meteorites: "+sizeof(meteorites);
+		if(mode_boss) _message+="\nBoss life: "+level_active.boss.boss_live;
+		_message+="\nMission: "+missions[level-1];
+		
+		text_hud.SetText(_message);
+		//show_map();
+	}
+
+	function OnTimerGame(_timer){
+		time++;
+		//app.Log("timer_game: "+time);
+		if(time>1000) time=0;
+		draw_HUD();
+		//cada 10 segundos aumnentamos la velocidad de la bola
+		if(time%10==0 && ball.speed<4){
+			ball.speed+=0.5;
+		}
+
+		if(level>6 && level<12) {
+			create_meteor();
+		}else if(level>12 && level<18){
+			create_enemy(rand(0,3));
+		}else if(level>18 && level<24){
+			create_enemy(4);
+		}
+	}
+	
+	
+	function ChangeLevel(){
+		player.SetVisible(false);
+		app.log("Cambiamos al level "+level);
+		delete_objects();
+		if(mode_boss)moes_boss=false;
+		timer_game.Stop();
+		level++;
+		//Posicionamos la flecha
+		arrow.SetPos(arrow_positions[level-1][0],arrow_positions[level-1][1]);
+		//Si el nivel es 1,7, 13 o 19 ponemos la pantalla de carga
+		if(level==1 || level==7|| level==13 || level==19 || first_level){
+			board_bg.RemoveFrames();
+			if(level==1){
+				board_bg.AddFrame("res/phase1.png");
+				loading_rocks_phase(1);
+			}
+			else if(level==7){
+				board_bg.AddFrame("res/phase2.png");
+				loading_rocks_phase(2);
+			}
+			else if(level==13){
+				board_bg.AddFrame("res/phase3.png");
+				loading_rocks_phase(3);
+			}
+			else if(level==19){
+				board_bg.AddFrame("res/phase4.png");
+				loading_rocks_phase(4);
+			}
+			//app.text_game.SetText("Loading rocks fase "+level);
+			//app.Sleep(1);
+			// Si es la primera carga del juego..
+			/*if(first_level){
+				first_level=false;
+				if(level>=0 && level<=6)loading_rocks_phase(1);
+				else if(level>=7 && level<=12)loading_rocks_phase(2);
+				else if(level>=13 && level<=18)loading_rocks_phase(3);
+				else if(level>=19 && level<=24)loading_rocks_phase(4);
+			}
+			else loading_rocks_phase(level);*/
+
+			app.Sleep(1);
+		}
+
+		
+		
+		if(level_active!=null) delete level_active;
+		if(level==6 || level==12 || level==18 || level==24 || level==25) {
+			mode_boss=true;
+			switch (level){
+				case 6:
+					level_active=new Level6(this);
+					break;
+				case 12:
+					level_active=new Level12(this);
+					break;
+				case 18:
+					level_active=new Level18(this);
+					break;
+				case 24:
+					level_active=new Level24(this);
+					break;
+				case 25:
+					app.Log("Vamos a pasar al stado game_over");
+					app._change("player_win");
+					break;
+			}
+		}
+		if(level>0){
+			//app.text_game.SetText("level completed");
+			board_bg.RemoveFrames();
+			board_bg.AddFrame("res/level"+level+".png");
+		}
+		
+
+		draw_map(level);
+
+		app.resources.PlaySoundGameStart();
+		app.gamePaused=true;
+		player.return_normal();
+		player.SetPos(260,410);
+		player.SetVisible(true);
+		ball.return_normal();
+		ball.SetPos(260,350);
+		draw_HUD();
+	}
+
+	function loading_rocks_phase(_phase){
+		_start=0;
+		//app.log("veamos el level "+_level);
+		app.text_game.SetText("Loading rocks phase "+_phase+"...");
+		app.Sleep(1);
+		if(_phase==1) _start=0;
+		else if(_phase==2) _start=6;
+		else if(_phase==3) _start=12;
+		else if(_phase==4) _start=18;
+		else _start=0;
+		//Pintamos el nivel
+		for (_p=_start;_p<_start+6;_p++){
+			//app.text_game.SetText("Loading rocks phase "+_phase+"..."+_p);
+			for (_y=0;_y<11;_y++){
+				for (_x=0;_x<11;_x++){
+					//_rock=create_rock(_x,_y,maps_by_phase[_p][_y][_x]);
+					_capsula_type= maps_by_phase[_p][_y][_x];
+					if (_capsula_type!=" " && _capsula_type!=0 && _capsula_type!=null && _capsula_type!="0"){
+						_rock=app.NewObject("rock","Rock",null, [this, (_x+1)*app.ROCK_WIDTH,(_y+1)*app.ROCK_HEIGHT, _capsula_type]);
+						active_phase[_p][_y][_x]=_rock;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Coge las rocas almacenadas en active_pase, las hace visibles, activa las colisiones, etc
+	 * 
+	 * @param _level neceitamos decirle en nivel de las rocas que queremos mostrar
+	 * 
+	 */
+	function draw_map(_level){
+		for (_y=0;_y<11;_y++){
+			for (_x=0;_x<11;_x++){
+				_rock=active_phase[_level-1][_y][_x];
+				_type=_rock.type;
+				//app.Log("tipo: "+active_phase[_level-1][_y][_x].type);
+				if(_type=="i1" || _type=="i2" || _type=="i3" || _type=="i4" ){
+					_rock.SetVisible(true);
+					_rock.SetStop(false);
+					_rock.SetCollision(true);
+					indestructible_rocks+=[_rock];
+				}else if (_type!=" " && _type!=0 && _type!=null && _type!="0"){ 
+					_rock.SetVisible(true);
+					_rock.SetStop(false);
+					_rock.SetCollision(true);
+					rocks+=[_rock];
+				} 
+			}
+		}
+	}
+
+	function player_die(){
+		if(player.type=="shield") {
+			player.return_normal();
+			return;
+		}
+		app.resources.PlaySoundPlayerDied();
+		player.lives--;
+		//El parámtero indica se tenemos que borrar también las rocas
+		delete_objects(false);
+		timer_game.Stop();
+		ball.SetPos(220,350);
+		ball.return_normal();
+		player.return_normal();
+		player.SetPos(260,410);
+		//Borramos el timer si existe
+		if(player.timer_is_actuve) {
+			delete player.timer_return_normal;
+			player.timer_is_actuve=false;
+		}
+
+		if(mode_boss){
+			level_active.boss.SetPos(app.BOARD_WIDTH/2,40);
+			app.gamePaused=true;
+			level_active.boss.Stop();
+		}
+		
+		if(player.lives<=0){
+			delete_objects();
+			app.resources.PlaySoundGameOver();
+			app.text_game.SetText("Game Over");
+			app.GetEngine().sleep(2000);
+
+			if (app.db.CheckRecord(player.score)){
+				app.gl.Stop();
+				app.GetEngine().AlertDialog("Alert", "new record", 0, null, null);
+				_name_for_new_record=app.db.GetUser();
+				app.db.InsertRecord(_name_for_new_record, player.score);
+				app.gl.Start();
+			}
+			//app.gameOver=True;
+			app._change("game_over");
+			
+		}else{
+			app.gamePaused=True;
+		}
+		draw_HUD();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*******************************************************************************
+	 * 									Creates
+	 *******************************************************************************/
+
+	function create_rock_fall(_x,_y,_type){
+		//_rock_fall=app.NewObject("rockFall","rockFall",null, [this, _x,_y, _type]);
+		_rock_fall=null;
+		for(_i=0;_i<sizeof(rock_falls);_i++){
+			if(rock_falls[_i].GetVisible()==false){
+				//app.log("creado el rock fall "+_type);
+				_rock_fall=rock_falls[_i];
+				_rock_fall.SetVisible(true);
+				_rock_fall.SetStop(false);
+				_rock_fall.SetCollision(true);
+				_rock_fall.SetPos(_x,_y);
+				_rock_fall.set_type(_type);
+				break;
+			}
+		}
+		return _rock_fall;
+	}
+	function show_capsule(_x,_y){
+		//Cogemos una cpsula del array
+		_capsule=capsules[Rand(0,sizeof(capsules)-1)];
+		_capsule.SetVisible(true);
+		_capsule.SetStop(false);
+		_capsule.SetCollision(true);
+		_capsule.SetPos(_x,_y);
+		//app.Log("vamos a mostrar la capsula "+_capsule.type+" "+_capsule.getX()+" "+_capsule.getY());
+	}
+	
+	/**
+	 * Crea una capsula
+	 * 
+	 * @param _x
+	 * @param _y
+	 * @param _with_probability Si queremos que sioempre se cree o con probabilidad
+	 * @param _mode_boss Si queremos que no se cree las capsulas de tipo next level y lasers cuando estemos en modo boss
+	 * 
+	 * @return Capsule
+	 * 
+	 */
+	function create_capsule(_x,_y,_with_probability=true,_mode_boss=false){
+		_capsule=null;
+		if(_with_probability){
+			_number_for_capsule=Rand(0,100);
+			//app.log("Vamos a crear un capsula con probabilidad "+_number_for_capsule+" modo boss "+mode_boss);
+			if(_number_for_capsule<20){
+				for(_i=0;_i<sizeof(capsules);_i++){
+					if(capsules[_i].getVisible()==false){
+						_capsule=capsules[_i];
+						if(mode_boss){
+							if(_capsule.type!="next" && _capsule.type!="laser"){
+								_capsule.SetVisible(true);
+								_capsule.SetStop(false);
+								_capsule.SetCollision(true);
+								_capsule.SetPos(_x,_y);
+							}
+						}else{
+							_capsule.SetVisible(true);
+							_capsule.SetStop(false);
+							_capsule.SetCollision(true);
+							_capsule.SetPos(_x,_y);
+						}
+						break;
+					}
+				}
+				capsules+=[_capsule];
+			}
+		}
+		//Obtenemos la capsula del array pero que esté invisible
+		
+		return _capsule;	
+	}
+	function create_3ball(){
+		for(_i=0;_i<sizeof(balls);_i++){
+			if(balls[_i].GetVisible()==false){
+				_ball=balls[_i];
+				_ball.SetVisible(true);
+				_ball.SetColor(RGB(255,0,0));
+				_ball.SetStop(false);
+				_ball.SetCollision(true);
+				_ball.SetPos(ball.GetX(),ball.GetY());
+				_ball.incposY=-4;
+				break;
+			}
+		}
+	}
+	function create_enemy(_type=0){
+		_enemy=null;
+		for(_i=0;_i<sizeof(enemies);_i++){
+			if(enemies[_i].getVisible()==false){
+				_enemy=enemies[_i];
+				if(_enemy[_i].type==_type){
+					_enemy.SetVisible(true);
+					_enemy.SetStop(false);
+					_enemy.SetCollision(true);
+					break;
+				}else{
+					continue;
+				}
+			}
+		}
+		return _enemy;
+	}
+
+	function create_meteor(){
+		//app.Log("Vamos a crear un meteorito");
+		_meteor=null;
+		for(_i=0;_i<sizeof(meteorites);_i++){
+			if(meteorites[_i].getVisible()==false){
+				//app.Log("encontrado invisible el meteorito "+_i);
+				_meteor=meteorites[_i];
+				_meteor.SetVisible(true);
+				_meteor.SetStop(false);
+				_meteor.SetCollision(true);
+				_meteor.SetPos(Rand(0, app.BOARD_WIDTH-76),10);
+				_meteor.create_type();
+				break;
+			}
+		}
+		return _meteor;
+	}
+
+	function create_laser(_x,_y,_type){
+		_laser=null;
+		//_laser=app.NewObject("laser","Laser",null,[this,_x, _y,_type]);
+		for(_i=0;_i<sizeof(lasers);_i++){
+			if(lasers[_i].getVisible()==false){
+				_laser=lasers[_i];
+				_laser.SetVisible(true);
+				_laser.SetStop(false);
+				_laser.SetCollision(true);
+				_laser.SetPos(_x,_y);
+				_laser.set_type(_type);
+				break;
+			}
+		}
+		lasers+=[_laser];
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*******************************************************************************
+	 * 									Deletes
+	 *******************************************************************************/
+	function delete_enemy(_enemy){
+		if(_enemy.touch_for_die==0){
+			app.resources.PlaySoundEnemyExplosion();
+			_enemy.SetAnimation("enemy-dead");
+			//enemies-=[_enemy];
+		}else{
+			_fx=_enemy.CreateFX("TINT");
+			_fx.Start(1000, RGB(255,0,0));
+			_enemy.touch_for_die--;
+		}
+	
+	}
+	function delete_rock(_rock){
+		//Si 11 tile son 520 pixeles de ancho
+		//    x            100pixeñes 
+		//Borramos el rock del array del nivel
+		//_tiles_in_rowx=app.BOARD_WIDTH/11;
+		//_tiles_in_rowy=app.BOARD_HEIGHT/11;
+		//_tile_x=floor(_rock.GetX()/40);
+		//_tile_y=floor(_rock.GetY()/20);
+		//active_map[_tile_y+1][_tile_x-1]=" ";
+		_rock.SetAnimation("rock-dead");
+		rocks-=[_rock];
+		app.resources.PlaySoundEnemyExplosion();
+		if(sizeof(rocks)<=0 && !mode_boss){
+			ChangeLevel();
+		}
+	}
+	function delete_rock_fall(_rock_fall){
+		//delete _rock_fall;
+		/*_rock_fall.SetVisible(false);
+		_rock_fall.SetStop(true);
+		_rock_fall.SetCollision(false);
+		_rock_fall.SetPos(-100,-100);*/
+		//rock_falls-=[_rock_fall];
+		app.resorces.PlaySoundEnemyExplosion();
+		_rock_fall.SetCurAnimation("rockFall-dead");
+	}
+	function delete_meteor(_meteor){
+		if(_meteor.touch_for_die==0){
+			app.resorces.PlaySoundEnemyExplosion();
+			_meteor.SetAnimation("asteroid-dead");
+			//_meteor.touch_for_die=10;
+		}else{
+			_fx=_meteor.CreateFX("TINT");
+			_fx.Start(1000, RGB(255,0,0));
+			_meteor.touch_for_die--;
+		}
+	}
+
+	function delete_capsule(_capsule){
+		_capsule.SetVisible(false);
+		_capsule.SetStop(true);
+		_capsule.SetCollision(false);
+		_capsule.SetPos(-100,-100);
+		capsules-=[_capsule];
+	}
+
+	function delete_laser(_laser){
+		_laser.SetVisible(false);
+		_laser.SetStop(true);
+		_laser.SetCollision(false);
+		_laser.SetPos(-100,-100);
+		//lasers-=[_laser];
+	}
+
+
+	function delete_objects(delete_rock=true){
+		//borramos todos los rocks cuando pasamos de pantalla
+		if(delete_rock){
+			for(i=0; i<sizeof(rocks);i++)delete  rocks[i];
+			rocks=[];
+			for(i=0; i<sizeof(indestructible_rocks);i++)delete indestructible_rocks[i];
+			indestructible_rocks=[];
+		}
+
+
+		
+		for(i=0; i<sizeof(rock_falls);i++){
+			rock_falls[i].SetVisible(false);
+			rock_falls[i].SetStop(true);
+			rock_falls[i].SetCollision(false);
+			rock_falls[i].SetPos(-100,-100);
+		}
+		for(i=0; i<sizeof(capsules);i++){
+			capsules[i].SetVisible(false);
+			capsules[i].SetStop(true);
+			capsules[i].SetCollision(false);
+			capsules[i].SetPos(-100,-100);
+		} 
+		
+		for(i=0; i<sizeof(balls);i++){
+			balls[i].SetVisible(false);
+			balls[i].SetStop(true);
+			balls[i].SetCollision(false);
+			balls[i].SetPos(-100,-100);
+		}
+		for(i=0; i<sizeof(lasers);i++){
+			lasers[i].SetVisible(false);
+			lasers[i].SetStop(true);
+			lasers[i].SetCollision(false);
+			lasers[i].SetPos(-100,-100);
+		} 
+		
+		for(i=0; i<sizeof(enemies);i++){
+			enemies[i].SetVisible(false);
+			enemies[i].SetStop(true);
+			enemies[i].SetCollision(false);
+			enemies[i].SetPos(-100,-100);
+		}
+		
+		for(i=0; i<sizeof(meteorites);i++){
+			meteorites[i].SetVisible(false);
+			meteorites[i].SetStop(true);
+			meteorites[i].SetCollision(false);
+			meteorites[i].SetPos(-100,-100);
+		} 
+
+
+	}	
+
+
+
+
+
+
+
+}

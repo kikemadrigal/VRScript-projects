@@ -1,0 +1,95 @@
+namespace es_tipolisto_arkandroid;
+
+class Menu implements App{
+	properties:
+		text=null;
+		text2=null;
+
+		bg=null;
+		bg2=null;
+	virtual _operator_new(_app){
+
+		
+		_bg2=app.NewObject("image","GL_Sprite");
+		_bg2.addframe("res/menu_bg2.png");
+		_bg2.SetAlpha(200);
+		_bg2.SetPos(0,0);
+		bg2=_bg2;
+
+		_bg=app.NewObject("image","GL_Sprite");
+		_bg.addFrame("res/menu.png");
+		_bg.SetPos(400,10);
+		bg=_bg;
+	
+		
+		_text=app.NewObject("text","GL_Text");
+		_text.SetFont("fonts/Vintage Black.ttf", 14);
+		_text.SetPos(app.GetResX()/2-_text.GetTextWidth()/2,140);
+		text=_text;
+
+		_text.SetText(_text.getText()+"Los enemigos intentan destruir el sol de nuestra"+
+		"\ngalaxia, y para ello estan construyendo barreras"+
+		"\ndetras de planetas y lunas. Dispones de una nave con"+
+		"\nuna bola de energia y un espejo, rompe las barreras"+
+		"\nenemigas.");
+
+		_text.SetText(_text.getText()+"\n\nThe enemies are trying to destroy the sun of"+
+		"\nour Milky Way galaxy, and to do so they"+
+		"\nare building barriers behind planets and moons."+ 
+		"\nYou have a ship with an energy ball and a mirror; "+
+		"\nbreak through the enemy barriers.");
+
+		_text.SetText(_text.getText()+"\n\nMSX Spain 2026");
+
+		
+		_text2=app.NewObject("text","GL_Text");
+		_text2.SetFont("fonts/Vintage Black.ttf", 14);
+		_text2.SetText("Record        Name        Date\n");
+		//app.GetResX()/2-_text.GetTextWidth()/2
+		_text2.SetPos(40,40);
+		text2=_text2;
+
+		
+		if(app.db==null){
+			app.Log("db es null");
+		}
+		else{
+			_ret=app.db.GetMax10();
+			if(sizeof(_ret)>0){
+				text2.SetText("Record        Name        Date\n");
+				for(i=0;i<sizeof(_ret);i++){
+					name=_ret[i][1];
+					record=_ret[i][2];
+					date=_ret[i][4];
+					text2.Settext(text2.GetText()+String_Format("%06d",Record)+" "+name+","+date+"\n");	
+				}
+			}else{
+				text2.SetText("Sin records");
+			}
+
+
+			_my_name=app.db.GetUser();
+			if(_my_name==null) _my_name="Not name";
+			text2.Settext(text2.GetText()+"\nTu nombre es "+_my_name);
+			_my_record=app.db.get_max_player();
+			if(_my_record==null) _my_record=0;
+			text2.Settext(text2.GetText()+"\nTu record es "+_my_record);
+			text2.Settext(text2.GetText()+"\n\nPress 'space' to continue.");
+			//text2.Settext(text2.GetText()+"\nPress the 'n' to send your high score to the internet.");
+			text2.Settext(text2.GetText()+"\nPulsa 'a' para asignar un nombre.");
+			text2.Settext(text2.GetText()+"\nPulsa 'n' para enviar tu puntuación a internet.");
+			text2.Settext(text2.GetText()+"\nPulsa 'd' y escribe 'Si' para resetear la base de datos.");
+			text2.Settext(text2.GetText()+"\nPulsa 'm' para ver el manual de instrucciones.");
+			text2.Settext(text2.GetText()+"\n\nhttpss://arkandroid.tipolisto.es/");
+		}
+	
+	}
+	
+	virtual _operator_delete(){
+		app.Log("borrando el menu");
+	 	delete text;
+		delete text2;
+		delete bg;
+		delete bg2;
+	}
+}

@@ -1,0 +1,18 @@
+﻿-Cambia el dibjo de 3ball de la capsula a +ball
+
+-Quita el signo de gemini a las i,agenes de las fases
+-Haz lo de separar el send_score y compilarlo a bytes
+
+-enemigos que hacen rutas antes de caer.
+-Enenimos fijos en la pantalla dando vueltas rodeados por bloques.
+
+-Pon el getFtime en enemigos bola y bosses.
+-Parece que se ha corregido la lentitud ccreando solo 1 bola extra
+-has quitado las 3 bolas por el rendimiento
+-Crea una capsula que cree ocas indestructible abajo durante el tiempo
+-En el fondo del boss 1 aparece el simbolo de gemini
+-Cambia el setCollision rect segun el tamaño de las rocas que mata al player con la mas grande
+
+
+
+

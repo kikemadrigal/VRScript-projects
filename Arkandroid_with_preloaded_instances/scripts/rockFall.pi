@@ -1,0 +1,78 @@
+﻿namespace es_tipolisto_arkandroid;
+
+class RockFall implements GL_sprite{
+	properties:
+		game=null;
+		incrementoY=1;
+	virtual _operator_new(_name,_creator,_params){
+		game=_params[0];
+		_type=_params[1];
+		SetVisible(false);
+		SetStop(true);
+		SetCollision(false);
+		Addanimationwithsheet("rockFall-dead","res/rocks.png",0,4,40*0,20*10,40,20);
+		Addanimationwithsheet("default-caible","res/rocks.png",0,0,40*0,20*0,40,20);
+		setAnimation("default-caible");
+	}
+	virtual move(){
+		if(GetCurAnimation() =="rockFall-dead" && GetAnimationLoops()>0){
+			//Destroy();
+			SetVisible(false);
+			SetStop(true);
+			SetCollision(false);
+			SetCurAnimation("default-caible");
+			return;
+		} 
+		incpos(0,incrementoY);
+		if(GetY()>GetApp().BOARD_HEIGHT) game.app.delete_rock_fall(this);
+	}
+
+	function set_type(_type){
+		type=_type;
+		switch(_type){
+			/**
+			 * Rocas caibles de caer al suelo
+			 */
+			case "af":{
+				Addanimationwithsheet("amarillo-caible","res/rocks.png",0,0,40*0,20*0,40,20);
+				setAnimation("amarillo-caible");
+				break;
+			}
+			case "gf":{
+				Addanimationwithsheet("gris-caible","res/rocks.png",0,0,40*1,20*0,40,20);
+				setAnimation("gris-caible");
+				break;
+			}
+			case "mf":{
+				Addanimationwithsheet("lila-caible","res/rocks.png",0,0,40*2,20*0,40,20);
+				setAnimation("lila-caible");
+				break;
+			}
+			case "rf":{
+				Addanimationwithsheet("rojo-caible","res/rocks.png",0,0,40*3,20*0,40,20);
+				setAnimation("rojo-caible");
+				break;
+			}
+			case "vf":{
+				Addanimationwithsheet("verde-caible","res/rocks.png",0,0,40*4,20*0,40,20);
+				setAnimation("verde-caible");
+				break;
+			}
+			case "zf":{
+				Addanimationwithsheet("azul-caible","res/rocks.png",0,0,40*5,20*0,40,20);
+				setAnimation("azul-caible");
+				break;
+			}
+			case "of":{
+				Addanimationwithsheet("azulclaro-caible","res/rocks.png",0,0,40*6,20*0,40,20);
+				setAnimation("azulclaro-caible");
+				break;
+			}
+			case "bf":{
+				Addanimationwithsheet("boss-caible","res/rocks.png",0,0,40*3,20*0,20,20);
+				setAnimation("boss-caible");
+				break;
+			}
+		}	
+	}
+}

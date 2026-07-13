@@ -1,0 +1,78 @@
+namespace es_tipolisto_arkandroid;
+
+/*
+    Boss 1 El fabrica rocas
+ */
+class Boss1 implements GL_sprite{
+	properties:
+		incrementoX=2;
+		incrementoY=0;
+		game=null;
+  
+        boss_live=50;
+        boss_dead=false;
+
+     
+        count_timer=0;
+        count_press=0;
+
+	virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+        Addanimationwithsheet("boss2-idle","res/bosses.png",0,0,80*0,80*1,80,80,-1,-1,-1,0.2);
+        Addanimationwithsheet("boss2-die","res/bosses.png",0,4,80*0,80*4,80,80,-1,-1,-1,0.2);
+		Setanimation("boss2-idle");
+        SetCollision(True);
+        SetPos(game.app.BOARD_WIDTH/2,40);
+    }
+    virtual _operator_delete(){
+        game.delete_objects();
+    }
+
+	virtual Move(){   
+        if(game.app.gamePaused) return;
+        if(boss_dead){
+            if(GetAnimationLoops()>0 && count_press==0) {
+                game.GetEngine().LogPrint("boss dead change stage");
+                count_press++;
+                SetAnimationSpeedFactor(0);
+                SetColor(RGB(255,0,0));
+
+                game.ChangeLevel();
+                boss_dead=false;
+                return;
+            }
+        }else{
+            if(boss_live<=0){
+                SetAnimation("boss2-die");
+                SetCollision(false);
+                boss_dead=true;
+            }else{
+                //Vamos creando y lanzando meteroitos al player
+                if(GetX()<0 || GetX()>game.app.BOARD_WIDTH-GetWidth()){
+                    incrementoX=-incrementoX;
+                }
+
+                if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth() ){
+                   if(count_timer==0){
+                    _rock=game.create_meteor();
+                    _rock.SetPos(GetX(), GetY());
+                   }
+                    count_timer++;
+                }else{
+                    count_timer=0;
+                }
+                if(GetY()>200){
+                    incrementoY=-0.2;
+                }else if(GetY()<50){
+                    incrementoY=0.2;
+                }
+                incPos(incrementoX, incrementoY);
+            }
+        }
+	}
+
+
+
+
+
+}

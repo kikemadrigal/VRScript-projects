@@ -1,0 +1,85 @@
+namespace es_tipolisto_arkandroid;
+
+/*
+    Boss 1 El fabrica rocas
+ */
+class Boss1 implements GL_sprite{
+	properties:
+		incrementoX=2;
+		incrementoY=0;
+		game=null;
+        boss_live=50;
+        boss_dead=false;
+     
+        count_timer=0;
+        count_press=0;
+	virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+        //80 pixeloes de ancho y 80 de alto
+        Addanimationwithsheet("boss1-idle","res/bosses.png",0,0,80*0,80*0,80,80,-1,-1,-1,0.2);
+        Addanimationwithsheet("boss1-die","res/bosses.png",0,7,80*0,80*4,80,80,-1,-1,-1,0.2);
+		Setanimation("boss1-idle");
+        SetCollision(True);
+        SetPos(GetApp().BOARD_WIDTH/2,40);
+    }
+    virtual _operator_delete(){
+        //SetVisible(false);
+        //SetCollision(false);
+        game.delete_objects();
+    }
+
+	virtual Move(){   
+        if(GetApp().gamePaused) return;
+        if(boss_dead){
+            if(GetAnimationLoops()>0 && count_press==0) {
+                game.GetEngine().LogPrint("boss dead change stage");
+                count_press++;
+                SetAnimationSpeedFactor(0);
+                SetCurAnimation("boss1-idle");
+                SetVisible(false);
+                SetCollision(false);
+                boss_live=10;
+                SetColor(RGB(255,0,0));
+                boss_dead=false;
+                game.ChangeLevel();
+               
+                return;
+            }
+        }else{
+            if(boss_live<=0){
+                SetAnimation("boss1-die");
+                SetCollision(false);
+                boss_dead=true;
+            }else{
+               //Vamos creando y lanzando ladrillos al player
+                if(GetX()<0 || GetX()>GetApp().BOARD_WIDTH-GetWidth()){
+                    incrementoX=-incrementoX;
+                }
+
+                if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth() ){
+                   if(count_timer==0){             
+                        game.Create_laser(GetX()+20, GetY()+GetHeight()+10, "enemy");
+                        //bf es la roca del bossue lanza el boss 1
+                        //game.Create_rock_fall(GetX()+20, GetY()+GetWF()+100, "bf");
+                        //game.Create_rock_fall(GetX()+20, 40, "bf");
+                   }
+                     count_timer++;
+                }else{
+                    count_timer=0;
+                }
+                if(GetY()>200){
+                    incrementoY=-0.2;
+                }else if(GetY()<50){
+                    incrementoY=0.2;
+                }
+                
+                incPos(incrementoX, incrementoY);
+            }
+        }
+	}
+
+
+
+
+
+}

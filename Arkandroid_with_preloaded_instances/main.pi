@@ -1,0 +1,233 @@
+﻿/**
+ * @name Arkandroid  
+ * 
+ * @author MSX spain 2026
+ * @version 1.0
+ */
+
+class Main implements GL_Program partial myConstants{
+
+
+	properties:
+		pad=null;
+   		menu=null;
+		winner=null;
+		manual=null;
+		game=null;
+		gameOver=True;
+		gamePaused=False;
+	
+		resources=null;
+		db=null;
+	
+		text_game=null;
+		//music_menu=null;
+		//music_winner=null;
+		record_user=0;
+	virtual Start()
+	{
+		AddScriptPackage("scripts");
+		// Configuraciones bÃ¡sicas de color de fondo, tamaÃ±o pantalla..
+		SetBackColor(RGB(0,0,0));
+		// 25x20 cuadraditos de 32px
+		SetResolution(800,450);
+		// -1 Ajusta l apantalla en horizontal
+		// -2 Ajusta la pantalla en vertical
+		// -3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-3,True);
+		//el sistema intenta sincronizar el dibujado con el refresco del monitor
+		//SetVSync(True);
+		SetFrameRate(60);
+		
+		// En juegos con mucha lógica o creación compleja de escenarios, 
+		// es recomendable activar este modo para evitar compartir ciclos de CPU
+		SetBackgroundMode(true);
+ 		SETANISPEEDFACTOR(2);
+		//Configuraciones del pad
+		//_pad=NewObject("pad","GL_Pad");
+		_pad=NewPad("pad");
+		_pad.SetPreset("CURSORS");
+		//_pad.SetPreset("JOYSTICK1",1);
+		//PAD_BUTTON_1 hasta PAD_BUTTON_16 (ver el move del player)
+		//1.disparo
+		_pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_SPACE);
+		//2 .Lanzar bomba
+		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_LCONTROL);
+		//3. Protegerse con escudo
+		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_LSHIFT);
+		//4. cambiar de nivel con la tecla TAB
+		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_TAB);
+		//5. Borrar los records
+		_pad.SetButton(PAD_BUTTON_5,0,PAD_MODE_KEYBOARD,KEY_D);
+		//6. Con la tecla N enviamos la putuación a internet
+		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_N);
+		//7. Con la tecla M vemos el manual
+		_pad.SetButton(PAD_BUTTON_7,0,PAD_MODE_KEYBOARD,KEY_M);
+		//8. Salir
+		_pad.SetButton(PAD_BUTTON_8,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
+		//9. Pausa
+		_pad.SetButton(PAD_BUTTON_9,0,PAD_MODE_KEYBOARD,KEY_P);
+		//10. al pulsar la tecla a se actualiza el nombre
+		_pad.SetButton(PAD_BUTTON_10,0,PAD_MODE_KEYBOARD,KEY_A);
+		
+		pad=_pad;
+
+		//Activamos los recuadritos de los sprites para ver si se hacen bien las colisiones
+		//GetActiveStage().SetDebug(True);
+
+		//Inicializamos la base de datos
+		db=new Db(this);
+		//El texto que aparece para pulse espacio o game over
+		_text_game=NewObject("text","GL_Text");
+		_text_game.SetFont("fonts/Vintage Black.ttf", 18);
+		_text_game.SetPos(BOARD_WIDTH/2-50, GetResY()-200);
+		text_game=_text_game;
+
+		//MÃºsica y efectos
+		//Cargamos la música y sonidos
+		resources=new resources(this);
+		resources.PlayMusicMenu();
+		//Creamos el menu
+		menu=new Menu(this);
+		
+		_change ("menu");
+	}
+
+	state "menu":{
+		Log("Estamos en el estado de menu");
+		if(pad.IsButtonDown(PAD_BUTTON_1)){
+			Log("Pulsamos en play y passamos al estado de game");
+			gameOver=False;
+			resources.stopMusicMenu();
+			Gl.Stop();
+			delete menu;
+			game=new Game(this);
+			gamePaused=true;
+			Gl.Start();
+			_change ("game");
+		//Con la tecla D borramos (la 5) la base de datos
+		}else if(pad.IsButtonDown(PAD_BUTTON_5)){
+			Log("pulsada la tgecla d para borrar la vase de datos");
+			_res=GetEngine().InputDialogModal("Escribe Si para resetar la base de datos","",View.AD_OK,"");
+			if(_res=="Si"){
+				db.DeleteRecords();
+				db.DeleteUserRecord();
+				db.InsertFakeRecords();
+				delete menu;
+				_menu=new Menu(this);
+				menu=_menu;
+			}
+		//Con ls tecla N (la 6) enciamos la puntuación a internet
+		}else if(pad.IsButtonDown(PAD_BUTTON_6)){
+			Log("pulsada la tgecla N enciamos la puntuación a internet");
+			send_record();
+		//Con ls tecla M (la 6) vemos el manual
+		}else if(pad.IsButtonDown(PAD_BUTTON_7)){
+			Log("pulsada la tgecla m vemos el manual");
+			delete menu;
+			_manual=new Manual(this);
+			manual=_manual;
+		}else if(pad.IsButtonDown(PAD_BUTTON_8)){
+			Log("pulsada la tgecla escape volvemos al menú");
+			delete manual;
+			_menu=new Menu(this);
+			menu=_menu;
+		//Al pulsar la tecla a se adigna un nombre
+		}else if(pad.IsButtonDown(PAD_BUTTON_10)){
+            _textModal="Escribe tu nombre";
+            _name_user="";
+            do{
+                _name_user=GetEngine().InputDialogModal(_textModal,"",View.AD_OK,"");
+                _textModal="El nombre no puede estar vacío ni ser menor de 4 caracteres";
+            }while(_name_user=="" || strlen(_name_user)<=3);
+			db.UpdateUser(_name_user);
+			delete menu;
+			_menu=new Menu(this);
+			menu=_menu;
+		}
+	}
+
+	state "winner"{
+		Log("Estamos en el estado de winner");
+		if(pad.IsButtonDown(PAD_BUTTON_1)){
+			Log("Pulsamos en play y passamos al estado de menu");
+			Gl.Stop();
+			menu=new Menu(this);
+			delete winner;
+			resources.stopMusicWinner();
+			resources.playMusicMenu();
+			Gl.Start();
+			resources.playMusicMenu();
+			_change ("menu");
+		}
+	}
+
+	state "player_win"{
+		Log("Player win, borrado game");
+		//Tenemos que para todos los objetos globales, pararlas y destruirlas
+		Gl.Stop();
+		winner=new Winner(this);
+		if(game!=null) delete game;	
+		Gl.Start();
+		gameOver=true;
+		resources.PlayMusicWinner();
+		_change ("winner");
+	}
+
+	state "game_over"{
+		Log("Game Over, borrado game");
+		//Tenemos que para todos los objetos globales, pararlas y destruirlas
+		Gl.Stop();
+		if(game!=null) delete game;
+		menu=new Menu(this);
+		Gl.Start();
+		gameOver=true;
+		resources.PlayMusicMenu();
+		_change ("menu");
+	}
+
+	
+	state "game"{
+		if(gamePaused){
+			text_game.Settext("Press space");
+			game.ball.SetPos(game.player.GetX()+game.player.GetWidth()/2,game.player.GetY()-game.ball.GetHeight()-105);
+			if(pad.IsButtonDown(PAD_BUTTON_1)){
+				gamePaused=False;
+				text_game.Settext("");
+				game.timer_game.Start();
+				if(game.mode_boss) game.level_active.boss.Start();
+				game.timer_game.Start();
+				
+			}
+		}
+	}
+		
+	function Log(_message){
+		GetEngine().LogPrint(_message);
+	}
+
+
+	function send_record(){
+		text_game.SetVisible(True);
+        _http=GetEngine().CreateHTTPManager();
+        _name=db.GetUser();
+		if(_name=="Not name found") GetEngine().AlertDialog("Alert", "Desbes de poner un nombre,pulsa la tecla A\nYou must enter a name, press the A key", 0, null, null);
+		else{
+			//mostramos un formaulario para que introduzca su nombre
+			_score=db.get_max_player();
+			//Hacemos la petición al servidor
+			_ret=_http.GetString("https://games.tipolisto.es/api/arkandroid-savescore.php?score="+_score+"&name="+_name+"&game=arkandroid");
+			Log("enviando score de "+_name+" con un score de "+_score);
+			text_game.SetText("Server response: "+_ret);
+			text_game.SetText("");
+			text_game.SetPos(100, 10);
+			Log("Respuesta del servidor: "+_ret);
+			GetEngine().Sleep(2000);
+			text_game.SetVisible(False);
+			delete _http;
+		}
+
+	}
+
+
+ }
