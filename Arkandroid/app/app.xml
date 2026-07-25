@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<icon name="app.png" />
+<description 
+bundle="es_tipolisto_arkandroid"
+name="Arkandroid"
+developer="MSX Spain"
+date="01/08/2026" 
+/>
+<application 
+name="main.pi" 
+/>

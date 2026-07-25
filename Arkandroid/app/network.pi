@@ -1,0 +1,27 @@
+
+class Network implements App{
+
+    virtual _operator_new(_app){ }
+
+    function send_record(){
+		app.text_game.SetVisible(True);
+        _http=app.GetEngine().CreateHTTPManager();
+        _name=app.db.GetUser();
+		if(_name=="Not name found") app.GetEngine().AlertDialog("Alert", "Desbes de poner un nombre,pulsa la tecla A\nYou must enter a name, press the A key", 0, null, null);
+		else{
+			//mostramos un formaulario para que introduzca su nombre
+			_score=app.db.get_max_player();
+			//Hacemos la petición al servidor
+			_ret=_http.GetString("https://games.tipolisto.es/api/arkandroid-savescore.php?score="+_score+"&name="+_name+"&game=arkandroid");
+			app.Log("enviando score de "+_name+" con un score de "+_score);
+			app.text_game.SetText("Server response: "+_ret);
+			app.text_game.SetText("");
+			app.text_game.SetPos(100, 10);
+			app.Log("Respuesta del servidor: "+_ret);
+            app.GetEngine().AlertDialog("Alert", _ret, 0, null, null);
+			app.GetEngine().Sleep(2000);
+			app.text_game.SetVisible(False);
+			delete _http;
+		}
+	}
+}

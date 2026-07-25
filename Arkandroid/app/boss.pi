@@ -1,0 +1,152 @@
+namespace es_tipolisto_arkandroid;
+
+/*
+    Boss 1 El fabrica rocas
+ */
+class Boss implements GL_sprite{
+	properties:
+		incrementoX=2;
+		incrementoY=0;
+		game=null;
+  
+        boss_live=20;
+        boss_dead=false;
+
+     
+        count_timer=0;
+        count_press=0;
+
+        type=1;
+
+	virtual _operator_new(_name,_creator, _params){
+        game=_params[0];
+        Addanimationwithsheet("boss-die","res/bosses.png",0,8,80*0,80*4,80,80,-1,-1,-1,0.2);
+        Addanimationwithsheet("boss1-idle","res/bosses.png",0,0,80*0,80*0,80,80,-1,-1,-1,0.2);
+        Addanimationwithsheet("boss2-idle","res/bosses.png",0,0,80*0,80*1,80,80,-1,-1,-1,0.2);
+        Addanimationwithsheet("boss3-idle","res/bosses.png",0,0,80*0,80*2,80,80,-1,-1,-1,0.2);
+        Addanimationwithsheet("boss4-idle","res/bosses.png",0,0,80*0,80*3,80,80,-1,-1,-1,0.2);
+		Setanimation("boss1-idle");
+        SetVisible(false);
+		SetStop(true);
+		SetCollision(false);
+        SetCollisionRect(20,20,40,40);
+        SetPos(game.app.BOARD_WIDTH/2,40);
+        SetType(PRIORITY_BOSS);
+        SetPriority(PRIORITY_BOSS);
+    }
+    function create_type(_type){
+        ResetAnimation();
+        type=_type;
+        switch(_type){
+            case 1:
+                SetCurAnimation("boss1-idle");
+                break;
+            case 2:
+                SetCurAnimation("boss2-idle");
+                break;
+            case 3:
+                SetCurAnimation("boss3-idle");
+                break;
+            case 4:
+                SetCurAnimation("boss4-idle");
+                break;
+        }
+    }
+    virtual _operator_delete(){
+        //game.delete_objects();
+        //RemoveAnimations();
+    }
+
+	virtual Move(){   
+        if(game.app.gamePaused) return;
+        if(boss_dead){
+            if(GetAnimationLoops()>0 && count_press==0) {
+            //if(GetAnimationLoops()>0) {
+                game.GetEngine().LogPrint("boss dead change stage");
+                count_press++;
+                //SetAnimationSpeedFactor(0);
+                SetColor(RGB(255,0,0));
+                SetCollision(false);
+                SetVisible(false);
+                SetStop(true);
+                game.change_level();
+                boss_dead=false;
+                return;
+            }
+        }else{
+            if(boss_live<=0){
+                SetAnimation("boss-die");
+                
+                boss_dead=true;
+            }else{
+                //Vamos creando y lanzando meteroitos al player
+                if(GetX()<0 || GetX()>game.app.BOARD_WIDTH-GetWidth()){
+                    incrementoX=-incrementoX;
+                }
+
+                if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth() ){
+                    if(count_timer==0){
+                       if(type==1){
+                            if(!game.exist_meteorite()) game.Create_rock_fall(GetX()+20, GetY()+GetHf()+2, "bf"); 
+                        }else if(type==2){
+                            _rock=game.create_meteor();
+                            _rock.SetPos(GetX(), GetY());
+                        }else if(type==3){
+                            if(!game.exist_enemies()){
+                                _rock=game.create_enemy(Rand(0,3));
+                                _rock.SetPos(GetX(), GetY()+GetHeight()+10);
+                                game.create_laser(GetX()+20, GetY()+GetHeight()+10,"enemy");
+                            }
+                        }else if(type==4){
+                             brhaviour_type4();
+                        }
+                    
+                    }
+                    count_timer++;
+                }else{
+                    count_timer=0;
+                }
+
+
+                if(GetY()>200){
+                    incrementoY=-0.2;
+                }else if(GetY()<50){
+                    incrementoY=0.2;
+                }
+                incPos(incrementoX, incrementoY);
+            
+            }
+        }
+	}
+
+    function brhaviour_type4(){
+         _enemy_type=Rand(0,3);
+        switch(_enemy_type){
+            case 0:
+               // getEngine().Logprint("Creamos un meteorito");
+                if(!game.exist_meteorite()) game.Create_rock_fall(GetX()+20, GetY()+GetHf()+2, "bf"); 
+                break;
+            case 1:
+                //getEngine().Logprint("Creamos enemigo del 0 al 3");
+                if(!game.exist_enemies()){
+                    //getEngine().Logprint("Creamos enemigo del 0 al 3");
+                    _enemy=game.create_enemy(Rand(0,3));
+                    _enemy.SetPos(GetX(), GetY());
+                }
+                    break;
+            case 2:
+               /*getEngine().Logprint("Creamos enemigo 4");
+                if(!game.exist_enemies()){
+                    _enemy=game.create_enemy(4);
+                    _enemy.SetPos(GetX(), GetY());
+                }*/
+                 _rock=game.create_meteor();
+                _rock.SetPos(GetX(), GetY());
+                break;
+            case 3:
+                //getEngine().Logprint("Creamos un laser");
+                game.create_laser(GetX()+20, GetY()+GetHeight()+10,"enemy");
+                break;
+        }
+    }
+}

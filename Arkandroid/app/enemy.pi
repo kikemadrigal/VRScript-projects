@@ -1,0 +1,147 @@
+﻿namespace es_tipolisto_arkandroid;
+
+class Enemy implements GL_sprite {
+  properties : 
+    speedX = 2;
+    speedY = 0;
+    type=0;
+    //type= null;
+    game=null;
+    count=0;
+    touch_for_die=5;
+  virtual _operator_new(_name, _creator, _params) {
+    game= _params[0];
+		SetVisible(false);
+		SetStop(true);
+		SetCollision(false);
+    SetType(PRIORITY_ENEMY);
+    SetPriority(PRIORITY_ENEMY);
+    Addanimationwithsheet("enemy-dead","res/enemies.png",0,8,0,3*62,62,62,-1,-1,-1,.2);
+    Addanimationwithsheet("enemy-normal1","res/enemies.png",0,0,0,0,62,62,-1,-1,-1,.2);
+    Addanimationwithsheet("enemy-normal2","res/enemies.png",1,1,0,0,62,62,-1,-1,-1,.2);
+    Addanimationwithsheet("enemy-normal3","res/enemies.png",2,2,0,0,62,62,-1,-1,-1,.2);
+    Addanimationwithsheet("enemy-normal4","res/enemies.png",3,3,0,0,62,62,-1,-1,-1,.2);
+    Addanimationwithsheet("enemy-normal5","res/enemies.png",4,4,0,0,62,62,-1,-1,-1,.2);
+    SetAnimation("enemy-normal1");
+    SetSize(GetApp().ROCK_WIDTH, GetApp().ROCK_HEIGHT, true);
+  }
+
+  virtual Move() { 
+    if(GetCurAnimation() =="enemy-dead" && GetAnimationLoops()>0){
+      SetVisible(false);
+			SetStop(true);
+			SetCollision(false);
+		}else{
+      incpos(speedX, speedY);
+      if(type>=0 && type<=3) {
+        behavior_normal();
+        //can_move_horizontal();
+      }
+      else if(type==4) behavior_leftRight();
+    }
+
+  }
+
+  function set_type(_type){
+    type=_type;
+    ResetAnimation();
+    switch(_type){
+      case 1:
+        SetCurAnimation("enemy-normal1");
+        break;
+      case 2:
+        SetCurAnimation("enemy-normal2");
+        break;
+      case 3:
+        SetCurAnimation("enemy-normal3");
+        break;
+      case 4:
+        SetCurAnimation("enemy-normal4");
+        break;
+    }
+    
+    if(_type>=0 && _type<=3){
+			_x=Rand(0, GetApp().BOARD_WIDTH-76);
+			_y=40;
+      speedY=2;
+		}else if(_type==4){
+			_x=20*3;
+      _y=Rand(20, GetApp().BOARD_HEIGHT-400);
+		}
+    SetPos(_x,_y);
+  }
+
+  function can_move_horizontal(){
+    _tile_x=floor(GetX()/40);
+    _tile_y=floor(GetY()/20);
+    
+    //Obtenemos el tipo de celda en la que se encuentra el enemigo
+    _rock_vertical=game.active_phase[game.level-1][_tile_y+1][_tile_x];
+    if(_rock_vertical==null)setY(GetY()+1);
+
+  }
+  function behavior_normal(){
+    if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth()){
+      if(count==0 ) {
+        game.create_laser(GetX()+20, GetY()+GetHeight()+10,"enemy");
+      }
+      count++;
+    }    
+    else {
+      count=0;
+    }
+    //Va rbotando en los bordes
+    if(GetX() < 20 || GetX() > GetApp().BOARD_WIDTH-GetWidth()) speedX = -speedX; 
+    if(GetY() < 100 ) speedY = 0.2;
+    else if( GetY() > 200) speedY=-0.2;
+    //getEngine().logprint(" "+GetY());
+  }
+
+  function behavior_leftRight(){
+    //Si se sale de la pantalla los borramos
+    if(GetX() < 20 || GetX() > GetApp().BOARD_WIDTH-GetWidth()-20){
+      speedX=-speedX;
+      return;
+    }
+    if(game.player.GetX() > GetX() && game.player.GetX() < GetX()+GetWidth()){
+      if(count==0) game.create_laser(GetX()+20, GetY()+GetHeight()+10,"enemy");
+       count++;
+    }    
+    else count=0;
+  }
+
+  function SetRouteZigZag(_x,_y){
+    _ruta=GetApp().NewObject("ruta","GL_Route");
+    _ruta.AddNode(_x, _y);
+    _ruta.AddNode(_x - 200, _y - 100);
+    _ruta.AddNode(_x - 400, _y + 100);
+    _ruta.AddNode(_x - 600, _y - 100);
+    _ruta.AddNode(_x - 800, _y + 100);
+    _ct=GetApp().NewObject("controller", "GL_Controller");
+    _ct.SetSpeed(3.0f, 3.0f);
+    SetRoute(_ruta, GL_Route.MODE_LOOP);
+  }
+
+  function SetRouteRightToLeft() {
+    _x = GetApp().GetCameraX() + GetApp().GetResX() + 100;
+    _ruta = GetApp().NewObject("ruta", "GL_Route");
+    _ruta.AddNode(_x, 400);
+    _ruta.AddNode(_x - 200, 300);
+    _ruta.AddNode(_x - 500, 200);
+    _ruta.AddNode(_x, 400);
+    //_ct=CreateController();
+    //_ct.SetSpeed(3.0f, 3.0f);
+    SetRoute(_ruta, GL_Route.MODE_LOOP);
+  }
+
+  function create_square_movement(_x, _y) {
+    _ruta = GetApp().NewObject("ruta", "GL_Route");
+    _ruta.AddNode(_x, _y);
+    _ruta.AddNode(_x + 600, _y);
+    _ruta.AddNode(_x + 600, _y - 100);
+    _ruta.AddNode(_x, _y - 100);
+    _ct = GetApp().NewObject("controller", "GL_Controller");
+    _ct.SetSpeed(2.0f, 2.0f);
+    _ct.SetRoute(_ruta, GL_Route.MODE_ENDFIX);
+  }
+}

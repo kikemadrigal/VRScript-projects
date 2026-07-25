@@ -1,0 +1,7 @@
+﻿
+-crea el moviemiento en los enemigos 0-3, que sea si hay u rock que es niulo que baje, ponle movimiento 1 por ejemplo
+-2 el boss 1 no saccas mas brick falls cuando termina el pool
+-enemigos que hacen rutas antes de caer.
+-Enenimos fijos en la pantalla dando vueltas rodeados por bloques.
+-Pon el getFtime en enemigos bola y bosses.
+-Crea una capsula que cree ocas indestructible abajo durante el tiempo

@@ -1,0 +1,72 @@
+namespace es_tipolisto_arkandroid;
+
+class Laser implements GL_sprite{
+	properties:
+		game=null;
+		type="normal";
+		incrementoY=0;
+	virtual _operator_new(_name,_creator,_params){
+		game=_params[0];
+		//_x=_params[1];
+		//_y=_params[2];
+		//type=_params[1];
+		AddEmptyframe(5,10);
+		SetColor(RGB(255,255,0));
+		SetVisible(false);
+		SetStop(true);
+		SetCollision(false);
+		SetType(PRIORITY_LASER);
+        SetPriority(PRIORITY_LASER);
+		Setcollidermode(true);	
+		//if(type=="normal") incrementoY=-5;
+		//else if(type=="enemy") incrementoY=1;
+	}
+	virtual Move(){
+		incpos(0,incrementoY);
+		
+		if(GetY()<0 || GetY()>GetApp().BOARD_HEIGHT){
+			game.delete_laser(this);
+		}
+	}
+
+
+    function OnSpriteCollision(_self, _spr){
+		if(	_spr.GetType()==PRIORITY_BALL || 
+			_spr.GetType()==PRIORITY_LASER ||
+			_spr.GetType()==PRIORITY_CAPSULE) return;
+		else if(_spr.GetType()==PRIORITY_ROCK && type=="enemy") return;
+		else if(_spr.GetType()==PRIORITY_ENEMY && type=="normal"){
+			game.delete_enemy(_spr);
+			game.draw_HUD();
+		}
+        else if(_spr.GetType()==PRIORITY_ROCK && type=="normal"){
+			IF(_spr.type!="i1" && _spr.type!="i2" && _spr.type!="i3" && _spr.type!="i4"){
+				game.delete_rock(_spr);
+           	 	game.draw_HUD();
+			}
+        }
+		else if(_spr.GetType()==PRIORITY_ROCKFALL ){
+			game.delete_rock_fall(_spr);	
+		}
+		else if(_spr.GetType()==PRIORITY_METEOR ){
+			game.delete_meteor(_spr);	
+		}
+		else if(_spr.GetType()==PRIORITY_PLAYER && type=="enemy"){
+			game.player_die();
+		}
+
+		//getApp().Log("Colision con "+", "+type+", "+_spr.GetType()+", "+class_id(_spr));
+		//Destroy();
+		//game.lasers-=[this];
+		game.delete_laser(this);
+    }
+	function set_game(_game){
+		game=_game;
+	}
+
+	function set_type(_type){
+		type=_type;
+		if(type=="normal") incrementoY=-5;
+		else if(type=="enemy") incrementoY=1;
+	}
+}

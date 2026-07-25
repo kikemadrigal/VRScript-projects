@@ -1,0 +1,33 @@
+namespace matrix_effect;
+
+class Main implements GL_Program
+{
+    virtual Start()
+    {
+        // Configuración básica del entorno [29-31]
+        SetBackColor(RGB(0, 0, 0));
+        SetBgColor(RGB(0, 0, 0));
+        SetResolution(256, 212); // Resolución retro estándar [30, 32]
+        SetViewScale(-3); // Ajuste a pantalla completa [32, 33]
+        SetVSync(true);
+        SetFrameRate(60); 
+
+        // Crear y activar el escenario [26, 34]
+        //_stage = NewStage("matrix_stage");
+        //_stage.SetActive();
+
+        // Llenar la pantalla con columnas [35, 36]
+        _numColumns = GetResX() / 10;
+        for (i = 0; i < _numColumns; i++)
+        {
+            _x = i * 10;
+            _y = rand(-200, 0); // Posición inicial escalonada [14]
+            _speed = frand(0.1, 0.5); // Velocidades variadas [14]
+            
+            // Creamos la instancia del objeto personalizado [26, 37]
+            NewObject("col" + string(i), "MatrixColumn", null, [_x, _y, _speed]);
+        }
+
+        ::Start(); // Inicia la ejecución de todos los objetos [38, 39]
+    }
+}

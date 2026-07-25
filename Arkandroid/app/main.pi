@@ -1,0 +1,223 @@
+﻿/**
+ * @name Arkandroid  
+ * 
+ * @author MSX spain 2026
+ * @version 1.4
+ */
+
+class Main implements GL_Program partial myConstants{
+
+
+	properties:
+		pad=null;
+   		menu=null;
+		winner=null;
+		manual=null;
+		game=null;
+		gameOver=True;
+		gamePaused=False;
+	
+		resources=null;
+		db=null;
+		network=null;
+
+		text_game=null;
+		record_user=0;
+	virtual Start()
+	{
+		//AddScriptPackage("scripts");
+		// Configuraciones bÃ¡sicas de color de fondo, tamaÃ±o pantalla..
+		SetBackColor(RGB(0,0,0));
+		// 25x20 cuadraditos de 32px
+		SetResolution(800,450);
+		// -1 Ajusta l apantalla en horizontal
+		// -2 Ajusta la pantalla en vertical
+		// -3 Ajuste puede que no proporcional a pantalla completa
+		SetViewScale(-3,True);
+		//el sistema intenta sincronizar el dibujado con el refresco del monitor
+		//SetVSync(True);
+		SetFrameRate(120);
+		
+		// En juegos con mucha lógica o creación compleja de escenarios, 
+		// es recomendable activar este modo para evitar compartir ciclos de CPU
+		SetBackgroundMode(true);
+ 		//SETANISPEEDFACTOR(2);
+		//Configuraciones del pad
+		//_pad=NewObject("pad","GL_Pad");
+		_pad=NewPad("pad");
+		_pad.SetPreset("CURSORS");
+		//_pad.SetPreset("JOYSTICK1",1);
+		//PAD_BUTTON_1 hasta PAD_BUTTON_16 (ver el move del player)
+		//1.disparo
+		_pad.SetButton(PAD_BUTTON_1,0,PAD_MODE_KEYBOARD,KEY_SPACE);
+		//2 .Lanzar bomba
+		_pad.SetButton(PAD_BUTTON_2,0,PAD_MODE_KEYBOARD,KEY_LCONTROL);
+		//3. Protegerse con escudo
+		_pad.SetButton(PAD_BUTTON_3,0,PAD_MODE_KEYBOARD,KEY_LSHIFT);
+		//4. cambiar de nivel con la tecla TAB
+		_pad.SetButton(PAD_BUTTON_4,0,PAD_MODE_KEYBOARD,KEY_TAB);
+		//5. Borrar los records
+		_pad.SetButton(PAD_BUTTON_5,0,PAD_MODE_KEYBOARD,KEY_D);
+		//6. Con la tecla N enviamos la putuación a internet
+		_pad.SetButton(PAD_BUTTON_6,0,PAD_MODE_KEYBOARD,KEY_N);
+		//7. Con la tecla M vemos el manual
+		_pad.SetButton(PAD_BUTTON_7,0,PAD_MODE_KEYBOARD,KEY_M);
+		//8. Salir
+		_pad.SetButton(PAD_BUTTON_8,0,PAD_MODE_KEYBOARD,KEY_ESCAPE);
+		//9. Pausa
+		_pad.SetButton(PAD_BUTTON_9,0,PAD_MODE_KEYBOARD,KEY_P);
+		//10. al pulsar la tecla a se actualiza el nombre
+		_pad.SetButton(PAD_BUTTON_10,0,PAD_MODE_KEYBOARD,KEY_A);
+		
+		pad=_pad;
+
+		//Activamos los recuadritos de los sprites para ver si se hacen bien las colisiones
+		//GetActiveStage().SetDebug(True);
+
+		//Inicializamos la base de datos
+		db=new Db(this);
+		//El texto que aparece para pulse espacio o game over
+		_text_game=NewObject("text","GL_Text");
+		_text_game.SetFont("fonts/matrix.ttf", 18);
+		_text_game.SetPos(BOARD_WIDTH/2-50, GetResY()-200);
+		text_game=_text_game;
+
+		//MÃºsica y efectos
+		//Cargamos la música y sonidos
+		resources=new resources(this);
+		resources.PlayMusicMenu();
+		//Funciones de red
+		network=new NetWork(this);
+		
+		//Creamos el menu
+		menu=new Menu(this);
+		
+		_change ("menu");
+	}
+
+	state "menu":{
+		Log("Estamos en el estado de menu");
+		if(pad.IsButtonDown(PAD_BUTTON_1)){
+			Log("Pulsamos en play y passamos al estado de game");
+			gameOver=False;
+			resources.stopMusicMenu();
+			Gl.Stop();
+			delete menu;
+			game=new Game(this);
+			gamePaused=true;
+			Gl.Start();
+			_change ("game");
+		//Con la tecla D borramos (la 5) la base de datos
+		}else if(pad.IsButtonDown(PAD_BUTTON_5)){
+			Log("pulsada la tgecla d para borrar la vase de datos");
+			_res=GetEngine().InputDialogModal("Escribe Si para resetar la base de datos","",View.AD_OK,"");
+			if(_res=="Si"){
+				db.reset_records();
+				delete menu;
+				_menu=new Menu(this);
+				menu=_menu;
+			}
+		//Con ls tecla N (la 6) enciamos la puntuación a internet
+		}else if(pad.IsButtonDown(PAD_BUTTON_6)){
+			Log("pulsada la tgecla N enciamos la puntuación a internet");
+			network.send_record();
+		//Con ls tecla M (la 6) vemos el manual
+		}else if(pad.IsButtonDown(PAD_BUTTON_7)){
+			Log("pulsada la tgecla m vemos el manual");
+			delete menu;
+			_manual=new Manual(this);
+			manual=_manual;
+		}else if(pad.IsButtonDown(PAD_BUTTON_8)){
+			Log("pulsada la tgecla escape volvemos al menú");
+			delete manual;
+			_menu=new Menu(this);
+			menu=_menu;
+		//Al pulsar la tecla a se adigna un nombre
+		}else if(pad.IsButtonDown(PAD_BUTTON_10)){
+            _textModal="Escribe tu nombre";
+            _name_user="";
+            do{
+                _name_user=GetEngine().InputDialogModal(_textModal,"",View.AD_OK,"");
+                _textModal="El nombre no puede estar vacío ni ser menor de 4 caracteres";
+            }while(_name_user=="" || strlen(_name_user)<=3);
+			db.UpdateUser(_name_user);
+			delete menu;
+			_menu=new Menu(this);
+			menu=_menu;
+		}
+	}
+
+	state "winner"{
+		Log("Estamos en el estado de winner");
+		if(pad.IsButtonDown(PAD_BUTTON_1)){			
+			resources.stopMusicWinner();
+			Gl.Stop();
+			if(winner!=null) delete winner;
+			menu=new Menu(this);
+			Gl.Start();
+			resources.playMusicMenu();
+			if(winner!=null) delete winner;
+			log("Pulsamos en play y passamos al estado de menu");
+			_change ("menu");
+			//End(0);
+		}
+	}
+
+	state "player_win"{
+		Log("Player win, borrado game");
+		//Tenemos que para todos los objetos globales, pararlas y destruirlas
+		Gl.Stop();
+		winner=new Winner(this);
+		if(game!=null) delete game;	
+		Gl.Start();
+		gameOver=true;
+		resources.PlayMusicWinner();
+		_change ("winner");
+	}
+
+	state "game_over"{
+		Log("Game Over, borrado game");
+		//Tenemos que para todos los objetos globales, pararlas y destruirlas
+		Gl.Stop();
+		if(game!=null) delete game;
+		menu=new Menu(this);
+		Gl.Start();
+		gameOver=true;
+		resources.PlayMusicMenu();
+		_change ("menu");
+	}
+
+	
+	state "game"{
+		if(gamePaused){
+			if(game.level==6 || game.level==12|| game.level==18 || game.level==24)text_game.SetText("Press ctrl to delete enemies\nor shift for protection.");
+			else text_game.Settext("Press space");
+			game.ball.SetPos(game.player.GetX()+game.player.GetWidth()/2,game.player.GetY()-game.ball.GetHeight()-105);
+			if(pad.IsButtonDown(PAD_BUTTON_1)){
+				resources.PlaySoundClick();
+				gamePaused=False;
+				text_game.Settext("");
+				game.timer_game.Start();
+				if(game.mode_boss) game.level_active.boss.Start();
+			}
+		}
+	}
+		
+	function Log(_message){
+		GetEngine().LogPrint(_message);
+	}
+
+
+	function alert_exit(){
+		Gl.Stop();
+		//function AlertDialog (title, text, mode = 0, ctx = null, f1 ="OnAlertDialogOK", f2 = "OnAlertDialogCancel", f3 = "")
+		//GetEngine().AlertDialog("Alert", "Are you sure you want to finish the game?", View.AD_OKCANCEL, null,"OnAlertDialogOK", "OnAlertCancel","");
+		_res = GetEngine().AlertDialogModal("Confirmation", "Are you sure you want to finish the game", View.AD_YESNO);
+        
+        if (_res == 1) // El usuario pulsó "SÍ"
+        {
+            End(0); // Finaliza la ejecución del programa sin errores
+        }
+		GL.Start();
+	}
+ }

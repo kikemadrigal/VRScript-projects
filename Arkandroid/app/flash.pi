@@ -1,0 +1,30 @@
+ 
+ namespace es_tipolisto_arkandroid;
+
+class Flash implements GL_sprite{
+	properties:
+		//game=null;
+        counter=255;
+
+	virtual _operator_new(_name,_creator,_params){
+		game=_params[0];
+		
+		addEmptyFrame(game.app.BOARD_WIDTH,game.app.BOARD_HEIGHT);
+	
+		SetColor(RGB(255,255,255));
+        SetPos(0,0);	
+	}
+	virtual Move(){
+		SetAlpha(counter);
+        counter-=5;
+        if(counter<=0){
+            Destroy();
+        }
+	}
+
+    virtual _operator_delete(){
+        //game.app.log("Flash destroyed");
+    }
+}
+ 
+ 

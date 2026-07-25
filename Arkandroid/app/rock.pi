@@ -1,0 +1,249 @@
+﻿namespace es_tipolisto_arkandroid;
+
+class Rock implements GL_sprite{
+	properties:
+		game=null;
+		hits_died=1;
+		indestructible=false;
+		fallible=false;
+		create_ondulation=false;		
+		angle=0;
+		type="normal";
+		incrementoY=2;
+	virtual _operator_new(_name,_creator,_params){
+		game=_params[0];
+		_x=_params[1];
+		_y=_params[2];
+		_type=_params[3];
+		type=_type;
+		SetVisible(false);
+		SetStop(true);
+		SetPos(_x,_y);	
+		SetCollision(false);		
+		SetPriority(GetApp().PRIORITY_ROCK);	
+		SetType(PRIORITY_ROCK);
+		SetPriority(PRIORITY_ROCK);
+		Addanimationwithsheet("rock-dead","res/rocks.png",0,4,40*0,20*10,40,20);
+		switch(_type){
+			case "a":{
+				Addanimationwithsheet("amarillo","res/rocks.png",0,0,40*0,20*0,40,20);
+				setAnimation("amarillo");
+				break;
+			}
+			case "g":{
+				Addanimationwithsheet("gris","res/rocks.png",0,0,40*1,20*0,40,20);
+				setAnimation("gris");
+				break;
+			}
+			case "m":{
+				Addanimationwithsheet("lila","res/rocks.png",0,0,40*2,20*0,40,20);
+				setAnimation("lila");
+				break;
+			}
+			case "r":{
+				Addanimationwithsheet("rojo","res/rocks.png",0,0,40*3,20*0,40,20);
+				setAnimation("rojo");
+				break;
+			}
+			case "v":{
+				Addanimationwithsheet("verde","res/rocks.png",0,0,40*4,20*0,40,20);
+				setAnimation("verde");
+				break;
+			}
+			case "z":{
+				Addanimationwithsheet("azul","res/rocks.png",0,0,40*5,20*0,40,20);
+				setAnimation("azul");
+				break;
+			}
+			case "o":{
+				Addanimationwithsheet("azulclaro","res/rocks.png",0,0,40*6,20*0,40,20);
+				setAnimation("azulclaro");
+				break;
+			}
+			case "x": {
+				Addanimationwithsheet("oro","res/rocks.png",0,0,40*0,20*1,40,20);
+				SetAnimation("oro");
+				hits_died=4; 
+				break;
+			}
+			case "p": {
+				AddAnimationwithsheet("plata","res/rocks.png",0,0,40*1,20*1,40,20);
+				SetAnimation("plata");
+				hits_died=3;
+				break;
+			}
+			case "b": {
+				AddAnimationwithsheet("bronce","res/rocks.png",0,0,40*2,20*1,40,20);
+				SetAnimation("bronce");
+				hits_died=2;
+				break;
+			}
+			case "t": {
+				AddAnimationwithsheet("titanio","res/rocks.png",0,0,40*3,20*1,40,20);
+				SetAnimation("titanio");
+				hits_died=1;
+				indestructible=true;
+				break;
+			}
+			case "d": {
+				AddAnimationwithsheet("dinamita","res/rocks.png",0,0,40*0,20*8,40,20);
+				SetAnimation("dinamita");
+				hits_died=1;
+				break;
+			}
+			case "f": {
+				AddAnimationwithsheet("flash","res/rocks.png",0,0,40*1,20*8,40,20);
+				SetAnimation("flash");
+				hits_died=1;
+				break;
+			}
+
+
+			/*
+			* indestructibles
+			 */
+			case "i1":{
+				Addanimationwithsheet("indestructible-derecha","res/rocks.png",0,0,40*0,20*2,20,20);
+				setAnimation("indestructible-derecha");
+				SetCollisionRect(0,0,20,20);
+				indestructible=true;
+				break;
+			}
+			case "i2":{
+				Addanimationwithsheet("indesctructible-izquierda","res/rocks.png",0,0,40*1,20*2,20,20);
+				setAnimation("indesctructible-izquierda");
+				SetCollisionRect(0,0,20,20);
+				indestructible=true;
+				break;
+			}
+			case "i3":{
+				Addanimationwithsheet("indesctructible-arriba","res/rocks.png",0,0,40,40,40,20);
+				setAnimation("indesctructible-arriba");
+				SetCollisionRect(0,0,40,20);
+				indestructible=true;
+				break;
+			}
+			case "i4":{
+				Addanimationwithsheet("indestructible-abajo","res/rocks.png",0,0,80,40,40,20);
+				setAnimation("indestructible-abajo");
+				SetCollisionRect(0,0,40,20);
+				indestructible=true;
+				break;
+			}
+
+
+
+			
+
+
+			/**
+			 * Rocas caibles de caer al suelo
+			 */
+			case "af":{
+				Addanimationwithsheet("amarillo-caible","res/rocks.png",0,0,40*0,20*0,40,20);
+				setAnimation("amarillo-caible");
+				create_ondulation=true;
+				break;
+			}
+			case "gf":{
+				Addanimationwithsheet("gris-caible","res/rocks.png",0,0,40*1,20*0,40,20);
+				setAnimation("gris-caible");
+				create_ondulation=true;
+				break;
+			}
+			case "mf":{
+				Addanimationwithsheet("lila-caible","res/rocks.png",0,0,40*2,20*0,40,20);
+				setAnimation("lila-caible");
+				create_ondulation=true;
+				break;
+			}
+			case "rf":{
+				Addanimationwithsheet("rojo-caible","res/rocks.png",0,0,40*3,20*0,40,20);
+				setAnimation("rojo-caible");
+				create_ondulation=true;
+				break;
+			}
+			case "vf":{
+				Addanimationwithsheet("verde-caible","res/rocks.png",0,0,40*4,20*0,40,20);
+				setAnimation("verde-caible");
+				create_ondulation=true;
+				break;
+			}
+			case "zf":{
+				Addanimationwithsheet("azul-caible","res/rocks.png",0,0,40*5,20*0,40,20);
+				setAnimation("azul-caible");
+				create_ondulation=true;
+				break;
+			}
+			case "of":{
+				Addanimationwithsheet("azulclaro-caible","res/rocks.png",0,0,40*6,20*0,40,20);
+				setAnimation("azulclaro-caible");
+				create_ondulation=true;
+				break;
+			}
+
+
+
+
+			/**
+			 * Rocas-bomba
+			 */
+			case "ab":{
+				Addanimationwithsheet("amarillo-bomba","res/rocks.png",0,0,40*0,20*9,40,20);
+				setAnimation("amarillo-bomba");
+				break;
+			}
+			case "gb":{
+				Addanimationwithsheet("gris-bomba","res/rocks.png",0,0,40*1,20*9,40,20);
+				setAnimation("gris-bomba");
+				break;
+			}
+			case "mb":{
+				Addanimationwithsheet("lila-bomba","res/rocks.png",0,0,40*2,20*9,40,20);
+				setAnimation("lila-bomba");
+				break;
+			}
+			case "rb":{
+				Addanimationwithsheet("rojo-bomba","res/rocks.png",0,0,40*3,20*9,40,20);
+				setAnimation("rojo-bomba");
+				break;
+			}
+			case "vb":{
+				Addanimationwithsheet("verde-bomba","res/rocks.png",0,0,40*4,20*9,40,20);
+				setAnimation("verde-bomba");
+				break;
+			}
+			case "zb":{
+				Addanimationwithsheet("azul-bomba","res/rocks.png",0,0,40*5,20*9,40,20);
+				setAnimation("azul-bomba");
+				break;
+			}
+			case "ob":{
+				Addanimationwithsheet("azulclaro-bomba","res/rocks.png",0,0,40*6,20*9,40,20);
+				setAnimation("azulclaro-bomba");
+				break;
+			}
+
+		}
+	}
+	virtual move(){
+		if(GetCurAnimation() =="rock-dead" && GetAnimationLoops()>0){
+			Destroy();
+			//SetVisible(false);
+			//SetStop(true);
+			//SetCollision(false);
+			return;
+		} 
+		if(create_ondulation){
+			 // 0.5f controla la amplitud del movimiento.
+        	IncPos(0, sin(angle) * 0.5f); 
+        	// Incremento el ángulo. GetFTime() asegura que la velocidad es consistente 
+        	// independientemente del framerate. 
+       		 angle += 0.1f * GetFTime(); 
+		}
+	}
+
+	function to_string(){
+		return "Rock: "+type;
+	}
+}

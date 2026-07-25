@@ -1,0 +1,67 @@
+namespace es_tipolisto_arkandroid;
+/**
+  * Los metoritos aparecen en la fase 2 que son las pantallas de la 7 a la 13
+ */
+class Meteor implements GL_sprite {
+  properties : 
+    type= null;
+    game=null;
+    incAngle=0;
+    touch_for_die=10;
+  virtual _operator_new(_name, _creator, _params) {
+    game= _params[0];
+    Addanimationwithsheet("asteroid0","res/asteroides.png",0,0,0,0,76,76,-1,-1,-1,.2);
+    Addanimationwithsheet("asteroid1","res/asteroides.png",1,1,0,0,76,76,-1,-1,-1,.2);
+    Addanimationwithsheet("asteroid2","res/asteroides.png",2,2,0,0,76,76,-1,-1,-1,.2);
+    Addanimationwithsheet("asteroid3","res/asteroides.png",3,3,0,0,76,76,-1,-1,-1,.2);
+    Addanimationwithsheet("asteroid4","res/asteroides.png",4,4,0,0,76,76,-1,-1,-1,.2);
+    Addanimationwithsheet("asteroid-dead","res/asteroides.png",0,4,0,76*2,76,76,-1,-1,-1,.2);
+    SetVisible(false);
+		SetStop(true);
+		SetCollision(false);
+    SetType(PRIORITY_METEOR);
+    SetPriority(PRIORITY_METEOR);
+    incAngle=frand(-0.1, 0.20);
+  }
+  function create_type(){
+    _type=rand(0,4);
+     ResetAnimation();
+    switch(_type){
+      case 0:
+        SetCurAnimation("asteroid0");
+        SetCollisionRect(15,15,46,46);
+        break;
+      case 1:
+        SetCurAnimation("asteroid1");
+        SetCollisionRect(15,15,46,46);
+        break;
+      case 2:
+        SetCurAnimation("asteroid2");
+        SetCollisionRect(25,25,26,26);
+        break;
+      case 3:
+        SetCurAnimation("asteroid3");
+        SetCollisionRect(30,30,16,16);
+      case 4:
+        SetCurAnimation("asteroid4");
+        SetCollisionRect(15,15,46,46);
+        break;
+    }
+  }
+
+  virtual Move() {  
+    if(GetCurAnimation() =="asteroid-dead" && GetAnimationLoops()>0){
+			//Destroy();
+      SetVisible(false);
+			SetStop(true);
+			SetCollision(false);
+			SetPos(-100,-100);
+      touch_for_die=10;
+      SetCurAnimation("asteroid");
+			return;
+		} 
+    incpos(0, 0.5);
+    IncAngle(incAngle);
+    if(GetY() > GetApp().BOARD_HEIGHT-GetHeight()) game.delete_meteor(this);
+  }
+}
