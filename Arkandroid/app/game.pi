@@ -32,8 +32,10 @@ class Game implements App{
 		board_ornament=null;
 		ornament_hud=null;
 		capsules_type=["3Ball","laser","live","largue","laser","bomb","clock","shield"];
+		//capsules_type=["laser","laser","laser","laser","laser","laser","laser","laser"];
 	
 		timer_game=null;
+		timer_change_level=null;
 		time=0;
 		mode_boss=false;
 		arrow=null;
@@ -93,7 +95,10 @@ class Game implements App{
 		timer_game=app.NewObject("timer", "GL_Timer");
 		timer_game.SetFrequency(8000);
 		timer_game.SetUserCallBack(this,"OnTimerGame");
-		timer_game.Stop();
+		
+		/*timer_change_level=app.NewObject("timer_nextlevel","GL_Timer");
+		timer_change_level.SetFrequency(8000);
+		timer_change_level.SetUserCallBack(this,"OnTimerChangeLevel");*/
 
 		//Ponemos el marcador
 		text_hud.SetVisible(True);
@@ -162,6 +167,13 @@ class Game implements App{
 
 		//Pintamos el nivel
 		change_level();
+
+
+		
+	}
+	virtual Start(){
+		timer_game.Stop();
+		//timer_change_level.Stop();
 	}
 	
 	/**
@@ -247,19 +259,22 @@ class Game implements App{
 			if(!exist_enemies())create_enemy(rand(0,3));
 		}
 	}
-	
-	/*function animation_for_change_level(){
-			//borramos los bloques de arriba
-			for(i=0; i<sizeof(indestructible_rocks);i++){
-				if(indestructible_rocks[i].type=="i3")delete indestructible_rocks[i];
-			}
-			//movemos el player hacia arriba
-			for(i=player.GetY(); i>0;i--){
-				player.incY(-10);
-			}
-			
-			if(player.GetY<10) change_level();
+	/*function OnTimerChangeLevel(_timer){
+		//borramos los bloques de arriba
+		for(i=0; i<sizeof(indestructible_rocks);i++){
+			if(indestructible_rocks[i].type=="i3")delete indestructible_rocks[i];
+		}
+		//movemos el player hacia arriba
+		for(i=player.GetY(); i>0;i--){
+			player.incpos(0,-1);
+		}
+		
+		if(player.GetY<10) {
+			change_level();
+			_timer.Stop();
+		}
 	}*/
+
 	
 	function change_level(){	
 		time=0;
@@ -270,6 +285,7 @@ class Game implements App{
 		delete_objects();
 		if(mode_boss)moes_boss=false;
 		timer_game.Stop();
+		//timer_change_level.Stop();
 		level++;
 		//Posicionamos la flecha
 		arrow.SetPos(arrow_positions[level-1][0],arrow_positions[level-1][1]);
@@ -398,7 +414,7 @@ class Game implements App{
 			return;
 		}
 		app.resources.PlaySoundPlayerDied();
-		//player.lives--;
+		player.lives--;
 		timer_game.Stop();
 		ball.SetPos(220,350);
 		ball.return_normal();
@@ -666,7 +682,7 @@ class Game implements App{
 		rocks-=[_rock];
 		app.resources.PlaySoundEnemyExplosion();
 		if(sizeof(rocks)<=0 && !mode_boss){
-			//animation_for_change_level();
+			//timer_change_level.Start();
 			change_level();
 		}
 	}
