@@ -4,7 +4,7 @@ class Installer implements DOS_Program
     {
         _console = GetDOS().GetConsole();
         _carpetaOrigen = "./app/"; 
-        _carpetaDestino = "C:/backups/"; // Carpeta a la que queremos copiar los archivos
+        _carpetaDestino = "./"; // Carpeta a la que queremos copiar los archivos
 
         // 1. Verificar si la carpeta de destino existe, si no, crearla
         if (!GetEngine().FolderExists(_carpetaDestino))
