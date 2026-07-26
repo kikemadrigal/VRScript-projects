@@ -36,7 +36,7 @@ class Main implements GL_Program partial myConstants{
 		SetViewScale(-3,True);
 		//el sistema intenta sincronizar el dibujado con el refresco del monitor
 		//SetVSync(True);
-		SetFrameRate(120);
+		SetFrameRate(120, false);
 		
 		// En juegos con mucha lógica o creación compleja de escenarios, 
 		// es recomendable activar este modo para evitar compartir ciclos de CPU
@@ -194,7 +194,7 @@ class Main implements GL_Program partial myConstants{
 			else text_game.Settext("Press space");
 			game.ball.SetPos(game.player.GetX()+game.player.GetWidth()/2,game.player.GetY()-game.ball.GetHeight()-105);
 			if(pad.IsButtonDown(PAD_BUTTON_1)){
-				resources.PlaySoundClick();
+				//resources.PlaySoundClick();
 				gamePaused=False;
 				text_game.Settext("");
 				game.timer_game.Start();

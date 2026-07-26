@@ -1,0 +1,79 @@
+class Installer implements DOS_Program
+{
+    virtual Start()
+    {
+        _console = GetDOS().GetConsole();
+        _carpetaOrigen = "./app/"; 
+        _carpetaDestino = "C:/backups/"; // Carpeta a la que queremos copiar los archivos
+
+        // 1. Verificar si la carpeta de destino existe, si no, crearla
+        if (!GetEngine().FolderExists(_carpetaDestino))
+        {
+            GetEngine().CreateRecursiveFolder(_carpetaDestino);
+        }
+
+        _listaArchivos = GetEngine().FindFiles(_carpetaOrigen + "*.*");
+
+        _console.PrintLn("Iniciando compresión y copia...");
+        _console.PrintLn("-------------------------------");
+        _console.PrintLn("Procesando:...");
+        for (i = 0; i < sizeof(_listaArchivos); i++)
+        {
+            _nombre = _listaArchivos[i];
+            _rutaOriginal = _carpetaOrigen + _nombre;
+            _rutaTemporalZ = _rutaOriginal + ".zip";
+            _rutaFinalCopia = _carpetaDestino + _nombre + ".zip";
+            
+           
+
+            // --- Lógica de Compresión (API Nativo) ---
+            _tamanio = GetEngine().FileSize(_rutaOriginal); 
+             //_console.PrintLn("El tamaño del archivo es: " + _tamanio);
+            _bufferOriginal = Buffer_New(_tamanio); 
+            //_handleRead = File_Open(_rutaOriginal, FILE_MODE_READ);
+            _handleRead = File_Open(_rutaOriginal, FILE_MODE_READMEM );
+             _console.Print(" " + _rutaOriginal + "... ");
+            if (_handleRead)
+            {
+                File_Read(_handleRead, _bufferOriginal); 
+                File_Close(_handleRead); 
+
+                //_bufferCompreso = Buffer_Compress(_bufferOriginal, COMPRESS_METHOD_ZIP | COMPRESS_BESTSIZE); 
+                _bufferCompreso = Buffer_Compress(_bufferOriginal, COMPRESS_METHOD_ZIP | COMPRESS_BESTSIZE); 
+
+                if (_bufferCompreso)
+                {
+                    _handleWrite = File_Open(_rutaTemporalZ, FILE_MODE_WRITE);
+                    if (_handleWrite)
+                    {
+                        File_Write(_handleWrite, _bufferCompreso);
+                        File_Close(_handleWrite); 
+                        
+                        // --- LÓGICA DE COPIA ---
+                        // Copiamos el archivo .z recién creado a la carpeta de destino 
+                        if (GetEngine().FileCopy(_rutaTemporalZ, _rutaFinalCopia))
+                        {
+                            _console.PrintLn("[COMPRIMIDO Y COPIADO]");
+                        }
+                        else
+                        {
+                            _console.PrintLn("[COMPRIMIDO PERO ERROR COPIA]");
+                        }
+                    }
+                    Buffer_Delete(_bufferCompreso);
+                }else{
+                    _console.PrintLn("[NO SE PUDO COMPRIMIR EL ARCHIVO]");
+                }
+            }else{
+                _console.PrintLn("[NO SE PUDO LEER EL ARCHIVO]");
+            }
+            Buffer_Delete(_bufferOriginal); 
+        }
+
+        _console.PrintOk("Proceso de respaldo finalizado. Ver resultado: "+_carpetaDestino); 
+        //Actualizamos el escritorio para mostrar el icono del nuevo programa
+        //_desktop = GetDesktop();
+        //_desktop.UpdateDesktop();
+        End(0); 
+    }
+}

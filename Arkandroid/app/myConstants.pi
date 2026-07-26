@@ -8,17 +8,19 @@ class{
 		BOARD_WIDTH=520;
 		BOARD_HEIGHT=450;
 
-		PRIORITY_BG=        0b000000000000;//0
-		PRIORITY_HUD=       0b000000000001;//1
-		PRIORITY_CAPSULE=   0b000000000010;//2
-		PRIORITY_ROCK=      0b000000000100;//4
-		PRIORITY_ROCKFALL=  0b000000001000;//8
-        PRIORITY_BOSS=      0b000000010000;//16
-		PRIORITY_METEOR=    0b000000100000;//32
-		PRIORITY_ENEMY=     0b000001000000;//64
-        PRIORITY_LASER=     0b000010000000;//128
-        PRIORITY_PLAYER=    0b000100000000;//256
-		PRIORITY_BALL=      0b001000000000;//512
+		PRIORITY_BG=                0b000000000000;//0
+		PRIORITY_HUD=               0b000000000001;//1
+		PRIORITY_CAPSULE=           0b000000000010;//2
+		PRIORITY_ROCK=              0b000000000100;//4
+		PRIORITY_ROCKFALL=          0b000000001000;//8
+        PRIORITY_BOSS=              0b000000010000;//16
+		PRIORITY_METEOR=            0b000000100000;//32
+		PRIORITY_ENEMY=             0b000001000000;//64
+        PRIORITY_LASER=             0b000010000000;//128
+        PRIORITY_PLAYER=            0b000100000000;//256
+		PRIORITY_BALL=              0b001000000000;//512
+		PRIORITY_PROGRESS_BAR_MASK= 0b010000000000;//512
+		PRIORITY_PROGRESS_BAR=      0b100000000000;//512
 
         //capsules_type=["3ball","3ball","3ball","3ball","3ball","3ball","3ball","3ball","3ball","3ball","3ball"];
         //capsules_type=["laser","3ball","laser","laser","live","largue","laser","next","bomb","clock","shield"];

@@ -5,3 +5,6 @@
 -Enenimos fijos en la pantalla dando vueltas rodeados por bloques.
 -Pon el getFtime en enemigos bola y bosses.
 -Crea una capsula que cree ocas indestructible abajo durante el tiempo
+
+sonido explosion asteroides
+sonid boss herido

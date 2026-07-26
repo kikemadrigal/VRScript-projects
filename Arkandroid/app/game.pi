@@ -40,7 +40,8 @@ class Game implements App{
 		mode_boss=false;
 		arrow=null;
 		//laser_template=null;
-
+		barFondo=null;
+		barProgreso=null;
 	/**
 	 * Construcor
 	 * 
@@ -80,6 +81,24 @@ class Game implements App{
 		_text_hud.SetPos(app.BOARD_WIDTH+20,20);
 		text_hud=_text_hud;
 
+		// 1. Crear el fondo de la barra (el marco)
+        barFondo = app.NewObject("pbar_bg", "gl_sprite");
+        barFondo.AddEmptyFrame(200, 20);
+        barFondo.SetColor(RGB(255, 255, 0)); 
+        barFondo.SetPos(app.BOARD_WIDTH/2-50, app.GetResY()-220);
+        barFondo.SetPriority(PRIORITY_PROGRESS_BAR_MASK); 
+		barFondo.SetVisible(true);
+		barFondo.SetWidth(100);
+
+        // 2. Crear la barra de progreso (la que indica la carga)
+        // Se hace un poco más pequeña para que quepa dentro del fondo
+        barProgreso = app.NewObject("pbar_status", "gl_sprite");
+        barProgreso.AddEmptyFrame(10 - 4, 20 - 4);
+        barProgreso.SetColor(RGB(255, 0, 0)); // Color blanco para el estado
+        barProgreso.SetPos(barFondo.GetX() + 2, barFondo.GetY() + 2);
+        barProgreso.SetPriority(PRIORITY_PROGRESS_BAR);
+		barProgreso.SetVisible(true);
+
 		//Player 1
 		_player=app.NewObject("player", "Player", null, [this, app.BOARD_WIDTH/2, app.GetResY()-100, False]);
 		player=_player;
@@ -115,6 +134,7 @@ class Game implements App{
 			_capsule=app.NewObject("capsule","Capsule",null, [this, _capsule_type]);
 			capsules+=[_capsule];
 		}
+		barProgreso.SetWidth(2);
 		app.text_game.SetText("Loading lasers");
 		app.Sleep(1);
 		//creamos 10 lasers
@@ -126,12 +146,14 @@ class Game implements App{
         //laser_template = app.GetActiveStage().NewObject("laser_temp", "Laser");
 		//laser_template.CreateInstancesPool(10);
 		//Creamos los rockfalls
+		barProgreso.SetWidth(4);
 		app.text_game.SetText("Loading Rock falls");
 		app.Sleep(1);
 		for(_i=0;_i<10;_i++){
 			_rockfall=app.NewObject("rockfall","Rockfall",null, [this,"af"]);
 			rock_falls+=[_rockfall];
 		}
+		barProgreso.SetWidth(6);
 		//creamos las 6 bolas
 		app.text_game.SetText("Loading extra balls");
 		app.Sleep(1);
@@ -141,6 +163,7 @@ class Game implements App{
 			_ball.incposY=-4;
 			balls+=[_ball];
 		}
+		barProgreso.SetWidth(8);
 		app.text_game.SetText("Loading enemies");
 		app.Sleep(1);
 		//Cremoas 10 Enemigos
@@ -148,6 +171,7 @@ class Game implements App{
 			_enemy=app.NewObject("enemy"+_i,"Enemy",null,[this]);
 			enemies+=[_enemy];
 		}
+		barProgreso.SetWidth(9);
 		app.text_game.SetText("Loading asteroids");
 		app.Sleep(1);
 		//Creamos 10 meteoritos
@@ -155,6 +179,7 @@ class Game implements App{
 			_meteor=app.NewObject("Meteor"+_i,"Meteor",null,[this]);
 			meteorites+=[_meteor];
 		}
+		barProgreso.SetWidth(10);
 		app.text_game.SetText("Loading bosses");
 		app.Sleep(1);
 		//Cargamos los bosses
@@ -281,6 +306,8 @@ class Game implements App{
 		app.resources.PlaySoundGameStart();
 		player.SetVisible(false);
 		ball.SetVisible(false);
+		barFondo.SetVisible(true);
+		barProgreso.SetVisible(true);
 		//app.log("Cambiamos al level "+level);
 		delete_objects();
 		if(mode_boss)moes_boss=false;
@@ -350,10 +377,17 @@ class Game implements App{
 		ball.SetVisible(true);
 		ball.return_normal();
 		ball.SetPos(260,350);
+		barFondo.SetVisible(false);
+		barProgreso.SetVisible(false);
 		draw_HUD();
 	}
 
 	function loading_rocks_phase(_phase){
+		//obtenemos el número total de rocas por fase y ponemos el ancho al progress bar
+		_number_rocks=get_num_rock_by_phase();
+		app.log("number rocks "+_number_rocks);
+		_counter_progress_bar=0;
+	
 		_start=0;
 		//app.log("veamos el level "+_level);
 		app.text_game.SetText("Loading rocks phase "+_phase+"...");
@@ -363,15 +397,23 @@ class Game implements App{
 		else if(_phase==3) _start=12;
 		else if(_phase==4) _start=18;
 		else _start=0;
+
 		//Pintamos el nivel
 		for (_p=_start;_p<_start+6;_p++){
 			//app.text_game.SetText("Loading rocks phase "+_phase+"..."+_p);
+			// si el 100 ----221
+			//        x
+			if(_p!=_start)barProgreso.SetWidth(100*_counter_progress_bar/_number_rocks);
+			app.log("ancho barra "+barProgreso.GetWidth());
+			app.Sleep(1);
 			for (_y=0;_y<11;_y++){
 				for (_x=0;_x<11;_x++){
+
 					_capsula_type= maps_by_phase[_p][_y][_x];
 					if (_capsula_type!=" " && _capsula_type!=0 && _capsula_type!=null && _capsula_type!="0"){
 						_rock=app.NewObject("rock","Rock",null, [this, (_x+1)*app.ROCK_WIDTH,_y*app.ROCK_HEIGHT, _capsula_type]);
 						active_phase[_p][_y][_x]=_rock;
+						_counter_progress_bar++;
 					}
 				}
 			}
@@ -404,7 +446,21 @@ class Game implements App{
 			}
 		}
 	}
-
+	function get_num_rock_by_phase(){
+		_num=0;
+		//son 6 niveles por fase
+		for (_p=0;_p<6;_p++){
+			for (_y=0;_y<11;_y++){
+				for (_x=0;_x<11;_x++){
+					_capsula_type= maps_by_phase[_p][_y][_x];
+					if (_capsula_type!=" " && _capsula_type!=0 && _capsula_type!=null && _capsula_type!="0"){
+						_num++;
+					}
+				}
+			}
+		}
+		return _num;
+	}
 	function player_die(){
 		//El parámtero indica se tenemos que borrar también las rocas
 		delete_objects(false);
