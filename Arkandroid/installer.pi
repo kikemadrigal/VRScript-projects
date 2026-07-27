@@ -1,79 +1,98 @@
-class Installer implements DOS_Program
-{
+class Installer implements DOS_Program{
     virtual Start()
     {
         _console = GetDOS().GetConsole();
-        _carpetaOrigen = "./app/"; 
-        _carpetaDestino = "./"; // Carpeta a la que queremos copiar los archivos
-
-        // 1. Verificar si la carpeta de destino existe, si no, crearla
-        if (!GetEngine().FolderExists(_carpetaDestino))
-        {
-            GetEngine().CreateRecursiveFolder(_carpetaDestino);
+        _carpetaOrigen = GetEngine().GetAbsoluteLogicPath( "app/");
+        _console.PrintLn("Carpeta origen: " + _carpetaOrigen);
+        //_rutaZip =GetEngine().GetAbsoluteLogicPath( "Arkandroid2.zip");
+        _rutaZip =GetEngine().GetAbsoluteLogicPath("arkandroid.zip");
+          _console.PrintLn("la rutazip es: "+_rutaZip);
+        //_rutaZip = GetEngine().GetPath( "Arkandroid.zip");
+        if(!GetEngine().FileExists(_rutaZip)){
+            _tamanio=GetEngine().filesize(_carpetaOrigen);
+            GetEngine().LogPrint("No existe el archivo "+_rutaZip+", vamos a crearlo de tamanio."+_tamanio);
+            _file=GetEngine().FileOpen(_rutaZip, FILE_MODE_WRITE);
+            //_file=File_Open(_rutaZip, FILE_MODE_WRITE);
+            _buffer = Buffer_New (1024);
+            /*
+                Escribe una cadena de caracteres (str) a partir de la posición (off) del
+                objeto (buffer) indicado. Según (asciiz) sea true o false, se copiará el
+                carácter NULL (cero) final o no.
+            */
+             //Buffer_SetString (_buffer, 0, "hola pichon");
+            _bufferCompress = Buffer_Compress(_buffer, COMPRESS_METHOD_ZIP | COMPRESS_BESTSIZE); 
+            File_Write(_file, _bufferCompress);
+            //File_Close(_rutaZip); 
         }
+        GetEngine().FileClose(_rutaZip);
 
-        _listaArchivos = GetEngine().FindFiles(_carpetaOrigen + "*.*");
 
-        _console.PrintLn("Iniciando compresión y copia...");
-        _console.PrintLn("-------------------------------");
-        _console.PrintLn("Procesando:...");
-        for (i = 0; i < sizeof(_listaArchivos); i++)
-        {
-            _nombre = _listaArchivos[i];
-            _rutaOriginal = _carpetaOrigen + _nombre;
-            _rutaTemporalZ = _rutaOriginal + ".zip";
-            _rutaFinalCopia = _carpetaDestino + _nombre + ".zip";
-            
-           
+        // 1. Obtener la lista de archivos a procesar [2, 3]
+        _listaArchivos = GetEngine().FindFiles(_carpetaOrigen + "*.*", false);
+        _console.PrintLn("Archivos encontrados: " + sizeof(_listaArchivos));
 
-            // --- Lógica de Compresión (API Nativo) ---
-            _tamanio = GetEngine().FileSize(_rutaOriginal); 
-             //_console.PrintLn("El tamaño del archivo es: " + _tamanio);
-            _bufferOriginal = Buffer_New(_tamanio); 
-            //_handleRead = File_Open(_rutaOriginal, FILE_MODE_READ);
-            _handleRead = File_Open(_rutaOriginal, FILE_MODE_READMEM );
-             _console.Print(" " + _rutaOriginal + "... ");
-            if (_handleRead)
+        
+        //_fileZip = GetEngine().File_Open(_rutaZip, FILE_MODE_WRITEMEM );
+        //_fileZip = GetEngine().FileOpen(_rutaZip, FILE_MODE_WRITE);
+        // 2. Abrir el contenedor ZIP (el segundo parámetro es la contraseña, 0 para ninguna) 
+        _console.PrintLn("Creando archivo ZIP...");
+        _zip = ZIP_Open(_rutaZip,0);
+
+         //_app.GetEngine().FileOpen(_file, FILE_MODE_WRITE);
+
+        if (_zip){
+            for (i = 0; i < sizeof(_listaArchivos); i++)
             {
-                File_Read(_handleRead, _bufferOriginal); 
-                File_Close(_handleRead); 
-
-                //_bufferCompreso = Buffer_Compress(_bufferOriginal, COMPRESS_METHOD_ZIP | COMPRESS_BESTSIZE); 
-                _bufferCompreso = Buffer_Compress(_bufferOriginal, COMPRESS_METHOD_ZIP | COMPRESS_BESTSIZE); 
-
-                if (_bufferCompreso)
+                _nombre = _listaArchivos[i];
+                    if (String_Left(_nombre, 1) == ".")
                 {
-                    _handleWrite = File_Open(_rutaTemporalZ, FILE_MODE_WRITE);
-                    if (_handleWrite)
-                    {
-                        File_Write(_handleWrite, _bufferCompreso);
-                        File_Close(_handleWrite); 
-                        
-                        // --- LÓGICA DE COPIA ---
-                        // Copiamos el archivo .z recién creado a la carpeta de destino 
-                        if (GetEngine().FileCopy(_rutaTemporalZ, _rutaFinalCopia))
-                        {
-                            _console.PrintLn("[COMPRIMIDO Y COPIADO]");
-                        }
-                        else
-                        {
-                            _console.PrintLn("[COMPRIMIDO PERO ERROR COPIA]");
-                        }
-                    }
-                    Buffer_Delete(_bufferCompreso);
-                }else{
-                    _console.PrintLn("[NO SE PUDO COMPRIMIR EL ARCHIVO]");
+                    //_console.PrintLn("  - " + _nombre + " [Ignorado]");
+                    continue;
                 }
-            }else{
-                _console.PrintLn("[NO SE PUDO LEER EL ARCHIVO]");
-            }
-            Buffer_Delete(_bufferOriginal); 
-        }
+                _rutaCompleta = _carpetaOrigen + _nombre;
+                _console.PrintLn("Vamos a añadir a el ZIP: " + _rutaCompleta);
+                // 3. Leer el contenido del archivo original a un Buffer 
+                _tamanio = GetEngine().FileSize(_rutaCompleta);
+                _buffer = Buffer_New(_tamanio);
+                _hRead = File_Open(_rutaCompleta, FILE_MODE_READ);
 
-        _console.PrintOk("Proceso de respaldo finalizado. Ver resultado: "+_carpetaDestino); 
-        //Actualizamos el escritorio para mostrar el icono del nuevo programa
-        //_desktop = GetDesktop();
-        //_desktop.UpdateDesktop();
+                if (_hRead)
+                {
+                    File_Read(_hRead, _buffer);
+                    File_Close(_hRead);
+
+                    // 4. Crear/Abrir una entrada de archivo DENTRO del ZIP en modo escritura 
+                    _hZipEntry = ZIP_GetFile(_zip, _nombre, FILE_MODE_WRITE);
+                    
+                    if (_hZipEntry)
+                    {
+                        // Escribir los datos del buffer en la entrada del ZIP [8]
+                        File_Write(_hZipEntry, _buffer);
+                        File_Close(_hZipEntry);
+                        _console.PrintLn("  + " + _nombre + " [Añadido]");
+                    }
+                }
+                // Liberar memoria del buffer procesado
+                Buffer_Delete(_buffer);
+            }
+
+            // 5. Cerrar el contenedor ZIP para finalizar la escritura
+           
+            _console.PrintLn("Proceso finalizado: " + _rutaZip);
+            
+        } else{
+            //_console.PrintLn("Problema al abrir el ZIP: " + _rutaZip + " [Es nulo] "+_zip);
+             if (!GetEngine().FileExists(_rutaZip)) 
+                _console.PrintLn("Error: El archivo físico no se encuentra.");
+            else if (GetEngine().FileIsOpened(_rutaZip))
+                _console.PrintLn("Error: El archivo ya está abierto o bloqueado.");
+            else
+                _console.PrintLn("Error: Problema desconocido al abrir el ZIP.");
+        }
+        ZIP_Close(_zip);
+        GetEngine().FileClose(_rutaZip);
+        //ZIP_FindCloseFile (_zip);
         End(0); 
     }
+    
 }

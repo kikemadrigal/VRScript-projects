@@ -1,0 +1,115 @@
+class Descompress implements DOS_Program
+{
+    virtual Start()
+    {
+        _console = GetDOS().GetConsole();
+        //_rutaZip = GetEngine().GetAbsoluteLogicPath( "output.zip");
+        _rutaZip = "demonia.app";
+        _carpetaDestino = "./extraccion/";       
+         if(!GetEngine().FileExists(_rutaZip)){
+            _console.PrintLn("No existe el archivo "+_rutaZip);
+            End(0);
+        }
+        
+        _attr = File_GetAttributes(_rutaZip);
+        switch (_attr)
+        {
+            case FFI_ATTRIBUTE_DIRECTORY:
+                _console.PrintLn("El archivo "+_rutaZip+" es una carpeta");
+                break;
+            case FFI_ATTRIBUTE_ARCHIVE:
+                _console.PrintLn("El archivo "+_rutaZip+" es un archivo ZIP");
+                break;
+            case FFI_ATTRIBUTE_SYSTEM:
+                _console.PrintLn("El archivo "+_rutaZip+" es un archivo del sistema");
+                break;
+            case FFI_ATTRIBUTE_HIDDEN:
+                _console.PrintLn("El archivo "+_rutaZip+" es un archivo oculto");
+                break;
+            case FFI_ATTRIBUTE_READONLY:
+                _console.PrintLn("El archivo "+_rutaZip+" es un archivo ZIP");
+                break;
+            default:
+                _console.PrintLn("El archivo "+_rutaZip+" es un archivo desconocido");
+              
+        }
+        if (!GetEngine().FolderExists(_carpetaDestino))GetEngine().CreateRecursiveFolder(_carpetaDestino); 
+
+       
+        //_fileZip = GetEngine().FileOpen(_rutaZip, FILE_MODE_WRITE);
+        _otro=GetEngine().GetPath(_rutaZip);
+         _console.PrintLn("Abriendo archivo ZIP: " + _otro);
+        _zip = ZIP_Open(_otro, 0); 
+        //_pathZip= GetEngine().GetAbsoluteLogicPath( _rutaZip);
+        if (_zip)
+        {
+            // 3. Comenzar la búsqueda de archivos dentro del ZIP
+            // Los parámetros son: (controlador, subcarpeta, patrón) 
+            _res = ZIP_FindFirstFile(_zip, " ", "*.*"); 
+            
+            _fhandle = _res; // Manejador de búsqueda
+            
+            while (_fhandle)
+            {
+                _nombre = _res[6]; // Nombre del archivo interno
+                _tamanio = _res[7]; // Tamaño sin comprimir
+
+                _console.Print("  > Extrayendo: " + _nombre + "... ");
+
+                // 4. Abrir la entrada del archivo dentro del ZIP para LECTURA
+                _hZipEntry = ZIP_GetFile(_zip, _nombre, FILE_MODE_READ); 
+                
+                if (_hZipEntry)
+                {
+                    // Crear buffer para alojar los datos extraídos
+                    _buffer = Buffer_New(_tamanio); 
+                    
+                    // Leer desde el ZIP al buffer
+                    File_Read(_hZipEntry, _buffer); 
+                    File_Close(_hZipEntry);
+
+                    // 5. Guardar el contenido del buffer en un archivo real en disco
+                    _hDiskFile = File_Open(_carpetaDestino + _nombre, FILE_MODE_WRITE); 
+                    if (_hDiskFile)
+                    {
+                        File_Write(_hDiskFile, _buffer); 
+                        File_Close(_hDiskFile);
+                        _console.PrintLn("[OK]");
+                    }
+                    else
+                    {
+                        _console.PrintLn("[ERROR DISCO]");
+                    }
+                    
+                    // Liberar memoria del buffer
+                    Buffer_Delete(_buffer); 
+                }
+
+                // 6. Buscar el siguiente archivo en el ZIP
+                _res = ZIP_FindNextFile(_fhandle); 
+                
+                // Si el primer elemento es verdadero, es la última entrada
+                if (_res) 
+                {
+                    ZIP_FindCloseFile(_fhandle); 
+                    _fhandle = null;
+                }
+            }
+             ZIP_Close(_zip);
+            // 7. Cerrar el contenedor principal
+            _console.PrintOk("Descompresión finalizada con éxito.");
+        }
+        else
+        {
+            if (!GetEngine().FileExists(_rutaZip)) 
+                _console.PrintLn("Error: El archivo físico no se encuentra.");
+            else if (GetEngine().FileIsOpened(_rutaZip))
+                _console.PrintLn("Error: El archivo ya está abierto o bloqueado.");
+            else
+                _console.PrintLn("Error: Problema desconocido al abrir el ZIP.");
+        }
+        //File_Close(_rutaZip);  
+       
+        End(0);
+    }
+}

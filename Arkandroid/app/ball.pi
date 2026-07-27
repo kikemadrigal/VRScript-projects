@@ -87,6 +87,7 @@ class Ball implements GL_sprite{
         }
         if(_spr.Gettype()==PRIORITY_BOSS){
             game.boss_active.boss_live--;
+            GetApp().resources.PlaySoundHitBoss();
             _fx= game.boss_active.CreateFX("TINT");
 			_fx.Start(1000, RGB(255,0,0));
             game.draw_HUD();

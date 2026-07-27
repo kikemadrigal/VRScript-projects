@@ -46,24 +46,24 @@ class Player implements GL_sprite{
 		else if (GetApp().pad.IsButton(PAD_BUTTON_DOWN))_incrementoY=2;	
 		if(type=="laser"){
 			if(GetApp().pad.IsButtonDown(PAD_BUTTON_1)){
-				 GetApp().resources.PlaySoundLaser();
 				//Creamos un laser
 				_x=GetX()+GetWidth()/2-10;
 				_y=GetY()-20;
 				game.Create_laser(_x,_Y,"normal");
 			} 
 		}
-		//Si se pulsa la tecla n
+		//Si se pulsa la tecla hacemos un destello y nos cargamos todoslos enemigos en pantalla
 		if(GetApp().pad.IsButtonDown(PAD_BUTTON_2)){
 			//game.app.log("Bomba lanzada");
 			if(counter_bombs>0){
 				counter_bombs--;
 				//Creamos un flash
 				GetApp().NewObject("flash","Flash",null, [game]);
+				GetApp().resources.PlaySoundEnemyExplosion();
 				game.delete_objects(false);
 				game.draw_HUD();
 			}
-		//Si se pulsa la tecla d
+		//Si se pulsa la tecla mayúscula o shift nos ponemos uno de los escudos guardados
 		}else if(GetApp().pad.IsButtonDown(PAD_BUTTON_3)){
 			create_shield();
 		// pulsando la tecla tab pasamos de pantalla

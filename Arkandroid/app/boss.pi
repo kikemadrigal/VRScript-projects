@@ -21,10 +21,10 @@ class Boss implements GL_sprite{
 	virtual _operator_new(_name,_creator, _params){
         game=_params[0];
         Addanimationwithsheet("boss-die","res/bosses.png",0,8,80*0,80*4,80,80,-1,-1,-1,0.2);
-        Addanimationwithsheet("boss1-idle","res/bosses.png",0,0,80*0,80*0,80,80,-1,-1,-1,0.2);
-        Addanimationwithsheet("boss2-idle","res/bosses.png",0,0,80*0,80*1,80,80,-1,-1,-1,0.2);
-        Addanimationwithsheet("boss3-idle","res/bosses.png",0,0,80*0,80*2,80,80,-1,-1,-1,0.2);
-        Addanimationwithsheet("boss4-idle","res/bosses.png",0,0,80*0,80*3,80,80,-1,-1,-1,0.2);
+        Addanimationwithsheet("boss1-idle","res/bosses.png",0,3,80*0,80*0,80,80,-1,-1,-1,0.05);
+        Addanimationwithsheet("boss2-idle","res/bosses.png",0,3,80*0,80*1,80,80,-1,-1,-1,0.05);
+        Addanimationwithsheet("boss3-idle","res/bosses.png",0,2,80*0,80*2,80,80,-1,-1,-1,0.05);
+        Addanimationwithsheet("boss4-idle","res/bosses.png",0,2,80*0,80*3,80,80,-1,-1,-1,0.05);
 		Setanimation("boss1-idle");
         SetVisible(false);
 		SetStop(true);

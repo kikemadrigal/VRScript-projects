@@ -16,6 +16,7 @@ class Resources implements App{
 		AUDIO_ENEMY_EXPLOSION=8;
 		AUDIO_HIT_2=9;
 		AUDIO_CLICK=10;
+		AUDIO_HIT_BOSS=11;
 	properties:
 		musics=[];
 		music=null;
@@ -37,6 +38,7 @@ class Resources implements App{
 		LoadAudio("sounds/explosion.ogg");
 		LoadAudio("sounds/hit2.ogg");
 		LoadAudio("sounds/click.ogg");
+		LoadAudio("sounds/hit_boss.ogg");
 	}
 	
 	virtual operator_delete(){
@@ -99,6 +101,9 @@ class Resources implements App{
 	}
 	function PlaySoundClick(){
 		audios[AUDIO_CLICK].Play();
+	}
+	function PlaySoundHitBoss(){
+		audios[AUDIO_HIT_BOSS].Play();
 	}
 	function LoadMusic(path){
 		//_music=NewObject("music", "Gl_Music");
