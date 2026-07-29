@@ -12,11 +12,9 @@ class Game implements App{
 		//level=11; //3 fase
 		//level=18; //4 fase
 
-		first_level=true;
 		text_hud=null;
 		player=null;
 		ball=null;
-
 		active_phase = dim([24, 11, 11], null);
 		rocks=[];
 		indestructible_rocks=[];
@@ -87,7 +85,7 @@ class Game implements App{
         barFondo.SetColor(RGB(255, 255, 0)); 
         barFondo.SetPos(app.BOARD_WIDTH/2-50, app.GetResY()-220);
         barFondo.SetPriority(PRIORITY_PROGRESS_BAR_MASK); 
-		barFondo.SetVisible(true);
+		//barFondo.SetVisible(true);
 		barFondo.SetWidth(100);
 
         // 2. Crear la barra de progreso (la que indica la carga)
@@ -97,7 +95,7 @@ class Game implements App{
         barProgreso.SetColor(RGB(255, 0, 0)); // Color blanco para el estado
         barProgreso.SetPos(barFondo.GetX() + 2, barFondo.GetY() + 2);
         barProgreso.SetPriority(PRIORITY_PROGRESS_BAR);
-		barProgreso.SetVisible(true);
+		//barProgreso.SetVisible(true);
 
 		//Player 1
 		_player=app.NewObject("player", "Player", null, [this, app.BOARD_WIDTH/2, app.GetResY()-100, False]);
@@ -300,11 +298,9 @@ class Game implements App{
 	
 	function change_level(){	
 		time=0;
-		barProgreso.SetWidth(10);
 		player.SetVisible(false);
 		ball.SetVisible(false);
-		barFondo.SetVisible(true);
-		barProgreso.SetVisible(true);
+
 		//app.log("Cambiamos al level "+level);
 		delete_objects();
 		if(mode_boss)moes_boss=false;
@@ -314,9 +310,11 @@ class Game implements App{
 		//Posicionamos la flecha
 		arrow.SetPos(arrow_positions[level-1][0],arrow_positions[level-1][1]);
 		//Si el nivel es 1,7, 13 o 19 ponemos la pantalla de carga
-		if(level==1 || level==7|| level==13 || level==19 || first_level){
+		if(level==1 || level==7|| level==13 || level==19 ){
 			board_bg.RemoveFrames();
-			
+			barProgreso.SetWidth(10);
+			barFondo.SetVisible(true);
+			barProgreso.SetVisible(true);
 			if(level==1){
 				board_bg.AddFrame("res/phase1.png");
 				loading_rocks_phase(1);

@@ -1,15 +1,22 @@
-SET ECHO ON
+
+rem SET ECHO OFF
+
+pause "Instala la aplicacion escribiendo installer.bat en la linea de comandos (DOS) o si estás en la linea de comandos pulsa enter"
 
 rem comprimimos todos los archivos en ua app con ziptool
+echo "Comprimiendo y creando Arkanoid.app"
 CD ./app
 ZIPTOOL /C /Y Arkandroid.app 
 ZIPTOOL /A Arkandroid.app ./*.*
 CD..
 
 rem Copiamos la aplicación a la carpeta de aplicaciones
+echo "Moviendo la carpeta Arkanoid a $SYSTEM:/apps/"
 move ./app/Arkandroid.app $SYSTEM:/apps/Arkandroid.app
 rem Copiamos la base ded datos a la carpeta de aplicaciones
 rem copy ./app/arkandroid.db $SYSTEM:/apps/arkandroid.db
+echo "Ahora ve al escritorio y en archivo quita el aspa de crear enlaces automaticamente y vuelvela a poner, pulsa una tecla para salir"
+pause
 
 rem rem Creamos el archivo lanzador
 rem echo "[Desktop Entry]" > Arkandroid.desktop
@@ -26,3 +33,4 @@ rem
 rem rem Creamos el lanzador o acceso directo o lin del escritorio
 rem copy Arkandroid.desktop $SYSTEM:/user/desktop/Arkandroid
 rem move Arkandroid.desktop $SYSTEM:/desktop/Arkandroid
+

@@ -68,7 +68,7 @@ class Player implements GL_sprite{
 			create_shield();
 		// pulsando la tecla tab pasamos de pantalla
 		}else if(GetApp().pad.IsButtonDown(PAD_BUTTON_4)){
-			game.change_level();
+			//game.change_level();
 			//game.animation_for_change_level();
 		//Con la tecla Esc salimos del juego
 		}else if(GetApp().pad.IsButtonDown(PAD_BUTTON_8) || GetApp().pad.IsButtonDown(PAD_BUTTON_9)){
