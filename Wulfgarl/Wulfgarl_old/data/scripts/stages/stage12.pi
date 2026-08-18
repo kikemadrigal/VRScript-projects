@@ -1,0 +1,60 @@
+namespace es_tipolisto_WulfgarI;
+/**
+ * Pantalla 10: Boss 2: el aguila 
+ *    Se mueve en todas direcciones
+ */
+class Stage12{
+    properties:
+        game=null;
+        bg=null;
+        boss=null;
+        
+    function _operator_new(_game){
+        game=_game;
+        if (DEBUG_MODE){
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,700,_game.GetApp().GetResY()-100, game.currentStage);
+        } 
+        
+        
+
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        bg.AddTexFrame(game.resources.get_bg_image(game.currentStage));
+        bg.SetPriority(-1);
+
+        _tmx = new TMX_tiles();
+        _ok=_tmx.Load(game.mapper, "resources/tilesmap12.tmx", game);
+        delete _tmx;        
+        if (_ok == false)
+		{
+			_game.GetApp().GetEngine().LogPrint("no cargado el tileset");
+		}
+        //game.getEngine().logprint("cargado el pantalla 12");
+        //Colocamos al player
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+        //posicionamos la cámara
+        game.SetCameraX(0);
+        //posicionamos el boss
+        boss=_game.NewObject("boss2","Boss2",[game]);
+        //game.getEngine().logprint("cargado boss pantalla 12");
+        //pintamos el marcador
+        _game.print_score();
+        //Pintamos la vida que le queda al boss
+        _game.draw_boss_live(boss.boss_live);
+    }
+    
+    function _operator_delete(){
+        game.draw_boss_live("");
+        delete game.layer;
+        boss.Destroy();
+        bg.Destroy();
+        game.delete_objects();
+        game.delete_enemies();
+        game.delete_fires();
+    }
+    function changeStage(){
+        //game.GetApp().Sleep(2000);
+        game.changeStage();
+    }
+}

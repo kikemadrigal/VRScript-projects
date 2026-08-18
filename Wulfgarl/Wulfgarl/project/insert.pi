@@ -1,0 +1,79 @@
+namespace es_tipolisto_Wulfgarl;
+
+class insert implements GL_Program{
+    properties:
+        connection=null;
+        name_for_record="";
+        score=200;
+    function Init()
+	{
+        if(sizeof(GetNumParams())>0){
+            /*if(sizeof(GetNumParams())>0 )GetEngine().LogPrint("el numero de parámetros es "+GetNumParams());
+            for(i=0;i<sizeof(GetNumParams());i++){
+                GetEngine().LogPrint("parámetro "+i+" es "+GetParam(i));
+            }*/
+            name_for_record=GetParam(0);
+            score=GetParam(1);
+        }
+        else GetEngine().LogPrint("no hay parámetros");
+    }
+        
+    function Start(){
+        _file="data/wulfgardb.sql";
+
+		GetEngine().LogPrint("Creando el programa insert");
+        _connection = GetEngine().OpenDB(_file);
+		if (_connection){
+			connection=_connection;
+        }else{
+            GetEngine().LogPrint("No se ha podido conectar a la base de datos");
+        }
+
+       
+        //opciones de botones. View.AD_CANCEL, View.AD_OK, View.AD_OKCANCEL, View.AD_COMBOBOX
+        //InputDialog(titulo_ventana, descripcion_iputbox_que_se_borra_al_escribir, opciones_de_botones, items = []) : string
+        //name_for_new_record=GetEngine().InputDialogmodal("New record", "", 0, " ");
+        //GetEngine().LogPrint("El nombre introducido es "+_name_for_new_record);
+        name_for_new_record=GetEngine().AlertDialog("New record", "Introduce tu nombre en records", 0, null, null);
+        //if(strlen(_name_for_new_record)>0 && _name_for_new_record!=""){
+        sql="insert into records (name, score, isMy, date) values ('"+name_for_record+"', "+score+", 1,datetime('now','localtime'));";
+        connection.Query(sql);
+        GetEngine().LogPrint("INSERT HECHOs");
+            
+
+        
+        GetEngine().CloseDB(connection);
+  
+    }
+    /*function GetMax10(){
+         GetEngine().LogPrint("obtenendio los 10 maximos");
+        sql="SELECT * FROM records ORDER BY score DESC LIMIT 10;";
+        _result=connection.Query(sql);
+        return _result;
+    }
+
+
+
+    function CheckRecord(){
+       GetEngine().LogPrint("viendo si hay algun record");
+		//app.Log("Comprobando el record "+record);
+		_result=GetMax10();
+		for(i=0;i<sizeof(_result);i++){
+            //app.GetEngine().LogPrint(" "+_result[i][2]);
+			if (_result[i][2]<score) {
+                 GetEngine().LogPrint("Si hay un record");
+				return true;
+			}
+		}
+         GetEngine().LogPrint("No hay un record");
+		return False;
+	}*/
+
+
+
+
+
+
+
+
+}

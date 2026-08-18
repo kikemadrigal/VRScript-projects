@@ -1,0 +1,138 @@
+namespace es_tipolisto_Wulfgarl;
+
+class Db {
+    properties:
+        connection=null;
+        app=null;
+        
+    function _operator_new(_app){
+        app=_app;
+        _file=_app.GetBundleDriveName()+"data/wulfgarl.sql";
+        _initialize_database=false;
+        if(!_app.GetEngine().FileExists(_file)){
+            _app.GetEngine().LogPrint("No existe el archivo "+_file+", vamos a crearlo.");
+            //_app.GetEngine().FileOpen(_file, FILE_MODE_WRITE);
+            _app.GetEngine().FileOpen(_file, FILE_MODE_WRITE);
+            _initialize_database=true;
+        }
+		//_app.GetEngine().LogPrint("Creando el objeto base de datos");
+        _connection = _app.GetEngine().OpenDB(_file);
+		if (_connection){
+			connection=_connection;
+			//_app.GetEngine().LogPrint("Conectado a la base de datos");
+        }else{
+            _app.GetEngine().LogPrint("No se ha podido conectar a la base de datos");
+        }
+        if(_initialize_database){
+            CreateTableRecords();
+            CreateTableUser();
+            InsertFakeRecords();
+            InsertFakeUser();
+        }
+    }
+    function _operator_delete(){
+        app.GetEngine().CloseDB(connection);
+    }
+    
+    function CreateTableRecords(){
+        sql="CREATE TABLE IF NOT EXISTS records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name varchar(20),
+            score int,
+            isMy int,
+            date varchar(255)
+        );";
+        connection.Query(sql);
+    }
+
+    function CreateTableUser(){
+        sql="CREATE TABLE IF NOT EXISTS user (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            score int
+        );";
+        connection.Query(sql);
+    }
+    function drop_table_records(){
+        sql="Drop table records";
+        connection.Query(sql);
+    }
+    function InsertFakeRecords(){
+        sql="insert into records (name, score, isMy, date) values 
+        ('Neo', 45000, 0, datetime('now','localtime')),
+        ('Trinity', 2000, 0, datetime('now','localtime')),
+        ('Morpheus', 1520, 0, datetime('now','localtime')),
+        ('Cifra', 1113, 0, datetime('now','localtime')),
+        ('Smith agent', 144, 0, datetime('now','localtime')),
+        ('Oraculo', 100, 0, datetime('now','localtime')),
+        ('Merovingio', 50, 0, datetime('now','localtime')),
+        ('Persephone', 40, 0, datetime('now','localtime')),
+        ('Arquitect', 30, 0, datetime('now','localtime')),
+        ('Anakin Skywalker', 20, 0, datetime('now','localtime')),
+        ('Luke Skywalker', 23, 0, datetime('now','localtime')),
+        ('Han solo', 20, 0, datetime('now','localtime')),
+        ('Leia Organa', 18, 0, datetime('now','localtime')),
+        ('Yoda', 0, 1, datetime('now','localtime'));";
+        connection.Query(sql);
+    }
+    function InsertFakeUser(){
+        sql="insert into user (name, score) values ('Not name found', 0);";
+        connection.Query(sql);
+    }
+
+
+  function GetUser(){
+      sql="SELECT * FROM user ORDER BY score DESC LIMIT 1;";
+      _result=connection.Query(sql);
+      return _result[0][1];
+  }
+    function GetMax10(){
+        sql="SELECT * FROM records ORDER BY score DESC LIMIT 10;";
+        _result=connection.Query(sql);
+        return _result;
+    }
+    function get_max_player(){
+        sql="SELECT * FROM records WHERE isMy=1 ORDER BY score DESC LIMIT 1;";
+        _result=connection.Query(sql);
+        return _result[0][2];
+    }
+
+	function CheckRecord(record){
+       // app.GetEngine().LogPrint("Checkamos el record "+record+" con:");
+		//app.Log("Comprobando el record "+record);
+		_result=GetMax10();
+		for(i=0;i<sizeof(_result);i++){
+            //app.GetEngine().LogPrint(" "+_result[i][2]);
+			if (_result[i][2]<record) {
+				return true;
+			}
+		}
+		return False;
+	}
+
+	function InsertRecord(name, score){
+        sql="insert into records (name, score, isMy, date) values ('"+name+"', "+score+", 1,datetime('now','localtime'));";
+        connection.Query(sql);
+	}
+
+    /*function UpdateUserRecord(_record){
+		sql="UPDATE user_record set score="+_record+" WHERE id=1";
+		connection.Query(sql);
+	}*/
+
+    function UpdateUser(_name){
+        sql="UPDATE user SET name='"+_name+"' WHERE id=1";
+        connection.Query(sql);
+    }
+
+    function delete_records(){
+        sql="DELETE FROM records";
+        connection.Query(sql);
+    }
+
+    function reset_records(){
+		drop_table_records();
+        CreateTableRecords();
+        InsertFakeRecords();
+	}
+}

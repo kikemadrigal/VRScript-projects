@@ -1,3 +1,7 @@
+
+Ponle un rofeo a la izquierda en records
+
+
 Bloques destruibles que escondan armas, vidas y puntos
 
 Crea Barra de energia del player y bosses

@@ -1,0 +1,49 @@
+namespace es_tipolisto_Wulfgarl;
+
+/**
+
+ * 
+ * 
+ * 
+ * 
+* Pantalla 
+ */
+class Stage2{
+    properties:
+        game=null;
+        bg=null;
+
+    function _operator_new(_game){
+        game=_game;
+        if (DEBUG_MODE) {
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,200,_game.GetApp().GetResY()-100,game.currentStage);
+        }
+
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+
+        _tmx = new TMX_tiles();
+        _tmx.Load(_game.mapper,"resources/tilesmap2.tmx", _game);
+        delete _tmx; 
+
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        _texture=game.resources.get_bg_image(game.currentStage);
+        bg.AddTexFrame(_texture);
+        bg.SetPriority(-1);
+
+        //creamos 10 buitres
+        for (i=0; i < 10; i++){ 
+            _x_random=rand(1000,LEVEL_WIDTH);
+            _y=10;
+            _enemy=game.create_enemy(ENEMY_TYPE_VULTURE,_x_random,_y, game.currentStage);
+        }
+        
+       //Pintamos el marcador
+        game.print_score();        
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        delete game.layer;
+    }   
+}

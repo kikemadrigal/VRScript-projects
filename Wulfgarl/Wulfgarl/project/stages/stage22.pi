@@ -1,0 +1,51 @@
+namespace es_tipolisto_Wulfgarl;
+/*
+ 
+ enemigos: 
+
+* Fondo: Catillo interior de fondo lila
+* Tiles: Ladrillos grises, plataformas gris claro y lila
+* Enemigos 11: 
+*    Bloques que aplastan
+*    Sierras
+*    Eladrones enmascarados
+*    Murciélagos
+* Objetos 28:
+*    Llaves,
+*    candado,
+*    monedas
+*/
+class Stage22{
+    properties:
+        game=null;
+        bg=null;
+
+    function _operator_new(_game){
+        game=_game;
+        if (DEBUG_MODE) {
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,100,_game.GetApp().GetResY()-100, game.currentStage);
+        }
+        //ponemos que tenemos que coger 3 llaves
+        _game.player1.keys_to_collect=3;
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+ 
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        bg.AddTexFrame(game.resources.get_bg_image(game.currentStage));
+        bg.SetPriority(-1);
+
+        _tmx = new TMX_tiles();
+        _tmx.Load(_game.mapper, "resources/tilesmap22.tmx", _game);
+        delete _tmx;
+        
+       
+        //pintamos el marcador
+        _game.print_score();
+  
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        delete game.layer;
+    }
+}

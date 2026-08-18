@@ -1,0 +1,7 @@
+.fileexplorer
+/scripts/.fileexplorer
+/sounds/.fileexplorer
+data/data/wulfgardb.sql
+data/data/sqlite3
+data/data/sqlite3.exe
+data/.fuse_*

@@ -1,0 +1,55 @@
+namespace es_tipolisto_Wulfgarl;
+/**
+ * Pantalla 14: fuego horizontal
+ * Fondo: Cueva marrón
+ * Tiles: Rocas marrones y grises oscuras
+ * Enemigos 13: 
+ *    Jabalís
+ *    Sierras
+ *    Murciélagos
+ *    Buitres
+
+ * Objetos 20:
+ *   Llaves, 
+ *   candado, 
+ *   monedas,
+ *   Lava que quema
+ *   Llamas de fuego que queman
+ */
+class Stage17{
+    properties:
+        game=null;
+        bg=null;
+    function _operator_new(_game){
+        game=_game;
+        if (DEBUG_MODE) {
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,150,_game.GetApp().GetResY()-100, game.currentStage);
+        }
+        //ponemos que tenemos que coger 3 llaves
+        _game.player1.keys_to_collect=3;
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+ 
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        bg.AddTexFrame(game.resources.get_bg_image(game.currentStage));
+        bg.SetPriority(-1);
+
+        _tmx = new TMX_tiles();
+        _tmx.Load(_game.mapper, "resources/tilesmap17.tmx", _game);
+        delete _tmx;
+        
+        game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_VERTICAL,580, 352, game.currentStage);
+        game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_VERTICAL,998, 354, game.currentStage);
+        game.create_enemy(ENEMY_TYPE_SHOOT_PLAYER_VERTICAL,2694, 352, game.currentStage);
+       
+        //pintamos el marcador
+        _game.print_score();
+  
+    }
+    function _operator_delete(){
+        bg.Destroy();
+        game.delete_fires();
+        delete game.layer;
+    }
+}

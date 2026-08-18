@@ -1,0 +1,80 @@
+class language{
+    properties:
+        name="eng";
+        spanish=[];
+        english=[];
+    virtual _operator_new(_app){
+        _name=_app.GetEngine().GetLocaleLanguage();
+        //if(_name=="es" || _name=="es-ES" || _name=="es-MX")_app.GetEngine().SetLocaleLanguage("ES");
+        //else _app.GetEngine().SetLocaleLanguage("GB");
+        name=_name;
+        spanish=[
+            ["menu","Un extraño virus ha infectado a los animales..."+
+					"\nUn dragon ha secuestrado a tu amada..."+
+					"\n\nControles:"+
+					"\nCursor derecha/izquierda para moverte"+
+					"\nCursor arriba para saltar"+
+					"\nEspacio para atacar o continuar"+
+					"\nPulsa la teclar 'r' para ver los records"+
+					"\n\nMision:"+
+					"\nCoge 3 llaves para abrir el candado y pasar de nivel"+
+                    "\n\nCreditos: "+
+                    "\nProgramador: Kike Madrigal \nMúsica: Clemente Tiñena\nTesters: mesíasMSX, Juan Morales"],
+            ["winner","Final de la batalla!!!\nProgramador: Kike Madrigal && \nMSXSpain amigos\nMúsica: Clemente Tiñena\nTesters: mesíasMSX, Juan Morales\nGracias por jugar a mi juego."],
+            ["records_table","Record    Nombre   fecha\n"],
+            ["no_records","Sin records"],
+            ["your_name_is","\nTu nombre es: "],
+            ["your_highest_score_is","\nTu mayor puntuacion es: "],
+            ["record_keys","\n\nPulsa la 'n' para asignar o actualizar tu nombre."+
+									"\nPulsa la 's' para subir tu record a https://wulfgar.tipolisto.es"+
+       								"\nPulsa la 'd' para reiniciar lla base de datos de los records"+
+       								"\nPulsa espacio para salir"],
+            ["wait_loading_maps_and_actors","Espere mientras se cargar actores y mapas"],
+            ["game_over","Juego terminado"],
+            ["new_record","Has conseguido un nuevo record!\nVe a menu y pulsa la tecla r para ver los records"],
+            ["score","Puntos"],
+            ["keys","Llaves"],
+            ["energy","Energia"],
+            ["message","Mensaje"],
+            ["quit_the_game","¿Seguro que quieres salir del juego?"]
+
+        ];
+        english=[
+            ["menu","A strange virus has infected the animals..."+
+                    "\nA dragon has kidnapped your beloved..."+
+                    "\n\nControls:"+
+                    "\nRight/left cursor to move"+
+                    "\nUp cursor to jump"+
+                    "\nSpace to attack or continue"+
+                    "\nPress 'r' to see the records"+
+                    "\n\nMission:"+
+                    "\nPick up 3 keys to open the padlock and pass the level"+
+                    "\n\nCredits: "+
+                    "\nDeveloper: Kike Madrigal \nMusic: Clemente Tiñena\nTester: mesiasMSX, Juan Morales."],
+            ["winner","\n\nEnd of the battle!! \nDeveloper: Kike Madrigal \nMusic: Clemente Tiñena\nTester: mesiasMSX."],
+            ["records_table","Record    Name   Date\n"],
+            ["no_records","No records"],
+            ["your_name_is","\nYour name is: "],
+            ["your_highest_score_is","\nYour highest score is: "],
+            ["record_keys","\n\nPress 'n' to assign or update your name."+
+                                    "\nPress 's' to upload your record to https://wulfgar.tipolisto.es"+
+                                    "\nPress 'd' to reset the records database"+
+                                    "\nPress space to exit"],
+            ["wait_loading_maps_and_actors","Please wait while actors and maps load."],
+            ["game_over","Game over"],
+            ["new_record","You've set a new record!\nGo to menu and press the R key to see the records."],
+            ["score","Score"],
+            ["keys","Keys"],
+            ["energy","Energy"],
+            ["message","Message"],
+            ["quit_the_game","Are you sure you want to quit the game?"]
+        ];
+    }
+
+
+    function get_value(key){
+        if(name=="es") return String_FromUTF8(spanish[key]);
+        else return english[key];
+    }
+
+}

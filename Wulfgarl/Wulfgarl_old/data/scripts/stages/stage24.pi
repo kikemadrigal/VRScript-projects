@@ -1,0 +1,60 @@
+namespace es_tipolisto_WulfgarI;
+
+/**
+ * batalla con el dragón final
+ */
+class Stage24{
+    properties:
+        game=null;
+        bg=null;
+        boss=null;
+        
+    function _operator_new(_game){
+        game=_game;
+        if (DEBUG_MODE) {
+            _game.SetDebug(true);
+            _game.create_object(OBJECT_TYPE_META,192,_game.GetApp().GetResY()-100, game.currentStage);
+        } 
+    
+        //Colocamos el fondo
+        bg=_game.NewObject("bg","gl_sprite");
+        bg.AddTexFrame(game.resources.get_bg_image(game.currentStage));
+        bg.SetPriority(-1);
+
+        _tmx = new TMX_tiles();
+        _ok=_tmx.Load(game.mapper, "resources/tilesmap24.tmx", game);
+        delete _tmx;        
+
+        //Colocamos al player
+        _game.player1.SetPosition(20,_game.GROUND_Y);
+        //posicionamos la cámara
+        game.SetCameraX(0);
+        //posicionamos el boss
+        boss=_game.NewObject("boss4","Boss4",[game, _game.player1]);
+        //pintamos el marcador
+        _game.print_score();
+        //Pintamos la vida que le queda al boss
+        _game.draw_boss_live(boss.boss_live);
+    }
+    
+    function _operator_delete(){
+        game.draw_boss_live("");
+        delete game.layer;
+        boss.Destroy();
+        /*for (i = 255; i > 0; i--) {
+            game.GetEngine().Sleep(1);
+            bg.background.SetAlpha(i);
+        }*/
+        //bg.SetAnimation("map2");
+        //bg.SetAlpha(255);
+        bg.Destroy();
+        game.delete_objects();
+        game.delete_enemies();
+        game.delete_fires();
+        
+    }
+    /*function changeStage(){
+        //game.GetApp().Sleep(2000);
+        game.changeStage();
+    }*/
+}

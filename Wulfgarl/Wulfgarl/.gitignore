@@ -1,7 +1,6 @@
 .fileexplorer
-/scripts/.fileexplorer
-/sounds/.fileexplorer
-data/data/wulfgardb.sql
-data/data/sqlite3
-data/data/sqlite3.exe
-data/.fuse_*
+edit.ini
+wulfgar.sql
+sqlite3
+sqlite3.exe
+.fuse_*
